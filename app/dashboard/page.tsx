@@ -14,6 +14,15 @@ type StatsResponse = {
     timestamp: string;
     status: string;
   }>;
+  roundHistory: Array<{
+    epoch: number;
+    status: string;
+    startedAt: string;
+    duration: string;
+    claimedSol: number;
+    distributedPump: number;
+    txSig: string | null;
+  }>;
 };
 
 type HoldersResponse = {
@@ -31,7 +40,8 @@ const emptyStats: StatsResponse = {
   lastRewardAirdropped: 0,
   totalRewardAirdropped: 0,
   nextDropTime: new Date().toISOString(),
-  epochHistory: []
+  epochHistory: [],
+  roundHistory: []
 };
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
@@ -50,6 +60,17 @@ async function getJson<T>(path: string, fallback: T): Promise<T> {
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
   return `${address.slice(0, 4)}...${address.slice(-4)}`;
+}
+
+function statusLabel(status: string) {
+  return status.toUpperCase();
+}
+
+function statusClass(status: string) {
+  if (status === "completed") return "status-pill completed";
+  if (status === "failed") return "status-pill failed";
+  if (status === "skipped") return "status-pill skipped";
+  return "status-pill running";
 }
 
 export default async function DashboardPage() {
@@ -109,9 +130,69 @@ export default async function DashboardPage() {
             </div>
           </div>
 
+          <section className="history-card" style={{ marginTop: 16 }}>
+            <div className="history-head">
+              <h3>Round History</h3>
+              <span>Latest 10 rounds</span>
+            </div>
+            <div className="table-wrap">
+              <table className="history-table">
+                <thead>
+                  <tr>
+                    <th>Round</th>
+                    <th>Status</th>
+                    <th>Started</th>
+                    <th>Duration</th>
+                    <th className="right">Claimed</th>
+                    <th className="right">Distributed</th>
+                    <th className="right">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.roundHistory.length ? (
+                    stats.roundHistory.map((round) => (
+                      <tr key={`${round.epoch}-${round.startedAt}`}>
+                        <td className="mono">#{round.epoch}</td>
+                        <td>
+                          <span className={statusClass(round.status)}>{statusLabel(round.status)}</span>
+                        </td>
+                        <td>{new Date(round.startedAt).toLocaleString()}</td>
+                        <td>{round.duration}</td>
+                        <td className="right mono">
+                          {round.claimedSol ? `${round.claimedSol.toLocaleString()} SOL` : "-"}
+                        </td>
+                        <td className="right mono">
+                          {round.distributedPump ? `${round.distributedPump.toLocaleString()} PUMP` : "-"}
+                        </td>
+                        <td className="right">
+                          {round.txSig ? (
+                            <a
+                              className="details-button"
+                              href={`https://solscan.io/tx/${round.txSig}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Details
+                            </a>
+                          ) : (
+                            <span className="details-button disabled">Details</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7}>No rounds yet.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
           <div className="dash-grid" style={{ marginTop: 16 }}>
             <section className="card">
-              <h3>Recent Epochs</h3>
+              <h3>Latest Epoch Summary</h3>
               <div className="table-wrap" style={{ marginTop: 14 }}>
                 <table>
                   <thead>

@@ -591,6 +591,35 @@ h1 {
   overflow-x: auto;
 }
 
+.history-card {
+  overflow: hidden;
+  border: 1px solid rgba(223, 240, 223, 0.14);
+  border-radius: 22px;
+  background:
+    linear-gradient(90deg, rgba(2, 4, 1, 0.72), rgba(2, 4, 1, 0.5)),
+    rgba(6, 12, 7, 0.64);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+}
+
+.history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid rgba(223, 240, 223, 0.1);
+}
+
+.history-head h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.history-head span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -611,9 +640,87 @@ th {
   letter-spacing: 0.08em;
 }
 
+.history-table {
+  min-width: 980px;
+}
+
+.history-table th {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.history-table th,
+.history-table td {
+  padding: 18px 24px;
+}
+
 td {
   color: var(--text);
   font-size: 14px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.status-pill::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.status-pill.completed {
+  border: 1px solid rgba(34, 255, 90, 0.28);
+  background: rgba(34, 255, 90, 0.12);
+  color: #35ff69;
+}
+
+.status-pill.completed::before {
+  background: #35ff69;
+}
+
+.status-pill.failed {
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  background: rgba(255, 68, 68, 0.12);
+  color: #ff5757;
+}
+
+.status-pill.failed::before {
+  background: #ff5757;
+}
+
+.status-pill.skipped,
+.status-pill.running {
+  border: 1px solid rgba(223, 240, 223, 0.18);
+  background: rgba(223, 240, 223, 0.08);
+  color: var(--muted);
+}
+
+.status-pill.skipped::before,
+.status-pill.running::before {
+  background: var(--muted);
+}
+
+.details-button {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 111, 28, 0.14);
+  color: #ff8a33;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.details-button.disabled {
+  opacity: 0.46;
+  pointer-events: none;
 }
 
 .mono {

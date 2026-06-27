@@ -10,6 +10,17 @@ type EpochRow = {
   completed_at: string | null;
 };
 
+type ClaimRow = {
+  epoch_id: string;
+  amount_claimed: string | number | null;
+  tx_sig: string | null;
+};
+
+type BuyRow = {
+  epoch_id: string;
+  tx_sig: string | null;
+};
+
 function supabaseConfig() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
@@ -33,6 +44,15 @@ function epochNumber(epochId: string, fallback: number) {
 function nextDropTime() {
   const fiveMinutes = 300000;
   return new Date(Math.ceil(Date.now() / fiveMinutes) * fiveMinutes).toISOString();
+}
+
+function durationLabel(startedAt: string | null, completedAt: string | null) {
+  if (!startedAt || !completedAt) return "0s";
+  const ms = Math.max(0, Date.parse(completedAt) - Date.parse(startedAt));
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
 }
 
 export async function GET() {
@@ -63,6 +83,32 @@ export async function GET() {
 
     if (!response.ok) throw new Error(`Supabase epochs error ${response.status}`);
     const rows = (await response.json()) as EpochRow[];
+    const epochIds = rows.map((row) => row.epoch_id);
+    const claims = epochIds.length
+      ? await fetch(
+          `${config.url}/rest/v1/claims?select=epoch_id,amount_claimed,tx_sig&epoch_id=in.(${epochIds.map(encodeURIComponent).join(",")})`,
+          {
+            headers: {
+              apikey: config.key,
+              Authorization: `Bearer ${config.key}`
+            },
+            cache: "no-store"
+          }
+        )
+      : null;
+    const claimRows = claims?.ok ? ((await claims.json()) as ClaimRow[]) : [];
+    const claimsByEpoch = new Map(claimRows.map((claim) => [claim.epoch_id, claim]));
+    const buys = epochIds.length
+      ? await fetch(`${config.url}/rest/v1/buys?select=epoch_id,tx_sig&epoch_id=in.(${epochIds.map(encodeURIComponent).join(",")})`, {
+          headers: {
+            apikey: config.key,
+            Authorization: `Bearer ${config.key}`
+          },
+          cache: "no-store"
+        })
+      : null;
+    const buyRows = buys?.ok ? ((await buys.json()) as BuyRow[]) : [];
+    const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
     const completed = rows.filter((row) => row.status === "completed" || row.status === "skipped");
     const latest = rows[0];
 
@@ -74,13 +120,28 @@ export async function GET() {
       status: row.status ?? "unknown"
     }));
 
+    const roundHistory = rows.slice(0, 10).map((row, index) => {
+      const claim = claimsByEpoch.get(row.epoch_id);
+      const buy = buysByEpoch.get(row.epoch_id);
+      return {
+        epoch: epochNumber(row.epoch_id, rows.length - index),
+        status: row.status ?? "unknown",
+        startedAt: row.started_at ?? row.epoch_id,
+        duration: durationLabel(row.started_at, row.completed_at),
+        claimedSol: toNumber(claim?.amount_claimed),
+        distributedPump: toNumber(row.reward_distributed),
+        txSig: claim?.tx_sig ?? buy?.tx_sig ?? null
+      };
+    });
+
     return NextResponse.json({
       currentEpoch: latest ? epochNumber(latest.epoch_id, rows.length) : 0,
       totalEpochs: rows.length,
       lastRewardAirdropped: epochHistory[0]?.rewardAmount ?? 0,
       totalRewardAirdropped: completed.reduce((sum, row) => sum + toNumber(row.reward_distributed), 0),
       nextDropTime: nextDropTime(),
-      epochHistory
+      epochHistory,
+      roundHistory
     });
   } catch (error) {
     console.error("stats route failed", error);
