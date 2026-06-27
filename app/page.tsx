@@ -58,6 +58,10 @@ const feed = [
 ];
 
 function Navbar() {
+  const xUrl = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com";
+  const ca = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
+  const shortCa = ca ? `${ca.slice(0, 4)}...${ca.slice(-4)}` : "CA";
+
   return (
     <header className="nav">
       <div className="container nav-inner">
@@ -72,6 +76,17 @@ function Navbar() {
           <a href="/dashboard">Dashboard</a>
         </nav>
         <div className="nav-actions">
+          <a className="mini-button" href={xUrl} target="_blank" rel="noreferrer">
+            X
+          </a>
+          <a
+            className="mini-button mono"
+            href={ca ? `https://solscan.io/token/${ca}` : "#"}
+            target={ca ? "_blank" : undefined}
+            rel={ca ? "noreferrer" : undefined}
+          >
+            {shortCa}
+          </a>
           <a className="cta" href="/dashboard">
             Live Drops <ArrowRight size={17} />
           </a>
