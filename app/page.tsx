@@ -69,7 +69,7 @@ function Navbar() {
       <div className="container nav-inner">
         <a className="brand" href="/">
           <img className="brand-logo" src="/logo.png" alt="Pump Airdrop logo" />
-          <span>Pump Airdrop</span>
+          <span>$AIRDROP</span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#how">How It Works</a>
@@ -257,7 +257,7 @@ export default function Page() {
 
       <footer className="footer">
         <div className="container nav-inner">
-          <span>© 2026 Pump Airdrop. Ticker: $AIRDROP.</span>
+          <span>© 2026 $AIRDROP. Ticker: $AIRDROP.</span>
           <span className="mono">claim - swap - snapshot - send</span>
         </div>
       </footer>

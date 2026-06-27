@@ -21,6 +21,16 @@ type BuyRow = {
   tx_sig: string | null;
 };
 
+type PayoutRow = {
+  epoch_id: string;
+  wallet: string;
+  reward_amount: string | number | null;
+  status: string | null;
+  tx_sig: string | null;
+  updated_at: string | null;
+  created_at: string | null;
+};
+
 function supabaseConfig() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
@@ -65,7 +75,9 @@ export async function GET() {
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
       nextDropTime: nextDropTime(),
-      epochHistory: []
+      epochHistory: [],
+      roundHistory: [],
+      recentRewards: []
     });
   }
 
@@ -109,6 +121,17 @@ export async function GET() {
       : null;
     const buyRows = buys?.ok ? ((await buys.json()) as BuyRow[]) : [];
     const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
+    const payouts = await fetch(
+      `${config.url}/rest/v1/payouts?select=epoch_id,wallet,reward_amount,status,tx_sig,updated_at,created_at&order=updated_at.desc&limit=20`,
+      {
+        headers: {
+          apikey: config.key,
+          Authorization: `Bearer ${config.key}`
+        },
+        cache: "no-store"
+      }
+    );
+    const payoutRows = payouts.ok ? ((await payouts.json()) as PayoutRow[]) : [];
     const completed = rows.filter((row) => row.status === "completed" || row.status === "skipped");
     const latest = rows[0];
 
@@ -134,6 +157,15 @@ export async function GET() {
       };
     });
 
+    const recentRewards = payoutRows.map((row) => ({
+      epoch: epochNumber(row.epoch_id, 0),
+      wallet: row.wallet,
+      rewardAmount: toNumber(row.reward_amount),
+      time: row.updated_at ?? row.created_at ?? row.epoch_id,
+      status: row.status ?? "unknown",
+      txSig: row.tx_sig
+    }));
+
     return NextResponse.json({
       currentEpoch: latest ? epochNumber(latest.epoch_id, rows.length) : 0,
       totalEpochs: rows.length,
@@ -141,7 +173,8 @@ export async function GET() {
       totalRewardAirdropped: completed.reduce((sum, row) => sum + toNumber(row.reward_distributed), 0),
       nextDropTime: nextDropTime(),
       epochHistory,
-      roundHistory
+      roundHistory,
+      recentRewards
     });
   } catch (error) {
     console.error("stats route failed", error);
@@ -151,7 +184,9 @@ export async function GET() {
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
       nextDropTime: nextDropTime(),
-      epochHistory: []
+      epochHistory: [],
+      roundHistory: [],
+      recentRewards: []
     });
   }
 }
