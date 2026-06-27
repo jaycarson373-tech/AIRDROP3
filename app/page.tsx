@@ -58,6 +58,39 @@ const feed = [
   }
 ];
 
+const airdropStages = [
+  {
+    step: "01",
+    title: "Stage 1: Launch",
+    body: "$AIRDROP goes live and holders start building positions.",
+    status: "NOW"
+  },
+  {
+    step: "02",
+    title: "Stage 2: First Claim",
+    body: "Creator fees begin flowing into the treasury wallet.",
+    status: "NEXT"
+  },
+  {
+    step: "03",
+    title: "Stage 3: PUMP Rewards",
+    body: "Fees swap into PUMP and rewards go to top eligible holders.",
+    status: "SOON"
+  },
+  {
+    step: "04",
+    title: "Stage 4: Forever Drops",
+    body: "The five-minute reward cycle runs automatically.",
+    status: "FINAL"
+  }
+];
+
+function currentAirdropStage() {
+  const parsed = Number(process.env.NEXT_PUBLIC_AIRDROP_STAGE ?? 1);
+  if (!Number.isFinite(parsed)) return 1;
+  return Math.min(airdropStages.length, Math.max(1, Math.floor(parsed)));
+}
+
 function Navbar() {
   const xUrl = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com";
   const ca = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
@@ -98,6 +131,9 @@ function Navbar() {
 }
 
 export default function Page() {
+  const activeStage = currentAirdropStage();
+  const progress = (activeStage / airdropStages.length) * 100;
+
   return (
     <div className="page">
       <ParallaxBackground />
@@ -136,24 +172,34 @@ export default function Page() {
                   <span />
                   <span />
                 </div>
-                <span>airdrop.worker</span>
+                <span>airdrop.stage</span>
               </div>
-              <div className="terminal-body">
-                {[
-                  ["1", "Claim creator fees", "Collect available Pump fees into treasury"],
-                  ["2", "Swap to PUMP", "Use the safe SOL balance, leave gas reserve"],
-                  ["3", "Snapshot $AIRDROP", "Top 50 holders, no 5%+ whales"],
-                  ["4", "Airdrop rewards", "Proportional PUMP sends with proof rows"]
-                ].map(([step, title, body]) => (
-                  <div className="flow-row" key={step}>
-                    <span className="step-dot">{step}</span>
-                    <span>
-                      <strong>{title}</strong>
-                      <small>{body}</small>
-                    </span>
-                    <span className="tag">LIVE</span>
+              <div className="terminal-body stage-panel">
+                <div className="stage-summary">
+                  <span>Current Stage</span>
+                  <strong>
+                    Stage {activeStage} of {airdropStages.length}
+                  </strong>
+                  <div className="stage-progress" aria-hidden="true">
+                    <span style={{ width: `${progress}%` }} />
                   </div>
-                ))}
+                </div>
+
+                {airdropStages.map((stage, index) => {
+                  const stageNumber = index + 1;
+                  const state = stageNumber < activeStage ? "done" : stageNumber === activeStage ? "active" : "upcoming";
+
+                  return (
+                    <div className={`flow-row stage-row ${state}`} key={stage.step}>
+                      <span className="step-dot">{stage.step}</span>
+                      <span>
+                        <strong>{stage.title}</strong>
+                        <small>{stage.body}</small>
+                      </span>
+                      <span className="tag">{state === "done" ? "DONE" : stage.status}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

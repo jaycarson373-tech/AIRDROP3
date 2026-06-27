@@ -292,6 +292,47 @@ h1 {
   gap: 14px;
 }
 
+.stage-panel {
+  gap: 12px;
+}
+
+.stage-summary {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(125, 255, 92, 0.07);
+}
+
+.stage-summary span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stage-summary strong {
+  font-size: 28px;
+  letter-spacing: -0.04em;
+}
+
+.stage-progress {
+  height: 9px;
+  overflow: hidden;
+  border: 1px solid rgba(125, 255, 92, 0.22);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.stage-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green), var(--yellow));
+}
+
 .flow-row {
   display: grid;
   grid-template-columns: 36px 1fr auto;
@@ -301,6 +342,20 @@ h1 {
   border-radius: 12px;
   padding: 14px;
   background: rgba(255, 255, 255, 0.04);
+}
+
+.stage-row.done {
+  opacity: 0.72;
+}
+
+.stage-row.active {
+  border-color: rgba(125, 255, 92, 0.52);
+  background: rgba(125, 255, 92, 0.11);
+  box-shadow: 0 0 32px rgba(125, 255, 92, 0.1);
+}
+
+.stage-row.upcoming {
+  opacity: 0.62;
 }
 
 .step-dot {
@@ -330,6 +385,17 @@ h1 {
   background: var(--green);
   font-size: 11px;
   font-weight: 900;
+}
+
+.stage-row.upcoming .tag {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+}
+
+.stage-row.done .tag {
+  background: rgba(125, 255, 92, 0.22);
+  color: var(--green);
 }
 
 .section {
