@@ -216,37 +216,6 @@ h1 {
   line-height: 1.65;
 }
 
-.search-shell {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: min(620px, 100%);
-  margin-top: 26px;
-  border: 1px solid rgba(125, 255, 92, 0.22);
-  border-radius: 12px;
-  padding: 15px 16px;
-  background: rgba(0, 0, 0, 0.28);
-  color: var(--muted);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
-}
-
-.search-shell svg {
-  color: var(--green);
-}
-
-.search-shell span {
-  flex: 1;
-}
-
-.search-shell kbd {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 4px 7px;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
-  font-size: 12px;
-}
-
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -376,28 +345,6 @@ h1 {
 
 .explore {
   padding-top: 20px;
-}
-
-.tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 18px 0 16px;
-}
-
-.tabs button {
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 9px 13px;
-  background: rgba(125, 255, 92, 0.07);
-  color: var(--muted);
-  font-weight: 900;
-  cursor: pointer;
-}
-
-.tabs button:first-child {
-  background: var(--green);
-  color: #061006;
 }
 
 .coin-feed {

@@ -2,12 +2,10 @@ import {
   ArrowRight,
   BadgeDollarSign,
   Gift,
-  Search,
   ShieldCheck,
   Sparkles,
   TimerReset,
   WalletCards,
-  Zap
 } from "lucide-react";
 
 const stats = [
@@ -35,29 +33,27 @@ const cards = [
   }
 ];
 
-const tabs = ["Trending", "Airdrops", "Top holders", "New", "Live"];
-
 const feed = [
   {
     symbol: "$AIRDROP",
-    title: "Pump Airdrop",
+    title: "Claim Fees",
     meta: "5m reward cycle",
-    body: "Creator fees buy PUMP and send it to top holders automatically.",
-    mc: "$ live soon"
+    body: "Pump creator fees are collected into the treasury wallet before each reward cycle.",
+    mc: "step 1"
   },
   {
     symbol: "PUMP",
-    title: "Reward Asset",
+    title: "Buy PUMP",
     meta: "Jupiter route",
-    body: "Treasury SOL swaps into PUMP before each holder-weighted send.",
-    mc: "reward"
+    body: "The worker swaps available SOL into PUMP while keeping SOL reserved for gas.",
+    mc: "step 2"
   },
   {
     symbol: "TOP 50",
-    title: "Holder Snapshot",
+    title: "Airdrop Holders",
     meta: "No 5%+ whales",
-    body: "Eligible wallets are ranked by source-token balance every epoch.",
-    mc: "proof"
+    body: "Top eligible $AIRDROP holders split the PUMP rewards proportionally.",
+    mc: "step 3"
   }
 ];
 
@@ -70,17 +66,12 @@ function Navbar() {
           <span>Pump Airdrop</span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="/">Home</a>
-          <a href="#go">GO</a>
-          <a href="#how">Communities</a>
-          <a href="/dashboard">Live</a>
-          <a href="#terminal">Terminal</a>
+          <a href="#how">How It Works</a>
+          <a href="#rewards">Rewards</a>
+          <a href="#proof">Proof</a>
+          <a href="/dashboard">Dashboard</a>
         </nav>
         <div className="nav-actions">
-          <a className="mini-button" href="#go">
-            Create
-          </a>
-          <a href="#proof">Proof</a>
           <a className="cta" href="/dashboard">
             Live Drops <ArrowRight size={17} />
           </a>
@@ -102,20 +93,15 @@ export default function Page() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Welcome to Pump Airdrop
+                Pump rewards for $AIRDROP holders
               </div>
               <h1>
-                Create the <span className="gradient">airdrop meta</span>.
+                Hold $AIRDROP. <span className="gradient">Earn PUMP</span> every 5 minutes.
               </h1>
               <p className="hero-copy">
-                $AIRDROP is the live reward terminal for people tired of waiting. Fees come in, PUMP gets bought,
-                holders get ranked, and the top wallets get paid on repeat.
+                Pump Airdrop claims creator fees, swaps them into PUMP, snapshots the top eligible holders,
+                and sends rewards straight to wallets on a five-minute cycle.
               </p>
-              <div className="search-shell">
-                <Search size={18} />
-                <span>Search for drops, holders, epochs...</span>
-                <kbd>⌘K</kbd>
-              </div>
               <div className="hero-actions">
                 <a className="cta" href="/dashboard">
                   View Live Dashboard <ArrowRight size={18} />
@@ -126,14 +112,14 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="terminal pump-card" aria-label="Airdrop process preview" id="terminal">
+            <div className="terminal pump-card" aria-label="Airdrop process preview">
               <div className="terminal-bar">
                 <div className="dots">
                   <span />
                   <span />
                   <span />
                 </div>
-                <span>pump.airdrop/live</span>
+                <span>airdrop.worker</span>
               </div>
               <div className="terminal-body">
                 {[
@@ -156,26 +142,19 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="section explore">
+        <section className="section explore" id="rewards">
           <div className="container">
             <div className="section-head compact">
               <div>
                 <div className="eyebrow">
-                  <Zap size={15} />
-                  Trending now
+                  <Sparkles size={15} />
+                  Reward engine
                 </div>
-                <h2>Explore drops</h2>
+                <h2>What happens each epoch</h2>
               </div>
               <a className="mini-button" href="/dashboard">
-                Grid / Table
+                View Dashboard
               </a>
-            </div>
-            <div className="tabs" aria-label="Explore filters">
-              {tabs.map((tab) => (
-                <button type="button" key={tab}>
-                  {tab}
-                </button>
-              ))}
             </div>
             <div className="coin-feed">
               {feed.map((item) => (
