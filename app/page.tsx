@@ -8,6 +8,7 @@ import {
   WalletCards,
 } from "lucide-react";
 import { ParallaxBackground } from "./parallax-background";
+import { RewardRoundPanel } from "./reward-round-panel";
 
 const stats = [
   ["5 min", "Reward cycle"],
@@ -58,39 +59,6 @@ const feed = [
   }
 ];
 
-const airdropStages = [
-  {
-    step: "01",
-    title: "Stage 1: Launch",
-    body: "$AIRDROP goes live and holders start building positions.",
-    status: "NOW"
-  },
-  {
-    step: "02",
-    title: "Stage 2: First Claim",
-    body: "Creator fees begin flowing into the treasury wallet.",
-    status: "NEXT"
-  },
-  {
-    step: "03",
-    title: "Stage 3: PUMP Rewards",
-    body: "Fees swap into PUMP and rewards go to top eligible holders.",
-    status: "SOON"
-  },
-  {
-    step: "04",
-    title: "Stage 4: Forever Drops",
-    body: "The five-minute reward cycle runs automatically.",
-    status: "FINAL"
-  }
-];
-
-function currentAirdropStage() {
-  const parsed = Number(process.env.NEXT_PUBLIC_AIRDROP_STAGE ?? 1);
-  if (!Number.isFinite(parsed)) return 1;
-  return Math.min(airdropStages.length, Math.max(1, Math.floor(parsed)));
-}
-
 function Navbar() {
   const xUrl = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com";
   const ca = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
@@ -131,9 +99,6 @@ function Navbar() {
 }
 
 export default function Page() {
-  const activeStage = currentAirdropStage();
-  const progress = (activeStage / airdropStages.length) * 100;
-
   return (
     <div className="page">
       <ParallaxBackground />
@@ -165,43 +130,7 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="terminal pump-card" aria-label="Airdrop process preview">
-              <div className="terminal-bar">
-                <div className="dots">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <span>airdrop.stage</span>
-              </div>
-              <div className="terminal-body stage-panel">
-                <div className="stage-summary">
-                  <span>Current Stage</span>
-                  <strong>
-                    Stage {activeStage} of {airdropStages.length}
-                  </strong>
-                  <div className="stage-progress" aria-hidden="true">
-                    <span style={{ width: `${progress}%` }} />
-                  </div>
-                </div>
-
-                {airdropStages.map((stage, index) => {
-                  const stageNumber = index + 1;
-                  const state = stageNumber < activeStage ? "done" : stageNumber === activeStage ? "active" : "upcoming";
-
-                  return (
-                    <div className={`flow-row stage-row ${state}`} key={stage.step}>
-                      <span className="step-dot">{stage.step}</span>
-                      <span>
-                        <strong>{stage.title}</strong>
-                        <small>{stage.body}</small>
-                      </span>
-                      <span className="tag">{state === "done" ? "DONE" : stage.status}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            <RewardRoundPanel />
           </div>
         </section>
 
