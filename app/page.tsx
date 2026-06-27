@@ -68,7 +68,7 @@ function Navbar() {
     <header className="nav">
       <div className="container nav-inner">
         <a className="brand" href="/">
-          <span className="coin">$</span>
+          <img className="brand-logo" src="/logo.png" alt="Pump Airdrop logo" />
           <span>Pump Airdrop</span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">

@@ -86,7 +86,7 @@ export default async function DashboardPage() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <span className="coin">$</span>
+            <img className="brand-logo" src="/logo.png" alt="Pump Airdrop logo" />
             <span>Pump Airdrop</span>
           </Link>
           <div className="nav-links">

@@ -122,6 +122,15 @@ input {
   box-shadow: 0 0 32px var(--shadow);
 }
 
+.brand-logo {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(125, 255, 92, 0.35);
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 0 32px var(--shadow);
+}
+
 .nav-links {
   display: flex;
   align-items: center;

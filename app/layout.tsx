@@ -6,7 +6,8 @@ export const metadata: Metadata = {
   description:
     "Pump Airdrop converts creator fees into PUMP rewards for top $AIRDROP holders every five minutes.",
   icons: {
-    icon: "/favicon.ico"
+    icon: "/logo.png",
+    apple: "/logo.png"
   }
 };
 
