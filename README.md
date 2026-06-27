@@ -18,7 +18,8 @@ Every epoch:
 3. Snapshot `$AIRDROP` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, Pump curve/pool addresses, `EXCLUDE_WALLETS`, and holders above `MAX_HOLDER_PCT`.
 5. Airdrop the treasury reward-token balance proportionally to the top `MAX_WALLETS_PER_EPOCH`.
-6. Store epochs, buys, snapshots, claims, and payouts in Supabase for the dashboard.
+6. Pick one deterministic random eligible holder as the Golden Airdrop winner and boost that wallet to 10x its normal reward when balance allows.
+7. Store epochs, buys, snapshots, claims, Golden fields, and payouts in Supabase for the dashboard.
 
 ## Supabase
 
@@ -26,6 +27,12 @@ Run:
 
 ```sql
 -- supabase/migrations/001_pump_airdrop.sql
+```
+
+If the first migration already exists in your project, also run:
+
+```sql
+-- supabase/migrations/002_golden_airdrop.sql
 ```
 
 The migration enables public read policies for dashboard tables. The worker still uses the service-role key for writes.

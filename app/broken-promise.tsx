@@ -105,7 +105,7 @@ export function BrokenPromise() {
 
           <div className="promise-proof">
             <div className="tweet-shell" ref={tweetRef}>
-              <blockquote className="twitter-tweet" data-theme="dark" data-dnt="true">
+              <blockquote className="twitter-tweet" data-theme="dark" data-dnt="true" data-cards="hidden" data-width="360">
                 <a href={TWEET_URL}>PumpFun tweet from July 9, 2025</a>
               </blockquote>
             </div>

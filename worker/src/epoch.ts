@@ -1,6 +1,12 @@
 import { claimFees } from "./claim.js";
 import { buyReward } from "./buy.js";
-import { airdropRewards, computeAllocations, treasuryRewardBalanceRaw } from "./airdrop.js";
+import {
+  airdropRewards,
+  applyGoldenAirdrop,
+  computeAllocations,
+  computeGoldenRewardPool,
+  treasuryRewardBalanceRaw
+} from "./airdrop.js";
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
 import { currentEpochId } from "./time.js";
 import { snapshotEligibleHolders } from "./snapshot.js";
@@ -48,7 +54,10 @@ export async function runEpoch(date = new Date()) {
     console.log(`[${epochId}] snapshot eligible holders: ${holders.length}`);
 
     const rewardBalance = await treasuryRewardBalanceRaw();
-    const allocations = await computeAllocations(holders, rewardBalance);
+    const availableRewardRaw =
+      buy.txSig && buy.rewardReceivedRaw > 0n && buy.rewardReceivedRaw < rewardBalance ? buy.rewardReceivedRaw : rewardBalance;
+    const goldenPool = computeGoldenRewardPool(epochId, holders, availableRewardRaw);
+    const allocations = await computeAllocations(holders, goldenPool.rewardPoolRaw);
     if (!allocations.length) {
       await completeEpoch(epochId, {
         eligible_count: holders.length,
@@ -60,15 +69,24 @@ export async function runEpoch(date = new Date()) {
       return;
     }
 
+    const golden = await applyGoldenAirdrop(epochId, holders, allocations, availableRewardRaw, goldenPool.snapshotHash);
     await airdropRewards(epochId, allocations);
     const distributed = allocations.reduce((sum, allocation) => sum + allocation.uiAmount, 0);
     await completeEpoch(epochId, {
       eligible_count: allocations.length,
       reward_bought: buy.rewardReceivedUi.toString(),
-      reward_distributed: distributed.toString()
+      reward_distributed: distributed.toString(),
+      golden_winner_wallet: golden.wallet,
+      golden_base_reward: golden.baseRewardUi.toString(),
+      golden_base_reward_raw: golden.baseRewardRaw.toString(),
+      golden_bonus_reward: golden.bonusRewardUi.toString(),
+      golden_bonus_reward_raw: golden.bonusRewardRaw.toString(),
+      golden_multiplier: golden.multiplier,
+      golden_capped: golden.capped,
+      golden_snapshot_hash: golden.snapshotHash
     });
     console.log(
-      `[${epochId}] summary: eligible=${holders.length}, recipients=${allocations.length}, bought=${buy.rewardReceivedUi}, distributed=${distributed}`
+      `[${epochId}] summary: eligible=${holders.length}, recipients=${allocations.length}, bought=${buy.rewardReceivedUi}, distributed=${distributed}, golden=${golden.wallet ?? "none"}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

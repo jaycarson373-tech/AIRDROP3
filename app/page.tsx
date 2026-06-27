@@ -10,13 +10,7 @@ import {
 import { ParallaxBackground } from "./parallax-background";
 import { BrokenPromise } from "./broken-promise";
 import { RewardRoundPanel } from "./reward-round-panel";
-
-const stats = [
-  ["5 min", "Reward cycle"],
-  ["Top 50", "Holder snapshots"],
-  ["5%+", "Whales excluded"],
-  ["PUMP", "Reward token"]
-];
+import { SiteLiveStats } from "./site-live-stats";
 
 const cards = [
   {
@@ -48,7 +42,7 @@ const feed = [
     symbol: "PUMP",
     title: "Buy PUMP",
     meta: "Jupiter route",
-    body: "The worker swaps available SOL into PUMP while keeping SOL reserved for gas.",
+    body: "The worker swaps available SOL into PUMP through Jupiter.",
     mc: "step 2"
   },
   {
@@ -135,8 +129,6 @@ export default function Page() {
           </div>
         </section>
 
-        <BrokenPromise />
-
         <section className="section explore" id="rewards">
           <div className="container">
             <div className="section-head compact">
@@ -167,18 +159,15 @@ export default function Page() {
                 </article>
               ))}
             </div>
+            <div className="golden-callout">
+              <span>Golden Airdrop</span>
+              Every epoch, one random eligible holder wins 10x their normal reward.
+            </div>
           </div>
         </section>
 
         <section className="section" id="proof">
-          <div className="container stats">
-            {stats.map(([value, label]) => (
-              <div className="stat" key={label}>
-                <strong>{value}</strong>
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
+          <SiteLiveStats />
         </section>
 
         <section className="section" id="how">
@@ -256,6 +245,8 @@ export default function Page() {
             </div>
           </div>
         </section>
+
+        <BrokenPromise />
       </main>
 
       <footer className="footer">

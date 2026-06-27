@@ -23,17 +23,39 @@ type StatsResponse = {
     startedAt: string;
     duration: string;
     claimedSol: number;
+    normalRewardsSent: number;
     distributedPump: number;
+    goldenWinnerWallet: string | null;
+    goldenBaseReward: number;
+    goldenBonusReward: number;
+    goldenTotalReward: number;
+    goldenMultiplier: number;
+    goldenCapped: boolean;
+    goldenTxSig: string | null;
     txSig: string | null;
   }>;
   recentRewards: Array<{
     epoch: number;
     wallet: string;
     rewardAmount: number;
+    normalRewardAmount: number;
+    goldenBonusReward: number;
+    isGolden: boolean;
+    goldenMultiplier: number;
+    goldenCapped: boolean;
     time: string;
     status: string;
     txSig: string | null;
   }>;
+  latestGolden: {
+    wallet: string | null;
+    baseReward: number;
+    bonusReward: number;
+    totalReward: number;
+    multiplier: number;
+    capped: boolean;
+    txSig: string | null;
+  } | null;
 };
 
 type HoldersResponse = {
@@ -53,7 +75,8 @@ const emptyStats: StatsResponse = {
   nextDropTime: new Date().toISOString(),
   epochHistory: [],
   roundHistory: [],
-  recentRewards: []
+  recentRewards: [],
+  latestGolden: null
 };
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
@@ -169,7 +192,7 @@ function DashboardSkeleton() {
   return (
     <>
       <div className="stats">
-        {Array.from({ length: 5 }).map((_, index) => (
+        {Array.from({ length: 8 }).map((_, index) => (
           <div className="stat skeleton-card" key={index}>
             <div className="skeleton-line wide" />
             <div className="skeleton-line" />
@@ -234,6 +257,7 @@ export function DashboardClient() {
   const liveHolders = holders ?? emptyHolders;
   const hasRounds = liveStats.totalEpochs > 0 || liveStats.roundHistory.length > 0;
   const hasRewards = liveStats.recentRewards.length > 0 || liveStats.totalRewardAirdropped > 0;
+  const latestGolden = liveStats.latestGolden;
   const nextDropMs = Math.max(Date.parse(liveStats.nextDropTime) || 0, fallbackNextDropMs());
   const countdown = formatCountdown(nextDropMs - now);
   const progress = useMemo(() => {
@@ -309,6 +333,22 @@ export function DashboardClient() {
                   </strong>
                   <span>Total PUMP airdropped</span>
                 </div>
+                <div className="stat golden-stat">
+                  <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
+                    {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Awaiting first winner"}
+                  </strong>
+                  <span>Latest Golden Winner</span>
+                </div>
+                <div className="stat golden-stat">
+                  <strong className={latestGolden ? "" : "empty-value"}>
+                    <AnimatedValue value={latestGolden ? latestGolden.totalReward : null} empty="Awaiting first drop" suffix=" PUMP" />
+                  </strong>
+                  <span>Golden Airdrop Amount</span>
+                </div>
+                <div className="stat golden-stat">
+                  <strong>{latestGolden?.multiplier ?? 10}x</strong>
+                  <span>Golden Multiplier</span>
+                </div>
               </div>
 
               <section className="history-card" style={{ marginTop: 16 }}>
@@ -325,6 +365,10 @@ export function DashboardClient() {
                         <th>Started</th>
                         <th>Duration</th>
                         <th className="right">Claimed</th>
+                        <th className="right">Normal Rewards</th>
+                        <th>Golden Winner</th>
+                        <th className="right">Golden Bonus</th>
+                        <th className="right">Golden Tx</th>
                         <th className="right">Distributed</th>
                         <th className="right">Action</th>
                       </tr>
@@ -344,6 +388,44 @@ export function DashboardClient() {
                                 <AnimatedValue value={round.claimedSol} maximumFractionDigits={4} suffix=" SOL" />
                               ) : (
                                 "–"
+                              )}
+                            </td>
+                            <td className="right mono">
+                              {round.normalRewardsSent ? (
+                                <AnimatedValue value={round.normalRewardsSent} maximumFractionDigits={2} suffix=" PUMP" />
+                              ) : (
+                                "–"
+                              )}
+                            </td>
+                            <td className="mono">
+                              {round.goldenWinnerWallet ? (
+                                <>
+                                  {compactAddress(round.goldenWinnerWallet)}
+                                  {round.goldenCapped ? <span className="capped-note"> capped</span> : null}
+                                </>
+                              ) : (
+                                "–"
+                              )}
+                            </td>
+                            <td className="right mono">
+                              {round.goldenBonusReward ? (
+                                <AnimatedValue value={round.goldenBonusReward} maximumFractionDigits={2} suffix=" PUMP" />
+                              ) : (
+                                "–"
+                              )}
+                            </td>
+                            <td className="right">
+                              {round.goldenTxSig ? (
+                                <a
+                                  className="details-button golden-link"
+                                  href={`https://solscan.io/tx/${round.goldenTxSig}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  Golden
+                                </a>
+                              ) : (
+                                <span className="details-button disabled">Awaiting tx</span>
                               )}
                             </td>
                             <td className="right mono">
@@ -371,7 +453,7 @@ export function DashboardClient() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={7}>Awaiting first drop.</td>
+                          <td colSpan={11}>Awaiting first drop.</td>
                         </tr>
                       )}
                     </tbody>
@@ -387,7 +469,10 @@ export function DashboardClient() {
                       liveStats.recentRewards.map((reward) => (
                         <div className="activity-row" key={`${reward.epoch}-${reward.wallet}-${reward.time}`}>
                           <div>
-                            <strong className="mono">{compactAddress(reward.wallet)}</strong>
+                            <strong className="mono">
+                              {compactAddress(reward.wallet)}
+                              {reward.isGolden ? <span className="golden-badge">Golden {reward.goldenMultiplier}x</span> : null}
+                            </strong>
                             <span>{formatTime(reward.time)}</span>
                           </div>
                           <div className="activity-meta">
@@ -398,6 +483,11 @@ export function DashboardClient() {
                                 "–"
                               )}
                             </span>
+                            {reward.isGolden && reward.goldenBonusReward ? (
+                              <span className="mono golden-bonus">
+                                +<AnimatedValue value={reward.goldenBonusReward} maximumFractionDigits={4} suffix=" bonus" />
+                              </span>
+                            ) : null}
                             <span className={statusClass(reward.status)}>{statusLabel(reward.status)}</span>
                             {reward.txSig ? (
                               <a

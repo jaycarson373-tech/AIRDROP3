@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -10,13 +11,38 @@ import {
 } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
-import { dryRunPayout, failPayout, planPayout, settlePayout } from "./db.js";
+import { dryRunPayout, failPayout, planPayout, recordGoldenPayoutTx, settlePayout } from "./db.js";
 import type { Holder } from "./snapshot.js";
+
+export const GOLDEN_MULTIPLIER = 10;
 
 export type Allocation = {
   wallet: string;
   amount: bigint;
   uiAmount: number;
+  normalAmount: bigint;
+  normalUiAmount: number;
+  goldenBonusAmount: bigint;
+  goldenBonusUiAmount: number;
+  goldenMultiplier: number;
+  isGolden: boolean;
+  goldenCapped: boolean;
+};
+
+export type GoldenSummary = {
+  wallet: string | null;
+  baseRewardRaw: bigint;
+  baseRewardUi: number;
+  bonusRewardRaw: bigint;
+  bonusRewardUi: number;
+  multiplier: number;
+  capped: boolean;
+  snapshotHash: string | null;
+};
+
+export type GoldenRewardPool = {
+  rewardPoolRaw: bigint;
+  snapshotHash: string | null;
 };
 
 type PreparedAllocation = Allocation & {
@@ -34,6 +60,10 @@ async function tokenProgramForMint() {
 
 function rawToUi(raw: bigint, decimals: number) {
   return Number(raw) / 10 ** decimals;
+}
+
+function minBigInt(a: bigint, b: bigint) {
+  return a < b ? a : b;
 }
 
 export async function treasuryRewardBalanceRaw() {
@@ -60,10 +90,99 @@ export async function computeAllocations(holders: Holder[], rewardRaw: bigint): 
       return {
         wallet: holder.wallet,
         amount,
-        uiAmount: rawToUi(amount, mintInfo.decimals)
+        uiAmount: rawToUi(amount, mintInfo.decimals),
+        normalAmount: amount,
+        normalUiAmount: rawToUi(amount, mintInfo.decimals),
+        goldenBonusAmount: 0n,
+        goldenBonusUiAmount: 0,
+        goldenMultiplier: 1,
+        isGolden: false,
+        goldenCapped: false
       };
     })
     .filter((allocation) => allocation.amount > 0n);
+}
+
+function snapshotHash(holders: Holder[]) {
+  const canonical = holders.map((holder) => `${holder.wallet}:${holder.rawBalance.toString()}`).join("|");
+  return createHash("sha256").update(canonical).digest("hex");
+}
+
+function deterministicIndex(epochId: string, hash: string, count: number) {
+  const seed = createHash("sha256").update(`${epochId}:${hash}`).digest();
+  return Number(seed.readBigUInt64BE(0) % BigInt(count));
+}
+
+export function computeGoldenRewardPool(epochId: string, holders: Holder[], availableRewardRaw: bigint): GoldenRewardPool {
+  if (!holders.length || availableRewardRaw <= 0n) {
+    return { rewardPoolRaw: availableRewardRaw, snapshotHash: holders.length ? snapshotHash(holders) : null };
+  }
+
+  const hash = snapshotHash(holders);
+  const winnerIndex = deterministicIndex(epochId, hash, holders.length);
+  const winner = holders[winnerIndex];
+  const totalWeight = holders.reduce((sum, holder) => sum + holder.rawBalance, 0n);
+  if (totalWeight <= 0n) return { rewardPoolRaw: 0n, snapshotHash: hash };
+
+  const denominator = totalWeight + winner.rawBalance * BigInt(GOLDEN_MULTIPLIER - 1);
+  const rewardPoolRaw = (availableRewardRaw * totalWeight) / denominator;
+  return { rewardPoolRaw, snapshotHash: hash };
+}
+
+export async function applyGoldenAirdrop(
+  epochId: string,
+  holders: Holder[],
+  allocations: Allocation[],
+  availableRewardRaw: bigint,
+  precomputedSnapshotHash?: string | null
+): Promise<GoldenSummary> {
+  const tokenProgram = await tokenProgramForMint();
+  const mintInfo = await getMint(connection, config.rewardTokenMint, "confirmed", tokenProgram);
+  const hash = precomputedSnapshotHash ?? snapshotHash(holders);
+
+  if (!allocations.length) {
+    return {
+      wallet: null,
+      baseRewardRaw: 0n,
+      baseRewardUi: 0,
+      bonusRewardRaw: 0n,
+      bonusRewardUi: 0,
+      multiplier: GOLDEN_MULTIPLIER,
+      capped: false,
+      snapshotHash: hash
+    };
+  }
+
+  const winnerIndex = deterministicIndex(epochId, hash, allocations.length);
+  const winner = allocations[winnerIndex];
+  const normalTotalRaw = allocations.reduce((sum, allocation) => sum + allocation.amount, 0n);
+  const availableBonusRaw = availableRewardRaw > normalTotalRaw ? availableRewardRaw - normalTotalRaw : 0n;
+  const targetBonusRaw = winner.normalAmount * BigInt(GOLDEN_MULTIPLIER - 1);
+  const bonusRaw = minBigInt(targetBonusRaw, availableBonusRaw);
+  const capped = bonusRaw < targetBonusRaw;
+
+  winner.amount += bonusRaw;
+  winner.uiAmount = rawToUi(winner.amount, mintInfo.decimals);
+  winner.goldenBonusAmount = bonusRaw;
+  winner.goldenBonusUiAmount = rawToUi(bonusRaw, mintInfo.decimals);
+  winner.goldenMultiplier = GOLDEN_MULTIPLIER;
+  winner.isGolden = true;
+  winner.goldenCapped = capped;
+
+  console.log(
+    `[${epochId}] golden winner ${winner.wallet}: base=${winner.normalAmount.toString()} raw, bonus=${bonusRaw.toString()} raw, multiplier=${GOLDEN_MULTIPLIER}x${capped ? " capped" : ""}`
+  );
+
+  return {
+    wallet: winner.wallet,
+    baseRewardRaw: winner.normalAmount,
+    baseRewardUi: winner.normalUiAmount,
+    bonusRewardRaw: bonusRaw,
+    bonusRewardUi: winner.goldenBonusUiAmount,
+    multiplier: GOLDEN_MULTIPLIER,
+    capped,
+    snapshotHash: hash
+  };
 }
 
 function chunk<T>(items: T[], size: number): T[][] {
@@ -96,7 +215,15 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
 
   if (!config.airdropEnabled) {
     for (const allocation of allocations) {
-      await dryRunPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString());
+      await dryRunPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString(), {
+        normalRewardAmountRaw: allocation.normalAmount.toString(),
+        normalRewardAmount: allocation.normalUiAmount.toString(),
+        goldenBonusRewardRaw: allocation.goldenBonusAmount.toString(),
+        goldenBonusReward: allocation.goldenBonusUiAmount.toString(),
+        goldenMultiplier: allocation.goldenMultiplier,
+        isGolden: allocation.isGolden,
+        goldenCapped: allocation.goldenCapped
+      });
     }
     return [];
   }
@@ -139,7 +266,15 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     }
 
     for (const allocation of batch) {
-      await planPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString());
+      await planPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString(), {
+        normalRewardAmountRaw: allocation.normalAmount.toString(),
+        normalRewardAmount: allocation.normalUiAmount.toString(),
+        goldenBonusRewardRaw: allocation.goldenBonusAmount.toString(),
+        goldenBonusReward: allocation.goldenBonusUiAmount.toString(),
+        goldenMultiplier: allocation.goldenMultiplier,
+        isGolden: allocation.isGolden,
+        goldenCapped: allocation.goldenCapped
+      });
     }
 
     try {
@@ -180,6 +315,9 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
       await connection.confirmTransaction(txSig, "confirmed");
       for (const allocation of batch) {
         await settlePayout(epochId, allocation.wallet, txSig);
+        if (allocation.isGolden) {
+          await recordGoldenPayoutTx(epochId, txSig);
+        }
         console.log(`[${epochId}] settled ${allocation.wallet}: ${txSig}`);
       }
       signatures.push(txSig);

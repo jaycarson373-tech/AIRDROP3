@@ -6,6 +6,12 @@ type EpochRow = {
   eligible_count: number | null;
   reward_bought: string | number | null;
   reward_distributed: string | number | null;
+  golden_winner_wallet: string | null;
+  golden_base_reward: string | number | null;
+  golden_bonus_reward: string | number | null;
+  golden_multiplier: number | null;
+  golden_capped: boolean | null;
+  golden_tx_sig: string | null;
   started_at: string | null;
   completed_at: string | null;
 };
@@ -25,6 +31,11 @@ type PayoutRow = {
   epoch_id: string;
   wallet: string;
   reward_amount: string | number | null;
+  normal_reward_amount: string | number | null;
+  golden_bonus_reward: string | number | null;
+  is_golden: boolean | null;
+  golden_multiplier: number | null;
+  golden_capped: boolean | null;
   status: string | null;
   tx_sig: string | null;
   updated_at: string | null;
@@ -74,16 +85,18 @@ export async function GET() {
       totalEpochs: 0,
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
+      latestEligibleHolders: 0,
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
-      recentRewards: []
+      recentRewards: [],
+      latestGolden: null
     });
   }
 
   try {
     const response = await fetch(
-      `${config.url}/rest/v1/epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,started_at,completed_at&order=started_at.desc&limit=25`,
+      `${config.url}/rest/v1/epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,golden_winner_wallet,golden_base_reward,golden_bonus_reward,golden_multiplier,golden_capped,golden_tx_sig,started_at,completed_at&order=started_at.desc&limit=25`,
       {
         headers: {
           apikey: config.key,
@@ -122,7 +135,7 @@ export async function GET() {
     const buyRows = buys?.ok ? ((await buys.json()) as BuyRow[]) : [];
     const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
     const payouts = await fetch(
-      `${config.url}/rest/v1/payouts?select=epoch_id,wallet,reward_amount,status,tx_sig,updated_at,created_at&order=updated_at.desc&limit=20`,
+      `${config.url}/rest/v1/payouts?select=epoch_id,wallet,reward_amount,normal_reward_amount,golden_bonus_reward,is_golden,golden_multiplier,golden_capped,status,tx_sig,updated_at,created_at&order=updated_at.desc&limit=20`,
       {
         headers: {
           apikey: config.key,
@@ -152,7 +165,15 @@ export async function GET() {
         startedAt: row.started_at ?? row.epoch_id,
         duration: durationLabel(row.started_at, row.completed_at),
         claimedSol: toNumber(claim?.amount_claimed),
+        normalRewardsSent: Math.max(0, toNumber(row.reward_distributed) - toNumber(row.golden_bonus_reward)),
         distributedPump: toNumber(row.reward_distributed),
+        goldenWinnerWallet: row.golden_winner_wallet,
+        goldenBaseReward: toNumber(row.golden_base_reward),
+        goldenBonusReward: toNumber(row.golden_bonus_reward),
+        goldenTotalReward: toNumber(row.golden_base_reward) + toNumber(row.golden_bonus_reward),
+        goldenMultiplier: row.golden_multiplier ?? 10,
+        goldenCapped: row.golden_capped ?? false,
+        goldenTxSig: row.golden_tx_sig,
         txSig: claim?.tx_sig ?? buy?.tx_sig ?? null
       };
     });
@@ -161,20 +182,39 @@ export async function GET() {
       epoch: epochNumber(row.epoch_id, 0),
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),
+      normalRewardAmount: toNumber(row.normal_reward_amount),
+      goldenBonusReward: toNumber(row.golden_bonus_reward),
+      isGolden: row.is_golden ?? false,
+      goldenMultiplier: row.golden_multiplier ?? 1,
+      goldenCapped: row.golden_capped ?? false,
       time: row.updated_at ?? row.created_at ?? row.epoch_id,
       status: row.status ?? "unknown",
       txSig: row.tx_sig
     }));
+    const latestGoldenRow = rows.find((row) => row.golden_winner_wallet);
+    const latestGolden = latestGoldenRow
+      ? {
+          wallet: latestGoldenRow.golden_winner_wallet,
+          baseReward: toNumber(latestGoldenRow.golden_base_reward),
+          bonusReward: toNumber(latestGoldenRow.golden_bonus_reward),
+          totalReward: toNumber(latestGoldenRow.golden_base_reward) + toNumber(latestGoldenRow.golden_bonus_reward),
+          multiplier: latestGoldenRow.golden_multiplier ?? 10,
+          capped: latestGoldenRow.golden_capped ?? false,
+          txSig: latestGoldenRow.golden_tx_sig
+        }
+      : null;
 
     return NextResponse.json({
       currentEpoch: latest ? epochNumber(latest.epoch_id, rows.length) : 0,
       totalEpochs: rows.length,
       lastRewardAirdropped: epochHistory[0]?.rewardAmount ?? 0,
       totalRewardAirdropped: completed.reduce((sum, row) => sum + toNumber(row.reward_distributed), 0),
+      latestEligibleHolders: toNumber(latest?.eligible_count),
       nextDropTime: nextDropTime(),
       epochHistory,
       roundHistory,
-      recentRewards
+      recentRewards,
+      latestGolden
     });
   } catch (error) {
     console.error("stats route failed", error);
@@ -183,10 +223,12 @@ export async function GET() {
       totalEpochs: 0,
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
+      latestEligibleHolders: 0,
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
-      recentRewards: []
+      recentRewards: [],
+      latestGolden: null
     });
   }
 }
