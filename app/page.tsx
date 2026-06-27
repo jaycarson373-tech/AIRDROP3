@@ -1,4 +1,14 @@
-import { ArrowRight, BadgeDollarSign, Gift, ShieldCheck, Sparkles, TimerReset, WalletCards } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeDollarSign,
+  Gift,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  TimerReset,
+  WalletCards,
+  Zap
+} from "lucide-react";
 
 const stats = [
   ["5 min", "Reward cycle"],
@@ -25,6 +35,32 @@ const cards = [
   }
 ];
 
+const tabs = ["Trending", "Airdrops", "Top holders", "New", "Live"];
+
+const feed = [
+  {
+    symbol: "$AIRDROP",
+    title: "Pump Airdrop",
+    meta: "5m reward cycle",
+    body: "Creator fees buy PUMP and send it to top holders automatically.",
+    mc: "$ live soon"
+  },
+  {
+    symbol: "PUMP",
+    title: "Reward Asset",
+    meta: "Jupiter route",
+    body: "Treasury SOL swaps into PUMP before each holder-weighted send.",
+    mc: "reward"
+  },
+  {
+    symbol: "TOP 50",
+    title: "Holder Snapshot",
+    meta: "No 5%+ whales",
+    body: "Eligible wallets are ranked by source-token balance every epoch.",
+    mc: "proof"
+  }
+];
+
 function Navbar() {
   return (
     <header className="nav">
@@ -34,13 +70,21 @@ function Navbar() {
           <span>Pump Airdrop</span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="#how">How it works</a>
-          <a href="#proof">Proof</a>
-          <a href="/dashboard">Dashboard</a>
+          <a href="/">Home</a>
+          <a href="#go">GO</a>
+          <a href="#how">Communities</a>
+          <a href="/dashboard">Live</a>
+          <a href="#terminal">Terminal</a>
         </nav>
-        <a className="cta" href="/dashboard">
-          Live Drops <ArrowRight size={17} />
-        </a>
+        <div className="nav-actions">
+          <a className="mini-button" href="#go">
+            Create
+          </a>
+          <a href="#proof">Proof</a>
+          <a className="cta" href="/dashboard">
+            Live Drops <ArrowRight size={17} />
+          </a>
+        </div>
       </div>
     </header>
   );
@@ -53,20 +97,25 @@ export default function Page() {
       <Navbar />
 
       <main>
-        <section className="hero">
+        <section className="hero" id="go">
           <div className="container hero-layout">
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Pump said soon. $AIRDROP ships every 5 minutes.
+                Welcome to Pump Airdrop
               </div>
               <h1>
-                The Pump <span className="gradient">airdrop</span> that actually shows up.
+                Create the <span className="gradient">airdrop meta</span>.
               </h1>
               <p className="hero-copy">
-                Pump Airdrop turns creator fees into PUMP buy pressure, snapshots the strongest $AIRDROP holders,
-                and sends rewards straight to wallets. No claims. No forms. Just hold and watch the drop hit.
+                $AIRDROP is the live reward terminal for people tired of waiting. Fees come in, PUMP gets bought,
+                holders get ranked, and the top wallets get paid on repeat.
               </p>
+              <div className="search-shell">
+                <Search size={18} />
+                <span>Search for drops, holders, epochs...</span>
+                <kbd>⌘K</kbd>
+              </div>
               <div className="hero-actions">
                 <a className="cta" href="/dashboard">
                   View Live Dashboard <ArrowRight size={18} />
@@ -77,14 +126,14 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="terminal" aria-label="Airdrop process preview">
+            <div className="terminal pump-card" aria-label="Airdrop process preview" id="terminal">
               <div className="terminal-bar">
                 <div className="dots">
                   <span />
                   <span />
                   <span />
                 </div>
-                <span>epoch.worker</span>
+                <span>pump.airdrop/live</span>
               </div>
               <div className="terminal-body">
                 {[
@@ -103,6 +152,46 @@ export default function Page() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section explore">
+          <div className="container">
+            <div className="section-head compact">
+              <div>
+                <div className="eyebrow">
+                  <Zap size={15} />
+                  Trending now
+                </div>
+                <h2>Explore drops</h2>
+              </div>
+              <a className="mini-button" href="/dashboard">
+                Grid / Table
+              </a>
+            </div>
+            <div className="tabs" aria-label="Explore filters">
+              {tabs.map((tab) => (
+                <button type="button" key={tab}>
+                  {tab}
+                </button>
+              ))}
+            </div>
+            <div className="coin-feed">
+              {feed.map((item) => (
+                <article className="coin-card" key={item.symbol}>
+                  <div className="coin-avatar">{item.symbol.slice(0, 2)}</div>
+                  <div>
+                    <div className="coin-title">
+                      <strong>{item.title}</strong>
+                      <span>{item.symbol}</span>
+                    </div>
+                    <p>{item.body}</p>
+                    <small>{item.meta}</small>
+                  </div>
+                  <span className="mc">{item.mc}</span>
+                </article>
+              ))}
             </div>
           </div>
         </section>
