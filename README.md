@@ -1,6 +1,6 @@
 # Pump Airdrop
 
-Ticker: `$AIRDOP`  
+Ticker: `$AIRDROP`  
 Name: `Pump Airdrop`
 
 One repo for:
@@ -15,7 +15,7 @@ Every epoch:
 
 1. Claim Pump creator fees to the treasury wallet.
 2. Swap available SOL to the reward token, normally PUMP, through Jupiter.
-3. Snapshot `$AIRDOP` holders with at least `ELIGIBILITY_MIN`.
+3. Snapshot `$AIRDROP` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, Pump curve/pool addresses, `EXCLUDE_WALLETS`, and holders above `MAX_HOLDER_PCT`.
 5. Airdrop the treasury reward-token balance proportionally to the top `MAX_WALLETS_PER_EPOCH`.
 6. Store epochs, buys, snapshots, claims, and payouts in Supabase for the dashboard.
@@ -36,9 +36,9 @@ Required:
 
 ```bash
 NEXT_PUBLIC_PROJECT_NAME="Pump Airdrop"
-NEXT_PUBLIC_SOURCE_SYMBOL=AIRDOP
+NEXT_PUBLIC_SOURCE_SYMBOL=AIRDROP
 NEXT_PUBLIC_REWARD_SYMBOL=PUMP
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<AIRDOP_MINT>
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<AIRDROP_MINT>
 NEXT_PUBLIC_REWARD_TOKEN_MINT=<PUMP_MINT>
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
@@ -59,7 +59,7 @@ Required:
 
 ```bash
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<AIRDOP_MINT>
+SOURCE_TOKEN_MINT=<AIRDROP_MINT>
 REWARD_TOKEN_MINT=<PUMP_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>

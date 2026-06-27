@@ -16,7 +16,7 @@ const cards = [
   {
     icon: WalletCards,
     title: "Top holders get paid",
-    body: "$AIRDOP holders with at least 1M tokens are ranked, whales above the cap are removed, and the top 50 split rewards by weight."
+    body: "$AIRDROP holders with at least 1M tokens are ranked, whales above the cap are removed, and the top 50 split rewards by weight."
   },
   {
     icon: ShieldCheck,
@@ -58,13 +58,13 @@ export default function Page() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Pump said soon. $AIRDOP ships every 5 minutes.
+                Pump said soon. $AIRDROP ships every 5 minutes.
               </div>
               <h1>
                 The Pump <span className="gradient">airdrop</span> that actually shows up.
               </h1>
               <p className="hero-copy">
-                Pump Airdrop turns creator fees into PUMP buy pressure, snapshots the strongest $AIRDOP holders,
+                Pump Airdrop turns creator fees into PUMP buy pressure, snapshots the strongest $AIRDROP holders,
                 and sends rewards straight to wallets. No claims. No forms. Just hold and watch the drop hit.
               </p>
               <div className="hero-actions">
@@ -90,7 +90,7 @@ export default function Page() {
                 {[
                   ["1", "Claim creator fees", "Collect available Pump fees into treasury"],
                   ["2", "Swap to PUMP", "Use the safe SOL balance, leave gas reserve"],
-                  ["3", "Snapshot $AIRDOP", "Top 50 holders, no 5%+ whales"],
+                  ["3", "Snapshot $AIRDROP", "Top 50 holders, no 5%+ whales"],
                   ["4", "Airdrop rewards", "Proportional PUMP sends with proof rows"]
                 ].map(([step, title, body]) => (
                   <div className="flow-row" key={step}>
@@ -157,7 +157,7 @@ export default function Page() {
                   <div>
                     <div className="eyebrow">
                       <Sparkles size={15} />
-                      $AIRDOP flywheel
+                      $AIRDROP flywheel
                     </div>
                     <h2 style={{ marginTop: 18 }}>Every epoch compounds attention.</h2>
                   </div>
@@ -197,7 +197,7 @@ export default function Page() {
 
       <footer className="footer">
         <div className="container nav-inner">
-          <span>© 2026 Pump Airdrop. Ticker: $AIRDOP.</span>
+          <span>© 2026 Pump Airdrop. Ticker: $AIRDROP.</span>
           <span className="mono">claim - swap - snapshot - send</span>
         </div>
       </footer>
