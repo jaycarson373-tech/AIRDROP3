@@ -8,6 +8,7 @@ import {
   WalletCards,
 } from "lucide-react";
 import { ParallaxBackground } from "./parallax-background";
+import { BrokenPromise } from "./broken-promise";
 import { RewardRoundPanel } from "./reward-round-panel";
 
 const stats = [
@@ -133,6 +134,8 @@ export default function Page() {
             <RewardRoundPanel />
           </div>
         </section>
+
+        <BrokenPromise />
 
         <section className="section explore" id="rewards">
           <div className="container">

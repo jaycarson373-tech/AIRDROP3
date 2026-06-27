@@ -364,6 +364,116 @@ h1 {
   margin-top: 34px;
 }
 
+.broken-promise {
+  padding-top: 26px;
+}
+
+.broken-promise-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(320px, 0.78fr);
+  gap: 28px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(126, 231, 159, 0.2);
+  border-radius: 24px;
+  padding: clamp(22px, 4vw, 38px);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(126, 231, 159, 0.16), transparent 32%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.02)),
+    rgba(6, 12, 7, 0.66);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28), 0 0 52px rgba(126, 231, 159, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.broken-promise-card::after {
+  content: "";
+  position: absolute;
+  right: -120px;
+  top: -120px;
+  width: 280px;
+  height: 280px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(126, 231, 159, 0.16), transparent 64%);
+  pointer-events: none;
+}
+
+.broken-promise-card h2 {
+  max-width: 620px;
+  margin-top: 18px;
+}
+
+.promise-copy {
+  display: grid;
+  gap: 8px;
+  max-width: 560px;
+  margin-top: 22px;
+  color: #aec4ac;
+  font-size: clamp(17px, 2vw, 21px);
+  line-height: 1.55;
+}
+
+.promise-copy span {
+  color: var(--green);
+  font-weight: 900;
+}
+
+.promise-proof {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.tweet-shell {
+  overflow: hidden;
+  width: 100%;
+  min-height: 210px;
+  border: 1px solid rgba(223, 240, 223, 0.11);
+  border-radius: 20px;
+  padding: 12px;
+  background: rgba(2, 4, 1, 0.5);
+}
+
+.tweet-shell iframe {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.twitter-tweet {
+  width: 100% !important;
+  margin: 0 auto !important;
+}
+
+.soon-counter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  border: 1px solid rgba(126, 231, 159, 0.22);
+  border-radius: 18px;
+  padding: 18px;
+  background:
+    linear-gradient(90deg, rgba(126, 231, 159, 0.13), transparent),
+    rgba(255, 255, 255, 0.035);
+}
+
+.soon-counter span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.soon-counter strong {
+  color: #e8fff0;
+  font-size: clamp(48px, 7vw, 86px);
+  line-height: 0.86;
+  letter-spacing: -0.08em;
+}
+
 .terminal {
   border: 1px solid var(--border);
   border-radius: 18px;
@@ -1053,6 +1163,7 @@ td {
 
 @media (max-width: 880px) {
   .hero-layout,
+  .broken-promise-card,
   .dash-grid,
   .cards,
   .coin-feed,
@@ -1079,6 +1190,14 @@ td {
 
   .activity-meta {
     justify-content: flex-start;
+  }
+
+  .soon-counter {
+    grid-template-columns: 1fr;
+  }
+
+  .tweet-shell {
+    min-height: 180px;
   }
 }
 
