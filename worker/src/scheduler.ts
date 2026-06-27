@@ -13,7 +13,15 @@ async function loop() {
   setTimeout(loop, waitMs);
 }
 
-loop().catch((error) => {
-  console.error("worker crashed", error);
-  process.exit(1);
-});
+function scheduleFirstRun() {
+  const waitMs = msUntilNextEpoch(new Date()) + 500;
+  console.log(`First epoch run scheduled in ${Math.round(waitMs / 1000)}s.`);
+  setTimeout(() => {
+    loop().catch((error) => {
+      console.error("worker crashed", error);
+      process.exit(1);
+    });
+  }, waitMs);
+}
+
+scheduleFirstRun();
