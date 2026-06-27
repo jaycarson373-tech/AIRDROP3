@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ParallaxBackground } from "../parallax-background";
 
 type StatsResponse = {
   currentEpoch: number;
@@ -59,6 +60,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="page">
+      <ParallaxBackground />
       <div className="grid-bg" />
       <header className="nav">
         <div className="container nav-inner">

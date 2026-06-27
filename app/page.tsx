@@ -7,6 +7,7 @@ import {
   TimerReset,
   WalletCards,
 } from "lucide-react";
+import { ParallaxBackground } from "./parallax-background";
 
 const stats = [
   ["5 min", "Reward cycle"],
@@ -99,6 +100,7 @@ function Navbar() {
 export default function Page() {
   return (
     <div className="page">
+      <ParallaxBackground />
       <div className="grid-bg" />
       <Navbar />
 

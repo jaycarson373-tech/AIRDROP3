@@ -12,6 +12,7 @@
   --yellow: #f6ff62;
   --border: rgba(125, 255, 92, 0.16);
   --shadow: rgba(125, 255, 92, 0.18);
+  --scroll-y: 0px;
 }
 
 * {
@@ -24,10 +25,7 @@ html {
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at top left, rgba(125, 255, 92, 0.15), transparent 34rem),
-    radial-gradient(circle at 80% 8%, rgba(246, 255, 98, 0.08), transparent 30rem),
-    linear-gradient(180deg, var(--bg), #020401 72%);
+  background: #020401;
   color: var(--text);
   font-family:
     "Helvetica Neue", Arial, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -44,14 +42,33 @@ input {
 }
 
 .page {
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   overflow: hidden;
+}
+
+.site-bg {
+  position: fixed;
+  inset: -8vh 0;
+  background-image:
+    linear-gradient(90deg, rgba(2, 4, 1, 0.72), rgba(2, 4, 1, 0.34) 48%, rgba(2, 4, 1, 0.76)),
+    linear-gradient(180deg, rgba(2, 4, 1, 0.12), rgba(2, 4, 1, 0.76) 76%, #020401),
+    url("/airdrop-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -2;
+  transform: translateY(calc(var(--scroll-y, 0px) * -0.08));
+  will-change: transform;
+  pointer-events: none;
 }
 
 .grid-bg {
   position: fixed;
   inset: 0;
   pointer-events: none;
+  z-index: -1;
   background-image:
     linear-gradient(rgba(125, 255, 92, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(125, 255, 92, 0.045) 1px, transparent 1px);
