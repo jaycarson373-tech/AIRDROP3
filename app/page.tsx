@@ -149,9 +149,9 @@ export default function Page() {
               </a>
             </div>
             <div className="coin-feed">
-              {feed.map((item) => (
+              {feed.map((item, index) => (
                 <article className="coin-card" key={item.symbol}>
-                  <div className="coin-avatar">{item.symbol.slice(0, 2)}</div>
+                  <div className="coin-avatar">{index + 1}</div>
                   <div>
                     <div className="coin-title">
                       <strong>{item.title}</strong>
