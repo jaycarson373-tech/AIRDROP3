@@ -55,7 +55,7 @@ const feed = [
 ];
 
 function Navbar() {
-  const xUrl = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com";
+  const xUrl = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/AirdropPumpFun_";
   const ca = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
   const shortCa = ca ? `${ca.slice(0, 4)}...${ca.slice(-4)}` : "CA";
 
