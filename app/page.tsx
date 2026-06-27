@@ -93,14 +93,14 @@ export default function Page() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Pump rewards for $AIRDROP holders
+                You waited long enough.
               </div>
               <h1>
-                Hold $AIRDROP. <span className="gradient">Earn PUMP</span> every 5 minutes.
+                The <span className="gradient">Pump.fun Airdrop</span> is here.
               </h1>
               <p className="hero-copy">
-                Pump Airdrop claims creator fees, swaps them into PUMP, snapshots the top eligible holders,
-                and sends rewards straight to wallets on a five-minute cycle.
+                Hold $AIRDROP and earn real PUMP rewards every five minutes. Creator fees are claimed, swapped,
+                snapshotted, and sent automatically to the top eligible holders.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="/dashboard">
