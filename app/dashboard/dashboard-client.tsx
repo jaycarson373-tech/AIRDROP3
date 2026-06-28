@@ -317,7 +317,7 @@ export function DashboardClient() {
                 </div>
                 <div className="stat">
                   <strong>
-                    <AnimatedValue value={hasRounds ? liveStats.currentEpoch : null} maximumFractionDigits={0} />
+                    <AnimatedValue value={hasRounds ? liveStats.currentEpoch : 0} maximumFractionDigits={0} />
                   </strong>
                   <span>Current epoch</span>
                 </div>

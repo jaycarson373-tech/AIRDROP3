@@ -73,6 +73,11 @@ function formatNumber(value: number, maximumFractionDigits = 2) {
   return value.toLocaleString(undefined, { maximumFractionDigits });
 }
 
+function formatZeroableNumber(value: number, maximumFractionDigits = 0) {
+  if (!Number.isFinite(value) || value < 0) return "–";
+  return value.toLocaleString(undefined, { maximumFractionDigits });
+}
+
 function formatDate(value: string) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? "–" : date.toLocaleString();
@@ -159,7 +164,7 @@ export function BlackBullTreasuryCard({
           label="Total Distributed"
           value={stats ? `${formatNumber(stats.totalRewardAirdropped)} ${rewardSymbol}` : "Loading"}
         />
-        <Metric label="Current Epoch" value={stats ? formatNumber(stats.currentEpoch, 0) : "Loading"} />
+        <Metric label="Current Epoch" value={stats ? formatZeroableNumber(stats.currentEpoch, 0) : "Loading"} />
       </div>
       <div className="eligibility-strip">
         <span>Requirement</span>
