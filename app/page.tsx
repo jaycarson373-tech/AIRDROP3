@@ -36,9 +36,6 @@ function Navbar() {
           <a href="/dashboard">Dashboard</a>
         </nav>
         <div className="nav-actions">
-          <a className="mini-button buy-mini" href={BUY_URL} target="_blank" rel="noreferrer">
-            Buy ${SOURCE_SYMBOL}
-          </a>
           <a className="mini-button" href={xUrl} target="_blank" rel="noreferrer">
             X
           </a>
