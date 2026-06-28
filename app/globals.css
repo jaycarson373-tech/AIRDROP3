@@ -122,18 +122,42 @@ input {
 .site-bg {
   position: fixed;
   inset: -8vh 0;
-  background-image:
-    radial-gradient(circle at 48% 18%, rgba(216, 173, 93, 0.15), transparent 36%),
-    linear-gradient(90deg, rgba(3, 3, 3, 0.9), rgba(3, 3, 3, 0.48) 45%, rgba(3, 3, 3, 0.9)),
-    linear-gradient(180deg, rgba(3, 3, 3, 0.05), rgba(3, 3, 3, 0.84) 76%, #030303),
-    url("/brand/black-bull.png");
-  background-size: auto, auto, auto, min(92vw, 920px) auto;
-  background-position: center, center, center, center top 72px;
-  background-repeat: no-repeat;
   z-index: -2;
   transform: translateY(calc(var(--scroll-y, 0px) * -0.08));
   will-change: transform;
   pointer-events: none;
+}
+
+.site-bg::before,
+.site-bg::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.site-bg::before {
+  opacity: 0.6;
+  background-image:
+    url("/brand/backgrounds/pump-street-1.png"),
+    url("/brand/backgrounds/pump-street-2.png"),
+    url("/brand/backgrounds/pump-street-3.png");
+  background-size:
+    max(100vw, 1280px) auto,
+    min(58vw, 760px) auto,
+    min(56vw, 720px) auto;
+  background-position:
+    center top,
+    left 0 top 58vh,
+    right 0 top 122vh;
+  background-repeat: no-repeat;
+}
+
+.site-bg::after {
+  background:
+    radial-gradient(circle at 48% 18%, rgba(216, 173, 93, 0.18), transparent 36%),
+    linear-gradient(90deg, rgba(3, 3, 3, 0.92), rgba(3, 3, 3, 0.5) 45%, rgba(3, 3, 3, 0.92)),
+    linear-gradient(180deg, rgba(3, 3, 3, 0.08), rgba(3, 3, 3, 0.78) 54%, rgba(3, 3, 3, 0.9) 100%);
 }
 
 @keyframes floatDrop {
