@@ -1,7 +1,7 @@
-# Pump Airdrop
+# Ansem Strategy
 
-Ticker: `$AIRDROP`  
-Name: `Pump Airdrop`
+Ticker: `$ANSEMSTR`
+Reward token: The Black Bull `$ANSEM`
 
 One repo for:
 
@@ -13,13 +13,13 @@ One repo for:
 
 Every epoch:
 
-1. Claim Pump creator fees to the treasury wallet.
-2. Swap available SOL to the reward token, normally PUMP, through Jupiter.
-3. Snapshot `$AIRDROP` holders with at least `ELIGIBILITY_MIN`.
-4. Exclude treasury, Pump curve/pool addresses, `EXCLUDE_WALLETS`, and holders above `MAX_HOLDER_PCT`.
+1. Claim creator fees to the treasury wallet.
+2. Swap available SOL to the reward token, `$ANSEM`, through Jupiter.
+3. Snapshot `$ANSEMSTR` holders with at least `ELIGIBILITY_MIN`.
+4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, and holders above `MAX_HOLDER_PCT`.
 5. Airdrop the treasury reward-token balance proportionally to the top `MAX_WALLETS_PER_EPOCH`.
-6. Pick one deterministic random eligible holder as the Golden Airdrop winner and boost that wallet to 10x its normal reward when balance allows.
-7. Store epochs, buys, snapshots, claims, Golden fields, and payouts in Supabase for the dashboard.
+6. Pick one deterministic random eligible holder as the 10x Black Bull Bonus winner when balance allows.
+7. Store epochs, buys, snapshots, claims, bonus fields, and payouts in Supabase for the dashboard.
 
 ## Supabase
 
@@ -42,13 +42,14 @@ The migration enables public read policies for dashboard tables. The worker stil
 Required:
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Pump Airdrop"
-NEXT_PUBLIC_SOURCE_SYMBOL=AIRDROP
-NEXT_PUBLIC_REWARD_SYMBOL=PUMP
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=A2B9eBUYmXbgrMFDjMa1QPzBWJ5pgxWBBEtkMQm5pump
-NEXT_PUBLIC_REWARD_TOKEN_MINT=pumpCmXqMfrsAkQ5r49WcJnRayYRqmXz6ae8H7H9Dfn
-NEXT_PUBLIC_X_URL=https://x.com/AirdropPumpFun_
-NEXT_PUBLIC_FIRST_AIRDROP_AT=2026-06-27T23:55:00.000Z
+NEXT_PUBLIC_PROJECT_NAME="Ansem Strategy"
+NEXT_PUBLIC_SOURCE_SYMBOL=ANSEMSTR
+NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<ANSEMSTR_MINT>
+NEXT_PUBLIC_REWARD_TOKEN_MINT=<ANSEM_MINT>
+NEXT_PUBLIC_X_URL=<ANSEM_X_URL>
+NEXT_PUBLIC_BUY_URL=<BUY_LINK>
+NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
 ```
@@ -68,8 +69,8 @@ Required:
 
 ```bash
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=A2B9eBUYmXbgrMFDjMa1QPzBWJ5pgxWBBEtkMQm5pump
-REWARD_TOKEN_MINT=pumpCmXqMfrsAkQ5r49WcJnRayYRqmXz6ae8H7H9Dfn
+SOURCE_TOKEN_MINT=<ANSEMSTR_MINT>
+REWARD_TOKEN_MINT=<ANSEM_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>

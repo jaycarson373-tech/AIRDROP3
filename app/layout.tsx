@@ -3,9 +3,9 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "$AIRDROP - Pump Airdrop",
+  title: "$ANSEMSTR - Ansem Strategy",
   description:
-    "Pump Airdrop converts creator fees into PUMP rewards for top $AIRDROP holders every five minutes.",
+    "Ansem Strategy converts creator fees into The Black Bull $ANSEM rewards for top $ANSEMSTR holders every five minutes.",
   icons: {
     icon: "/logo.png",
     apple: "/logo.png"

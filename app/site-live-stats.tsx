@@ -13,6 +13,8 @@ const fallbackStats: StatsResponse = {
   totalRewardAirdropped: 0,
   latestEligibleHolders: 0
 };
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMSTR";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 
 async function getStats() {
   try {
@@ -55,11 +57,11 @@ export function SiteLiveStats() {
       </div>
       <div className="stat">
         <strong>{stats ? displayNumber(stats.totalRewardAirdropped, "Awaiting first drop") : "–"}</strong>
-        <span>Total PUMP airdropped</span>
+        <span>Total {REWARD_SYMBOL} airdropped</span>
       </div>
       <div className="stat">
         <strong>{stats ? displayNumber(stats.latestEligibleHolders) : "–"}</strong>
-        <span>Total holders</span>
+        <span>Eligible {SOURCE_SYMBOL} holders</span>
       </div>
     </div>
   );

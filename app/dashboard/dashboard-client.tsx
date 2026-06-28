@@ -82,6 +82,9 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Ansem Strategy";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMSTR";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -272,8 +275,11 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/logo.png" alt="Pump Airdrop logo" />
-            <span>$AIRDROP</span>
+            <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
+            <span>
+              ANSEM
+              <small>STRATEGY</small>
+            </span>
           </Link>
           <div className="nav-links">
             <Link href="/">Landing</Link>
@@ -288,9 +294,9 @@ export function DashboardClient() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Live reward proof
+                Live Black Bull proof
               </div>
-              <h1 style={{ fontSize: "clamp(44px, 7vw, 82px)" }}>Airdrop Dashboard</h1>
+              <h1 style={{ fontSize: "clamp(44px, 7vw, 82px)" }}>Strategy Dashboard</h1>
             </div>
             <p className="lead">
               This page reads the same Supabase tables the Railway worker writes: epochs, snapshots, buys, and payouts.
@@ -325,29 +331,29 @@ export function DashboardClient() {
                   <strong className={hasRewards ? "" : "empty-value"}>
                     <AnimatedValue value={hasRewards ? liveStats.lastRewardAirdropped : null} empty="Awaiting first drop" />
                   </strong>
-                  <span>Last PUMP airdropped</span>
+                  <span>Last {REWARD_SYMBOL} airdropped</span>
                 </div>
                 <div className="stat">
                   <strong className={hasRewards ? "" : "empty-value"}>
                     <AnimatedValue value={hasRewards ? liveStats.totalRewardAirdropped : null} empty="Awaiting first drop" />
                   </strong>
-                  <span>Total PUMP airdropped</span>
+                  <span>Total {REWARD_SYMBOL} airdropped</span>
                 </div>
                 <div className="stat golden-stat">
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
                     {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Awaiting first winner"}
                   </strong>
-                  <span>Latest Golden Winner</span>
+                  <span>Latest Bonus Winner</span>
                 </div>
                 <div className="stat golden-stat">
                   <strong className={latestGolden ? "" : "empty-value"}>
-                    <AnimatedValue value={latestGolden ? latestGolden.totalReward : null} empty="Awaiting first drop" suffix=" PUMP" />
+                    <AnimatedValue value={latestGolden ? latestGolden.totalReward : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
                   </strong>
-                  <span>Golden Airdrop Amount</span>
+                  <span>Black Bull Bonus Amount</span>
                 </div>
                 <div className="stat golden-stat">
                   <strong>{latestGolden?.multiplier ?? 10}x</strong>
-                  <span>Golden Multiplier</span>
+                  <span>Bonus Multiplier</span>
                 </div>
               </div>
 
@@ -366,9 +372,9 @@ export function DashboardClient() {
                         <th>Duration</th>
                         <th className="right">Claimed</th>
                         <th className="right">Normal Rewards</th>
-                        <th>Golden Winner</th>
-                        <th className="right">Golden Bonus</th>
-                        <th className="right">Golden Tx</th>
+                        <th>Bonus Winner</th>
+                        <th className="right">Bonus Amount</th>
+                        <th className="right">Bonus Tx</th>
                         <th className="right">Distributed</th>
                         <th className="right">Action</th>
                       </tr>
@@ -392,7 +398,7 @@ export function DashboardClient() {
                             </td>
                             <td className="right mono">
                               {round.normalRewardsSent ? (
-                                <AnimatedValue value={round.normalRewardsSent} maximumFractionDigits={2} suffix=" PUMP" />
+                                <AnimatedValue value={round.normalRewardsSent} maximumFractionDigits={2} suffix={` ${REWARD_SYMBOL}`} />
                               ) : (
                                 "–"
                               )}
@@ -409,7 +415,7 @@ export function DashboardClient() {
                             </td>
                             <td className="right mono">
                               {round.goldenBonusReward ? (
-                                <AnimatedValue value={round.goldenBonusReward} maximumFractionDigits={2} suffix=" PUMP" />
+                                <AnimatedValue value={round.goldenBonusReward} maximumFractionDigits={2} suffix={` ${REWARD_SYMBOL}`} />
                               ) : (
                                 "–"
                               )}
@@ -422,7 +428,7 @@ export function DashboardClient() {
                                   target="_blank"
                                   rel="noreferrer"
                                 >
-                                  Golden
+                                  Bonus
                                 </a>
                               ) : (
                                 <span className="details-button disabled">Awaiting tx</span>
@@ -430,7 +436,7 @@ export function DashboardClient() {
                             </td>
                             <td className="right mono">
                               {round.distributedPump ? (
-                                <AnimatedValue value={round.distributedPump} maximumFractionDigits={2} suffix=" PUMP" />
+                                <AnimatedValue value={round.distributedPump} maximumFractionDigits={2} suffix={` ${REWARD_SYMBOL}`} />
                               ) : (
                                 "–"
                               )}
@@ -471,14 +477,14 @@ export function DashboardClient() {
                           <div>
                             <strong className="mono">
                               {compactAddress(reward.wallet)}
-                              {reward.isGolden ? <span className="golden-badge">Golden {reward.goldenMultiplier}x</span> : null}
+                              {reward.isGolden ? <span className="golden-badge">Bonus {reward.goldenMultiplier}x</span> : null}
                             </strong>
                             <span>{formatTime(reward.time)}</span>
                           </div>
                           <div className="activity-meta">
                             <span className="mono">
                               {reward.rewardAmount ? (
-                                <AnimatedValue value={reward.rewardAmount} maximumFractionDigits={4} suffix=" PUMP" />
+                                <AnimatedValue value={reward.rewardAmount} maximumFractionDigits={4} suffix={` ${REWARD_SYMBOL}`} />
                               ) : (
                                 "–"
                               )}
@@ -511,7 +517,7 @@ export function DashboardClient() {
                 </section>
 
                 <section className="card">
-                  <h3>Latest Top Holders</h3>
+                  <h3>Latest Top {SOURCE_SYMBOL} Holders</h3>
                   <div className="table-wrap" style={{ marginTop: 14 }}>
                     <table>
                       <thead>

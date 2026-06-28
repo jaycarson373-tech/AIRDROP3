@@ -2,7 +2,7 @@ import { runEpoch } from "./epoch.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
 
-console.log(`Pump Airdrop worker started. Schedule: every ${config.epochMinutes} minutes.`);
+console.log(`Ansem Strategy worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
   `Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
