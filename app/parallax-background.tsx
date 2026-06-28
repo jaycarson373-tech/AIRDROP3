@@ -22,5 +22,12 @@ export function ParallaxBackground() {
     };
   }, []);
 
-  return <div className="site-bg" aria-hidden="true" />;
+  return (
+    <div className="site-bg" aria-hidden="true">
+      <div className="parallax-layer bg-hills" />
+      <div className="parallax-layer bg-grass" />
+      <div className="parallax-layer bg-fog" />
+      <div className="parallax-layer bg-vignette" />
+    </div>
+  );
 }

@@ -17,7 +17,18 @@ export function AppPolish() {
   }, []);
 
   useEffect(() => {
-    const selector = ".section, .card, .coin-card, .stat, .history-card, .round-panel";
+    const updateScrolled = () => {
+      document.documentElement.classList.toggle("is-scrolled", window.scrollY > 12);
+    };
+
+    updateScrolled();
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+
+    return () => window.removeEventListener("scroll", updateScrolled);
+  }, []);
+
+  useEffect(() => {
+    const selector = ".section, .card, .stat, .history-card, .round-panel, .timeline-step";
     const elements = new Set<Element>();
     const observer = new IntersectionObserver(
       (entries) => {
@@ -55,7 +66,7 @@ export function AppPolish() {
   return (
     <div className={`loading-screen${leaving ? " is-leaving" : ""}`}>
       <div className="loader-mascot">
-        <img src="/logo.png" alt="" />
+        <img src="/brand/grass-logo.webp" alt="" />
       </div>
       <div className="loader-text">Loading GRASS…</div>
       <div className="loader-line" aria-hidden="true">

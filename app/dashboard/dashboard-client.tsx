@@ -198,7 +198,7 @@ function DashboardSkeleton() {
   return (
     <>
       <div className="stats">
-        {Array.from({ length: 8 }).map((_, index) => (
+        {Array.from({ length: 5 }).map((_, index) => (
           <div className="stat skeleton-card" key={index}>
             <div className="skeleton-line wide" />
             <div className="skeleton-line" />
@@ -273,15 +273,14 @@ export function DashboardClient() {
   return (
     <div className="page">
       <ParallaxBackground />
-      <div className="grid-bg" />
       <div className="grass-particles" />
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/grass-logo.webp" alt={`${PROJECT_NAME} logo`} />
             <span>
               GRASS
-              <small>BLACK BULL REWARDS</small>
+              <small>Rewards for ANSEM</small>
             </span>
           </Link>
           <div className="nav-links">
@@ -297,9 +296,9 @@ export function DashboardClient() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Live GRASS proof
+                Live pasture proof
               </div>
-              <h1 style={{ fontSize: "clamp(44px, 7vw, 82px)" }}>GRASS Dashboard</h1>
+              <h1 className="dashboard-title">GRASS Dashboard</h1>
             </div>
           </div>
 
@@ -310,50 +309,34 @@ export function DashboardClient() {
               <div className="stats dashboard-stats">
                 <div className="stat live-stat">
                   <strong>{countdown}</strong>
-                  <span>Next {REWARD_SYMBOL} Drop</span>
+                  <span>Next Drop</span>
                   <div className="round-progress tiny" aria-hidden="true">
                     <span style={{ width: `${Math.min(100, Math.max(0, progress))}%` }} />
                   </div>
                 </div>
                 <div className="stat">
-                  <strong>{countdown}</strong>
-                  <span>Epoch Countdown</span>
-                </div>
-                <div className="stat">
-                  <strong>
-                    <AnimatedValue value={liveStats.latestEligibleHolders} maximumFractionDigits={0} />
-                  </strong>
-                  <span>Eligible {SOURCE_SYMBOL} Holders</span>
-                </div>
-                <div className="stat">
                   <strong className={hasRewards ? "" : "empty-value"}>
-                    <AnimatedValue value={hasRewards ? liveStats.totalRewardAirdropped : null} empty="Awaiting first drop" />
+                    <AnimatedValue value={hasRewards ? liveStats.lastRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
                   </strong>
-                  <span>Total {REWARD_SYMBOL} Airdropped</span>
+                  <span>Last Drop</span>
                 </div>
                 <div className="stat">
-                  <strong>
-                    <AnimatedValue value={liveStats.recentRewards.length} maximumFractionDigits={0} />
-                  </strong>
-                  <span>Last 50 Winners</span>
-                </div>
-                <div className="stat golden-stat">
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
                     {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Awaiting first winner"}
                   </strong>
                   <span>Lucky Winner</span>
                 </div>
-                <div className="stat golden-stat">
-                  <strong className={latestGolden ? "" : "empty-value"}>
-                    <AnimatedValue value={latestGolden ? latestGolden.totalReward : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
-                  </strong>
-                  <span>Bonus Drop</span>
-                </div>
-                <div className="stat golden-stat">
+                <div className="stat">
                   <strong>
-                    <AnimatedValue value={liveStats.totalEpochs} maximumFractionDigits={0} />
+                    <AnimatedValue value={liveStats.latestEligibleHolders} maximumFractionDigits={0} />
                   </strong>
-                  <span>Total Epochs</span>
+                  <span>Eligible Holders</span>
+                </div>
+                <div className="stat">
+                  <strong className={hasRewards ? "" : "empty-value"}>
+                    <AnimatedValue value={hasRewards ? liveStats.totalRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
+                  </strong>
+                  <span>Total Distributed</span>
                 </div>
               </div>
 
