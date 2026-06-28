@@ -109,10 +109,6 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="hero-bull-art" aria-hidden="true">
-              <img src="/brand/black-bull.png" alt="" />
-            </div>
-
             <BlackBullTreasuryCard sourceSymbol={SOURCE_SYMBOL} rewardSymbol={REWARD_SYMBOL} />
           </div>
         </section>
