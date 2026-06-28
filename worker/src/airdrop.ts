@@ -45,6 +45,14 @@ export type GoldenRewardPool = {
   snapshotHash: string | null;
 };
 
+export type AirdropResult = {
+  signatures: string[];
+  settledCount: number;
+  settledRaw: bigint;
+  settledUi: number;
+  stoppedForReserve: boolean;
+};
+
 type PreparedAllocation = Allocation & {
   owner: PublicKey;
   destinationAta: PublicKey;
@@ -200,11 +208,15 @@ async function missingAtaRentLamports(atas: PublicKey[]) {
   return BigInt(missingCount * rent);
 }
 
-export async function airdropRewards(epochId: string, allocations: Allocation[]) {
+export async function airdropRewards(epochId: string, allocations: Allocation[]): Promise<AirdropResult> {
   const treasury = treasuryKeypair();
   const tokenProgram = await tokenProgramForMint();
   const mintInfo = await getMint(connection, config.rewardTokenMint, "confirmed", tokenProgram);
   const sourceAta = getAssociatedTokenAddressSync(config.rewardTokenMint, treasury.publicKey, false, tokenProgram);
+  let settledRaw = 0n;
+  let settledUi = 0;
+  let settledCount = 0;
+  let stoppedForReserve = false;
 
   console.log(`[${epochId}] proof before send: ${allocations.length} payouts`);
   for (const allocation of allocations) {
@@ -225,7 +237,13 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
         goldenCapped: allocation.goldenCapped
       });
     }
-    return [];
+    return {
+      signatures: [],
+      settledCount: 0,
+      settledRaw: 0n,
+      settledUi: 0,
+      stoppedForReserve: false
+    };
   }
 
   const prepared: PreparedAllocation[] = allocations.map((allocation) => {
@@ -244,6 +262,18 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
   });
 
   const signatures: string[] = [];
+  for (const allocation of prepared) {
+    await planPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString(), {
+      normalRewardAmountRaw: allocation.normalAmount.toString(),
+      normalRewardAmount: allocation.normalUiAmount.toString(),
+      goldenBonusRewardRaw: allocation.goldenBonusAmount.toString(),
+      goldenBonusReward: allocation.goldenBonusUiAmount.toString(),
+      goldenMultiplier: allocation.goldenMultiplier,
+      isGolden: allocation.isGolden,
+      goldenCapped: allocation.goldenCapped
+    });
+  }
+
   const batches = chunk(prepared, config.airdropBatchSize);
   for (let batchIndex = 0; batchIndex < batches.length; batchIndex += 1) {
     const batch = batches[batchIndex];
@@ -254,6 +284,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     const balanceLamports = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
 
     if (balanceLamports < requiredLamports) {
+      stoppedForReserve = true;
       const error = new Error(
         `Treasury SOL below airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, reserve=${reserveLamports}, estimatedAtaRent=${estimatedRentLamports}`
       );
@@ -263,18 +294,6 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
         await failPayout(epochId, allocation.wallet, error);
       }
       break;
-    }
-
-    for (const allocation of batch) {
-      await planPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString(), {
-        normalRewardAmountRaw: allocation.normalAmount.toString(),
-        normalRewardAmount: allocation.normalUiAmount.toString(),
-        goldenBonusRewardRaw: allocation.goldenBonusAmount.toString(),
-        goldenBonusReward: allocation.goldenBonusUiAmount.toString(),
-        goldenMultiplier: allocation.goldenMultiplier,
-        isGolden: allocation.isGolden,
-        goldenCapped: allocation.goldenCapped
-      });
     }
 
     try {
@@ -315,6 +334,9 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
       await connection.confirmTransaction(txSig, "confirmed");
       for (const allocation of batch) {
         await settlePayout(epochId, allocation.wallet, txSig);
+        settledRaw += allocation.amount;
+        settledUi += allocation.uiAmount;
+        settledCount += 1;
         if (allocation.isGolden) {
           await recordGoldenPayoutTx(epochId, txSig);
         }
@@ -329,5 +351,11 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     }
   }
 
-  return signatures;
+  return {
+    signatures,
+    settledCount,
+    settledRaw,
+    settledUi,
+    stoppedForReserve
+  };
 }

@@ -70,10 +70,13 @@ export async function runEpoch(date = new Date()) {
     }
 
     const golden = await applyGoldenAirdrop(epochId, holders, allocations, availableRewardRaw, goldenPool.snapshotHash);
-    await airdropRewards(epochId, allocations);
-    const distributed = allocations.reduce((sum, allocation) => sum + allocation.uiAmount, 0);
+    const airdrop = await airdropRewards(epochId, allocations);
+    if (airdrop.stoppedForReserve && airdrop.settledCount === 0) {
+      throw new Error("Airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
+    }
+    const distributed = airdrop.settledUi;
     await completeEpoch(epochId, {
-      eligible_count: allocations.length,
+      eligible_count: holders.length,
       reward_bought: buy.rewardReceivedUi.toString(),
       reward_distributed: distributed.toString(),
       golden_winner_wallet: golden.wallet,
@@ -86,7 +89,7 @@ export async function runEpoch(date = new Date()) {
       golden_snapshot_hash: golden.snapshotHash
     });
     console.log(
-      `[${epochId}] summary: eligible=${holders.length}, recipients=${allocations.length}, bought=${buy.rewardReceivedUi}, distributed=${distributed}, golden=${golden.wallet ?? "none"}`
+      `[${epochId}] summary: eligible=${holders.length}, recipients=${airdrop.settledCount}/${allocations.length}, bought=${buy.rewardReceivedUi}, distributed=${distributed}, golden=${golden.wallet ?? "none"}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {
