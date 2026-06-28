@@ -91,4 +91,4 @@ create policy "public read snapshots" on snapshots
   for select using (true);
 
 create policy "public read settled payouts" on payouts
-  for select using (status in ('settled', 'dry_run'));
+  for select using (status = 'settled');

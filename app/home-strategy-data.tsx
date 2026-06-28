@@ -7,6 +7,7 @@ type Round = {
   status: string;
   startedAt: string;
   duration: string;
+  rewardBought: number;
   distributedPump: number;
   txSig: string | null;
 };
@@ -195,9 +196,13 @@ export function StrategyDataSections({
   const rounds = stats?.roundHistory ?? [];
   const rewards = stats?.recentRewards ?? [];
   const topHolders = holders?.topHolders ?? [];
-  const maxDistributed = useMemo(
-    () => Math.max(...rounds.map((round) => round.distributedPump), 0),
+  const distributedRounds = useMemo(
+    () => rounds.filter((round) => round.distributedPump > 0),
     [rounds]
+  );
+  const maxDistributed = useMemo(
+    () => Math.max(...distributedRounds.map((round) => round.distributedPump), 0),
+    [distributedRounds]
   );
 
   return (
@@ -207,7 +212,7 @@ export function StrategyDataSections({
           <div className="section-head">
             <h2>Strategy Status</h2>
             <p className="lead">
-              Ansem Strategy is the Black Bull accumulation engine: fees in, ${rewardSymbol} out, eligible holders
+              ASTR Strategy is the Black Bull accumulation engine: fees in, ${rewardSymbol} out, eligible holders
               paid every epoch.
             </p>
           </div>
@@ -225,12 +230,12 @@ export function StrategyDataSections({
           <div className="history-card distribution-card">
             <div className="history-head">
               <h3>Black Bull Distributed</h3>
-              <span>{rounds.length ? "Latest rounds" : "No distributions yet"}</span>
+              <span>{distributedRounds.length ? "Latest distributions" : "No distributions yet"}</span>
             </div>
-            {rounds.length ? (
+            {distributedRounds.length ? (
               <>
                 <div className="distribution-bars" aria-label="Recent distribution history">
-                  {rounds.slice(0, 8).reverse().map((round) => (
+                  {distributedRounds.slice(0, 8).reverse().map((round) => (
                     <div className="distribution-bar" key={`${round.epoch}-${round.startedAt}`}>
                       <span
                         style={{

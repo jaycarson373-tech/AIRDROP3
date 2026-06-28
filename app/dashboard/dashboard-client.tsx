@@ -23,6 +23,7 @@ type StatsResponse = {
     startedAt: string;
     duration: string;
     claimedSol: number;
+    rewardBought: number;
     normalRewardsSent: number;
     distributedPump: number;
     goldenWinnerWallet: string | null;
@@ -82,8 +83,8 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Ansem Strategy";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMSTR";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ASTR Strategy";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ASTR";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
@@ -277,7 +278,7 @@ export function DashboardClient() {
           <Link className="brand" href="/">
             <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
-              ANSEM
+              ASTR
               <small>STRATEGY</small>
             </span>
           </Link>
@@ -296,7 +297,7 @@ export function DashboardClient() {
                 <span className="pulse" />
                 Live Black Bull proof
               </div>
-              <h1 style={{ fontSize: "clamp(44px, 7vw, 82px)" }}>Strategy Dashboard</h1>
+              <h1 style={{ fontSize: "clamp(44px, 7vw, 82px)" }}>ASTR Dashboard</h1>
             </div>
           </div>
 
@@ -368,6 +369,7 @@ export function DashboardClient() {
                         <th>Started</th>
                         <th>Duration</th>
                         <th className="right">Fees Collected</th>
+                        <th className="right">Bought</th>
                         <th className="right">Normal Rewards</th>
                         <th>Bonus Winner</th>
                         <th className="right">Bonus Amount</th>
@@ -389,6 +391,13 @@ export function DashboardClient() {
                             <td className="right mono">
                               {round.claimedSol ? (
                                 <AnimatedValue value={round.claimedSol} maximumFractionDigits={4} suffix=" SOL" />
+                              ) : (
+                                "–"
+                              )}
+                            </td>
+                            <td className="right mono">
+                              {round.rewardBought ? (
+                                <AnimatedValue value={round.rewardBought} maximumFractionDigits={2} suffix={` ${REWARD_SYMBOL}`} />
                               ) : (
                                 "–"
                               )}
@@ -456,7 +465,7 @@ export function DashboardClient() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={11}>Awaiting first drop.</td>
+                          <td colSpan={12}>Awaiting first drop.</td>
                         </tr>
                       )}
                     </tbody>

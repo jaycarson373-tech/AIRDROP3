@@ -42,6 +42,16 @@ type PayoutRow = {
   created_at: string | null;
 };
 
+type EpochPayoutSummary = {
+  rewardAmount: number;
+  normalRewardAmount: number;
+  goldenBonusReward: number;
+  recipients: number;
+  latestTime: string | null;
+  latestTxSig: string | null;
+  golden: PayoutRow | null;
+};
+
 function supabaseConfig() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
@@ -64,6 +74,10 @@ function epochNumber(epochId: string, fallback: number) {
 
 function rowTime(row: Pick<EpochRow, "epoch_id" | "started_at">) {
   return Date.parse(row.started_at ?? row.epoch_id) || 0;
+}
+
+function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id">) {
+  return Date.parse(row.updated_at ?? row.created_at ?? row.epoch_id) || 0;
 }
 
 function nextDropTime() {
@@ -138,8 +152,8 @@ export async function GET() {
       : null;
     const buyRows = buys?.ok ? ((await buys.json()) as BuyRow[]) : [];
     const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
-    const payouts = await fetch(
-      `${config.url}/rest/v1/payouts?select=epoch_id,wallet,reward_amount,normal_reward_amount,golden_bonus_reward,is_golden,golden_multiplier,golden_capped,status,tx_sig,updated_at,created_at&order=updated_at.desc&limit=20`,
+    const settledPayouts = await fetch(
+      `${config.url}/rest/v1/payouts?select=epoch_id,wallet,reward_amount,normal_reward_amount,golden_bonus_reward,is_golden,golden_multiplier,golden_capped,status,tx_sig,updated_at,created_at&status=eq.settled&order=updated_at.desc&limit=1000`,
       {
         headers: {
           apikey: config.key,
@@ -148,7 +162,38 @@ export async function GET() {
         cache: "no-store"
       }
     );
-    const payoutRows = payouts.ok ? ((await payouts.json()) as PayoutRow[]) : [];
+    const payoutRows = settledPayouts.ok ? ((await settledPayouts.json()) as PayoutRow[]) : [];
+    const payoutsByEpoch = new Map<string, EpochPayoutSummary>();
+
+    for (const payout of payoutRows) {
+      const summary =
+        payoutsByEpoch.get(payout.epoch_id) ??
+        ({
+          rewardAmount: 0,
+          normalRewardAmount: 0,
+          goldenBonusReward: 0,
+          recipients: 0,
+          latestTime: null,
+          latestTxSig: null,
+          golden: null
+        } satisfies EpochPayoutSummary);
+      const currentTime = payoutTime(payout);
+      const latestTime = Date.parse(summary.latestTime ?? "") || 0;
+
+      summary.rewardAmount += toNumber(payout.reward_amount);
+      summary.normalRewardAmount += toNumber(payout.normal_reward_amount);
+      summary.goldenBonusReward += toNumber(payout.golden_bonus_reward);
+      summary.recipients += 1;
+      if (currentTime >= latestTime) {
+        summary.latestTime = payout.updated_at ?? payout.created_at ?? payout.epoch_id;
+        summary.latestTxSig = payout.tx_sig;
+      }
+      if (payout.is_golden && (!summary.golden || currentTime >= payoutTime(summary.golden))) {
+        summary.golden = payout;
+      }
+      payoutsByEpoch.set(payout.epoch_id, summary);
+    }
+
     const completed = rows.filter((row) => row.status === "completed");
     const latest = rows[0];
     const displayEpochById = new Map(
@@ -162,37 +207,46 @@ export async function GET() {
         .map((row, index) => [row.epoch_id, index + 1])
     );
 
-    const epochHistory = completed.slice(0, 10).map((row, index) => ({
-      epoch: completedDisplayEpochById.get(row.epoch_id) ?? completed.length - index,
-      rewardAmount: toNumber(row.reward_distributed),
-      recipients: toNumber(row.eligible_count),
-      timestamp: row.completed_at ?? row.started_at ?? row.epoch_id,
-      status: row.status ?? "unknown"
-    }));
+    const epochHistory = completed
+      .filter((row) => (payoutsByEpoch.get(row.epoch_id)?.rewardAmount ?? 0) > 0)
+      .slice(0, 10)
+      .map((row, index) => {
+        const payoutSummary = payoutsByEpoch.get(row.epoch_id);
+        return {
+          epoch: completedDisplayEpochById.get(row.epoch_id) ?? completed.length - index,
+          rewardAmount: payoutSummary?.rewardAmount ?? 0,
+          recipients: payoutSummary?.recipients ?? 0,
+          timestamp: payoutSummary?.latestTime ?? row.completed_at ?? row.started_at ?? row.epoch_id,
+          status: row.status ?? "unknown"
+        };
+      });
 
     const roundHistory = rows.slice(0, 10).map((row, index) => {
       const claim = claimsByEpoch.get(row.epoch_id);
       const buy = buysByEpoch.get(row.epoch_id);
+      const payoutSummary = payoutsByEpoch.get(row.epoch_id);
+      const goldenPayout = payoutSummary?.golden;
       return {
         epoch: displayEpochById.get(row.epoch_id) ?? rows.length - index,
         status: row.status ?? "unknown",
         startedAt: row.started_at ?? row.epoch_id,
         duration: durationLabel(row.started_at, row.completed_at),
         claimedSol: toNumber(claim?.amount_claimed),
-        normalRewardsSent: Math.max(0, toNumber(row.reward_distributed) - toNumber(row.golden_bonus_reward)),
-        distributedPump: toNumber(row.reward_distributed),
-        goldenWinnerWallet: row.golden_winner_wallet,
-        goldenBaseReward: toNumber(row.golden_base_reward),
-        goldenBonusReward: toNumber(row.golden_bonus_reward),
-        goldenTotalReward: toNumber(row.golden_base_reward) + toNumber(row.golden_bonus_reward),
-        goldenMultiplier: row.golden_multiplier ?? 10,
-        goldenCapped: row.golden_capped ?? false,
-        goldenTxSig: row.golden_tx_sig,
-        txSig: claim?.tx_sig ?? buy?.tx_sig ?? null
+        rewardBought: toNumber(row.reward_bought),
+        normalRewardsSent: payoutSummary?.normalRewardAmount ?? 0,
+        distributedPump: payoutSummary?.rewardAmount ?? 0,
+        goldenWinnerWallet: goldenPayout?.wallet ?? null,
+        goldenBaseReward: toNumber(goldenPayout?.normal_reward_amount),
+        goldenBonusReward: toNumber(goldenPayout?.golden_bonus_reward),
+        goldenTotalReward: toNumber(goldenPayout?.reward_amount),
+        goldenMultiplier: goldenPayout?.golden_multiplier ?? row.golden_multiplier ?? 10,
+        goldenCapped: goldenPayout?.golden_capped ?? false,
+        goldenTxSig: goldenPayout?.tx_sig ?? null,
+        txSig: payoutSummary?.latestTxSig ?? claim?.tx_sig ?? buy?.tx_sig ?? null
       };
     });
 
-    const recentRewards = payoutRows.map((row) => ({
+    const recentRewards = payoutRows.slice(0, 20).map((row) => ({
       epoch: displayEpochById.get(row.epoch_id) ?? epochNumber(row.epoch_id, 0),
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),
@@ -205,24 +259,28 @@ export async function GET() {
       status: row.status ?? "unknown",
       txSig: row.tx_sig
     }));
-    const latestGoldenRow = rows.find((row) => row.golden_winner_wallet);
+    const latestGoldenRow = payoutRows.find((row) => row.is_golden);
     const latestGolden = latestGoldenRow
       ? {
-          wallet: latestGoldenRow.golden_winner_wallet,
-          baseReward: toNumber(latestGoldenRow.golden_base_reward),
+          wallet: latestGoldenRow.wallet,
+          baseReward: toNumber(latestGoldenRow.normal_reward_amount),
           bonusReward: toNumber(latestGoldenRow.golden_bonus_reward),
-          totalReward: toNumber(latestGoldenRow.golden_base_reward) + toNumber(latestGoldenRow.golden_bonus_reward),
+          totalReward: toNumber(latestGoldenRow.reward_amount),
           multiplier: latestGoldenRow.golden_multiplier ?? 10,
           capped: latestGoldenRow.golden_capped ?? false,
-          txSig: latestGoldenRow.golden_tx_sig
+          txSig: latestGoldenRow.tx_sig
         }
       : null;
+    const totalRewardAirdropped = Array.from(payoutsByEpoch.values()).reduce(
+      (sum, summary) => sum + summary.rewardAmount,
+      0
+    );
 
     return NextResponse.json({
       currentEpoch: completed.length,
       totalEpochs: completed.length,
       lastRewardAirdropped: epochHistory[0]?.rewardAmount ?? 0,
-      totalRewardAirdropped: completed.reduce((sum, row) => sum + toNumber(row.reward_distributed), 0),
+      totalRewardAirdropped,
       latestEligibleHolders: toNumber(latest?.eligible_count),
       nextDropTime: nextDropTime(),
       epochHistory,

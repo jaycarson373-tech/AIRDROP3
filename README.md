@@ -1,6 +1,6 @@
-# Ansem Strategy
+# ASTR Strategy
 
-Ticker: `$ANSEMSTR`
+Ticker: `$ASTR`
 Reward token: The Black Bull `$ANSEM`
 
 One repo for:
@@ -15,7 +15,7 @@ Every epoch:
 
 1. Claim creator fees to the treasury wallet.
 2. Swap available SOL to the reward token, `$ANSEM`, through Jupiter.
-3. Snapshot `$ANSEMSTR` holders with at least `ELIGIBILITY_MIN`.
+3. Snapshot `$ASTR` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, and holders above `MAX_HOLDER_PCT`.
 5. Airdrop the treasury reward-token balance proportionally to the top `MAX_WALLETS_PER_EPOCH`.
 6. Pick one deterministic random eligible holder as the 10x Black Bull Bonus winner when balance allows.
@@ -29,10 +29,11 @@ Run:
 -- supabase/migrations/001_pump_airdrop.sql
 ```
 
-If the first migration already exists in your project, also run:
+If the first migration already exists in your project, also run the follow-up migrations:
 
 ```sql
 -- supabase/migrations/002_golden_airdrop.sql
+-- supabase/migrations/003_settled_payouts_only.sql
 ```
 
 The migration enables public read policies for dashboard tables. The worker still uses the service-role key for writes.
@@ -42,12 +43,12 @@ The migration enables public read policies for dashboard tables. The worker stil
 Required:
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Ansem Strategy"
-NEXT_PUBLIC_SOURCE_SYMBOL=ANSEMSTR
+NEXT_PUBLIC_PROJECT_NAME="ASTR Strategy"
+NEXT_PUBLIC_SOURCE_SYMBOL=ASTR
 NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<ANSEMSTR_MINT>
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<ASTR_MINT>
 NEXT_PUBLIC_REWARD_TOKEN_MINT=<ANSEM_MINT>
-NEXT_PUBLIC_X_URL=https://x.com/ANSEMSTR_
+NEXT_PUBLIC_X_URL=https://x.com/ASTRStrategy
 NEXT_PUBLIC_BUY_URL=<BUY_LINK>
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
@@ -69,7 +70,7 @@ Required:
 
 ```bash
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<ANSEMSTR_MINT>
+SOURCE_TOKEN_MINT=<ASTR_MINT>
 REWARD_TOKEN_MINT=<ANSEM_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>

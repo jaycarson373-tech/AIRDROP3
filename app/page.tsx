@@ -8,13 +8,13 @@ import {
 import { ParallaxBackground } from "./parallax-background";
 import { BlackBullTreasuryCard, StrategyDataSections } from "./home-strategy-data";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Ansem Strategy";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMSTR";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ASTR Strategy";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ASTR";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 
 function Navbar() {
-  const xUrl = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/ANSEMSTR_";
+  const xUrl = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/ASTRStrategy";
   const ca = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
   const shortCa = ca ? `${ca.slice(0, 4)}...${ca.slice(-4)}` : "CA Coming Soon";
 
@@ -24,7 +24,7 @@ function Navbar() {
         <a className="brand" href="/">
           <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
           <span>
-            ANSEM
+            ASTR
             <small>STRATEGY</small>
           </span>
         </a>
@@ -72,7 +72,7 @@ export default function Page() {
                 The Black Bull Strategy
               </div>
               <h1>
-                Ansem <span className="gradient">Strategy.</span>
+                ASTR <span className="gradient">Strategy.</span>
               </h1>
               <p className="hero-copy">
                 Every trade accumulates ${REWARD_SYMBOL}. Every 5 minutes, eligible holders receive ${REWARD_SYMBOL}.
@@ -106,7 +106,10 @@ export default function Page() {
               </div>
             </div>
 
-            <BlackBullTreasuryCard sourceSymbol={SOURCE_SYMBOL} rewardSymbol={REWARD_SYMBOL} />
+            <div className="hero-side">
+              <img className="hero-logo-art" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
+              <BlackBullTreasuryCard sourceSymbol={SOURCE_SYMBOL} rewardSymbol={REWARD_SYMBOL} />
+            </div>
           </div>
         </section>
 
@@ -115,7 +118,7 @@ export default function Page() {
             <div className="section-head">
               <h2>How It Works</h2>
               <p className="lead">
-                Ansem Strategy is the Black Bull accumulation strategy. Every trade fuels the treasury. Every
+                ASTR Strategy is the Black Bull accumulation strategy. Every trade fuels the treasury. Every
                 epoch sends ${REWARD_SYMBOL} to eligible holders.
               </p>
             </div>
@@ -161,7 +164,7 @@ export default function Page() {
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
-            <strong>ANSEM STRATEGY</strong>
+            <strong>ASTR STRATEGY</strong>
           </div>
           <p>
             The Black Bull accumulation strategy. Hold ${SOURCE_SYMBOL}. Receive ${REWARD_SYMBOL}. Never sell.
@@ -170,7 +173,7 @@ export default function Page() {
             <a href="#strategy">Strategy</a>
             <a href="#history">Airdrops</a>
             <a href="#leaderboard">Leaderboard</a>
-            <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/ANSEMSTR_"} target="_blank" rel="noreferrer">X</a>
+            <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/ASTRStrategy"} target="_blank" rel="noreferrer">X</a>
             <span>Telegram</span>
           </div>
           <div className="footer-ca">
