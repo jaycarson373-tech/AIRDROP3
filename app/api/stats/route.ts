@@ -246,7 +246,7 @@ export async function GET() {
       };
     });
 
-    const recentRewards = payoutRows.slice(0, 20).map((row) => ({
+    const recentRewards = payoutRows.slice(0, 50).map((row) => ({
       epoch: displayEpochById.get(row.epoch_id) ?? epochNumber(row.epoch_id, 0),
       wallet: row.wallet,
       rewardAmount: toNumber(row.reward_amount),

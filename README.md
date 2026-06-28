@@ -1,7 +1,7 @@
-# ASTR Strategy
+# GRASS
 
-Ticker: `$ASTR`
-Reward token: The Black Bull `$ANSEM`
+Source token: `$ANSEM`
+Reward token: `$GRASS`
 
 One repo for:
 
@@ -14,11 +14,11 @@ One repo for:
 Every epoch:
 
 1. Claim creator fees to the treasury wallet.
-2. Swap available SOL to the reward token, `$ANSEM`, through Jupiter.
-3. Snapshot `$ASTR` holders with at least `ELIGIBILITY_MIN`.
+2. Swap available SOL to the reward token, `$GRASS`, through Jupiter.
+3. Snapshot `$ANSEM` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, and holders above `MAX_HOLDER_PCT`.
-5. Airdrop the treasury reward-token balance proportionally to the top `MAX_WALLETS_PER_EPOCH`.
-6. Pick one deterministic random eligible holder as the 10x Black Bull Bonus winner when balance allows.
+5. Select `MAX_WALLETS_PER_EPOCH` deterministic-random eligible holders for the epoch and airdrop the reward-token balance across those recipients.
+6. Pick one selected recipient as the 10x Black Bull Bonus winner when balance allows.
 7. Store epochs, buys, snapshots, claims, bonus fields, and payouts in Supabase for the dashboard.
 
 ## Supabase
@@ -43,12 +43,12 @@ The migration enables public read policies for dashboard tables. The worker stil
 Required:
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="ASTR Strategy"
-NEXT_PUBLIC_SOURCE_SYMBOL=ASTR
-NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<ASTR_MINT>
-NEXT_PUBLIC_REWARD_TOKEN_MINT=<ANSEM_MINT>
-NEXT_PUBLIC_X_URL=https://x.com/ASTRStrategy
+NEXT_PUBLIC_PROJECT_NAME="GRASS"
+NEXT_PUBLIC_SOURCE_SYMBOL=ANSEM
+NEXT_PUBLIC_REWARD_SYMBOL=GRASS
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<ANSEM_MINT>
+NEXT_PUBLIC_REWARD_TOKEN_MINT=<GRASS_MINT>
+NEXT_PUBLIC_X_URL=https://x.com
 NEXT_PUBLIC_BUY_URL=<BUY_LINK>
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
@@ -70,8 +70,8 @@ Required:
 
 ```bash
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<ASTR_MINT>
-REWARD_TOKEN_MINT=<ANSEM_MINT>
+SOURCE_TOKEN_MINT=<ANSEM_MINT>
+REWARD_TOKEN_MINT=<GRASS_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>

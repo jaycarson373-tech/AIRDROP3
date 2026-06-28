@@ -74,9 +74,9 @@ function formatNumber(value: number, maximumFractionDigits = 2) {
   return value.toLocaleString(undefined, { maximumFractionDigits });
 }
 
-function formatZeroableNumber(value: number, maximumFractionDigits = 0) {
-  if (!Number.isFinite(value) || value < 0) return "–";
-  return value.toLocaleString(undefined, { maximumFractionDigits });
+function formatRewardAmount(value: number, symbol: string) {
+  if (!Number.isFinite(value) || value <= 0) return "Awaiting first drop";
+  return `${formatNumber(value)} ${symbol}`;
 }
 
 function formatDate(value: string) {
@@ -151,26 +151,25 @@ export function BlackBullTreasuryCard({
   return (
     <aside className="treasury-card" aria-live="polite">
       <div className="treasury-head">
-        <span>Black Bull Treasury</span>
+        <span>GRASS Drop Queue</span>
         <i>LIVE</i>
       </div>
       <div className="treasury-grid">
-        <Metric label="Treasury Balance" value="Coming Soon" />
-        <Metric label="Next Distribution" value={countdown} strong />
+        <Metric label="Next GRASS Drop" value={countdown} strong />
+        <Metric label="Epoch Countdown" value={countdown} />
         <Metric
-          label="Eligible Holders"
+          label={`Eligible ${sourceSymbol} Holders`}
           value={stats ? formatNumber(stats.latestEligibleHolders, 0) : "Loading"}
         />
         <Metric
-          label="Total Distributed"
-          value={stats ? `${formatNumber(stats.totalRewardAirdropped)} ${rewardSymbol}` : "Loading"}
+          label={`Total ${rewardSymbol} Airdropped`}
+          value={stats ? formatRewardAmount(stats.totalRewardAirdropped, rewardSymbol) : "Loading"}
         />
-        <Metric label="Current Epoch" value={stats ? formatZeroableNumber(stats.currentEpoch, 0) : "Loading"} />
       </div>
       <div className="eligibility-strip">
         <span>Requirement</span>
-        <strong>Hold 1M+ ${sourceSymbol}</strong>
-        <em>Sell anytime = permanently ineligible</em>
+        <strong>Hold {sourceSymbol}</strong>
+        <em>50 winners every epoch, one lucky bonus drop</em>
       </div>
     </aside>
   );
@@ -209,18 +208,17 @@ export function StrategyDataSections({
     <>
       <section className="section" id="status">
         <div className="container">
-          <div className="section-head">
-            <h2>Strategy Status</h2>
-            <p className="lead">
-              ASTR Strategy is the Black Bull accumulation engine: fees in, ${rewardSymbol} out, eligible holders
-              paid every epoch.
+            <div className="section-head">
+              <h2>Strategy Status</h2>
+              <p className="lead">
+              Bulls eat grass. Hold {sourceSymbol}. Every 5 minutes, eligible holders are entered for {rewardSymbol} rewards.
             </p>
           </div>
           <div className="status-grid">
-            <StatusItem label="Current strategy" value={`Accumulating $${rewardSymbol}`} tone="live" />
+            <StatusItem label="Current loop" value="The bull keeps eating" tone="live" />
             <StatusItem label="Distribution interval" value="Every 5 minutes" />
-            <StatusItem label="Eligibility" value={`1M+ $${sourceSymbol}`} />
-            <StatusItem label="Sell rule" value="Permanently ineligible after selling" tone="danger" />
+            <StatusItem label="Eligibility" value={`Hold $${sourceSymbol}`} />
+            <StatusItem label="Reward" value={`Get $${rewardSymbol}`} />
           </div>
         </div>
       </section>
@@ -229,8 +227,8 @@ export function StrategyDataSections({
         <div className="container split-section">
           <div className="history-card distribution-card">
             <div className="history-head">
-              <h3>Black Bull Distributed</h3>
-              <span>{distributedRounds.length ? "Latest distributions" : "No distributions yet"}</span>
+              <h3>{rewardSymbol} Airdropped</h3>
+              <span>{distributedRounds.length ? "Latest drops" : "No drops yet"}</span>
             </div>
             {distributedRounds.length ? (
               <>
@@ -247,18 +245,18 @@ export function StrategyDataSections({
                   ))}
                 </div>
                 <div className="distribution-total">
-                  <span>Total distributed all time</span>
-                  <strong>{stats ? formatNumber(stats.totalRewardAirdropped) : "Loading"} ${rewardSymbol}</strong>
+                  <span>Total {rewardSymbol} airdropped</span>
+                  <strong>{stats ? formatRewardAmount(stats.totalRewardAirdropped, rewardSymbol) : "Loading"}</strong>
                 </div>
               </>
             ) : (
-              <div className="empty-state">No distributions yet.</div>
+              <div className="empty-state">No GRASS drops yet.</div>
             )}
           </div>
 
           <div className="history-card holders-card" id="leaderboard">
             <div className="history-head">
-              <h3>Top Holders</h3>
+              <h3>Eligible {sourceSymbol} Holders</h3>
               <span>{topHolders.length ? "Latest snapshot" : "Holder data loading"}</span>
             </div>
             {topHolders.length ? (
@@ -282,8 +280,8 @@ export function StrategyDataSections({
         <div className="container">
           <div className="history-card">
             <div className="history-head">
-              <h3>Live Activity</h3>
-              <span>{rewards.length ? "Real payout events" : "Live activity coming soon"}</span>
+              <h3>Last Winners</h3>
+              <span>{rewards.length ? "Real GRASS payout events" : "Winners coming soon"}</span>
             </div>
             {rewards.length ? (
               <div className="activity-feed padded">
@@ -306,7 +304,7 @@ export function StrategyDataSections({
                 ))}
               </div>
             ) : (
-              <div className="empty-state">Live activity coming soon.</div>
+              <div className="empty-state">The pasture is quiet. Winners will show after settled payouts.</div>
             )}
           </div>
         </div>

@@ -57,7 +57,7 @@ export function AppPolish() {
       <div className="loader-mascot">
         <img src="/logo.png" alt="" />
       </div>
-      <div className="loader-text">Loading ASTR strategy…</div>
+      <div className="loader-text">Loading GRASS…</div>
       <div className="loader-line" aria-hidden="true">
         <span />
       </div>

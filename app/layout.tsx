@@ -3,14 +3,15 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "$ASTR - Ansem Strategy",
+  title: "GRASS",
   description:
-    "ASTR Strategy converts creator fees into The Black Bull $ANSEM rewards for top holders every five minutes.",
+    "Grass-fed rewards for Ansem holders. Bulls eat grass. Hold ANSEM. Get GRASS.",
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: "/logo.svg", type: "image/svg+xml" },
       { url: "/logo.png", type: "image/png" }
     ],
     apple: "/apple-touch-icon.png"

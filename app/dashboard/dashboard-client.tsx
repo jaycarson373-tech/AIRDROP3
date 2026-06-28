@@ -9,6 +9,7 @@ type StatsResponse = {
   totalEpochs: number;
   lastRewardAirdropped: number;
   totalRewardAirdropped: number;
+  latestEligibleHolders: number;
   nextDropTime: string;
   epochHistory: Array<{
     epoch: number;
@@ -73,6 +74,7 @@ const emptyStats: StatsResponse = {
   totalEpochs: 0,
   lastRewardAirdropped: 0,
   totalRewardAirdropped: 0,
+  latestEligibleHolders: 0,
   nextDropTime: new Date().toISOString(),
   epochHistory: [],
   roundHistory: [],
@@ -83,9 +85,9 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ASTR Strategy";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ASTR";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "GRASS";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEM";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "GRASS";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -259,7 +261,6 @@ export function DashboardClient() {
 
   const liveStats = stats ?? emptyStats;
   const liveHolders = holders ?? emptyHolders;
-  const hasRounds = liveStats.totalEpochs > 0;
   const hasRewards = liveStats.recentRewards.length > 0 || liveStats.totalRewardAirdropped > 0;
   const latestGolden = liveStats.latestGolden;
   const nextDropMs = Math.max(Date.parse(liveStats.nextDropTime) || 0, fallbackNextDropMs());
@@ -273,13 +274,14 @@ export function DashboardClient() {
     <div className="page">
       <ParallaxBackground />
       <div className="grid-bg" />
+      <div className="grass-particles" />
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
             <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
-              ASTR
-              <small>STRATEGY</small>
+              GRASS
+              <small>BLACK BULL REWARDS</small>
             </span>
           </Link>
           <div className="nav-links">
@@ -295,9 +297,9 @@ export function DashboardClient() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Live Black Bull proof
+                Live GRASS proof
               </div>
-              <h1 style={{ fontSize: "clamp(44px, 7vw, 82px)" }}>ASTR Dashboard</h1>
+              <h1 style={{ fontSize: "clamp(44px, 7vw, 82px)" }}>GRASS Dashboard</h1>
             </div>
           </div>
 
@@ -308,57 +310,57 @@ export function DashboardClient() {
               <div className="stats dashboard-stats">
                 <div className="stat live-stat">
                   <strong>{countdown}</strong>
-                  <span>Next Airdrop</span>
+                  <span>Next {REWARD_SYMBOL} Drop</span>
                   <div className="round-progress tiny" aria-hidden="true">
                     <span style={{ width: `${Math.min(100, Math.max(0, progress))}%` }} />
                   </div>
                 </div>
                 <div className="stat">
-                  <strong>
-                    <AnimatedValue value={hasRounds ? liveStats.currentEpoch : 0} maximumFractionDigits={0} />
-                  </strong>
-                  <span>Current epoch</span>
+                  <strong>{countdown}</strong>
+                  <span>Epoch Countdown</span>
                 </div>
                 <div className="stat">
                   <strong>
-                    <AnimatedValue value={hasRounds ? liveStats.totalEpochs : 0} maximumFractionDigits={0} />
+                    <AnimatedValue value={liveStats.latestEligibleHolders} maximumFractionDigits={0} />
                   </strong>
-                  <span>Total epochs</span>
-                </div>
-                <div className="stat">
-                  <strong className={hasRewards ? "" : "empty-value"}>
-                    <AnimatedValue value={hasRewards ? liveStats.lastRewardAirdropped : null} empty="Awaiting first drop" />
-                  </strong>
-                  <span>Last {REWARD_SYMBOL} airdropped</span>
+                  <span>Eligible {SOURCE_SYMBOL} Holders</span>
                 </div>
                 <div className="stat">
                   <strong className={hasRewards ? "" : "empty-value"}>
                     <AnimatedValue value={hasRewards ? liveStats.totalRewardAirdropped : null} empty="Awaiting first drop" />
                   </strong>
-                  <span>Total {REWARD_SYMBOL} airdropped</span>
+                  <span>Total {REWARD_SYMBOL} Airdropped</span>
+                </div>
+                <div className="stat">
+                  <strong>
+                    <AnimatedValue value={liveStats.recentRewards.length} maximumFractionDigits={0} />
+                  </strong>
+                  <span>Last 50 Winners</span>
                 </div>
                 <div className="stat golden-stat">
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
                     {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Awaiting first winner"}
                   </strong>
-                  <span>Latest Bonus Winner</span>
+                  <span>Lucky Winner</span>
                 </div>
                 <div className="stat golden-stat">
                   <strong className={latestGolden ? "" : "empty-value"}>
                     <AnimatedValue value={latestGolden ? latestGolden.totalReward : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
                   </strong>
-                  <span>Black Bull Bonus Amount</span>
+                  <span>Bonus Drop</span>
                 </div>
                 <div className="stat golden-stat">
-                  <strong>{latestGolden?.multiplier ?? 10}x</strong>
-                  <span>Bonus Multiplier</span>
+                  <strong>
+                    <AnimatedValue value={liveStats.totalEpochs} maximumFractionDigits={0} />
+                  </strong>
+                  <span>Total Epochs</span>
                 </div>
               </div>
 
               <section className="history-card" style={{ marginTop: 16 }}>
                 <div className="history-head">
-                  <h3>Round History</h3>
-                  <span>Latest 10 rounds</span>
+                  <h3>Epoch History</h3>
+                  <span>Latest 10 GRASS rounds</span>
                 </div>
                 <div className="table-wrap">
                   <table className="history-table">
@@ -369,12 +371,12 @@ export function DashboardClient() {
                         <th>Started</th>
                         <th>Duration</th>
                         <th className="right">Fees Collected</th>
-                        <th className="right">Bought</th>
-                        <th className="right">Normal Rewards</th>
-                        <th>Bonus Winner</th>
+                        <th className="right">{REWARD_SYMBOL} Bought</th>
+                        <th className="right">Rewards Sent</th>
+                        <th>Lucky Winner</th>
                         <th className="right">Bonus Amount</th>
                         <th className="right">Bonus Tx</th>
-                        <th className="right">Distributed</th>
+                        <th className="right">{REWARD_SYMBOL} Airdropped</th>
                         <th className="right">Action</th>
                       </tr>
                     </thead>
@@ -465,7 +467,7 @@ export function DashboardClient() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={12}>Awaiting first drop.</td>
+                          <td colSpan={12}>Awaiting first GRASS drop.</td>
                         </tr>
                       )}
                     </tbody>
@@ -475,7 +477,7 @@ export function DashboardClient() {
 
               <div className="dash-grid" style={{ marginTop: 16 }}>
                 <section className="card">
-                  <h3>Recent Rewards</h3>
+                  <h3>Last 50 Winners</h3>
                   <div className="activity-feed" style={{ marginTop: 14 }}>
                     {liveStats.recentRewards.length ? (
                       liveStats.recentRewards.map((reward) => (
@@ -517,13 +519,13 @@ export function DashboardClient() {
                         </div>
                       ))
                     ) : (
-                      <div className="empty-state">Rewards will appear here after the first live distribution.</div>
+                      <div className="empty-state">Winners will appear here after settled GRASS payouts.</div>
                     )}
                   </div>
                 </section>
 
                 <section className="card">
-                  <h3>Latest Top {SOURCE_SYMBOL} Holders</h3>
+                  <h3>Eligible {SOURCE_SYMBOL} Holders</h3>
                   <div className="table-wrap" style={{ marginTop: 14 }}>
                     <table>
                       <thead>

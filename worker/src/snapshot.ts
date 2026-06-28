@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { PublicKey } from "@solana/web3.js";
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
@@ -64,6 +65,29 @@ function holderPct(rawBalance: bigint, rawSupply: bigint) {
   return Number((rawBalance * 1_000_000n) / rawSupply) / 10_000;
 }
 
+function recipientScore(epochId: string, holder: Holder) {
+  return createHash("sha256")
+    .update(`${epochId}:${holder.wallet}:${holder.rawBalance.toString()}`)
+    .digest("hex");
+}
+
+export function selectRewardRecipients(epochId: string, holders: Holder[]) {
+  const recipients = holders
+    .map((holder) => ({ holder, score: recipientScore(epochId, holder) }))
+    .sort((a, b) => {
+      const score = a.score.localeCompare(b.score);
+      return score || a.holder.wallet.localeCompare(b.holder.wallet);
+    })
+    .slice(0, config.maxWalletsPerEpoch)
+    .map(({ holder }) => holder);
+
+  if (holders.length > recipients.length) {
+    console.log(`[SNAPSHOT] selected ${recipients.length} random recipients from ${holders.length} eligible holders`);
+  }
+
+  return recipients;
+}
+
 export async function snapshotEligibleHolders(): Promise<Holder[]> {
   const tokenProgram = await tokenProgramForMint(config.sourceTokenMint);
   const mintInfo = await getMint(connection, config.sourceTokenMint, "confirmed", tokenProgram);
@@ -108,7 +132,7 @@ export async function snapshotEligibleHolders(): Promise<Holder[]> {
   }
 
   const excluded = excludedWallets(mintInfo.mintAuthority);
-  const holders = eligibleByBalance
+  return eligibleByBalance
     .filter((holder) => !excluded.has(holder.wallet))
     .filter((holder) => {
       const isWhale = holder.holderPct > config.maxHolderPct;
@@ -118,10 +142,4 @@ export async function snapshotEligibleHolders(): Promise<Holder[]> {
       return !isWhale;
     })
     .sort((a, b) => (a.rawBalance === b.rawBalance ? 0 : a.rawBalance > b.rawBalance ? -1 : 1));
-
-  if (holders.length > config.maxWalletsPerEpoch) {
-    console.log(`[SNAPSHOT] using top ${config.maxWalletsPerEpoch} of ${holders.length} eligible holders`);
-  }
-
-  return holders.slice(0, config.maxWalletsPerEpoch);
 }
