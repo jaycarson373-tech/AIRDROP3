@@ -258,7 +258,7 @@ export function DashboardClient() {
 
   const liveStats = stats ?? emptyStats;
   const liveHolders = holders ?? emptyHolders;
-  const hasRounds = liveStats.totalEpochs > 0 || liveStats.roundHistory.length > 0;
+  const hasRounds = liveStats.totalEpochs > 0;
   const hasRewards = liveStats.recentRewards.length > 0 || liveStats.totalRewardAirdropped > 0;
   const latestGolden = liveStats.latestGolden;
   const nextDropMs = Math.max(Date.parse(liveStats.nextDropTime) || 0, fallbackNextDropMs());
@@ -298,9 +298,6 @@ export function DashboardClient() {
               </div>
               <h1 style={{ fontSize: "clamp(44px, 7vw, 82px)" }}>Strategy Dashboard</h1>
             </div>
-            <p className="lead">
-              This page reads the same Supabase tables the Railway worker writes: epochs, snapshots, buys, and payouts.
-            </p>
           </div>
 
           {loading ? (
@@ -323,7 +320,7 @@ export function DashboardClient() {
                 </div>
                 <div className="stat">
                   <strong>
-                    <AnimatedValue value={hasRounds ? liveStats.totalEpochs : null} maximumFractionDigits={0} />
+                    <AnimatedValue value={hasRounds ? liveStats.totalEpochs : 0} maximumFractionDigits={0} />
                   </strong>
                   <span>Total epochs</span>
                 </div>
