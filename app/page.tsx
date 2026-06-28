@@ -72,7 +72,7 @@ export default function Page() {
                 The Black Bull Strategy
               </div>
               <h1>
-                Follow The <span className="gradient">Strategy.</span>
+                Ansem <span className="gradient">Strategy.</span>
               </h1>
               <p className="hero-copy">
                 Every trade accumulates ${REWARD_SYMBOL}. Every 5 minutes, eligible holders receive ${REWARD_SYMBOL}.
