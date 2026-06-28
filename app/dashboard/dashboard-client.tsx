@@ -370,7 +370,7 @@ export function DashboardClient() {
                         <th>Status</th>
                         <th>Started</th>
                         <th>Duration</th>
-                        <th className="right">Claimed</th>
+                        <th className="right">Fees Collected</th>
                         <th className="right">Normal Rewards</th>
                         <th>Bonus Winner</th>
                         <th className="right">Bonus Amount</th>
