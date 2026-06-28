@@ -14,7 +14,7 @@ const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 
 function Navbar() {
-  const xUrl = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com";
+  const xUrl = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/ANSEMSTR_";
   const ca = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
   const shortCa = ca ? `${ca.slice(0, 4)}...${ca.slice(-4)}` : "CA Coming Soon";
 
@@ -177,7 +177,7 @@ export default function Page() {
             <a href="#strategy">Strategy</a>
             <a href="#history">Airdrops</a>
             <a href="#leaderboard">Leaderboard</a>
-            <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com"} target="_blank" rel="noreferrer">X</a>
+            <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/ANSEMSTR_"} target="_blank" rel="noreferrer">X</a>
             <span>Telegram</span>
           </div>
           <div className="footer-ca">
