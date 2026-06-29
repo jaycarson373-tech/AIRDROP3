@@ -2,7 +2,6 @@ import {
   ArrowDown,
   ArrowRight,
   Leaf,
-  MessageCircle,
   Star,
   Timer,
   Users,
@@ -33,7 +32,6 @@ function Navbar() {
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#strategy">Home</a>
           <a href="#how">How It Works</a>
-          <a href="#tweet">Tweet</a>
           <a href="#status">Proof</a>
           <a href="/dashboard">Dashboard</a>
         </nav>
@@ -179,23 +177,6 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="section" id="tweet">
-          <div className="container split-section tweet-section">
-            <div>
-              <div className="eyebrow">
-                <MessageCircle size={16} />
-                Origin tweet
-              </div>
-              <h2>The Tweet That Fed The Bull</h2>
-              <p className="lead">Link/embed the Ansem tweet here.</p>
-            </div>
-            <div className="tweet-card">
-              <span>Tweet embed placeholder</span>
-              <strong>ANSEM tweet goes here</strong>
-            </div>
-          </div>
-        </section>
-
         <StrategyDataSections sourceSymbol={SOURCE_SYMBOL} rewardSymbol={REWARD_SYMBOL} />
       </main>
 
@@ -211,7 +192,6 @@ export default function Page() {
           <div className="footer-links">
             <a href="#strategy">GRASS</a>
             <a href="#how">How It Works</a>
-            <a href="#tweet">Tweet</a>
             <a href="#leaderboard">Leaderboard</a>
             <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com"} target="_blank" rel="noreferrer">X</a>
             <span>Telegram</span>
