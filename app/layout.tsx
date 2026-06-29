@@ -3,9 +3,9 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "GRASS",
+  title: "The Nietzschean Bull",
   description:
-    "Grass-fed rewards for Ansem holders. Bulls eat grass. Hold ANSEM. Get GRASS.",
+    "A dark luxury conviction protocol rewarding eligible BULL holders with automatic ANSEM distributions.",
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },

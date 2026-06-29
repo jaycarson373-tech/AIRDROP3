@@ -13,8 +13,8 @@ const fallbackStats: StatsResponse = {
   totalRewardAirdropped: 0,
   latestEligibleHolders: 0
 };
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEM";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "GRASS";
+const SOURCE_SYMBOL = "BULL";
+const REWARD_SYMBOL = "ANSEM";
 
 async function getStats() {
   try {

@@ -28,7 +28,7 @@ export function AppPolish() {
   }, []);
 
   useEffect(() => {
-    const selector = ".section, .card, .stat, .history-card, .round-panel, .timeline-step";
+    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .conviction-card, .warning-card, .lookup-card, .faq-item";
     const elements = new Set<Element>();
     const observer = new IntersectionObserver(
       (entries) => {
@@ -66,9 +66,9 @@ export function AppPolish() {
   return (
     <div className={`loading-screen${leaving ? " is-leaving" : ""}`}>
       <div className="loader-mascot">
-        <img src="/brand/grass-logo.webp" alt="" />
+        <img src="/brand/nietzschean-logo.webp" alt="" />
       </div>
-      <div className="loader-text">Loading GRASS…</div>
+      <div className="loader-text">The Nietzschean Bull</div>
       <div className="loader-line" aria-hidden="true">
         <span />
       </div>
