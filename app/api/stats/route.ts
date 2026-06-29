@@ -353,19 +353,9 @@ export async function GET() {
   }
 
   try {
-    const [rows, totalEpochCount] = await Promise.all([
-      getSupabaseJson<EpochRow[]>(
-        config,
-        "epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,golden_winner_wallet,golden_base_reward,golden_bonus_reward,golden_multiplier,golden_capped,golden_tx_sig,started_at,completed_at&order=started_at.desc&limit=25"
-      ),
-      getSupabaseCount(config, "epochs?select=epoch_id")
-    ]);
-    const allEpochs = totalEpochCount ?? rows.length;
-    const firstRecentEpochNumber = Math.max(1, allEpochs - rows.length + 1);
-    const displayEpochById = new Map(
-      [...rows]
-        .sort((a, b) => rowTime(a) - rowTime(b))
-        .map((row, index) => [row.epoch_id, firstRecentEpochNumber + index])
+    const rows = await getSupabaseJson<EpochRow[]>(
+      config,
+      "epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,golden_winner_wallet,golden_base_reward,golden_bonus_reward,golden_multiplier,golden_capped,golden_tx_sig,started_at,completed_at&order=started_at.desc&limit=50"
     );
     const epochIds = rows.map((row) => row.epoch_id);
     const claims = epochIds.length
@@ -419,42 +409,53 @@ export async function GET() {
       payoutsByEpoch.set(payout.epoch_id, summary);
     }
 
-    const completed = rows.filter((row) => row.status === "completed");
     const latest = rows[0];
+    const rowsByEpoch = new Map(rows.map((row) => [row.epoch_id, row]));
+    const realEpochIds = [...payoutsByEpoch.entries()]
+      .filter(([, summary]) => summary.rewardAmount > 0)
+      .sort(([epochA, summaryA], [epochB, summaryB]) => {
+        const timeA = Date.parse(summaryA.latestTime ?? epochA) || 0;
+        const timeB = Date.parse(summaryB.latestTime ?? epochB) || 0;
+        return timeA - timeB || epochA.localeCompare(epochB);
+      })
+      .map(([epochId]) => epochId);
+    const realEpochCount = realEpochIds.length;
+    const displayEpochById = new Map(realEpochIds.map((epochId, index) => [epochId, index + 1]));
+    const recentRealEpochIds = [...realEpochIds].reverse().slice(0, 10);
+    const latestRealRow = rowsByEpoch.get(recentRealEpochIds[0]) ?? latest;
 
-    const epochHistory = completed
-      .filter((row) => (payoutsByEpoch.get(row.epoch_id)?.rewardAmount ?? 0) > 0)
-      .slice(0, 10)
-      .map((row, index) => {
-        const payoutSummary = payoutsByEpoch.get(row.epoch_id);
+    const epochHistory = recentRealEpochIds.map((epochId, index) => {
+        const row = rowsByEpoch.get(epochId);
+        const payoutSummary = payoutsByEpoch.get(epochId);
         return {
-          epoch: displayEpochById.get(row.epoch_id) ?? allEpochs - index,
+          epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
           rewardAmount: payoutSummary?.rewardAmount ?? 0,
           recipients: payoutSummary?.recipients ?? 0,
-          timestamp: payoutSummary?.latestTime ?? row.completed_at ?? row.started_at ?? row.epoch_id,
-          status: row.status ?? "unknown"
+          timestamp: payoutSummary?.latestTime ?? row?.completed_at ?? row?.started_at ?? epochId,
+          status: row?.status === "completed" ? "completed" : "settled"
         };
       });
 
-    const roundHistory = rows.slice(0, 10).map((row, index) => {
-      const claim = claimsByEpoch.get(row.epoch_id);
-      const buy = buysByEpoch.get(row.epoch_id);
-      const payoutSummary = payoutsByEpoch.get(row.epoch_id);
+    const roundHistory = recentRealEpochIds.map((epochId, index) => {
+      const row = rowsByEpoch.get(epochId);
+      const claim = claimsByEpoch.get(epochId);
+      const buy = buysByEpoch.get(epochId);
+      const payoutSummary = payoutsByEpoch.get(epochId);
       const goldenPayout = payoutSummary?.golden;
       return {
-        epoch: displayEpochById.get(row.epoch_id) ?? rows.length - index,
-        status: row.status ?? "unknown",
-        startedAt: row.started_at ?? row.epoch_id,
-        duration: durationLabel(row.started_at, row.completed_at),
+        epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
+        status: row?.status === "completed" ? "completed" : "settled",
+        startedAt: row?.started_at ?? epochId,
+        duration: durationLabel(row?.started_at ?? null, row?.completed_at ?? payoutSummary?.latestTime ?? null),
         claimedSol: toNumber(claim?.amount_claimed),
-        rewardBought: toNumber(row.reward_bought),
+        rewardBought: toNumber(row?.reward_bought),
         normalRewardsSent: payoutSummary?.normalRewardAmount ?? 0,
         distributedPump: payoutSummary?.rewardAmount ?? 0,
         goldenWinnerWallet: goldenPayout?.wallet ?? null,
         goldenBaseReward: toNumber(goldenPayout?.normal_reward_amount),
         goldenBonusReward: toNumber(goldenPayout?.golden_bonus_reward),
         goldenTotalReward: toNumber(goldenPayout?.reward_amount),
-        goldenMultiplier: goldenPayout?.golden_multiplier ?? row.golden_multiplier ?? 10,
+        goldenMultiplier: goldenPayout?.golden_multiplier ?? row?.golden_multiplier ?? 10,
         goldenCapped: goldenPayout?.golden_capped ?? false,
         goldenTxSig: goldenPayout?.tx_sig ?? null,
         txSig: payoutSummary?.latestTxSig ?? claim?.tx_sig ?? buy?.tx_sig ?? null
@@ -490,13 +491,13 @@ export async function GET() {
       (sum, summary) => sum + summary.rewardAmount,
       0
     );
-    const storedEligibleHolders = toNumber(latest?.eligible_count);
+    const storedEligibleHolders = toNumber(latestRealRow?.eligible_count);
     const latestEligibleHolders =
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
 
     return NextResponse.json({
-      currentEpoch: allEpochs,
-      totalEpochs: allEpochs,
+      currentEpoch: realEpochCount,
+      totalEpochs: realEpochCount,
       lastRewardAirdropped: epochHistory[0]?.rewardAmount ?? 0,
       totalRewardAirdropped,
       latestEligibleHolders,
