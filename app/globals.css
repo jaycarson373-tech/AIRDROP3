@@ -997,11 +997,6 @@ td a,
   min-height: 120px;
 }
 
-.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .section,
 .metric-card,
 .history-card,
@@ -1012,9 +1007,23 @@ td a,
 .warning-card,
 .lookup-card,
 .faq-item {
-  opacity: 0;
-  transform: translateY(12px);
+  opacity: 1;
+  transform: translateY(0);
   transition: opacity 520ms ease, transform 520ms ease, border-color 160ms ease;
+}
+
+.section.is-visible,
+.metric-card.is-visible,
+.history-card.is-visible,
+.card.is-visible,
+.stat.is-visible,
+.flow-step.is-visible,
+.conviction-card.is-visible,
+.warning-card.is-visible,
+.lookup-card.is-visible,
+.faq-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .metric-card:hover,
