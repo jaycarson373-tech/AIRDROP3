@@ -31,6 +31,11 @@ type BuyRow = {
   tx_sig: string | null;
 };
 
+type SupabaseConfig = {
+  url: string;
+  key: string;
+};
+
 type PayoutRow = {
   epoch_id: string;
   wallet: string;
@@ -77,6 +82,61 @@ function supabaseConfig() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return null;
   return { url: url.replace(/\/$/, ""), key };
+}
+
+function supabaseHeaders(key: string, extra?: HeadersInit) {
+  return {
+    apikey: key,
+    Authorization: `Bearer ${key}`,
+    ...extra
+  };
+}
+
+async function getSupabaseJson<T>(config: SupabaseConfig, path: string, extraHeaders?: HeadersInit) {
+  const response = await fetch(`${config.url}/rest/v1/${path}`, {
+    headers: supabaseHeaders(config.key, extraHeaders),
+    cache: "no-store"
+  });
+  if (!response.ok) throw new Error(`Supabase ${path} error ${response.status}`);
+  return (await response.json()) as T;
+}
+
+function countFromContentRange(contentRange: string | null) {
+  const total = contentRange?.split("/").pop();
+  const count = Number(total);
+  return Number.isFinite(count) ? count : null;
+}
+
+async function getSupabaseCount(config: SupabaseConfig, path: string) {
+  const response = await fetch(`${config.url}/rest/v1/${path}`, {
+    headers: supabaseHeaders(config.key, {
+      Prefer: "count=exact",
+      Range: "0-0"
+    }),
+    cache: "no-store"
+  });
+  if (!response.ok) throw new Error(`Supabase count ${path} error ${response.status}`);
+  return countFromContentRange(response.headers.get("content-range"));
+}
+
+async function getSettledPayouts(config: SupabaseConfig) {
+  const pageSize = 1000;
+  const rows: PayoutRow[] = [];
+
+  for (let offset = 0; ; offset += pageSize) {
+    const page = await getSupabaseJson<PayoutRow[]>(
+      config,
+      "payouts?select=epoch_id,wallet,reward_amount,normal_reward_amount,golden_bonus_reward,is_golden,golden_multiplier,golden_capped,status,tx_sig,updated_at,created_at&status=eq.settled&order=updated_at.desc",
+      {
+        Range: `${offset}-${offset + pageSize - 1}`
+      }
+    );
+
+    rows.push(...page);
+    if (page.length < pageSize) break;
+  }
+
+  return rows;
 }
 
 function rpcUrl() {
@@ -293,28 +353,26 @@ export async function GET() {
   }
 
   try {
-    const response = await fetch(
-      `${config.url}/rest/v1/epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,golden_winner_wallet,golden_base_reward,golden_bonus_reward,golden_multiplier,golden_capped,golden_tx_sig,started_at,completed_at&order=started_at.desc&limit=25`,
-      {
-        headers: {
-          apikey: config.key,
-          Authorization: `Bearer ${config.key}`
-        },
-        cache: "no-store"
-      }
+    const [rows, totalEpochCount] = await Promise.all([
+      getSupabaseJson<EpochRow[]>(
+        config,
+        "epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,golden_winner_wallet,golden_base_reward,golden_bonus_reward,golden_multiplier,golden_capped,golden_tx_sig,started_at,completed_at&order=started_at.desc&limit=25"
+      ),
+      getSupabaseCount(config, "epochs?select=epoch_id")
+    ]);
+    const allEpochs = totalEpochCount ?? rows.length;
+    const firstRecentEpochNumber = Math.max(1, allEpochs - rows.length + 1);
+    const displayEpochById = new Map(
+      [...rows]
+        .sort((a, b) => rowTime(a) - rowTime(b))
+        .map((row, index) => [row.epoch_id, firstRecentEpochNumber + index])
     );
-
-    if (!response.ok) throw new Error(`Supabase epochs error ${response.status}`);
-    const rows = (await response.json()) as EpochRow[];
     const epochIds = rows.map((row) => row.epoch_id);
     const claims = epochIds.length
       ? await fetch(
           `${config.url}/rest/v1/claims?select=epoch_id,amount_claimed,tx_sig&epoch_id=in.(${epochIds.map(encodeURIComponent).join(",")})`,
           {
-            headers: {
-              apikey: config.key,
-              Authorization: `Bearer ${config.key}`
-            },
+            headers: supabaseHeaders(config.key),
             cache: "no-store"
           }
         )
@@ -323,26 +381,13 @@ export async function GET() {
     const claimsByEpoch = new Map(claimRows.map((claim) => [claim.epoch_id, claim]));
     const buys = epochIds.length
       ? await fetch(`${config.url}/rest/v1/buys?select=epoch_id,tx_sig&epoch_id=in.(${epochIds.map(encodeURIComponent).join(",")})`, {
-          headers: {
-            apikey: config.key,
-            Authorization: `Bearer ${config.key}`
-          },
+          headers: supabaseHeaders(config.key),
           cache: "no-store"
         })
       : null;
     const buyRows = buys?.ok ? ((await buys.json()) as BuyRow[]) : [];
     const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
-    const settledPayouts = await fetch(
-      `${config.url}/rest/v1/payouts?select=epoch_id,wallet,reward_amount,normal_reward_amount,golden_bonus_reward,is_golden,golden_multiplier,golden_capped,status,tx_sig,updated_at,created_at&status=eq.settled&order=updated_at.desc&limit=1000`,
-      {
-        headers: {
-          apikey: config.key,
-          Authorization: `Bearer ${config.key}`
-        },
-        cache: "no-store"
-      }
-    );
-    const payoutRows = settledPayouts.ok ? ((await settledPayouts.json()) as PayoutRow[]) : [];
+    const payoutRows = await getSettledPayouts(config);
     const payoutsByEpoch = new Map<string, EpochPayoutSummary>();
 
     for (const payout of payoutRows) {
@@ -376,16 +421,6 @@ export async function GET() {
 
     const completed = rows.filter((row) => row.status === "completed");
     const latest = rows[0];
-    const displayEpochById = new Map(
-      [...rows]
-        .sort((a, b) => rowTime(a) - rowTime(b))
-        .map((row, index) => [row.epoch_id, index + 1])
-    );
-    const completedDisplayEpochById = new Map(
-      [...completed]
-        .sort((a, b) => rowTime(a) - rowTime(b))
-        .map((row, index) => [row.epoch_id, index + 1])
-    );
 
     const epochHistory = completed
       .filter((row) => (payoutsByEpoch.get(row.epoch_id)?.rewardAmount ?? 0) > 0)
@@ -393,7 +428,7 @@ export async function GET() {
       .map((row, index) => {
         const payoutSummary = payoutsByEpoch.get(row.epoch_id);
         return {
-          epoch: completedDisplayEpochById.get(row.epoch_id) ?? completed.length - index,
+          epoch: displayEpochById.get(row.epoch_id) ?? allEpochs - index,
           rewardAmount: payoutSummary?.rewardAmount ?? 0,
           recipients: payoutSummary?.recipients ?? 0,
           timestamp: payoutSummary?.latestTime ?? row.completed_at ?? row.started_at ?? row.epoch_id,
@@ -460,8 +495,8 @@ export async function GET() {
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
 
     return NextResponse.json({
-      currentEpoch: completed.length,
-      totalEpochs: completed.length,
+      currentEpoch: allEpochs,
+      totalEpochs: allEpochs,
       lastRewardAirdropped: epochHistory[0]?.rewardAmount ?? 0,
       totalRewardAirdropped,
       latestEligibleHolders,
