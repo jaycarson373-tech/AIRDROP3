@@ -76,12 +76,12 @@ h1 {
   display: grid;
   gap: 8px;
   color: var(--ivory);
-  font-size: clamp(4.4rem, 10vw, 9.8rem);
+  font-size: clamp(5rem, 11.6vw, 11.4rem);
   font-weight: 700;
   letter-spacing: 0.12em;
   line-height: 0.86;
   text-transform: uppercase;
-  text-shadow: 0 22px 70px rgba(0, 0, 0, 0.58);
+  text-shadow: 0 28px 90px rgba(0, 0, 0, 0.72), 0 0 42px rgba(202, 164, 106, 0.12);
 }
 
 h1 span:first-child {
@@ -122,6 +122,22 @@ h3 {
     linear-gradient(90deg, rgba(202, 164, 106, 0.025) 1px, transparent 1px);
   background-size: 80px 80px;
   opacity: 0.42;
+}
+
+.page::after {
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  pointer-events: none;
+  content: "";
+  background-image:
+    radial-gradient(circle, rgba(202, 164, 106, 0.22) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(111, 139, 82, 0.18) 0 1px, transparent 1.8px);
+  background-position: 0 0, 88px 130px;
+  background-size: 220px 220px, 310px 310px;
+  opacity: 0.16;
+  animation: particleDrift 32s linear infinite;
+  mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
 }
 
 .container {
@@ -197,8 +213,8 @@ h3 {
 }
 
 .brand-logo {
-  width: 52px;
-  height: 52px;
+  width: 58px;
+  height: 58px;
   flex: 0 0 auto;
   border: 1px solid rgba(202, 164, 106, 0.32);
   border-radius: 50%;
@@ -257,10 +273,11 @@ h3 {
   min-height: 48px;
   border: 1px solid rgba(202, 164, 106, 0.48);
   border-radius: 0;
-  background: var(--gold);
+  background: linear-gradient(180deg, #e2c383, var(--gold));
   color: #090806;
   padding: 0 20px;
   font-weight: 800;
+  box-shadow: 0 18px 50px rgba(202, 164, 106, 0.18);
   transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
 
@@ -276,6 +293,7 @@ h3 {
 .mini-button {
   background: transparent;
   color: var(--ivory);
+  box-shadow: none;
 }
 
 .mini-button {
@@ -296,8 +314,25 @@ h3 {
 .nietzschean-hero {
   display: grid;
   align-items: end;
-  padding: 148px 0 70px;
+  padding: 150px 0 76px;
   background: var(--black);
+}
+
+.nietzschean-hero::after {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  z-index: 1;
+  height: 26vh;
+  pointer-events: none;
+  content: "";
+  background:
+    repeating-linear-gradient(92deg, rgba(111, 139, 82, 0.18) 0 1px, transparent 1px 12px),
+    linear-gradient(180deg, transparent, rgba(2, 3, 2, 0.92));
+  opacity: 0.48;
+  transform: translate3d(calc(var(--scroll-y) * -0.012), calc(var(--scroll-y) * 0.018), 0);
+  will-change: transform;
 }
 
 .hero-art,
@@ -311,15 +346,15 @@ h3 {
 
 .hero-mountains {
   background-image: url("/brand/nietzschean-hero.webp");
-  background-position: center center;
+  background-position: center 46%;
   background-repeat: no-repeat;
   background-size: cover;
-  transform: translate3d(0, calc(var(--scroll-y) * 0.035), 0) scale(1.04);
+  transform: translate3d(0, calc(var(--scroll-y) * 0.026), 0) scale(1.08);
   will-change: transform;
 }
 
 .hero-clouds {
-  opacity: 0.34;
+  opacity: 0.42;
   background:
     radial-gradient(ellipse at 20% 16%, rgba(237, 229, 212, 0.18), transparent 36%),
     radial-gradient(ellipse at 66% 20%, rgba(202, 164, 106, 0.12), transparent 42%);
@@ -327,7 +362,7 @@ h3 {
 }
 
 .hero-fog {
-  opacity: 0.3;
+  opacity: 0.38;
   background:
     radial-gradient(ellipse at 22% 76%, rgba(237, 229, 212, 0.14), transparent 34%),
     radial-gradient(ellipse at 72% 80%, rgba(237, 229, 212, 0.1), transparent 30%);
@@ -336,8 +371,9 @@ h3 {
 
 .hero-shade {
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.28) 42%, rgba(0, 0, 0, 0.18) 68%, rgba(0, 0, 0, 0.72)),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.34), transparent 36%, rgba(0, 0, 0, 0.82));
+    radial-gradient(ellipse at 62% 20%, rgba(226, 195, 131, 0.22), transparent 32%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.38) 42%, rgba(0, 0, 0, 0.08) 69%, rgba(0, 0, 0, 0.55)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 32%, rgba(0, 0, 0, 0.9));
 }
 
 .hero-inner {
@@ -418,7 +454,9 @@ h3 {
   position: relative;
   padding: 110px 0;
   background:
-    linear-gradient(180deg, rgba(3, 3, 3, 0.84), rgba(10, 9, 8, 0.96)),
+    radial-gradient(ellipse at 12% 0%, rgba(111, 139, 82, 0.07), transparent 34%),
+    radial-gradient(ellipse at 90% 12%, rgba(202, 164, 106, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(3, 3, 3, 0.88), rgba(10, 9, 8, 0.96)),
     var(--black);
 }
 
@@ -458,6 +496,16 @@ h3 {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.feeding-section {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(202, 164, 106, 0.12), transparent 42%),
+    linear-gradient(180deg, rgba(7, 8, 6, 0.96), rgba(3, 3, 3, 0.96));
+}
+
+.feeding-grid {
+  align-items: stretch;
+}
+
 .metric-card,
 .history-card,
 .conviction-card,
@@ -477,7 +525,10 @@ h3 {
   display: grid;
   min-height: 154px;
   align-content: space-between;
+  border-color: rgba(237, 229, 212, 0.12);
+  background: rgba(18, 17, 15, 0.68);
   padding: 22px;
+  backdrop-filter: blur(18px);
 }
 
 .metric-card span,
@@ -651,8 +702,8 @@ h3 {
 .black-bull-section {
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 16% 30%, rgba(127, 47, 36, 0.16), transparent 34%),
-    radial-gradient(ellipse at 82% 52%, rgba(64, 82, 51, 0.18), transparent 38%),
+    radial-gradient(ellipse at 18% 36%, rgba(127, 47, 36, 0.24), transparent 34%),
+    radial-gradient(ellipse at 84% 48%, rgba(64, 82, 51, 0.2), transparent 38%),
     #020202;
 }
 
@@ -670,7 +721,7 @@ h3 {
 
 .black-bull-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.62fr);
+  grid-template-columns: minmax(360px, 0.7fr) minmax(0, 1fr);
   gap: 54px;
   align-items: center;
 }
@@ -726,7 +777,7 @@ h3 {
   overflow: hidden;
   border: 1px solid rgba(237, 229, 212, 0.1);
   background: #010101;
-  aspect-ratio: 1;
+  aspect-ratio: 0.9;
 }
 
 .black-bull-portrait::after {
@@ -812,10 +863,111 @@ h3 {
   font-size: 0.9rem;
 }
 
+.black-bull-timeline {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 44px;
+  padding-top: 32px;
+}
+
+.black-bull-timeline::before {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, rgba(127, 47, 36, 0.32), rgba(202, 164, 106, 0.8), rgba(111, 139, 82, 0.36));
+  box-shadow: 0 0 26px rgba(202, 164, 106, 0.2);
+}
+
+.black-bull-timeline span {
+  position: relative;
+  border: 1px solid rgba(237, 229, 212, 0.08);
+  background: rgba(10, 9, 8, 0.82);
+  color: var(--ivory);
+  padding: 16px;
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.88rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.black-bull-timeline span::before {
+  position: absolute;
+  top: -30px;
+  left: 18px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  content: "";
+  background: var(--red-glow);
+  box-shadow: 0 0 18px rgba(202, 164, 106, 0.28);
+}
+
 .conviction-scale {
   display: grid;
   margin-top: 32px;
   border-top: 1px solid var(--border);
+}
+
+.streak-timeline {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 34px;
+  padding-top: 34px;
+}
+
+.streak-timeline::before {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, rgba(202, 164, 106, 0.1), rgba(202, 164, 106, 0.86), rgba(111, 139, 82, 0.46));
+  box-shadow: 0 0 22px rgba(202, 164, 106, 0.18);
+}
+
+.streak-node {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(202, 164, 106, 0.16);
+  background: rgba(15, 14, 12, 0.76);
+  padding: 16px 12px;
+  min-height: 108px;
+}
+
+.streak-node::before {
+  position: absolute;
+  top: -30px;
+  left: 14px;
+  width: 11px;
+  height: 11px;
+  border: 1px solid rgba(202, 164, 106, 0.78);
+  border-radius: 50%;
+  content: "";
+  background: var(--green-soft);
+  box-shadow: 0 0 20px rgba(202, 164, 106, 0.28);
+}
+
+.streak-node span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.streak-node strong {
+  color: var(--gold);
+  font-family: Cinzel, Georgia, serif;
+  font-size: 1.15rem;
 }
 
 .scale-row {
@@ -849,6 +1001,26 @@ h3 {
   font-size: clamp(2rem, 4vw, 3.8rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.streak-readout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.streak-readout > div {
+  border: 1px solid rgba(237, 229, 212, 0.08);
+  background: rgba(237, 229, 212, 0.035);
+  padding: 16px;
+}
+
+.streak-readout strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ivory);
+  line-height: 1.25;
 }
 
 .conviction-card > strong {
@@ -922,6 +1094,45 @@ h3 {
 
 .warning-card p {
   margin-top: 18px;
+}
+
+.eligibility-flow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.eligibility-card {
+  position: relative;
+  display: grid;
+  min-height: 168px;
+  align-content: space-between;
+  border: 1px solid rgba(202, 164, 106, 0.22);
+  background: rgba(16, 15, 13, 0.82);
+  padding: 22px;
+  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.03), 0 28px 70px rgba(0, 0, 0, 0.34);
+}
+
+.eligibility-card:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  right: -13px;
+  color: var(--gold);
+  content: "↓";
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.eligibility-card span {
+  color: var(--green);
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.95rem;
+}
+
+.eligibility-card strong {
+  color: var(--ivory);
+  font-family: Cinzel, Georgia, serif;
+  font-size: 1.35rem;
+  line-height: 1.1;
 }
 
 .eligibility-rules {
@@ -1042,15 +1253,78 @@ td a,
   padding: 24px;
 }
 
-.philosophy-grid h2 {
-  max-width: 640px;
+.philosophy-section {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(202, 164, 106, 0.12), transparent 44%),
+    linear-gradient(180deg, rgba(4, 4, 3, 0.96), rgba(8, 7, 6, 0.96));
 }
 
-.philosophy-grid > div {
+.philosophy-cards {
   display: grid;
-  gap: 18px;
-  border-left: 1px solid var(--border);
-  padding-left: 30px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.philosophy-card {
+  display: grid;
+  min-height: 220px;
+  align-items: end;
+  border: 1px solid rgba(202, 164, 106, 0.18);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(111, 139, 82, 0.12), transparent 48%),
+    rgba(14, 13, 11, 0.88);
+  padding: 24px;
+  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.03), 0 30px 74px rgba(0, 0, 0, 0.34);
+}
+
+.philosophy-card span {
+  color: var(--ivory);
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(1.35rem, 2.2vw, 2.2rem);
+  line-height: 1.05;
+}
+
+.final-bull-section {
+  min-height: 82vh;
+  display: grid;
+  align-items: end;
+  overflow: hidden;
+  background: #020202;
+}
+
+.final-bull-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22) 56%, rgba(0, 0, 0, 0.82)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.86)),
+    url("/brand/ansem-black-bull.jpg") 72% center / min(64vw, 760px) auto no-repeat;
+  filter: saturate(0.88) contrast(1.1);
+  transform: translate3d(0, calc(var(--scroll-y) * -0.018), 0);
+}
+
+.final-bull-copy {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 40px;
+}
+
+.final-bull-copy h2 {
+  max-width: 760px;
+}
+
+.final-bull-copy p,
+.final-bull-copy strong {
+  color: var(--ivory);
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(1.55rem, 3.4vw, 3.4rem);
+  line-height: 1.04;
+}
+
+.final-bull-copy strong {
+  color: var(--gold);
 }
 
 .faq-grid {
@@ -1312,6 +1586,8 @@ td a,
 .flow-step,
 .path-card,
 .black-bull-card,
+.eligibility-card,
+.philosophy-card,
 .conviction-card,
 .warning-card,
 .lookup-card,
@@ -1329,6 +1605,8 @@ td a,
 .flow-step.is-visible,
 .path-card.is-visible,
 .black-bull-card.is-visible,
+.eligibility-card.is-visible,
+.philosophy-card.is-visible,
 .conviction-card.is-visible,
 .warning-card.is-visible,
 .lookup-card.is-visible,
@@ -1344,6 +1622,8 @@ td a,
 .flow-step:hover,
 .path-card:hover,
 .black-bull-card:hover,
+.eligibility-card:hover,
+.philosophy-card:hover,
 .conviction-card:hover,
 .warning-card:hover,
 .lookup-card:hover,
@@ -1378,6 +1658,15 @@ td a,
   }
 }
 
+@keyframes particleDrift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-80px, 120px, 0);
+  }
+}
+
 @media (max-width: 1080px) {
   .nav-links {
     display: none;
@@ -1395,6 +1684,9 @@ td a,
   }
 
   .dashboard-grid,
+  .eligibility-flow,
+  .black-bull-timeline,
+  .philosophy-cards,
   .stats,
   .dashboard-stats,
   .faq-grid {
@@ -1407,6 +1699,10 @@ td a,
 
   .bull-path {
     grid-auto-columns: minmax(230px, 42vw);
+  }
+
+  .streak-timeline {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .hero-countdown {
@@ -1488,6 +1784,9 @@ td a,
   }
 
   .dashboard-grid,
+  .eligibility-flow,
+  .black-bull-timeline,
+  .philosophy-cards,
   .stats,
   .dashboard-stats,
   .faq-grid,
@@ -1511,11 +1810,44 @@ td a,
     min-width: 0;
   }
 
-  .philosophy-grid > div {
-    border-left: 0;
-    border-top: 1px solid var(--border);
-    padding-top: 24px;
-    padding-left: 0;
+  .streak-timeline {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .streak-readout {
+    grid-template-columns: 1fr;
+  }
+
+  .streak-timeline::before {
+    top: 0;
+    bottom: 0;
+    left: 8px;
+    width: 1px;
+    height: auto;
+  }
+
+  .streak-node {
+    margin-left: 24px;
+  }
+
+  .streak-node::before {
+    top: 20px;
+    left: -30px;
+  }
+
+  .eligibility-card:not(:last-child)::after {
+    right: auto;
+    bottom: -18px;
+    left: 24px;
+    top: auto;
+    transform: none;
+  }
+
+  .final-bull-art {
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.9)),
+      url("/brand/ansem-black-bull.jpg") center 16% / min(108vw, 620px) auto no-repeat;
   }
 
   .activity-row,

@@ -120,14 +120,19 @@ export default function Page() {
         <HolderLookup />
         <AirdropHistory />
 
-        <section className="section philosophy-section">
-          <div className="container philosophy-grid">
-            <h2>The herd follows.</h2>
-            <div>
-              <p>The Bull endures.</p>
-              <p>Weak hands seek certainty.</p>
-              <p>Strong hands embrace conviction.</p>
-              <p>Every distribution rewards patience.</p>
+        <section className="section philosophy-section" id="philosophy">
+          <div className="container">
+            <div className="section-kicker">The philosophy</div>
+            <div className="section-head split-head">
+              <h2>The Herd Reacts. The Bull Endures.</h2>
+              <p>Not more explanation. More posture.</p>
+            </div>
+            <div className="philosophy-cards">
+              {["Accumulate.", "Hold.", "Build Your Epoch Streak.", "Become Harder To Shake Out."].map((item) => (
+                <article className="philosophy-card" key={item}>
+                  <span>{item}</span>
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -137,12 +142,22 @@ export default function Page() {
             <div className="section-kicker">FAQ</div>
             <h2>Terms of conviction.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 BULL and remain eligible through each five-minute epoch." />
+              <FaqItem title="How do I qualify?" body="Hold at least 500,000 BULL and remain eligible through each five-minute epoch." />
               <FaqItem title="How often are distributions?" body="The worker runs on five-minute epochs and distributes ANSEM automatically when live backend conditions are met." />
-              <FaqItem title="What resets my streak?" body="Selling any BULL or falling below 1,000,000 BULL resets your consecutive eligible epoch streak to 0." />
+              <FaqItem title="What resets my streak?" body="Selling any BULL or falling below 500,000 BULL resets your consecutive eligible epoch streak to 0." />
               <FaqItem title="How do conviction multipliers work?" body="Your multiplier increases as your consecutive eligible epoch streak grows. Reach 2,016 epochs, or one week, to unlock 10x." />
               <FaqItem title="How is ANSEM purchased?" body="Creator fees are routed into ANSEM purchases by the existing backend flow, then distributed to eligible holders." />
             </div>
+          </div>
+        </section>
+
+        <section className="section final-bull-section">
+          <div className="final-bull-art" aria-hidden="true" />
+          <div className="container final-bull-copy">
+            <h2>The herd chases.</h2>
+            <p>The Bull accumulates.</p>
+            <p>Every epoch.</p>
+            <strong>Forward.</strong>
           </div>
         </section>
       </main>
@@ -182,22 +197,6 @@ function BlackBullSection() {
     <section className="section black-bull-section" id="black-bull">
       <div className="black-bull-glow" aria-hidden="true" />
       <div className="container black-bull-grid">
-        <div className="black-bull-copy">
-          <div className="section-kicker">The inspiration</div>
-          <h2>THE BLACK BULL</h2>
-          <div className="lore-copy">
-            <p>Before the herd saw it, the Black Bull was already moving.</p>
-            <p>
-              From early crypto cycles to the current trenches, Ansem became one of the voices people watched when the
-              market needed direction.
-            </p>
-            <p>He called attention back to the trenches. He brought energy back to the timeline. He made the bull feel alive again.</p>
-            <p>The Nietzschean Bull is built around that same idea:</p>
-            <p>do not chase the herd. do not panic. do not sell the first shakeout.</p>
-            <p>Accumulate. Hold. Survive the epoch. Become harder to shake out.</p>
-          </div>
-        </div>
-
         <aside className="black-bull-card">
           <div className="black-bull-portrait">
             <img src="/brand/ansem-black-bull.jpg" alt="Ansem / The Black Bull" />
@@ -219,6 +218,27 @@ function BlackBullSection() {
             <p>Placeholder for embedded X post.</p>
           </div>
         </aside>
+
+        <div className="black-bull-copy">
+          <div className="section-kicker">The inspiration</div>
+          <h2>THE BLACK BULL</h2>
+          <div className="lore-copy">
+            <p>Before the herd saw it, the Black Bull was already moving.</p>
+            <p>
+              From early crypto cycles to the current trenches, Ansem became one of the voices people watched when the
+              market needed direction.
+            </p>
+            <p>He called attention back to the trenches. He brought energy back to the timeline. He made the bull feel alive again.</p>
+            <p>The Nietzschean Bull is built around that same idea:</p>
+            <p>do not chase the herd. do not panic. do not sell the first shakeout.</p>
+            <p>Accumulate. Hold. Survive the epoch. Become harder to shake out.</p>
+          </div>
+        </div>
+      </div>
+      <div className="container black-bull-timeline" aria-label="Black Bull lore timeline">
+        {["Trenches revived", "Timeline energy", "Airdrop meta", "Bull season"].map((item) => (
+          <span key={item}>{item}</span>
+        ))}
       </div>
     </section>
   );
@@ -272,12 +292,12 @@ function PathOfTheBull() {
     <section className="section path-section" id="path">
       <div className="path-parallax" aria-hidden="true" />
       <div className="container">
-        <div className="section-kicker">The Path of the Bull</div>
+        <div className="section-kicker">The Bull's Journey</div>
         <div className="section-head split-head">
           <h2>Markets collapse. The Bull advances.</h2>
-          <p>Part history, part philosophy: a record of conviction moving through every cycle.</p>
+          <p>Another cycle. Another panic. The Bull continues forward.</p>
         </div>
-        <div className="bull-path" aria-label="The Path of the Bull timeline">
+        <div className="bull-path" aria-label="The Bull's Journey timeline">
           {bullPath.map((milestone) => (
             <article className="path-card" key={milestone.year}>
               <span>{milestone.year}</span>

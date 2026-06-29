@@ -160,27 +160,19 @@ export function LiveProtocolDashboard() {
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
 
   return (
-    <section className="section live-section" id="dashboard">
+    <section className="section live-section feeding-section" id="dashboard">
       <div className="container">
-        <div className="section-kicker">Live protocol</div>
+        <div className="section-kicker">Live feeding</div>
         <div className="section-head split-head">
-          <h2>Conviction Ledger</h2>
-          <p>
-            Live values come from the existing reward backend. Conviction-specific fields are labeled until the
-            holder-streak backend is connected.
-          </p>
+          <h2>The protocol eats every epoch.</h2>
+          <p>Live values come from the existing reward backend. No fake production data.</p>
         </div>
-        <div className="lux-grid dashboard-grid">
-          <MetricCard label="Total ANSEM Purchased" value={formatAmount(sumRounds(rounds, "rewardBought"), "ANSEM")} />
-          <MetricCard label="Total ANSEM Distributed" value={stats ? formatAmount(stats.totalRewardAirdropped, "ANSEM") : "Loading"} strong />
+        <div className="lux-grid dashboard-grid feeding-grid">
           <MetricCard label="Current Epoch" value={stats ? formatCount(stats.currentEpoch) : "Loading"} />
-          <MetricCard label="Next Distribution" value={countdown} strong />
-          <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
-          <MetricCard label="Average Conviction" value="Awaiting streak backend" muted />
-          <MetricCard label="Highest Conviction" value="Awaiting streak backend" muted />
-          <MetricCard label="Longest Holder" value="Awaiting streak backend" muted />
-          <MetricCard label="Total Creator Fees" value="Awaiting fee aggregate" muted />
+          <MetricCard label="Next Feeding" value={countdown} strong />
           <MetricCard label="Current ANSEM Bought" value={latestRound ? formatAmount(latestRound.rewardBought, "ANSEM") : "Awaiting next buy"} />
+          <MetricCard label="Recent Feedings" value={stats ? formatCount(stats.totalEpochs) : "Loading"} />
+          <MetricCard label="Total ANSEM Distributed" value={stats ? formatAmount(stats.totalRewardAirdropped, "ANSEM") : "Loading"} strong />
         </div>
       </div>
     </section>
@@ -209,14 +201,14 @@ function MetricCard({
   );
 }
 
-const convictionSteps = [
+const convictionMilestones = [
   ["Epoch 1", "1.00x"],
-  ["288 Epochs / 1 Day", "1.25x"],
-  ["576 Epochs / 2 Days", "1.75x"],
-  ["1,008 Epochs / 3.5 Days", "2.50x"],
-  ["1,440 Epochs / 5 Days", "4.00x"],
-  ["1,728 Epochs / 6 Days", "7.00x"],
-  ["2,016 Epochs / 1 Week", "10.00x MAX"]
+  ["288", "1.25x"],
+  ["576", "1.75x"],
+  ["1,008", "2.50x"],
+  ["1,440", "4.00x"],
+  ["1,728", "7.00x"],
+  ["2,016", "10.00x"]
 ];
 
 const ranks = ["Initiate", "Disciple", "Stoic", "Sage", "Ascended", "Nietzschean"];
@@ -231,23 +223,36 @@ export function ConvictionSection() {
           <p className="lead">
             The longer an eligible holder continuously holds, the larger share of every ANSEM distribution they receive.
           </p>
-          <div className="conviction-scale">
-            {convictionSteps.map(([age, multiplier]) => (
-              <div className="scale-row" key={age}>
-                <span>{age}</span>
+          <div className="streak-timeline" aria-label="Epoch streak milestones">
+            {convictionMilestones.map(([epoch, multiplier]) => (
+              <div className="streak-node" key={epoch}>
+                <span>{epoch}</span>
                 <strong>{multiplier}</strong>
               </div>
             ))}
           </div>
         </div>
         <div className="conviction-card">
-          <span>10x Conviction Bonus</span>
-          <h3>Current Conviction</h3>
+          <span>Epoch streak</span>
+          <h3>Current Epoch Streak</h3>
+          <div className="streak-readout">
+            <div>
+              <span>Current Epoch Streak</span>
+              <strong>Awaiting live streak backend</strong>
+            </div>
+            <div>
+              <span>Current Multiplier</span>
+              <strong>Awaiting live streak backend</strong>
+            </div>
+            <div>
+              <span>Next Milestone</span>
+              <strong>2,016 epochs</strong>
+            </div>
+          </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <strong>Awaiting live streak backend</strong>
-          <p>Maximum multiplier remains 10x. Existing bonus mechanics are preserved.</p>
+          <p>Selling resets everything. The Bull only remembers continuous conviction.</p>
           <div className="max-row">
             <span>Maximum</span>
             <b>10x</b>
@@ -271,16 +276,13 @@ export function PermanentEligibility() {
           <div className="section-kicker">Eligibility rules</div>
           <h2>Holding is everything.</h2>
         </div>
-        <div className="warning-card">
-          <span>Requirements</span>
-          <strong>Hold 1,000,000+ BULL</strong>
-          <ul className="eligibility-rules">
-            <li>Every 5 minutes is one epoch.</li>
-            <li>Your multiplier increases as your consecutive eligible epoch streak grows.</li>
-            <li>Selling any amount of BULL immediately resets your streak to 0.</li>
-            <li>Falling below 1,000,000 BULL also resets your streak.</li>
-            <li>Stay eligible for 2,016 consecutive epochs, or 1 week, to unlock the 10x Nietzschean Bull multiplier.</li>
-          </ul>
+        <div className="eligibility-flow">
+          {["Hold 500K+ $BULL", "Every 5 Minutes", "Epoch Streak Builds", "Sell = Reset"].map((item, index) => (
+            <article className="eligibility-card" key={item}>
+              <span>{index + 1}</span>
+              <strong>{item}</strong>
+            </article>
+          ))}
         </div>
       </div>
     </section>
