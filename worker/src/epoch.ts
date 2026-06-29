@@ -5,6 +5,7 @@ import {
   applyGoldenAirdrop,
   computeAllocations,
   computeGoldenRewardPool,
+  estimatePayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
@@ -32,15 +33,6 @@ export async function runEpoch(date = new Date()) {
     await startEpoch(epochId);
     await claimFees(epochId);
 
-    const buy = await buyReward(epochId);
-    await recordBuy(
-      epochId,
-      buy.baseSpentLamports.toString(),
-      buy.rewardReceivedRaw.toString(),
-      buy.rewardReceivedUi.toString(),
-      buy.txSig
-    );
-
     const eligibleHolders = await snapshotEligibleHolders();
     await persistSnapshot(
       epochId,
@@ -54,6 +46,28 @@ export async function runEpoch(date = new Date()) {
     console.log(`[${epochId}] snapshot eligible holders: ${eligibleHolders.length}`);
     const holders = selectRewardRecipients(epochId, eligibleHolders);
     console.log(`[${epochId}] selected reward recipients: ${holders.length}`);
+
+    if (!holders.length) {
+      await recordBuy(epochId, "0", "0", "0", null);
+      await completeEpoch(epochId, {
+        eligible_count: eligibleHolders.length,
+        reward_bought: "0",
+        reward_distributed: "0",
+        status: "skipped"
+      });
+      console.log(`[${epochId}] no eligible holders, skipped buy and airdrop`);
+      return;
+    }
+
+    const payoutReserveLamports = await estimatePayoutReserveLamports(holders.map((holder) => holder.wallet));
+    const buy = await buyReward(epochId, payoutReserveLamports);
+    await recordBuy(
+      epochId,
+      buy.baseSpentLamports.toString(),
+      buy.rewardReceivedRaw.toString(),
+      buy.rewardReceivedUi.toString(),
+      buy.txSig
+    );
 
     const rewardBalance = await treasuryRewardBalanceRaw();
     const availableRewardRaw =

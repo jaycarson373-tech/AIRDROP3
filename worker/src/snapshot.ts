@@ -51,6 +51,8 @@ function canonicalPoolPda(mint: PublicKey) {
 
 function excludedWallets(mintAuthority: PublicKey | null) {
   const excluded = new Set<string>();
+  addExcluded(excluded, config.sourceTokenMint);
+  addExcluded(excluded, config.rewardTokenMint);
   addExcluded(excluded, treasuryKeypair().publicKey);
   addExcluded(excluded, mintAuthority);
   addExcluded(excluded, bondingCurvePda(config.sourceTokenMint));

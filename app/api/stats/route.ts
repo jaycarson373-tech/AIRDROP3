@@ -176,11 +176,13 @@ function canonicalPoolPda(mint: PublicKey) {
 
 function excludedWallets(mint: PublicKey, mintAuthority: PublicKey | null) {
   const excluded = new Set<string>();
+  addExcluded(excluded, mint);
   addExcluded(excluded, mintAuthority);
   addExcluded(excluded, bondingCurvePda(mint));
   addExcluded(excluded, bondingCurveV2Pda(mint));
   addExcluded(excluded, canonicalPoolPda(mint));
   addExcludedString(excluded, process.env.TREASURY_WALLET_PUBLIC_KEY);
+  addExcludedString(excluded, process.env.REWARD_TOKEN_MINT ?? process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
 
   for (const wallet of (process.env.EXCLUDE_WALLETS ?? "").split(",")) {
     addExcludedString(excluded, wallet);

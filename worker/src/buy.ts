@@ -31,6 +31,10 @@ function rawToUi(raw: bigint, decimals: number) {
   return Number(raw) / 10 ** decimals;
 }
 
+function maxBigInt(a: bigint, b: bigint) {
+  return a > b ? a : b;
+}
+
 async function postBuyReserveLamports() {
   const minReserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
   if (!config.airdropEnabled) return minReserveLamports;
@@ -49,10 +53,12 @@ async function postBuyReserveLamports() {
   return payoutReserveLamports > minReserveLamports ? payoutReserveLamports : minReserveLamports;
 }
 
-export async function treasurySwapAmount() {
+export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
   const treasury = treasuryKeypair();
   const balance = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
-  const reserveLamports = await postBuyReserveLamports();
+  const defaultReserveLamports = await postBuyReserveLamports();
+  const reserveLamports =
+    explicitReserveLamports === undefined ? defaultReserveLamports : maxBigInt(explicitReserveLamports, defaultReserveLamports);
   const bpsAmount = (balance * BigInt(config.swapBalanceBps)) / 10_000n;
   const reserveAmount = balance > reserveLamports ? balance - reserveLamports : 0n;
   const amount = bpsAmount < reserveAmount ? bpsAmount : reserveAmount;
@@ -92,9 +98,9 @@ async function jupiterSwap(baseAmount: bigint, treasuryPublicKey: string) {
   return { quote, swap: (await swapResponse.json()) as { swapTransaction: string } };
 }
 
-export async function buyReward(epochId: string): Promise<BuyResult> {
+export async function buyReward(epochId: string, explicitReserveLamports?: bigint): Promise<BuyResult> {
   const treasury = treasuryKeypair();
-  const { amount, balance, reserveLamports } = await treasurySwapAmount();
+  const { amount, balance, reserveLamports } = await treasurySwapAmount(explicitReserveLamports);
   const decimals = await rewardDecimals();
 
   if (amount <= 0n) {
