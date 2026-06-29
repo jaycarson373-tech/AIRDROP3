@@ -11,6 +11,8 @@
   --bronze-soft: #5f4728;
   --gold: #caa46a;
   --gold-soft: #a6814e;
+  --green: #6f8b52;
+  --green-soft: #405233;
   --ivory: #ede5d4;
   --muted: #aaa193;
   --faint: rgba(237, 229, 212, 0.64);
@@ -533,6 +535,118 @@ h3 {
   line-height: 1.25;
 }
 
+.path-section {
+  overflow: hidden;
+  background: #030303;
+}
+
+.path-section::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background:
+    radial-gradient(ellipse at 8% 42%, rgba(111, 139, 82, 0.12), transparent 34%),
+    radial-gradient(ellipse at 78% 24%, rgba(202, 164, 106, 0.13), transparent 36%),
+    linear-gradient(180deg, rgba(3, 3, 3, 0.86), #030303);
+}
+
+.path-parallax {
+  position: absolute;
+  inset: -20% 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, transparent 0 34%, rgba(202, 164, 106, 0.08) 34% 35%, transparent 35% 100%),
+    linear-gradient(65deg, transparent 0 58%, rgba(111, 139, 82, 0.08) 58% 59%, transparent 59% 100%);
+  opacity: 0.7;
+  transform: translate3d(0, calc(var(--scroll-y) * -0.035), 0);
+  will-change: transform;
+}
+
+.bull-path {
+  position: relative;
+  display: grid;
+  grid-auto-columns: minmax(240px, 290px);
+  grid-auto-flow: column;
+  gap: 18px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 56px 4px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(202, 164, 106, 0.34) transparent;
+}
+
+.bull-path::before {
+  position: absolute;
+  top: 26px;
+  left: 4px;
+  width: max(100%, 2590px);
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, rgba(202, 164, 106, 0.12), rgba(202, 164, 106, 0.84), rgba(111, 139, 82, 0.42));
+  box-shadow: 0 0 28px rgba(202, 164, 106, 0.2);
+}
+
+.path-card {
+  position: relative;
+  display: grid;
+  min-height: 220px;
+  align-content: start;
+  gap: 14px;
+  border: 1px solid rgba(202, 164, 106, 0.18);
+  background: rgba(12, 11, 10, 0.96);
+  padding: 24px;
+  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.03), 0 26px 70px rgba(0, 0, 0, 0.34);
+}
+
+.path-card::before {
+  position: absolute;
+  top: -35px;
+  left: 24px;
+  width: 13px;
+  height: 13px;
+  border: 1px solid rgba(202, 164, 106, 0.82);
+  border-radius: 50%;
+  content: "";
+  background: var(--green-soft);
+  box-shadow: 0 0 0 6px rgba(111, 139, 82, 0.08), 0 0 26px rgba(202, 164, 106, 0.28);
+}
+
+.path-card span {
+  color: var(--gold);
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.path-card h3 {
+  font-family: Cinzel, Georgia, serif;
+  font-size: 1.18rem;
+  letter-spacing: 0.04em;
+}
+
+.path-card p {
+  color: var(--faint);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.path-card-final {
+  min-width: 340px;
+  border-color: rgba(202, 164, 106, 0.44);
+  background:
+    linear-gradient(135deg, rgba(202, 164, 106, 0.12), rgba(111, 139, 82, 0.08)),
+    rgba(14, 12, 10, 0.98);
+}
+
+.path-card-final h3 {
+  color: var(--gold);
+  font-size: 1.6rem;
+}
+
 .conviction-scale {
   display: grid;
   margin-top: 32px;
@@ -643,6 +757,34 @@ h3 {
 
 .warning-card p {
   margin-top: 18px;
+}
+
+.eligibility-rules {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+  padding: 0;
+  list-style: none;
+}
+
+.eligibility-rules li {
+  position: relative;
+  border-top: 1px solid rgba(237, 229, 212, 0.08);
+  color: var(--faint);
+  padding: 14px 0 0 22px;
+  line-height: 1.55;
+}
+
+.eligibility-rules li::before {
+  position: absolute;
+  top: 21px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  content: "";
+  background: var(--green);
+  box-shadow: 0 0 16px rgba(111, 139, 82, 0.38);
 }
 
 .lookup-card {
@@ -1003,6 +1145,7 @@ td a,
 .card,
 .stat,
 .flow-step,
+.path-card,
 .conviction-card,
 .warning-card,
 .lookup-card,
@@ -1018,6 +1161,7 @@ td a,
 .card.is-visible,
 .stat.is-visible,
 .flow-step.is-visible,
+.path-card.is-visible,
 .conviction-card.is-visible,
 .warning-card.is-visible,
 .lookup-card.is-visible,
@@ -1031,6 +1175,7 @@ td a,
 .card:hover,
 .stat:hover,
 .flow-step:hover,
+.path-card:hover,
 .conviction-card:hover,
 .warning-card:hover,
 .lookup-card:hover,
@@ -1089,6 +1234,10 @@ td a,
 
   .flow {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bull-path {
+    grid-auto-columns: minmax(230px, 42vw);
   }
 
   .hero-countdown {
@@ -1181,6 +1330,15 @@ td a,
   .flow-step,
   .metric-card {
     min-height: 126px;
+  }
+
+  .bull-path {
+    grid-auto-columns: minmax(230px, 82vw);
+    padding-top: 48px;
+  }
+
+  .path-card-final {
+    min-width: 0;
   }
 
   .philosophy-grid > div {

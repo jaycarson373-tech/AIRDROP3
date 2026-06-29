@@ -26,6 +26,7 @@ function Navbar() {
         </a>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#dashboard">Dashboard</a>
+          <a href="#path">Path</a>
           <a href="#conviction">Conviction</a>
           <a href="#eligibility">Eligibility</a>
           <a href="#airdrops">Airdrops</a>
@@ -81,6 +82,7 @@ export default function Page() {
         </section>
 
         <LiveProtocolDashboard />
+        <PathOfTheBull />
 
         <section className="section mechanics-section" id="how">
           <div className="container">
@@ -132,10 +134,10 @@ export default function Page() {
             <div className="section-kicker">FAQ</div>
             <h2>Terms of conviction.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body="Hold 1,000,000+ BULL and remain continuously eligible." />
+              <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 BULL and remain eligible through each five-minute epoch." />
               <FaqItem title="How often are distributions?" body="The worker runs on five-minute epochs and distributes ANSEM automatically when live backend conditions are met." />
-              <FaqItem title="Why is selling permanent?" body="The mechanic is designed to reward continuous conviction, not temporary participation." />
-              <FaqItem title="How do conviction multipliers work?" body="Longer uninterrupted holding periods increase reward weight, up to the 10x maximum." />
+              <FaqItem title="What resets my streak?" body="Selling any BULL or falling below 1,000,000 BULL resets your consecutive eligible epoch streak to 0." />
+              <FaqItem title="How do conviction multipliers work?" body="Your multiplier increases as your consecutive eligible epoch streak grows. Reach 2,016 epochs, or one week, to unlock 10x." />
               <FaqItem title="How is ANSEM purchased?" body="Creator fees are routed into ANSEM purchases by the existing backend flow, then distributed to eligible holders." />
             </div>
           </div>
@@ -148,7 +150,7 @@ export default function Page() {
             <img className="brand-logo" src="/brand/nietzschean-logo.webp" alt={`${PROJECT_NAME} logo`} />
             <strong>The Nietzschean Bull</strong>
           </div>
-          <p>Permanent eligibility. Automatic ANSEM distributions. Conviction over noise.</p>
+          <p>Hold. Accumulate. Advance your epoch streak.</p>
           <div className="footer-links">
             <a href="#dashboard">Dashboard</a>
             <a href="#conviction">Conviction</a>
@@ -169,6 +171,78 @@ export default function Page() {
         </div>
       </footer>
     </div>
+  );
+}
+
+const bullPath = [
+  {
+    year: "2013",
+    title: "The Bull is born.",
+    body: "Early believers begin accumulating."
+  },
+  {
+    year: "2017",
+    title: "The first mania.",
+    body: "Most chase euphoria. The Bull keeps walking."
+  },
+  {
+    year: "2018",
+    title: "The crash.",
+    body: "Weak hands disappear. The Bull survives."
+  },
+  {
+    year: "2020",
+    title: "Global uncertainty.",
+    body: "The Bull keeps accumulating."
+  },
+  {
+    year: "2021",
+    title: "Euphoria returns.",
+    body: "Everyone wants the Bull. The Bull remains unchanged."
+  },
+  {
+    year: "2022",
+    title: "Another brutal bear market.",
+    body: "Speculators leave. Conviction remains."
+  },
+  {
+    year: "2024",
+    title: "Institutions arrive.",
+    body: "The Bull keeps moving."
+  },
+  {
+    year: "Today",
+    title: "The Nietzschean Bull continues forward.",
+    body: "Never rushing. Never reacting. Only accumulating."
+  }
+];
+
+function PathOfTheBull() {
+  return (
+    <section className="section path-section" id="path">
+      <div className="path-parallax" aria-hidden="true" />
+      <div className="container">
+        <div className="section-kicker">The Path of the Bull</div>
+        <div className="section-head split-head">
+          <h2>Markets collapse. The Bull advances.</h2>
+          <p>Part history, part philosophy: a record of conviction moving through every cycle.</p>
+        </div>
+        <div className="bull-path" aria-label="The Path of the Bull timeline">
+          {bullPath.map((milestone) => (
+            <article className="path-card" key={milestone.year}>
+              <span>{milestone.year}</span>
+              <h3>{milestone.title}</h3>
+              <p>{milestone.body}</p>
+            </article>
+          ))}
+          <article className="path-card path-card-final">
+            <span>Become the Bull.</span>
+            <h3>Hold. Accumulate.</h3>
+            <p>Advance your epoch streak.</p>
+          </article>
+        </div>
+      </div>
+    </section>
   );
 }
 

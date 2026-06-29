@@ -3,9 +3,30 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://thenietzscheanbull.fun"),
   title: "The Nietzschean Bull",
-  description:
-    "A dark luxury conviction protocol rewarding eligible BULL holders with automatic ANSEM distributions.",
+  description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every epoch.",
+  openGraph: {
+    title: "The Nietzschean Bull",
+    description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every epoch.",
+    url: "https://thenietzscheanbull.fun",
+    siteName: "The Nietzschean Bull",
+    images: [
+      {
+        url: "/brand/nietzschean-hero.webp",
+        width: 1200,
+        height: 780,
+        alt: "The Nietzschean Bull"
+      }
+    ],
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Nietzschean Bull",
+    description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every epoch.",
+    images: ["/brand/nietzschean-hero.webp"]
+  },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },

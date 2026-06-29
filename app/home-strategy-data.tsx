@@ -210,13 +210,13 @@ function MetricCard({
 }
 
 const convictionSteps = [
-  ["1 Day", "1.00x"],
-  ["3 Days", "1.25x"],
-  ["7 Days", "1.75x"],
-  ["14 Days", "2.50x"],
-  ["30 Days", "4.00x"],
-  ["60 Days", "7.00x"],
-  ["90 Days", "10.00x MAX"]
+  ["Epoch 1", "1.00x"],
+  ["288 Epochs / 1 Day", "1.25x"],
+  ["576 Epochs / 2 Days", "1.75x"],
+  ["1,008 Epochs / 3.5 Days", "2.50x"],
+  ["1,440 Epochs / 5 Days", "4.00x"],
+  ["1,728 Epochs / 6 Days", "7.00x"],
+  ["2,016 Epochs / 1 Week", "10.00x MAX"]
 ];
 
 const ranks = ["Initiate", "Disciple", "Stoic", "Sage", "Ascended", "Nietzschean"];
@@ -268,13 +268,19 @@ export function PermanentEligibility() {
     <section className="section eligibility-section" id="eligibility">
       <div className="container warning-layout">
         <div>
-          <div className="section-kicker">Permanent eligibility</div>
+          <div className="section-kicker">Eligibility rules</div>
           <h2>Holding is everything.</h2>
         </div>
         <div className="warning-card">
           <span>Requirements</span>
           <strong>Hold 1,000,000+ BULL</strong>
-          <p>Selling your tokens once permanently removes eligibility. No resets. No second chances. No appeals.</p>
+          <ul className="eligibility-rules">
+            <li>Every 5 minutes is one epoch.</li>
+            <li>Your multiplier increases as your consecutive eligible epoch streak grows.</li>
+            <li>Selling any amount of BULL immediately resets your streak to 0.</li>
+            <li>Falling below 1,000,000 BULL also resets your streak.</li>
+            <li>Stay eligible for 2,016 consecutive epochs, or 1 week, to unlock the 10x Nietzschean Bull multiplier.</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -297,7 +303,7 @@ export function HolderLookup() {
           <div className="section-kicker">Holder lookup</div>
           <h2>Measure conviction.</h2>
           <p className="lead">
-            Wallet-level streak, permanent status, estimated reward, and rank require the conviction backend endpoint.
+            Wallet-level streak, eligibility status, estimated reward, and rank require the conviction backend endpoint.
           </p>
         </div>
         <form className="lookup-card" onSubmit={handleSubmit}>

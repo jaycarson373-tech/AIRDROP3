@@ -19,6 +19,7 @@ export function AppPolish() {
   useEffect(() => {
     const updateScrolled = () => {
       document.documentElement.classList.toggle("is-scrolled", window.scrollY > 12);
+      document.documentElement.style.setProperty("--scroll-y", `${window.scrollY}px`);
     };
 
     updateScrolled();
@@ -28,7 +29,7 @@ export function AppPolish() {
   }, []);
 
   useEffect(() => {
-    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .conviction-card, .warning-card, .lookup-card, .faq-item";
+    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .path-card, .conviction-card, .warning-card, .lookup-card, .faq-item";
     const elements = new Set<Element>();
     const observer = new IntersectionObserver(
       (entries) => {
