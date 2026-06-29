@@ -1,4 +1,8 @@
 import { NextResponse } from "next/server";
+import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
+import { Connection, PublicKey } from "@solana/web3.js";
+
+export const runtime = "nodejs";
 
 type EpochRow = {
   epoch_id: string;
@@ -52,6 +56,19 @@ type EpochPayoutSummary = {
   golden: PayoutRow | null;
 };
 
+type ParsedTokenAccountInfo = {
+  owner?: string;
+  tokenAmount?: {
+    amount?: string;
+  };
+};
+
+const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
+const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
+const LIVE_ELIGIBLE_CACHE_MS = 90_000;
+
+let liveEligibleCache: { key: string; value: number; expiresAt: number } | null = null;
+
 function supabaseConfig() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
@@ -62,9 +79,36 @@ function supabaseConfig() {
   return { url: url.replace(/\/$/, ""), key };
 }
 
+function rpcUrl() {
+  return (
+    process.env.HELIUS_RPC_URL ??
+    process.env.NEXT_PUBLIC_HELIUS_RPC_URL ??
+    process.env.SOLANA_RPC_URL ??
+    "https://api.mainnet-beta.solana.com"
+  );
+}
+
+function numberEnv(name: string, fallback: number) {
+  const value = process.env[name] ?? process.env[`NEXT_PUBLIC_${name}`];
+  if (value === undefined || value === "") return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 function toNumber(value: unknown) {
   const number = Number(value ?? 0);
   return Number.isFinite(number) ? number : 0;
+}
+
+function sourceTokenMint() {
+  const value = process.env.SOURCE_TOKEN_MINT ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT;
+  if (!value) return null;
+  try {
+    return new PublicKey(value);
+  } catch {
+    console.warn("stats route could not parse SOURCE_TOKEN_MINT");
+    return null;
+  }
 }
 
 function epochNumber(epochId: string, fallback: number) {
@@ -85,6 +129,139 @@ function nextDropTime() {
   return new Date(Math.ceil(Date.now() / fiveMinutes) * fiveMinutes).toISOString();
 }
 
+async function tokenProgramForMint(connection: Connection, mint: PublicKey) {
+  const info = await connection.getAccountInfo(mint, "confirmed");
+  if (!info) throw new Error(`Mint not found: ${mint.toBase58()}`);
+  if (info.owner.equals(TOKEN_PROGRAM_ID)) return TOKEN_PROGRAM_ID;
+  if (info.owner.equals(TOKEN_2022_PROGRAM_ID)) return TOKEN_2022_PROGRAM_ID;
+  throw new Error(`Unsupported token program: ${info.owner.toBase58()}`);
+}
+
+function addExcluded(excluded: Set<string>, value: PublicKey | null | undefined) {
+  if (value) excluded.add(value.toBase58());
+}
+
+function addExcludedString(excluded: Set<string>, value: string | null | undefined) {
+  const trimmed = value?.trim();
+  if (!trimmed) return;
+  try {
+    excluded.add(new PublicKey(trimmed).toBase58());
+  } catch {
+    console.warn("stats route skipped invalid excluded wallet");
+  }
+}
+
+function pumpPda(seeds: Buffer[]) {
+  return PublicKey.findProgramAddressSync(seeds, PUMP_PROGRAM_ID)[0];
+}
+
+function pumpAmmPda(seeds: Buffer[]) {
+  return PublicKey.findProgramAddressSync(seeds, PUMP_AMM_PROGRAM_ID)[0];
+}
+
+function bondingCurvePda(mint: PublicKey) {
+  return pumpPda([Buffer.from("bonding-curve"), mint.toBuffer()]);
+}
+
+function bondingCurveV2Pda(mint: PublicKey) {
+  return pumpPda([Buffer.from("bonding-curve-v2"), mint.toBuffer()]);
+}
+
+function canonicalPoolPda(mint: PublicKey) {
+  const index = Buffer.alloc(2);
+  index.writeUInt16LE(0);
+  const poolAuthority = pumpPda([Buffer.from("pool-authority"), mint.toBuffer()]);
+  return pumpAmmPda([Buffer.from("pool"), index, poolAuthority.toBuffer(), mint.toBuffer(), NATIVE_MINT.toBuffer()]);
+}
+
+function excludedWallets(mint: PublicKey, mintAuthority: PublicKey | null) {
+  const excluded = new Set<string>();
+  addExcluded(excluded, mintAuthority);
+  addExcluded(excluded, bondingCurvePda(mint));
+  addExcluded(excluded, bondingCurveV2Pda(mint));
+  addExcluded(excluded, canonicalPoolPda(mint));
+  addExcludedString(excluded, process.env.TREASURY_WALLET_PUBLIC_KEY);
+
+  for (const wallet of (process.env.EXCLUDE_WALLETS ?? "").split(",")) {
+    addExcludedString(excluded, wallet);
+  }
+
+  return excluded;
+}
+
+function holderPct(rawBalance: bigint, rawSupply: bigint) {
+  if (rawSupply <= 0n) return 0;
+  return Number((rawBalance * 1_000_000n) / rawSupply) / 10_000;
+}
+
+function parsedTokenInfo(data: unknown) {
+  return (data as { parsed?: { info?: ParsedTokenAccountInfo } })?.parsed?.info ?? null;
+}
+
+async function liveEligibleHolderCount() {
+  const mint = sourceTokenMint();
+  if (!mint) return null;
+
+  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 1_000_000));
+  const maxHolderPct = numberEnv("MAX_HOLDER_PCT", 5);
+  const endpoint = rpcUrl();
+  const cacheKey = `${endpoint}:${mint.toBase58()}:${eligibilityMin}:${maxHolderPct}`;
+  const now = Date.now();
+
+  if (liveEligibleCache?.key === cacheKey && liveEligibleCache.expiresAt > now) {
+    return liveEligibleCache.value;
+  }
+
+  const connection = new Connection(endpoint, "confirmed");
+  const tokenProgram = await tokenProgramForMint(connection, mint);
+  const mintInfo = await getMint(connection, mint, "confirmed", tokenProgram);
+  const rawSupply = mintInfo.supply;
+  if (rawSupply <= 0n) return 0;
+
+  const filters = tokenProgram.equals(TOKEN_PROGRAM_ID)
+    ? [{ dataSize: 165 }, { memcmp: { offset: 0, bytes: mint.toBase58() } }]
+    : [{ memcmp: { offset: 0, bytes: mint.toBase58() } }];
+  const accounts = await connection.getParsedProgramAccounts(tokenProgram, { filters });
+  const balances = new Map<string, bigint>();
+
+  for (const account of accounts) {
+    const parsed = parsedTokenInfo(account.account.data);
+    if (!parsed?.owner || !parsed.tokenAmount?.amount) continue;
+    const owner = new PublicKey(parsed.owner);
+    if (!PublicKey.isOnCurve(owner.toBytes())) continue;
+    const amount = BigInt(parsed.tokenAmount.amount);
+    balances.set(parsed.owner, (balances.get(parsed.owner) ?? 0n) + amount);
+  }
+
+  const excluded = excludedWallets(mint, mintInfo.mintAuthority);
+  const minRawBalance = BigInt(Math.ceil(eligibilityMin * 10 ** mintInfo.decimals));
+  let count = 0;
+
+  for (const [wallet, rawBalance] of balances) {
+    if (excluded.has(wallet)) continue;
+    if (rawBalance < minRawBalance) continue;
+    if (holderPct(rawBalance, rawSupply) > maxHolderPct) continue;
+    count += 1;
+  }
+
+  liveEligibleCache = {
+    key: cacheKey,
+    value: count,
+    expiresAt: now + LIVE_ELIGIBLE_CACHE_MS
+  };
+
+  return count;
+}
+
+async function liveEligibleHolderCountOrNull() {
+  try {
+    return await liveEligibleHolderCount();
+  } catch (error) {
+    console.warn("stats route could not count live eligible holders", error);
+    return null;
+  }
+}
+
 function durationLabel(startedAt: string | null, completedAt: string | null) {
   if (!startedAt || !completedAt) return "0s";
   const ms = Math.max(0, Date.parse(completedAt) - Date.parse(startedAt));
@@ -98,12 +275,13 @@ export async function GET() {
   const config = supabaseConfig();
 
   if (!config) {
+    const latestEligibleHolders = await liveEligibleHolderCountOrNull();
     return NextResponse.json({
       currentEpoch: 0,
       totalEpochs: 0,
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
-      latestEligibleHolders: 0,
+      latestEligibleHolders: latestEligibleHolders ?? 0,
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],
@@ -275,13 +453,16 @@ export async function GET() {
       (sum, summary) => sum + summary.rewardAmount,
       0
     );
+    const storedEligibleHolders = toNumber(latest?.eligible_count);
+    const latestEligibleHolders =
+      storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
 
     return NextResponse.json({
       currentEpoch: completed.length,
       totalEpochs: completed.length,
       lastRewardAirdropped: epochHistory[0]?.rewardAmount ?? 0,
       totalRewardAirdropped,
-      latestEligibleHolders: toNumber(latest?.eligible_count),
+      latestEligibleHolders,
       nextDropTime: nextDropTime(),
       epochHistory,
       roundHistory,
@@ -290,12 +471,13 @@ export async function GET() {
     });
   } catch (error) {
     console.error("stats route failed", error);
+    const latestEligibleHolders = await liveEligibleHolderCountOrNull();
     return NextResponse.json({
       currentEpoch: 0,
       totalEpochs: 0,
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
-      latestEligibleHolders: 0,
+      latestEligibleHolders: latestEligibleHolders ?? 0,
       nextDropTime: nextDropTime(),
       epochHistory: [],
       roundHistory: [],

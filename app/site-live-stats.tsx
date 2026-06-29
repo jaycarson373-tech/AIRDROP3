@@ -31,6 +31,11 @@ function displayNumber(value: number, empty = "–") {
   return value.toLocaleString(undefined, { maximumFractionDigits: 2 });
 }
 
+function displayCount(value: number) {
+  if (!Number.isFinite(value) || value < 0) return "–";
+  return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
 export function SiteLiveStats() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
 
@@ -60,7 +65,7 @@ export function SiteLiveStats() {
         <span>Total {REWARD_SYMBOL} Airdropped</span>
       </div>
       <div className="stat">
-        <strong>{stats ? displayNumber(stats.latestEligibleHolders) : "–"}</strong>
+        <strong>{stats ? displayCount(stats.latestEligibleHolders) : "–"}</strong>
         <span>Eligible {SOURCE_SYMBOL} Holders</span>
       </div>
     </div>

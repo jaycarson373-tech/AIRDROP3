@@ -74,6 +74,11 @@ function formatNumber(value: number, maximumFractionDigits = 2) {
   return value.toLocaleString(undefined, { maximumFractionDigits });
 }
 
+function formatCount(value: number) {
+  if (!Number.isFinite(value) || value < 0) return "–";
+  return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
 function formatRewardAmount(value: number, symbol: string) {
   if (!Number.isFinite(value) || value <= 0) return "Awaiting first drop";
   return `${formatNumber(value)} ${symbol}`;
@@ -159,7 +164,7 @@ export function BlackBullTreasuryCard({
         <Metric label="Epoch Countdown" value={countdown} />
         <Metric
           label={`Eligible ${sourceSymbol} Holders`}
-          value={stats ? formatNumber(stats.latestEligibleHolders, 0) : "Loading"}
+          value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"}
         />
         <Metric
           label={`Total ${rewardSymbol} Airdropped`}
