@@ -3,6 +3,9 @@ import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
 
+const SWAP_EXECUTION_CUSHION_LAMPORTS = 3_000_000n;
+const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
+
 export type BuyResult = {
   baseSpentLamports: bigint;
   rewardReceivedRaw: bigint;
@@ -28,10 +31,28 @@ function rawToUi(raw: bigint, decimals: number) {
   return Number(raw) / 10 ** decimals;
 }
 
+async function postBuyReserveLamports() {
+  const minReserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
+  if (!config.airdropEnabled) return minReserveLamports;
+
+  const airdropReserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
+  const ataRentLamports = BigInt(await connection.getMinimumBalanceForRentExemption(165));
+  const maxRecipientAtaRentLamports = ataRentLamports * BigInt(config.maxWalletsPerEpoch);
+  const maxBatchCount = BigInt(Math.ceil(config.maxWalletsPerEpoch / config.airdropBatchSize));
+  const transferFeeCushionLamports = maxBatchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
+  const payoutReserveLamports =
+    airdropReserveLamports +
+    maxRecipientAtaRentLamports +
+    transferFeeCushionLamports +
+    SWAP_EXECUTION_CUSHION_LAMPORTS;
+
+  return payoutReserveLamports > minReserveLamports ? payoutReserveLamports : minReserveLamports;
+}
+
 export async function treasurySwapAmount() {
   const treasury = treasuryKeypair();
   const balance = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
-  const reserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
+  const reserveLamports = await postBuyReserveLamports();
   const bpsAmount = (balance * BigInt(config.swapBalanceBps)) / 10_000n;
   const reserveAmount = balance > reserveLamports ? balance - reserveLamports : 0n;
   const amount = bpsAmount < reserveAmount ? bpsAmount : reserveAmount;

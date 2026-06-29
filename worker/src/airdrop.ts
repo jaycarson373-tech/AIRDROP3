@@ -220,9 +220,8 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
 
   console.log(`[${epochId}] proof before send: ${allocations.length} payouts`);
   for (const allocation of allocations) {
-    console.log(
-      `[${epochId}] ${config.airdropEnabled ? "" : "[DRY-RUN] "}would send ${allocation.amount.toString()} raw reward tokens to ${allocation.wallet}`
-    );
+    const sendMode = config.airdropEnabled ? "queued live send" : "[DRY-RUN] would send";
+    console.log(`[${epochId}] ${sendMode} ${allocation.amount.toString()} raw reward tokens to ${allocation.wallet}`);
   }
 
   if (!config.airdropEnabled) {
