@@ -600,8 +600,8 @@ h3 {
 .timeline-section::before {
   background-image:
     linear-gradient(180deg, rgba(5, 7, 4, 0.64), rgba(5, 7, 4, 0.72)),
-    url("/brand/grass-hero.webp");
-  background-position: center bottom;
+    url("/brand/grass-landscape.webp");
+  background-position: center 70%;
 }
 
 #status::before {
