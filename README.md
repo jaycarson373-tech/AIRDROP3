@@ -99,12 +99,14 @@ SWAP_BALANCE_BPS=9000
 MIN_SOL_RESERVE=0.125
 AIRDROP_SOL_RESERVE=0.125
 AIRDROP_BATCH_SIZE=4
+AIRDROP_REWARD_BPS=4000
 SWAP_SLIPPAGE_BPS=300
 PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
 `SWAP_BALANCE_BPS=9000` spends up to 90% of SOL while also respecting `MIN_SOL_RESERVE`, so the treasury keeps SOL for airdrop fees.
+`AIRDROP_REWARD_BPS=4000` distributes 40% of available reward tokens each epoch and leaves the rest in treasury.
 
 ## Commands
 

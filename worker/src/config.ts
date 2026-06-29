@@ -72,6 +72,7 @@ export const config = {
   minSolReserve: numberEnv("MIN_SOL_RESERVE", 0.125),
   airdropSolReserve: numberEnv("AIRDROP_SOL_RESERVE", 0.125),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
+  airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 4000))),
   swapSlippageBps: Math.max(1, intEnv("SWAP_SLIPPAGE_BPS", 300)),
   priorityFeeSol: numberEnv("PRIORITY_FEE_SOL", 0.000001),
   minRewardRawToAirdrop: BigInt(Math.max(0, intEnv("MIN_REWARD_RAW_TO_AIRDROP", 1)))

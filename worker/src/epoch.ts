@@ -1,5 +1,6 @@
 import { claimFees } from "./claim.js";
 import { buyReward } from "./buy.js";
+import { config } from "./config.js";
 import {
   airdropRewards,
   applyGoldenAirdrop,
@@ -72,7 +73,11 @@ export async function runEpoch(date = new Date()) {
     const rewardBalance = await treasuryRewardBalanceRaw();
     const availableRewardRaw =
       buy.txSig && buy.rewardReceivedRaw > 0n && buy.rewardReceivedRaw < rewardBalance ? buy.rewardReceivedRaw : rewardBalance;
-    const goldenPool = computeGoldenRewardPool(epochId, holders, availableRewardRaw);
+    const rewardPoolRaw = (availableRewardRaw * BigInt(config.airdropRewardBps)) / 10_000n;
+    console.log(
+      `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw available (${config.airdropRewardBps} bps)`
+    );
+    const goldenPool = computeGoldenRewardPool(epochId, holders, rewardPoolRaw);
     const allocations = await computeAllocations(holders, goldenPool.rewardPoolRaw);
     if (!allocations.length) {
       await completeEpoch(epochId, {
@@ -85,7 +90,7 @@ export async function runEpoch(date = new Date()) {
       return;
     }
 
-    const golden = await applyGoldenAirdrop(epochId, holders, allocations, availableRewardRaw, goldenPool.snapshotHash);
+    const golden = await applyGoldenAirdrop(epochId, holders, allocations, rewardPoolRaw, goldenPool.snapshotHash);
     const airdrop = await airdropRewards(epochId, allocations);
     if (airdrop.stoppedForReserve && airdrop.settledCount === 0) {
       throw new Error("Airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
