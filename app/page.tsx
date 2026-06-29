@@ -12,6 +12,7 @@ const PROJECT_NAME = "The Nietzschean Bull";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? "";
 const CONTRACT_URL = CONTRACT_ADDRESS ? `https://solscan.io/token/${CONTRACT_ADDRESS}` : "https://solscan.io";
+const ANSEM_X_URL = "https://x.com/blknoiz06?s=21";
 
 function Navbar() {
   return (
@@ -27,6 +28,7 @@ function Navbar() {
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#dashboard">Dashboard</a>
           <a href="#path">Path</a>
+          <a href="#black-bull">Black Bull</a>
           <a href="#conviction">Conviction</a>
           <a href="#eligibility">Eligibility</a>
           <a href="#airdrops">Airdrops</a>
@@ -83,6 +85,7 @@ export default function Page() {
 
         <LiveProtocolDashboard />
         <PathOfTheBull />
+        <BlackBullSection />
 
         <section className="section mechanics-section" id="how">
           <div className="container">
@@ -171,6 +174,53 @@ export default function Page() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function BlackBullSection() {
+  return (
+    <section className="section black-bull-section" id="black-bull">
+      <div className="black-bull-glow" aria-hidden="true" />
+      <div className="container black-bull-grid">
+        <div className="black-bull-copy">
+          <div className="section-kicker">The inspiration</div>
+          <h2>THE BLACK BULL</h2>
+          <div className="lore-copy">
+            <p>Before the herd saw it, the Black Bull was already moving.</p>
+            <p>
+              From early crypto cycles to the current trenches, Ansem became one of the voices people watched when the
+              market needed direction.
+            </p>
+            <p>He called attention back to the trenches. He brought energy back to the timeline. He made the bull feel alive again.</p>
+            <p>The Nietzschean Bull is built around that same idea:</p>
+            <p>do not chase the herd. do not panic. do not sell the first shakeout.</p>
+            <p>Accumulate. Hold. Survive the epoch. Become harder to shake out.</p>
+          </div>
+        </div>
+
+        <aside className="black-bull-card">
+          <div className="black-bull-portrait">
+            <img src="/brand/ansem-black-bull.jpg" alt="Ansem / The Black Bull" />
+          </div>
+          <div className="black-bull-card-head">
+            <span>Ansem / The Black Bull</span>
+            <a href={ANSEM_X_URL} target="_blank" rel="noreferrer">
+              View X <ArrowRight size={15} />
+            </a>
+          </div>
+          <div className="bull-signal-list">
+            <span>Recent Virality</span>
+            <span>Trenches revived</span>
+            <span>Airdrop meta activated</span>
+            <span>Bull season energy</span>
+          </div>
+          <div className="tweet-placeholder">
+            <span>The Tweet That Started It</span>
+            <p>Placeholder for embedded X post.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
   );
 }
 

@@ -13,6 +13,7 @@
   --gold-soft: #a6814e;
   --green: #6f8b52;
   --green-soft: #405233;
+  --red-glow: #7f2f24;
   --ivory: #ede5d4;
   --muted: #aaa193;
   --faint: rgba(237, 229, 212, 0.64);
@@ -647,6 +648,170 @@ h3 {
   font-size: 1.6rem;
 }
 
+.black-bull-section {
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 16% 30%, rgba(127, 47, 36, 0.16), transparent 34%),
+    radial-gradient(ellipse at 82% 52%, rgba(64, 82, 51, 0.18), transparent 38%),
+    #020202;
+}
+
+.black-bull-glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(202, 164, 106, 0.05), transparent 34%),
+    radial-gradient(ellipse at 50% 100%, rgba(127, 47, 36, 0.14), transparent 46%);
+  opacity: 0.9;
+  transform: translate3d(0, calc(var(--scroll-y) * -0.025), 0);
+}
+
+.black-bull-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.62fr);
+  gap: 54px;
+  align-items: center;
+}
+
+.black-bull-copy h2 {
+  max-width: 680px;
+}
+
+.lore-copy {
+  display: grid;
+  max-width: 740px;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.lore-copy p {
+  color: var(--faint);
+  font-size: clamp(1.02rem, 1.55vw, 1.22rem);
+  line-height: 1.75;
+}
+
+.lore-copy p:first-child,
+.lore-copy p:last-child {
+  color: var(--ivory);
+  font-family: Cinzel, Georgia, serif;
+  letter-spacing: 0.04em;
+}
+
+.black-bull-card {
+  position: relative;
+  border: 1px solid rgba(202, 164, 106, 0.28);
+  background:
+    linear-gradient(180deg, rgba(12, 10, 9, 0.98), rgba(5, 5, 4, 0.98)),
+    #050504;
+  padding: 18px;
+  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.035), 0 36px 90px rgba(0, 0, 0, 0.42);
+}
+
+.black-bull-card::before {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  content: "";
+  background:
+    radial-gradient(ellipse at 18% 12%, rgba(127, 47, 36, 0.42), transparent 36%),
+    radial-gradient(ellipse at 90% 72%, rgba(111, 139, 82, 0.34), transparent 36%);
+  filter: blur(20px);
+  opacity: 0.58;
+}
+
+.black-bull-portrait {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(237, 229, 212, 0.1);
+  background: #010101;
+  aspect-ratio: 1;
+}
+
+.black-bull-portrait::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    radial-gradient(ellipse at 50% 18%, transparent 32%, rgba(0, 0, 0, 0.08) 58%, rgba(0, 0, 0, 0.68)),
+    linear-gradient(180deg, transparent 62%, rgba(0, 0, 0, 0.72));
+}
+
+.black-bull-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.06) saturate(0.86);
+}
+
+.black-bull-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid rgba(237, 229, 212, 0.08);
+  padding: 22px 2px 18px;
+}
+
+.black-bull-card-head span,
+.tweet-placeholder span {
+  color: var(--gold);
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.black-bull-card-head a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ivory);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.bull-signal-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 18px 0;
+}
+
+.bull-signal-list span {
+  border: 1px solid rgba(237, 229, 212, 0.08);
+  background: rgba(237, 229, 212, 0.035);
+  color: var(--faint);
+  padding: 12px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bull-signal-list span:nth-child(odd) {
+  border-color: rgba(111, 139, 82, 0.24);
+}
+
+.bull-signal-list span:nth-child(even) {
+  border-color: rgba(127, 47, 36, 0.24);
+}
+
+.tweet-placeholder {
+  border: 1px solid rgba(202, 164, 106, 0.2);
+  background: rgba(2, 2, 2, 0.72);
+  padding: 18px;
+}
+
+.tweet-placeholder p {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .conviction-scale {
   display: grid;
   margin-top: 32px;
@@ -1146,6 +1311,7 @@ td a,
 .stat,
 .flow-step,
 .path-card,
+.black-bull-card,
 .conviction-card,
 .warning-card,
 .lookup-card,
@@ -1162,6 +1328,7 @@ td a,
 .stat.is-visible,
 .flow-step.is-visible,
 .path-card.is-visible,
+.black-bull-card.is-visible,
 .conviction-card.is-visible,
 .warning-card.is-visible,
 .lookup-card.is-visible,
@@ -1176,6 +1343,7 @@ td a,
 .stat:hover,
 .flow-step:hover,
 .path-card:hover,
+.black-bull-card:hover,
 .conviction-card:hover,
 .warning-card:hover,
 .lookup-card:hover,
@@ -1220,6 +1388,7 @@ td a,
   .split-section,
   .conviction-layout,
   .warning-layout,
+  .black-bull-grid,
   .philosophy-grid,
   .footer-grid {
     grid-template-columns: 1fr;
@@ -1323,6 +1492,7 @@ td a,
   .dashboard-stats,
   .faq-grid,
   .flow,
+  .bull-signal-list,
   .dash-grid {
     grid-template-columns: 1fr;
   }
