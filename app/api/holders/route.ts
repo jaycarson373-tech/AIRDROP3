@@ -140,10 +140,12 @@ export async function GET() {
         };
       })
         .sort((a, b) => {
-          const earned = b.totalAnsemEarned - a.totalAnsemEarned;
-          if (earned) return earned;
+          const streak = (b.currentStreak ?? 0) - (a.currentStreak ?? 0);
+          if (streak) return streak;
           const multiplier = (b.currentMultiplierBps ?? 0) - (a.currentMultiplierBps ?? 0);
           if (multiplier) return multiplier;
+          const earned = b.totalAnsemEarned - a.totalAnsemEarned;
+          if (earned) return earned;
           return b.balance - a.balance;
         })
         .slice(0, 50)

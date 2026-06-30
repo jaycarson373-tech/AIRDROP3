@@ -296,7 +296,7 @@ export function DashboardClient() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Live conviction ledger
+                Live standing ledger
               </div>
               <h1 className="dashboard-title">Airdrop Ledger</h1>
             </div>
@@ -324,7 +324,7 @@ export function DashboardClient() {
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
                     {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Awaiting first winner"}
                   </strong>
-                  <span>10x Conviction Winner</span>
+                  <span>10x Final Bull</span>
                 </div>
                 <div className="stat">
                   <strong>

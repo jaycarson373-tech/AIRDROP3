@@ -5,10 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://thenietzscheanbull.fun"),
   title: "The Final Bull",
-  description: "The final bull market rewards holders. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
+  description: "The final bull market rewards the last ones still standing. Hold BULL, stay eligible, and receive automatic ANSEM distributions.",
   openGraph: {
     title: "The Final Bull",
-    description: "The final bull market rewards holders. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
+    description: "The final bull market rewards the last ones still standing. Hold BULL, stay eligible, and receive automatic ANSEM distributions.",
     url: "https://thenietzscheanbull.fun",
     siteName: "The Final Bull",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "The Final Bull",
-    description: "The final bull market rewards holders. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
+    description: "The final bull market rewards the last ones still standing. Hold BULL, stay eligible, and receive automatic ANSEM distributions.",
     images: ["/brand/nietzschean-hero-alt.jpg"]
   },
   icons: {

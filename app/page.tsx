@@ -30,7 +30,7 @@ function Navbar() {
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#dashboard">Dashboard</a>
           <a href="#conviction">Multiplier</a>
-          <a href="#bull-board">Final Standing</a>
+          <a href="#bull-board">Last Standing</a>
           <a href="#feedings">Feedings</a>
           <a href="/fallen-bulls">Fallen Bulls</a>
         </nav>
@@ -67,7 +67,7 @@ export default function Page() {
                 <span>Bull</span>
               </h1>
               <p className="hero-subtitle">
-                The Final Bull rewards the holders who stay through the last great cycle. Hold BULL. Earn ANSEM. Do not get shaken out.
+                The final bull market won't reward the fastest. It will reward the last ones still standing.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#eligibility">
@@ -96,7 +96,7 @@ export default function Page() {
         <section className="section faq-section" id="faq">
           <div className="container">
             <div className="section-kicker">FAQ</div>
-            <h2>Terms of conviction.</h2>
+            <h2>Rules for the last ones standing.</h2>
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $BULL and stay above that threshold." />
               <FaqItem title="How often are distributions?" body="Creator fees buy ANSEM every five minutes, then the existing backend distributes it automatically when live conditions are met." />
@@ -110,10 +110,10 @@ export default function Page() {
         <section className="section final-bull-section">
           <div className="final-bull-art" aria-hidden="true" />
           <div className="container final-bull-copy">
-            <h2>The herd chases.</h2>
-            <p>The Bull accumulates.</p>
-            <p>Every feeding.</p>
-            <strong>Forward.</strong>
+            <h2>THE LAST ONES STANDING</h2>
+            <p>Every cycle leaves fewer believers.</p>
+            <p>Every cycle creates fewer bulls.</p>
+            <strong>The Final Bull rewards the wallets that never stopped accumulating.</strong>
           </div>
         </section>
       </main>
@@ -124,12 +124,12 @@ export default function Page() {
             <img className="brand-logo" src="/brand/nietzschean-crest.jpg" alt={`${PROJECT_NAME} logo`} />
             <strong>The Final Bull</strong>
           </div>
-          <p>Hold. Accumulate. Build your hold time.</p>
+          <p>Outlast the herd. Stay standing.</p>
           <div className="footer-links">
             <a href="#dashboard">Dashboard</a>
             <a href="#conviction">Multiplier</a>
             <a href="#eligibility">Eligibility</a>
-            <a href="#bull-board">Final Standing</a>
+            <a href="#bull-board">Last Standing</a>
             <a href="/fallen-bulls">Fallen Bulls</a>
             <a href="#feedings">Feedings</a>
             <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com"} target="_blank" rel="noreferrer">
@@ -194,43 +194,33 @@ function BlackBullSection() {
 const bullPath = [
   {
     year: "2013",
-    title: "The Bull is born.",
-    body: "Early believers begin accumulating."
+    title: "The beginning.",
+    body: "The first believers entered."
   },
   {
     year: "2017",
     title: "The first mania.",
-    body: "Most chase euphoria. The Bull keeps walking."
-  },
-  {
-    year: "2018",
-    title: "The crash.",
-    body: "Weak hands disappear. The Bull survives."
-  },
-  {
-    year: "2020",
-    title: "Global uncertainty.",
-    body: "The Bull keeps accumulating."
+    body: "The herd rushed in."
   },
   {
     year: "2021",
-    title: "Euphoria returns.",
-    body: "Everyone wants the Bull. The Bull remains unchanged."
+    title: "Everyone thought it would never end.",
+    body: "The cycle reached fever pitch."
   },
   {
     year: "2022",
-    title: "Another brutal bear market.",
-    body: "Speculators leave. Conviction remains."
+    title: "Most disappeared.",
+    body: "The noise went quiet."
   },
   {
     year: "2024",
-    title: "Institutions arrive.",
-    body: "The Bull keeps moving."
+    title: "The survivors returned.",
+    body: "The cycle began again."
   },
   {
     year: "Today",
-    title: "The Final Bull moves forward.",
-    body: "The final cycle belongs to holders who keep accumulating."
+    title: "The Final Bull.",
+    body: "Only the last ones remain."
   }
 ];
 
@@ -239,12 +229,12 @@ function PathOfTheBull() {
     <section className="section path-section" id="path">
       <div className="path-parallax" aria-hidden="true" />
       <div className="container">
-        <div className="section-kicker">The Bull's Journey</div>
+        <div className="section-kicker">Survive the cycle</div>
         <div className="section-head split-head">
-          <h2>Every cycle ended. This one decides who stayed.</h2>
-          <p>The timeline remains the same: panic, euphoria, collapse, accumulation. The Final Bull keeps moving.</p>
+          <h2>THE FINAL CYCLE</h2>
+          <p>Most will leave. A few will remain.</p>
         </div>
-        <div className="bull-path" aria-label="The Bull's Journey timeline">
+        <div className="bull-path" aria-label="The Final Cycle timeline">
           {bullPath.map((milestone) => (
             <article className="path-card" key={milestone.year}>
               <span>{milestone.year}</span>
@@ -255,7 +245,7 @@ function PathOfTheBull() {
           <article className="path-card path-card-final">
             <span>Become the Bull.</span>
             <h3>Hold. Accumulate.</h3>
-            <p>Build your hold time.</p>
+            <p>Outlast the herd.</p>
           </article>
         </div>
       </div>

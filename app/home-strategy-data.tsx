@@ -235,12 +235,12 @@ function MetricCard({
 
 const multiplierTiers = [
   ["Bull", "Bull", "0-4 min", "1.00×"],
-  ["Conviction", "Conviction", "5-14 min", "2.00×"],
+  ["Standing", "Still Standing", "5-14 min", "2.00×"],
   ["Strong", "Strong Bull", "15-29 min", "5.00×"],
   ["Diamond", "Diamond Bull", "30+ min", "10.00×"]
 ];
 
-const ranks = ["Initiate", "Holder", "Conviction", "Strong Bull", "Diamond Bull", "Final Bull"];
+const ranks = ["Bull", "Standing", "Strong Bull", "Diamond Bull", "Last Bull", "Final Bull"];
 
 export function ConvictionSection() {
   return (
@@ -248,7 +248,7 @@ export function ConvictionSection() {
       <div className="container">
         <div className="section-kicker">Current Multiplier</div>
         <div className="section-head split-head">
-          <h2>Stay longer. Earn a larger share.</h2>
+          <h2>Stay standing. Earn a larger share.</h2>
           <p>Every 5 minutes = one epoch.</p>
         </div>
         <div className="multiplier-grid">
@@ -286,14 +286,14 @@ export function ConvictionSection() {
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>Selling ends eligibility. The Bull only remembers continuous holding.</p>
+          <p>Selling ends eligibility. The Bull only remembers who stayed standing.</p>
           <div className="max-row">
             <span>Maximum</span>
             <b>10×</b>
           </div>
         </div>
       </div>
-      <div className="container rank-strip" aria-label="Conviction ranks">
+      <div className="container rank-strip" aria-label="Standing ranks">
         {ranks.map((rank) => (
           <span key={rank}>{rank}</span>
         ))}
@@ -308,10 +308,10 @@ export function PermanentEligibility() {
       <div className="container warning-layout">
         <div>
           <div className="section-kicker">Eligibility rules</div>
-          <h2>Holding is everything.</h2>
+          <h2>Outlast the herd.</h2>
         </div>
         <div className="eligibility-flow">
-          {["Hold 1,000,000+ $BULL", "Every 5 Minutes", "Hold Time Builds", "Sell = Forever Out"].map((item, index) => (
+          {["1M+ $BULL", "Stay Eligible", "Every 5 Minutes", "Multiplier Grows", "Sell Once", "Permanently Ineligible"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -379,10 +379,10 @@ export function BullBoard() {
   return (
     <section className="section bull-board-section" id="bull-board">
       <div className="container">
-        <div className="section-kicker">Final bull standing</div>
+        <div className="section-kicker">Last bulls standing</div>
         <div className="section-head split-head">
-          <h2>FINAL BULL STANDING</h2>
-          <p>Ranked by total ANSEM earned. Multipliers show who has kept their standing through the live epochs.</p>
+          <h2>LAST BULLS STANDING</h2>
+          <p>Ranked by longest eligible streak, highest multiplier, total ANSEM earned, then current hold time.</p>
           <a className="cta secondary" href="/fallen-bulls">
             Fallen Bulls
           </a>
@@ -393,9 +393,9 @@ export function BullBoard() {
               <thead>
                 <tr>
                   <th>Wallet</th>
-                  <th>Total ANSEM Earned</th>
-                  <th>Current Multiplier</th>
                   <th>Current Hold Time</th>
+                  <th>Current Multiplier</th>
+                  <th>Total ANSEM Earned</th>
                   <th>Last Feeding</th>
                   <th>Current Streak</th>
                 </tr>
@@ -408,9 +408,9 @@ export function BullBoard() {
                     return (
                       <tr key={holder.address}>
                         <td>{compactAddress(holder.address)}</td>
-                        <td>{recentEarned > 0 ? formatAmount(recentEarned, "ANSEM") : "Awaiting holder totals"}</td>
-                        <td>{holder.currentMultiplier ?? "Awaiting live state"}</td>
                         <td>{holder.currentHoldTime ?? "Awaiting live state"}</td>
+                        <td>{holder.currentMultiplier ?? "Awaiting live state"}</td>
+                        <td>{recentEarned > 0 ? formatAmount(recentEarned, "ANSEM") : "Awaiting holder totals"}</td>
                         <td>{holder.lastFeedingAt ? formatDate(holder.lastFeedingAt) : lastReward ? formatDate(lastReward.time) : "Awaiting feeding"}</td>
                         <td>{holder.currentStreak !== null && holder.currentStreak !== undefined ? `${holder.currentStreak} epochs` : "Awaiting live state"}</td>
                       </tr>
@@ -418,7 +418,7 @@ export function BullBoard() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={6}>Awaiting Final Bull Standing.</td>
+                    <td colSpan={6}>Awaiting Last Bulls Standing.</td>
                   </tr>
                 )}
               </tbody>
@@ -501,7 +501,7 @@ export function HolderLookup() {
       <div className="container split-section">
         <div>
           <div className="section-kicker">Holder lookup</div>
-          <h2>Measure conviction.</h2>
+          <h2>Check your standing.</h2>
           <p className="lead">
             Wallet-level status uses the live holder-state tracker after the first tracked epoch.
           </p>
@@ -521,7 +521,7 @@ export function HolderLookup() {
             {submitted ? (
               <>
                 <strong>{compactAddress(wallet)}</strong>
-                <span>Awaiting live backend integration for conviction status.</span>
+                <span>Awaiting live backend integration for standing status.</span>
               </>
             ) : (
               <span>Enter a wallet to check eligibility once lookup integration is live.</span>
