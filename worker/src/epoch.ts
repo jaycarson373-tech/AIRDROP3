@@ -5,6 +5,7 @@ import {
   airdropRewards,
   applyGoldenAirdrop,
   computeAllocations,
+  filterHoldersWithRewardAccounts,
   computeGoldenRewardPool,
   estimatePayoutReserveLamports,
   treasuryRewardBalanceRaw
@@ -45,8 +46,15 @@ export async function runEpoch(date = new Date()) {
       }))
     );
     console.log(`[${epochId}] snapshot eligible holders: ${eligibleHolders.length}`);
-    const holders = selectRewardRecipients(epochId, eligibleHolders);
-    console.log(`[${epochId}] selected reward recipients: ${holders.length}`);
+    const selectedHolders = selectRewardRecipients(epochId, eligibleHolders);
+    console.log(`[${epochId}] selected reward recipients: ${selectedHolders.length}`);
+    const { holders, skipped } = await filterHoldersWithRewardAccounts(selectedHolders);
+    if (skipped.length) {
+      console.log(
+        `[${epochId}] skipped ${skipped.length} selected recipients without ANSEM token accounts to avoid ATA rent`
+      );
+    }
+    console.log(`[${epochId}] reward-ready recipients: ${holders.length}/${selectedHolders.length}`);
 
     if (!holders.length) {
       await recordBuy(epochId, "0", "0", "0", null);
@@ -56,7 +64,7 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no eligible holders, skipped buy and airdrop`);
+      console.log(`[${epochId}] no reward-ready holders, skipped buy and airdrop`);
       return;
     }
 

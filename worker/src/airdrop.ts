@@ -4,7 +4,6 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
-  createAssociatedTokenAccountIdempotentInstruction,
   createTransferCheckedInstruction,
   getAssociatedTokenAddressSync,
   getMint
@@ -76,6 +75,16 @@ function minBigInt(a: bigint, b: bigint) {
   return a < b ? a : b;
 }
 
+function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
+  return getAssociatedTokenAddressSync(
+    config.rewardTokenMint,
+    owner,
+    true,
+    tokenProgram,
+    ASSOCIATED_TOKEN_PROGRAM_ID
+  );
+}
+
 export async function treasuryRewardBalanceRaw() {
   const treasury = treasuryKeypair();
   const tokenProgram = await tokenProgramForMint();
@@ -86,6 +95,26 @@ export async function treasuryRewardBalanceRaw() {
   } catch {
     return 0n;
   }
+}
+
+export async function filterHoldersWithRewardAccounts(holders: Holder[]) {
+  if (!holders.length) return { holders, skipped: [] as Holder[] };
+
+  const tokenProgram = await tokenProgramForMint();
+  const atas = holders.map((holder) => rewardAtaForOwner(new PublicKey(holder.wallet), tokenProgram));
+  const accounts = await connection.getMultipleAccountsInfo(atas, "confirmed");
+  const ready: Holder[] = [];
+  const skipped: Holder[] = [];
+
+  accounts.forEach((account, index) => {
+    if (account) {
+      ready.push(holders[index]);
+    } else {
+      skipped.push(holders[index]);
+    }
+  });
+
+  return { holders: ready, skipped };
 }
 
 export async function computeAllocations(holders: Holder[], rewardRaw: bigint): Promise<Allocation[]> {
@@ -203,22 +232,14 @@ function chunk<T>(items: T[], size: number): T[][] {
   return chunks;
 }
 
-async function missingAtaRentLamports(atas: PublicKey[]) {
-  const accounts = await connection.getMultipleAccountsInfo(atas, "confirmed");
-  const missingCount = accounts.filter((account) => account === null).length;
-  const rent = await connection.getMinimumBalanceForRentExemption(165);
-  return BigInt(missingCount * rent);
-}
-
 async function payoutReserveForAtas(atas: PublicKey[]) {
   const reserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
-  const estimatedRentLamports = await missingAtaRentLamports(atas);
   const batchCount = BigInt(Math.max(1, Math.ceil(atas.length / config.airdropBatchSize)));
   const estimatedFeeLamports = batchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
   return {
-    totalLamports: reserveLamports + estimatedRentLamports + estimatedFeeLamports + AIRDROP_RENT_CUSHION_LAMPORTS,
+    totalLamports: reserveLamports + estimatedFeeLamports + AIRDROP_RENT_CUSHION_LAMPORTS,
     reserveLamports,
-    estimatedRentLamports,
+    estimatedRentLamports: 0n,
     estimatedFeeLamports,
     cushionLamports: AIRDROP_RENT_CUSHION_LAMPORTS
   };
@@ -228,18 +249,10 @@ export async function estimatePayoutReserveLamports(wallets: string[]) {
   if (!wallets.length) return BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
 
   const tokenProgram = await tokenProgramForMint();
-  const atas = wallets.map((wallet) =>
-    getAssociatedTokenAddressSync(
-      config.rewardTokenMint,
-      new PublicKey(wallet),
-      true,
-      tokenProgram,
-      ASSOCIATED_TOKEN_PROGRAM_ID
-    )
-  );
+  const atas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), tokenProgram));
   const reserve = await payoutReserveForAtas(atas);
   console.log(
-    `[RESERVE] payout reserve for ${wallets.length} wallets: total=${reserve.totalLamports}, base=${reserve.reserveLamports}, rent=${reserve.estimatedRentLamports}, fees=${reserve.estimatedFeeLamports}, cushion=${reserve.cushionLamports}`
+    `[RESERVE] payout reserve for ${wallets.length} wallets: total=${reserve.totalLamports}, base=${reserve.reserveLamports}, rent=0, fees=${reserve.estimatedFeeLamports}, cushion=${reserve.cushionLamports}`
   );
   return reserve.totalLamports;
 }
@@ -286,13 +299,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     return {
       ...allocation,
       owner,
-      destinationAta: getAssociatedTokenAddressSync(
-        config.rewardTokenMint,
-        owner,
-        true,
-        tokenProgram,
-        ASSOCIATED_TOKEN_PROGRAM_ID
-      )
+      destinationAta: rewardAtaForOwner(owner, tokenProgram)
     };
   });
 
@@ -333,15 +340,14 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
   for (let batchIndex = 0; batchIndex < batches.length; batchIndex += 1) {
     const batch = batches[batchIndex];
     const reserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
-    const estimatedRentLamports = await missingAtaRentLamports(batch.map((allocation) => allocation.destinationAta));
     const estimatedFeeLamports = AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
-    const requiredLamports = reserveLamports + estimatedRentLamports + estimatedFeeLamports;
+    const requiredLamports = reserveLamports + estimatedFeeLamports;
     const balanceLamports = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
 
     if (balanceLamports < requiredLamports) {
       stoppedForReserve = true;
       const error = new Error(
-        `Treasury SOL below airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, reserve=${reserveLamports}, estimatedAtaRent=${estimatedRentLamports}`
+        `Treasury SOL below airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, reserve=${reserveLamports}, estimatedAtaRent=0`
       );
       console.error(`[${epochId}] stopping airdrop batch: ${error.message}`);
       const remaining = batches.slice(batchIndex).flat();
@@ -355,14 +361,6 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
       const tx = new Transaction();
       for (const allocation of batch) {
         tx.add(
-          createAssociatedTokenAccountIdempotentInstruction(
-            treasury.publicKey,
-            allocation.destinationAta,
-            allocation.owner,
-            config.rewardTokenMint,
-            tokenProgram,
-            ASSOCIATED_TOKEN_PROGRAM_ID
-          ),
           createTransferCheckedInstruction(
             sourceAta,
             config.rewardTokenMint,

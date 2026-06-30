@@ -40,15 +40,9 @@ async function postBuyReserveLamports() {
   if (!config.airdropEnabled) return minReserveLamports;
 
   const airdropReserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
-  const ataRentLamports = BigInt(await connection.getMinimumBalanceForRentExemption(165));
-  const maxRecipientAtaRentLamports = ataRentLamports * BigInt(config.maxWalletsPerEpoch);
   const maxBatchCount = BigInt(Math.ceil(config.maxWalletsPerEpoch / config.airdropBatchSize));
   const transferFeeCushionLamports = maxBatchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
-  const payoutReserveLamports =
-    airdropReserveLamports +
-    maxRecipientAtaRentLamports +
-    transferFeeCushionLamports +
-    SWAP_EXECUTION_CUSHION_LAMPORTS;
+  const payoutReserveLamports = airdropReserveLamports + transferFeeCushionLamports + SWAP_EXECUTION_CUSHION_LAMPORTS;
 
   return payoutReserveLamports > minReserveLamports ? payoutReserveLamports : minReserveLamports;
 }
