@@ -13,6 +13,8 @@ type HolderStateRow = {
   eligible_since: string | null;
   permanently_ineligible: boolean | null;
   ineligible_reason: string | null;
+  ineligible_at: string | null;
+  last_seen_at: string | null;
 };
 type PayoutRow = {
   wallet: string;
@@ -36,11 +38,12 @@ function toNumber(value: unknown) {
   return Number.isFinite(number) ? number : 0;
 }
 
-async function getJson<T>(url: string, key: string) {
+async function getJson<T>(url: string, key: string, extraHeaders?: HeadersInit) {
   const response = await fetch(url, {
     headers: {
       apikey: key,
-      Authorization: `Bearer ${key}`
+      Authorization: `Bearer ${key}`,
+      ...extraHeaders
     },
     cache: "no-store"
   });
@@ -57,6 +60,23 @@ async function getJsonOrNull<T>(url: string, key: string) {
   }
 }
 
+async function getSettledPayouts(config: { url: string; key: string }) {
+  const pageSize = 1000;
+  const rows: PayoutRow[] = [];
+
+  for (let offset = 0; ; offset += pageSize) {
+    const page = await getJson<PayoutRow[]>(
+      `${config.url}/rest/v1/payouts?select=wallet,reward_amount,updated_at,created_at&status=eq.settled&order=updated_at.desc`,
+      config.key,
+      { Range: `${offset}-${offset + pageSize - 1}` }
+    );
+    rows.push(...page);
+    if (page.length < pageSize) break;
+  }
+
+  return rows;
+}
+
 function multiplierLabel(bps: number | null | undefined) {
   return `${((bps ?? 10000) / 10000).toFixed(2)}x`;
 }
@@ -69,20 +89,28 @@ function holdTimeLabel(streakEpochs: number | null | undefined) {
   return remaining ? `${hours}h ${remaining}m` : `${hours}h`;
 }
 
+function reasonLabel(reason: string | null | undefined) {
+  if (reason === "balance_decreased") return "Sold BULL";
+  if (reason === "dropped_below_threshold") return "Dropped below 1M";
+  if (reason === "dropped_below_threshold_or_sold") return "Sold or dropped below 1M";
+  return "Permanently ineligible";
+}
+
 export async function GET() {
   const config = supabaseConfig();
-  if (!config) return NextResponse.json({ topHolders: [], totalSupply: 0, uniqueHolders: 0 });
+  if (!config) return NextResponse.json({ topHolders: [], fallenBulls: [], totalSupply: 0, uniqueHolders: 0 });
 
   try {
     const holderStates = await getJsonOrNull<HolderStateRow[]>(
-      `${config.url}/rest/v1/holder_states?select=wallet,source_balance,current_streak_epochs,current_multiplier_bps,eligible_since,permanently_ineligible,ineligible_reason&order=current_multiplier_bps.desc,current_streak_epochs.desc,source_balance.desc&limit=50`,
+      `${config.url}/rest/v1/holder_states?select=wallet,source_balance,current_streak_epochs,current_multiplier_bps,eligible_since,permanently_ineligible,ineligible_reason,ineligible_at,last_seen_at&limit=10000`,
       config.key
     );
     const activeStates = (holderStates ?? []).filter((row) => !row.permanently_ineligible);
-    const payoutRows = await getJsonOrNull<PayoutRow[]>(
-      `${config.url}/rest/v1/payouts?select=wallet,reward_amount,updated_at,created_at&status=eq.settled&order=updated_at.desc&limit=1000`,
-      config.key
-    );
+    const fallenStates = (holderStates ?? []).filter((row) => row.permanently_ineligible);
+    const payoutRows = await getSettledPayouts(config).catch((error) => {
+      console.warn("optional payout totals query failed", error);
+      return [] as PayoutRow[];
+    });
     const payoutsByWallet = new Map<string, { total: number; lastRewardAt: string | null }>();
     for (const payout of payoutRows ?? []) {
       const current = payoutsByWallet.get(payout.wallet) ?? { total: 0, lastRewardAt: null };
@@ -93,11 +121,11 @@ export async function GET() {
 
     if (activeStates.length) {
       const totalSupply = activeStates.reduce((sum, row) => sum + toNumber(row.source_balance), 0);
-      const topHolders = activeStates.map((row, index) => {
+      const topHolders = activeStates.map((row) => {
         const balance = toNumber(row.source_balance);
         const payout = payoutsByWallet.get(row.wallet);
         return {
-          rank: index + 1,
+          rank: 0,
           address: row.wallet,
           balance,
           percentage: totalSupply > 0 ? ((balance / totalSupply) * 100).toFixed(2) : "0.00",
@@ -110,9 +138,37 @@ export async function GET() {
           permanentlyIneligible: false,
           ineligibleReason: null
         };
-      });
+      })
+        .sort((a, b) => {
+          const earned = b.totalAnsemEarned - a.totalAnsemEarned;
+          if (earned) return earned;
+          const multiplier = (b.currentMultiplierBps ?? 0) - (a.currentMultiplierBps ?? 0);
+          if (multiplier) return multiplier;
+          return b.balance - a.balance;
+        })
+        .slice(0, 50)
+        .map((row, index) => ({ ...row, rank: index + 1 }));
 
-      return NextResponse.json({ topHolders, totalSupply, uniqueHolders: activeStates.length });
+      const fallenBulls = fallenStates
+        .map((row) => {
+          const payout = payoutsByWallet.get(row.wallet);
+          return {
+            address: row.wallet,
+            balance: toNumber(row.source_balance),
+            currentMultiplier: multiplierLabel(row.current_multiplier_bps),
+            currentMultiplierBps: row.current_multiplier_bps ?? 10000,
+            currentStreak: row.current_streak_epochs ?? 0,
+            totalAnsemEarned: payout?.total ?? 0,
+            lastFeedingAt: payout?.lastRewardAt ?? null,
+            ineligibleReason: reasonLabel(row.ineligible_reason),
+            ineligibleAt: row.ineligible_at,
+            lastSeenAt: row.last_seen_at
+          };
+        })
+        .sort((a, b) => Date.parse(b.ineligibleAt ?? b.lastSeenAt ?? "") - Date.parse(a.ineligibleAt ?? a.lastSeenAt ?? ""))
+        .slice(0, 250);
+
+      return NextResponse.json({ topHolders, fallenBulls, totalSupply, uniqueHolders: activeStates.length });
     }
 
     const epochs = await getJson<EpochRow[]>(
@@ -120,7 +176,7 @@ export async function GET() {
       config.key
     );
     const epochId = epochs[0]?.epoch_id;
-    if (!epochId) return NextResponse.json({ topHolders: [], totalSupply: 0, uniqueHolders: 0 });
+    if (!epochId) return NextResponse.json({ topHolders: [], fallenBulls: [], totalSupply: 0, uniqueHolders: 0 });
 
     const snapshots = await getJson<SnapshotRow[]>(
       `${config.url}/rest/v1/snapshots?select=wallet,source_balance&epoch_id=eq.${encodeURIComponent(epochId)}&order=source_balance.desc&limit=50`,
@@ -128,10 +184,10 @@ export async function GET() {
     );
 
     const totalSupply = snapshots.reduce((sum, row) => sum + toNumber(row.source_balance), 0);
-    const topHolders = snapshots.map((row, index) => {
+    const topHolders = snapshots.map((row) => {
       const balance = toNumber(row.source_balance);
       return {
-        rank: index + 1,
+        rank: 0,
         address: row.wallet,
         balance,
         percentage: totalSupply > 0 ? ((balance / totalSupply) * 100).toFixed(2) : "0.00",
@@ -144,11 +200,13 @@ export async function GET() {
         permanentlyIneligible: false,
         ineligibleReason: null
       };
-    });
+    })
+      .sort((a, b) => b.totalAnsemEarned - a.totalAnsemEarned || b.balance - a.balance)
+      .map((row, index) => ({ ...row, rank: index + 1 }));
 
-    return NextResponse.json({ topHolders, totalSupply, uniqueHolders: snapshots.length });
+    return NextResponse.json({ topHolders, fallenBulls: [], totalSupply, uniqueHolders: snapshots.length });
   } catch (error) {
     console.error("holders route failed", error);
-    return NextResponse.json({ topHolders: [], totalSupply: 0, uniqueHolders: 0 });
+    return NextResponse.json({ topHolders: [], fallenBulls: [], totalSupply: 0, uniqueHolders: 0 });
   }
 }

@@ -30,8 +30,9 @@ function Navbar() {
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#dashboard">Dashboard</a>
           <a href="#conviction">Multiplier</a>
-          <a href="#bull-board">Bull Board</a>
+          <a href="#bull-board">Final Standing</a>
           <a href="#feedings">Feedings</a>
+          <a href="/fallen-bulls">Fallen Bulls</a>
         </nav>
         <div className="nav-actions">
           {CONTRACT_ADDRESS ? (
@@ -128,7 +129,8 @@ export default function Page() {
             <a href="#dashboard">Dashboard</a>
             <a href="#conviction">Multiplier</a>
             <a href="#eligibility">Eligibility</a>
-            <a href="#bull-board">Bull Board</a>
+            <a href="#bull-board">Final Standing</a>
+            <a href="/fallen-bulls">Fallen Bulls</a>
             <a href="#feedings">Feedings</a>
             <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com"} target="_blank" rel="noreferrer">
               X

@@ -49,6 +49,18 @@ type HoldersResponse = {
     permanentlyIneligible: boolean;
     ineligibleReason: string | null;
   }>;
+  fallenBulls?: Array<{
+    address: string;
+    balance: number;
+    currentMultiplier: string | null;
+    currentMultiplierBps: number | null;
+    currentStreak: number | null;
+    totalAnsemEarned: number;
+    lastFeedingAt: string | null;
+    ineligibleReason: string;
+    ineligibleAt: string | null;
+    lastSeenAt: string | null;
+  }>;
 };
 
 const emptyStats: StatsResponse = {
@@ -367,10 +379,13 @@ export function BullBoard() {
   return (
     <section className="section bull-board-section" id="bull-board">
       <div className="container">
-        <div className="section-kicker">Live bull board</div>
+        <div className="section-kicker">Final bull standing</div>
         <div className="section-head split-head">
-          <h2>THE BULL BOARD</h2>
-          <p>Top eligible holders appear first. Permanent-ineligible wallets are removed from the board.</p>
+          <h2>FINAL BULL STANDING</h2>
+          <p>Ranked by total ANSEM earned. Multipliers show who has kept their standing through the live epochs.</p>
+          <a className="cta secondary" href="/fallen-bulls">
+            Fallen Bulls
+          </a>
         </div>
         <div className="history-card bull-board-card">
           <div className="table-wrap">
@@ -378,9 +393,9 @@ export function BullBoard() {
               <thead>
                 <tr>
                   <th>Wallet</th>
+                  <th>Total ANSEM Earned</th>
                   <th>Current Multiplier</th>
                   <th>Current Hold Time</th>
-                  <th>Total ANSEM Earned</th>
                   <th>Last Feeding</th>
                   <th>Current Streak</th>
                 </tr>
@@ -393,9 +408,9 @@ export function BullBoard() {
                     return (
                       <tr key={holder.address}>
                         <td>{compactAddress(holder.address)}</td>
+                        <td>{recentEarned > 0 ? formatAmount(recentEarned, "ANSEM") : "Awaiting holder totals"}</td>
                         <td>{holder.currentMultiplier ?? "Awaiting live state"}</td>
                         <td>{holder.currentHoldTime ?? "Awaiting live state"}</td>
-                        <td>{recentEarned > 0 ? formatAmount(recentEarned, "ANSEM") : "Awaiting holder totals"}</td>
                         <td>{holder.lastFeedingAt ? formatDate(holder.lastFeedingAt) : lastReward ? formatDate(lastReward.time) : "Awaiting feeding"}</td>
                         <td>{holder.currentStreak !== null && holder.currentStreak !== undefined ? `${holder.currentStreak} epochs` : "Awaiting live state"}</td>
                       </tr>
@@ -403,7 +418,7 @@ export function BullBoard() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={6}>Awaiting live holder board.</td>
+                    <td colSpan={6}>Awaiting Final Bull Standing.</td>
                   </tr>
                 )}
               </tbody>
