@@ -301,6 +301,10 @@ h3 {
   padding: 0 14px;
 }
 
+.ca-copy-button {
+  cursor: pointer;
+}
+
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }

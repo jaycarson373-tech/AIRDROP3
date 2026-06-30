@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { CopyCaButton } from "./copy-ca-button";
 import {
   BullBoard,
   ConvictionSection,
@@ -35,9 +36,7 @@ function Navbar() {
         </nav>
         <div className="nav-actions">
           {CONTRACT_ADDRESS ? (
-            <a className="mini-button mono" href={CONTRACT_URL} target="_blank" rel="noreferrer">
-              CA {shortAddress(CONTRACT_ADDRESS)}
-            </a>
+            <CopyCaButton address={CONTRACT_ADDRESS} label={shortAddress(CONTRACT_ADDRESS)} />
           ) : null}
           <a className="cta secondary" href="/dashboard">
             View Feedings
