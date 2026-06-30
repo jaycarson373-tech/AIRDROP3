@@ -5,10 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://thenietzscheanbull.fun"),
   title: "The Nietzschean Bull",
-  description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every epoch.",
+  description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
   openGraph: {
     title: "The Nietzschean Bull",
-    description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every epoch.",
+    description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
     url: "https://thenietzscheanbull.fun",
     siteName: "The Nietzschean Bull",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "The Nietzschean Bull",
-    description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every epoch.",
+    description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
     images: ["/brand/nietzschean-hero.webp"]
   },
   icons: {

@@ -1,11 +1,13 @@
-import { ArrowDown, ArrowRight, Crown, Landmark, Shield, Timer, WalletCards } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import {
-  AirdropHistory,
+  BullBoard,
   ConvictionSection,
   HeroCountdown,
   HolderLookup,
   LiveProtocolDashboard,
-  PermanentEligibility
+  PermanentEligibility,
+  RecentFeedings,
+  RewardExplanation
 } from "./home-strategy-data";
 
 const PROJECT_NAME = "The Nietzschean Bull";
@@ -29,9 +31,9 @@ function Navbar() {
           <a href="#dashboard">Dashboard</a>
           <a href="#path">Path</a>
           <a href="#black-bull">Black Bull</a>
-          <a href="#conviction">Conviction</a>
-          <a href="#eligibility">Eligibility</a>
-          <a href="#airdrops">Airdrops</a>
+          <a href="#conviction">Multiplier</a>
+          <a href="#bull-board">Bull Board</a>
+          <a href="#feedings">Feedings</a>
         </nav>
         <div className="nav-actions">
           {CONTRACT_ADDRESS ? (
@@ -40,7 +42,7 @@ function Navbar() {
             </a>
           ) : null}
           <a className="cta secondary" href="/dashboard">
-            View Airdrops
+            View Feedings
           </a>
         </div>
       </div>
@@ -74,8 +76,8 @@ export default function Page() {
                 <a className="cta" href="#eligibility">
                   Become Eligible <ArrowRight size={18} />
                 </a>
-                <a className="cta secondary" href="#airdrops">
-                  View Airdrops
+                <a className="cta secondary" href="#feedings">
+                  View Feedings
                 </a>
               </div>
             </div>
@@ -87,48 +89,22 @@ export default function Page() {
         <PathOfTheBull />
         <BlackBullSection />
 
-        <section className="section mechanics-section" id="how">
-          <div className="container">
-            <div className="section-kicker">How it works</div>
-            <div className="section-head split-head">
-              <h2>No claiming. No wallet interaction.</h2>
-              <p>Simply hold. The protocol repeats every five minutes.</p>
-            </div>
-            <div className="flow">
-              {[
-                { icon: Landmark, title: "Creator Fees" },
-                { icon: ArrowDown, title: "100% Buy ANSEM" },
-                { icon: Crown, title: "Conviction Multiplier Applied" },
-                { icon: WalletCards, title: "Eligible BULL Holders" },
-                { icon: Shield, title: "Automatic Distribution" },
-                { icon: Timer, title: "Repeat Every Five Minutes" }
-              ].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <article className="flow-step" key={item.title}>
-                    <Icon size={22} />
-                    <span>{item.title}</span>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
+        <RewardExplanation />
         <ConvictionSection />
         <PermanentEligibility />
+        <BullBoard />
+        <RecentFeedings />
         <HolderLookup />
-        <AirdropHistory />
 
         <section className="section philosophy-section" id="philosophy">
           <div className="container">
             <div className="section-kicker">The philosophy</div>
             <div className="section-head split-head">
-              <h2>The Herd Reacts. The Bull Endures.</h2>
-              <p>Not more explanation. More posture.</p>
+              <h2>The Herd Reacts. The Bull Accumulates.</h2>
+              <p>The longer you stay, the larger your share becomes.</p>
             </div>
             <div className="philosophy-cards">
-              {["Accumulate.", "Hold.", "Build Your Epoch Streak.", "Become Harder To Shake Out."].map((item) => (
+              {["Accumulate.", "Hold.", "Increase Your Share.", "Become Harder To Shake Out."].map((item) => (
                 <article className="philosophy-card" key={item}>
                   <span>{item}</span>
                 </article>
@@ -142,10 +118,10 @@ export default function Page() {
             <div className="section-kicker">FAQ</div>
             <h2>Terms of conviction.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body="Hold at least 500,000 BULL and remain eligible through each five-minute epoch." />
-              <FaqItem title="How often are distributions?" body="The worker runs on five-minute epochs and distributes ANSEM automatically when live backend conditions are met." />
-              <FaqItem title="What resets my streak?" body="Selling any BULL or falling below 500,000 BULL resets your consecutive eligible epoch streak to 0." />
-              <FaqItem title="How do conviction multipliers work?" body="Your multiplier increases as your consecutive eligible epoch streak grows. Reach 2,016 epochs, or one week, to unlock 10x." />
+              <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $BULL and stay above that threshold." />
+              <FaqItem title="How often are distributions?" body="Creator fees buy ANSEM every five minutes, then the existing backend distributes it automatically when live conditions are met." />
+              <FaqItem title="What resets my multiplier?" body="Selling any $BULL or falling below 1,000,000 $BULL resets your multiplier back to 1.00×." />
+              <FaqItem title="How do multipliers work?" body="Your multiplier rises with continuous hold time: 1×, 2×, 5×, then 10× after four hours." />
               <FaqItem title="How is ANSEM purchased?" body="Creator fees are routed into ANSEM purchases by the existing backend flow, then distributed to eligible holders." />
             </div>
           </div>
@@ -156,7 +132,7 @@ export default function Page() {
           <div className="container final-bull-copy">
             <h2>The herd chases.</h2>
             <p>The Bull accumulates.</p>
-            <p>Every epoch.</p>
+            <p>Every feeding.</p>
             <strong>Forward.</strong>
           </div>
         </section>
@@ -168,12 +144,13 @@ export default function Page() {
             <img className="brand-logo" src="/brand/nietzschean-logo.webp" alt={`${PROJECT_NAME} logo`} />
             <strong>The Nietzschean Bull</strong>
           </div>
-          <p>Hold. Accumulate. Advance your epoch streak.</p>
+          <p>Hold. Accumulate. Build your hold time.</p>
           <div className="footer-links">
             <a href="#dashboard">Dashboard</a>
-            <a href="#conviction">Conviction</a>
+            <a href="#conviction">Multiplier</a>
             <a href="#eligibility">Eligibility</a>
-            <a href="#airdrops">Airdrops</a>
+            <a href="#bull-board">Bull Board</a>
+            <a href="#feedings">Feedings</a>
             <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com"} target="_blank" rel="noreferrer">
               X
             </a>
@@ -210,12 +187,8 @@ function BlackBullSection() {
           <div className="bull-signal-list">
             <span>Recent Virality</span>
             <span>Trenches revived</span>
-            <span>Airdrop meta activated</span>
+            <span>Reward meta activated</span>
             <span>Bull season energy</span>
-          </div>
-          <div className="tweet-placeholder">
-            <span>The Tweet That Started It</span>
-            <p>Placeholder for embedded X post.</p>
           </div>
         </aside>
 
@@ -224,19 +197,14 @@ function BlackBullSection() {
           <h2>THE BLACK BULL</h2>
           <div className="lore-copy">
             <p>Before the herd saw it, the Black Bull was already moving.</p>
-            <p>
-              From early crypto cycles to the current trenches, Ansem became one of the voices people watched when the
-              market needed direction.
-            </p>
-            <p>He called attention back to the trenches. He brought energy back to the timeline. He made the bull feel alive again.</p>
-            <p>The Nietzschean Bull is built around that same idea:</p>
-            <p>do not chase the herd. do not panic. do not sell the first shakeout.</p>
-            <p>Accumulate. Hold. Survive the epoch. Become harder to shake out.</p>
+            <p>Ansem brought energy back to the timeline and made the bull feel alive again.</p>
+            <p>The Herd Reacts. The Bull Accumulates.</p>
+            <p>The longer you stay, the larger your share becomes.</p>
           </div>
         </div>
       </div>
       <div className="container black-bull-timeline" aria-label="Black Bull lore timeline">
-        {["Trenches revived", "Timeline energy", "Airdrop meta", "Bull season"].map((item) => (
+        {["Trenches revived", "Timeline energy", "Reward meta", "Bull season"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>
@@ -308,7 +276,7 @@ function PathOfTheBull() {
           <article className="path-card path-card-final">
             <span>Become the Bull.</span>
             <h3>Hold. Accumulate.</h3>
-            <p>Advance your epoch streak.</p>
+            <p>Build your hold time.</p>
           </article>
         </div>
       </div>

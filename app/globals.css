@@ -509,6 +509,10 @@ h3 {
 .metric-card,
 .history-card,
 .conviction-card,
+.multiplier-card,
+.reset-warning-card,
+.reward-flow-card,
+.share-card,
 .warning-card,
 .lookup-card,
 .faq-item,
@@ -533,6 +537,8 @@ h3 {
 
 .metric-card span,
 .conviction-card span,
+.reset-warning-card span,
+.share-card span,
 .warning-card span,
 .lookup-card label,
 .history-head span,
@@ -565,6 +571,92 @@ h3 {
   color: var(--muted);
   font-family: Inter, sans-serif;
   font-size: 1rem;
+}
+
+.reward-explainer-section {
+  background:
+    radial-gradient(ellipse at 14% 12%, rgba(111, 139, 82, 0.12), transparent 38%),
+    radial-gradient(ellipse at 86% 10%, rgba(202, 164, 106, 0.12), transparent 36%),
+    linear-gradient(180deg, rgba(5, 5, 4, 0.98), rgba(10, 9, 8, 0.98));
+}
+
+.reward-flow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  counter-reset: reward-step;
+}
+
+.reward-flow-card {
+  position: relative;
+  display: grid;
+  min-height: 168px;
+  align-content: end;
+  border-color: rgba(202, 164, 106, 0.22);
+  background:
+    linear-gradient(180deg, rgba(237, 229, 212, 0.035), transparent),
+    rgba(15, 14, 12, 0.86);
+  padding: 22px;
+}
+
+.reward-flow-card::before {
+  counter-increment: reward-step;
+  content: "0" counter(reward-step);
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  color: var(--gold);
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.86rem;
+  letter-spacing: 0.18em;
+}
+
+.reward-flow-card:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  z-index: 2;
+  content: "↓";
+  color: var(--green);
+  font-family: Cinzel, Georgia, serif;
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.reward-flow-card strong {
+  color: var(--ivory);
+  font-family: Cinzel, Georgia, serif;
+  font-size: 1.28rem;
+  line-height: 1.18;
+}
+
+.share-example {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.share-card {
+  padding: 24px;
+  border-color: rgba(111, 139, 82, 0.22);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(111, 139, 82, 0.12), transparent 52%),
+    rgba(12, 11, 10, 0.86);
+}
+
+.share-card strong {
+  display: block;
+  margin-top: 18px;
+  color: var(--gold);
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(2.4rem, 4vw, 4.4rem);
+  line-height: 0.9;
+}
+
+.share-card p {
+  margin-top: 14px;
+  color: var(--faint);
+  font-size: 0.98rem;
 }
 
 .flow {
@@ -805,8 +897,7 @@ h3 {
   padding: 22px 2px 18px;
 }
 
-.black-bull-card-head span,
-.tweet-placeholder span {
+.black-bull-card-head span {
   color: var(--gold);
   font-family: Cinzel, Georgia, serif;
   font-size: 0.92rem;
@@ -849,18 +940,6 @@ h3 {
 
 .bull-signal-list span:nth-child(even) {
   border-color: rgba(127, 47, 36, 0.24);
-}
-
-.tweet-placeholder {
-  border: 1px solid rgba(202, 164, 106, 0.2);
-  background: rgba(2, 2, 2, 0.72);
-  padding: 18px;
-}
-
-.tweet-placeholder p {
-  margin-top: 8px;
-  color: var(--muted);
-  font-size: 0.9rem;
 }
 
 .black-bull-timeline {
@@ -911,6 +990,92 @@ h3 {
   display: grid;
   margin-top: 32px;
   border-top: 1px solid var(--border);
+}
+
+.multiplier-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.multiplier-card {
+  position: relative;
+  display: grid;
+  min-height: 228px;
+  align-content: space-between;
+  border-color: rgba(202, 164, 106, 0.22);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(202, 164, 106, 0.12), transparent 48%),
+    rgba(15, 14, 12, 0.9);
+  padding: 24px;
+}
+
+.multiplier-card::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background: linear-gradient(180deg, rgba(237, 229, 212, 0.04), transparent 42%);
+}
+
+.multiplier-card > span {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.multiplier-card h3 {
+  margin-top: 24px;
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(1.18rem, 1.6vw, 1.6rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.multiplier-card p {
+  margin-top: 8px;
+  color: var(--faint);
+  font-size: 0.96rem;
+}
+
+.multiplier-card strong {
+  display: block;
+  margin-top: 22px;
+  color: var(--gold);
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(2.2rem, 4vw, 4.6rem);
+  line-height: 0.92;
+}
+
+.reset-warning-card {
+  margin-top: 16px;
+  border-color: rgba(201, 136, 114, 0.46);
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(127, 47, 36, 0.36), transparent 44%),
+    linear-gradient(180deg, rgba(20, 9, 7, 0.92), rgba(10, 8, 7, 0.92));
+  padding: 26px;
+  box-shadow: inset 0 0 0 1px rgba(237, 229, 212, 0.035), 0 26px 70px rgba(0, 0, 0, 0.36);
+}
+
+.reset-warning-card span {
+  color: var(--danger);
+}
+
+.reset-warning-card strong {
+  display: block;
+  max-width: 900px;
+  margin-top: 12px;
+  color: var(--ivory);
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(1.35rem, 2.8vw, 2.8rem);
+  letter-spacing: 0.04em;
+  line-height: 1.08;
+  text-transform: uppercase;
+}
+
+.reset-warning-card p {
+  margin-top: 12px;
+  color: var(--danger);
+  font-weight: 800;
 }
 
 .streak-timeline {
@@ -990,6 +1155,7 @@ h3 {
 
 .conviction-card {
   position: relative;
+  margin-top: 16px;
   padding: 32px;
   overflow: hidden;
   border-color: rgba(202, 164, 106, 0.34);
@@ -1202,6 +1368,23 @@ h3 {
 
 .history-card {
   overflow: hidden;
+}
+
+.bull-board-section {
+  background:
+    radial-gradient(ellipse at 18% 8%, rgba(202, 164, 106, 0.1), transparent 38%),
+    radial-gradient(ellipse at 78% 42%, rgba(111, 139, 82, 0.1), transparent 36%),
+    linear-gradient(180deg, rgba(4, 4, 3, 0.97), rgba(9, 8, 7, 0.98));
+}
+
+.recent-feedings-section {
+  background:
+    radial-gradient(ellipse at 72% 0%, rgba(202, 164, 106, 0.11), transparent 40%),
+    linear-gradient(180deg, rgba(10, 9, 8, 0.98), rgba(3, 3, 3, 0.98));
+}
+
+.bull-board-card table {
+  min-width: 1050px;
 }
 
 .table-wrap {
@@ -1584,6 +1767,10 @@ td a,
 .card,
 .stat,
 .flow-step,
+.multiplier-card,
+.reset-warning-card,
+.reward-flow-card,
+.share-card,
 .path-card,
 .black-bull-card,
 .eligibility-card,
@@ -1603,6 +1790,10 @@ td a,
 .card.is-visible,
 .stat.is-visible,
 .flow-step.is-visible,
+.multiplier-card.is-visible,
+.reset-warning-card.is-visible,
+.reward-flow-card.is-visible,
+.share-card.is-visible,
 .path-card.is-visible,
 .black-bull-card.is-visible,
 .eligibility-card.is-visible,
@@ -1620,6 +1811,10 @@ td a,
 .card:hover,
 .stat:hover,
 .flow-step:hover,
+.multiplier-card:hover,
+.reset-warning-card:hover,
+.reward-flow-card:hover,
+.share-card:hover,
 .path-card:hover,
 .black-bull-card:hover,
 .eligibility-card:hover,
@@ -1684,6 +1879,9 @@ td a,
   }
 
   .dashboard-grid,
+  .multiplier-grid,
+  .reward-flow,
+  .share-example,
   .eligibility-flow,
   .black-bull-timeline,
   .philosophy-cards,
@@ -1695,6 +1893,10 @@ td a,
 
   .flow {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .reward-flow-card:not(:last-child)::after {
+    display: none;
   }
 
   .bull-path {
@@ -1784,6 +1986,9 @@ td a,
   }
 
   .dashboard-grid,
+  .multiplier-grid,
+  .reward-flow,
+  .share-example,
   .eligibility-flow,
   .black-bull-timeline,
   .philosophy-cards,
@@ -1797,7 +2002,9 @@ td a,
   }
 
   .flow-step,
-  .metric-card {
+  .metric-card,
+  .multiplier-card,
+  .reward-flow-card {
     min-height: 126px;
   }
 

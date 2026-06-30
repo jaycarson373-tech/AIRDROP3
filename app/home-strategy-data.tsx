@@ -146,38 +146,42 @@ export function HeroCountdown() {
 
   return (
     <div className="hero-countdown" aria-live="polite">
-      <span>Next ANSEM Airdrop</span>
+      <span>Next Feeding</span>
       <strong>{countdown}</strong>
     </div>
   );
 }
 
 export function LiveProtocolDashboard() {
-  const { stats, now } = useProtocolData();
+  const { stats } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
-  const latestRound = rounds[0];
-  const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
-  const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
+  const todaysFeedings = countToday(rounds);
 
   return (
     <section className="section live-section feeding-section" id="dashboard">
       <div className="container">
-        <div className="section-kicker">Live feeding</div>
+        <div className="section-kicker">Feeding stats</div>
         <div className="section-head split-head">
-          <h2>The protocol eats every epoch.</h2>
+          <h2>The protocol feeds live.</h2>
           <p>Live values come from the existing reward backend. No fake production data.</p>
         </div>
         <div className="lux-grid dashboard-grid feeding-grid">
+          <MetricCard label="ANSEM Purchased" value={formatAmount(sumRounds(rounds, "rewardBought"), "ANSEM")} />
+          <MetricCard label="Today's Feedings" value={stats ? formatCount(todaysFeedings) : "Loading"} />
           <MetricCard label="Current Epoch" value={stats ? formatCount(stats.currentEpoch) : "Loading"} />
-          <MetricCard label="Next Feeding" value={countdown} strong />
-          <MetricCard label="Current ANSEM Bought" value={latestRound ? formatAmount(latestRound.rewardBought, "ANSEM") : "Awaiting next buy"} />
-          <MetricCard label="Recent Feedings" value={stats ? formatCount(stats.totalEpochs) : "Loading"} />
-          <MetricCard label="Total ANSEM Distributed" value={stats ? formatAmount(stats.totalRewardAirdropped, "ANSEM") : "Loading"} strong />
+          <MetricCard label="Eligible Bulls" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} strong />
+          <MetricCard label="Average Multiplier" value="Awaiting streak backend" muted />
         </div>
       </div>
     </section>
   );
 }
+
+function countToday(rounds: Round[]) {
+  const today = new Date().toDateString();
+  return rounds.filter((round) => new Date(round.startedAt).toDateString() === today).length;
+}
+
 function sumRounds(rounds: Round[], key: "rewardBought" | "distributedPump") {
   return rounds.reduce((sum, round) => sum + (Number.isFinite(round[key]) ? round[key] : 0), 0);
 }
@@ -201,14 +205,11 @@ function MetricCard({
   );
 }
 
-const convictionMilestones = [
-  ["Epoch 1", "1.00x"],
-  ["288", "1.25x"],
-  ["576", "1.75x"],
-  ["1,008", "2.50x"],
-  ["1,440", "4.00x"],
-  ["1,728", "7.00x"],
-  ["2,016", "10.00x"]
+const multiplierTiers = [
+  ["🥉", "Bull", "0-14 min", "1.00×"],
+  ["🥈", "Conviction", "15-59 min", "2.00×"],
+  ["🥇", "Strong Bull", "1-3 hr", "5.00×"],
+  ["💎", "Diamond Bull", "4+ hr", "10.00×"]
 ];
 
 const ranks = ["Initiate", "Disciple", "Stoic", "Sage", "Ascended", "Nietzschean"];
@@ -216,46 +217,51 @@ const ranks = ["Initiate", "Disciple", "Stoic", "Sage", "Ascended", "Nietzschean
 export function ConvictionSection() {
   return (
     <section className="section conviction-section" id="conviction">
-      <div className="container conviction-layout">
-        <div>
-          <div className="section-kicker">Conviction</div>
-          <h2>Patience becomes weight.</h2>
-          <p className="lead">
-            The longer an eligible holder continuously holds, the larger share of every ANSEM distribution they receive.
-          </p>
-          <div className="streak-timeline" aria-label="Epoch streak milestones">
-            {convictionMilestones.map(([epoch, multiplier]) => (
-              <div className="streak-node" key={epoch}>
-                <span>{epoch}</span>
-                <strong>{multiplier}</strong>
-              </div>
-            ))}
-          </div>
+      <div className="container">
+        <div className="section-kicker">Current Multiplier</div>
+        <div className="section-head split-head">
+          <h2>Stay longer. Earn a larger share.</h2>
+          <p>Every 5 minutes = one epoch.</p>
         </div>
-        <div className="conviction-card">
-          <span>Epoch streak</span>
-          <h3>Current Epoch Streak</h3>
+        <div className="multiplier-grid">
+          {multiplierTiers.map(([icon, title, time, multiplier]) => (
+            <article className="multiplier-card" key={title}>
+              <span>{icon}</span>
+              <h3>{title}</h3>
+              <p>{time}</p>
+              <strong>{multiplier}</strong>
+            </article>
+          ))}
+        </div>
+        <div className="reset-warning-card">
+          <span>Multiplier reset</span>
+          <strong>Selling any amount of $BULL instantly resets your multiplier back to 1.00×.</strong>
+          <p>Dropping below 1,000,000 $BULL also resets your multiplier.</p>
+        </div>
+        <div className="conviction-card streak-card">
+          <span>Live hold time</span>
+          <h3>Current Multiplier</h3>
           <div className="streak-readout">
             <div>
-              <span>Current Epoch Streak</span>
-              <strong>Awaiting live streak backend</strong>
+              <span>Current Multiplier</span>
+              <strong>Awaiting streak backend</strong>
             </div>
             <div>
-              <span>Current Multiplier</span>
-              <strong>Awaiting live streak backend</strong>
+              <span>Current Hold Time</span>
+              <strong>Awaiting streak backend</strong>
             </div>
             <div>
               <span>Next Milestone</span>
-              <strong>2,016 epochs</strong>
+              <strong>15 min</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>Selling resets everything. The Bull only remembers continuous conviction.</p>
+          <p>Selling resets everything. The Bull only remembers continuous holding.</p>
           <div className="max-row">
             <span>Maximum</span>
-            <b>10x</b>
+            <b>10×</b>
           </div>
         </div>
       </div>
@@ -277,12 +283,173 @@ export function PermanentEligibility() {
           <h2>Holding is everything.</h2>
         </div>
         <div className="eligibility-flow">
-          {["Hold 500K+ $BULL", "Every 5 Minutes", "Epoch Streak Builds", "Sell = Reset"].map((item, index) => (
+          {["Hold 1,000,000+ $BULL", "Every 5 Minutes", "Hold Time Builds", "Sell = Reset"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
             </article>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function RewardExplanation() {
+  return (
+    <section className="section reward-explainer-section" id="how">
+      <div className="container">
+        <div className="section-kicker">How rewards work</div>
+        <div className="section-head split-head">
+          <h2>Simple: hold BULL, receive ANSEM.</h2>
+          <p>Your multiplier increases your share of every distribution.</p>
+        </div>
+        <div className="reward-flow">
+          {[
+            "Hold at least 1,000,000 $BULL",
+            "Creator fees buy ANSEM every 5 minutes",
+            "ANSEM is distributed to every eligible holder",
+            "Your multiplier increases your share"
+          ].map((item) => (
+            <article className="reward-flow-card" key={item}>
+              <strong>{item}</strong>
+            </article>
+          ))}
+        </div>
+        <div className="share-example">
+          {[
+            ["Holder A", "1×", "receives one share"],
+            ["Holder B", "5×", "receives five shares"],
+            ["Holder C", "10×", "receives ten shares"]
+          ].map(([holder, multiplier, copy]) => (
+            <article className="share-card" key={holder}>
+              <span>{holder}</span>
+              <strong>{multiplier}</strong>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function BullBoard() {
+  const { stats, holders } = useProtocolData();
+  const recentRewards = stats?.recentRewards ?? [];
+
+  const earnedByWallet = useMemo(() => {
+    const totals = new Map<string, number>();
+    for (const reward of recentRewards) {
+      totals.set(reward.wallet, (totals.get(reward.wallet) ?? 0) + reward.rewardAmount);
+    }
+    return totals;
+  }, [recentRewards]);
+
+  const rows = holders?.topHolders ?? [];
+
+  return (
+    <section className="section bull-board-section" id="bull-board">
+      <div className="container">
+        <div className="section-kicker">Live bull board</div>
+        <div className="section-head split-head">
+          <h2>THE BULL BOARD</h2>
+          <p>Top holders appear first. Multiplier and hold-time fields update when the streak backend is connected.</p>
+        </div>
+        <div className="history-card bull-board-card">
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Wallet</th>
+                  <th>Current Multiplier</th>
+                  <th>Current Hold Time</th>
+                  <th>Total ANSEM Earned</th>
+                  <th>Last Feeding</th>
+                  <th>Current Streak</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.length ? (
+                  rows.slice(0, 25).map((holder) => {
+                    const lastReward = recentRewards.find((reward) => reward.wallet === holder.address);
+                    const recentEarned = earnedByWallet.get(holder.address) ?? 0;
+                    return (
+                      <tr key={holder.address}>
+                        <td>{compactAddress(holder.address)}</td>
+                        <td>Awaiting streak</td>
+                        <td>Awaiting hold time</td>
+                        <td>{recentEarned > 0 ? formatAmount(recentEarned, "ANSEM") : "Awaiting holder totals"}</td>
+                        <td>{lastReward ? formatDate(lastReward.time) : "Awaiting feeding"}</td>
+                        <td>Awaiting streak</td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan={6}>Awaiting live holder board.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function RecentFeedings() {
+  const { stats } = useProtocolData();
+  const rewards = stats?.recentRewards ?? [];
+
+  return (
+    <section className="section recent-feedings-section" id="feedings">
+      <div className="container">
+        <div className="section-kicker">Recent feedings</div>
+        <div className="section-head split-head">
+          <h2>Proof the Bull is eating.</h2>
+          <p>Settled ANSEM transfers from the live reward backend.</p>
+        </div>
+        <div className="history-card">
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Wallet</th>
+                  <th>Multiplier</th>
+                  <th>ANSEM Received</th>
+                  <th>Time</th>
+                  <th>TX Link</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rewards.length ? (
+                  rewards.slice(0, 50).map((reward) => (
+                    <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
+                      <td>{compactAddress(reward.wallet)}</td>
+                      <td>Awaiting streak</td>
+                      <td>{formatAmount(reward.rewardAmount, "ANSEM")}</td>
+                      <td>{formatDate(reward.time)}</td>
+                      <td>
+                        {reward.txSig ? (
+                          <a href={`https://solscan.io/tx/${reward.txSig}`} target="_blank" rel="noreferrer">
+                            Solscan
+                          </a>
+                        ) : (
+                          "Awaiting tx"
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5}>Awaiting settled ANSEM feedings.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -305,7 +472,7 @@ export function HolderLookup() {
           <div className="section-kicker">Holder lookup</div>
           <h2>Measure conviction.</h2>
           <p className="lead">
-            Wallet-level streak, eligibility status, estimated reward, and rank require the conviction backend endpoint.
+            Wallet-level multiplier, hold time, estimated reward, and rank require the streak backend endpoint.
           </p>
         </div>
         <form className="lookup-card" onSubmit={handleSubmit}>
@@ -335,17 +502,17 @@ export function HolderLookup() {
   );
 }
 
-export function AirdropHistory() {
+export function FeedingHistory() {
   const { stats } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
 
   return (
-    <section className="section history-section" id="airdrops">
+    <section className="section history-section" id="feedings-history">
       <div className="container">
-        <div className="section-kicker">Airdrop history</div>
+        <div className="section-kicker">Feeding history</div>
         <div className="section-head split-head">
           <h2>ANSEM Distributions</h2>
-          <p>Settled epochs only. Failed or skipped worker attempts are not counted as protocol epochs.</p>
+          <p>Settled feedings only. Failed or skipped worker attempts are not counted.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -382,7 +549,7 @@ export function AirdropHistory() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6}>Awaiting settled ANSEM airdrops.</td>
+                    <td colSpan={6}>Awaiting settled ANSEM feedings.</td>
                   </tr>
                 )}
               </tbody>
