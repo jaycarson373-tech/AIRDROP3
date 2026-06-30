@@ -7,14 +7,13 @@ import {
   HolderLookup,
   LiveProtocolDashboard,
   PermanentEligibility,
-  RecentFeedings,
+  RecentAirdrops,
   RewardExplanation
 } from "./home-strategy-data";
 
 const PROJECT_NAME = "The Final Bull";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? "";
-const ANSEM_X_URL = "https://x.com/blknoiz06?s=21";
 
 function Navbar() {
   return (
@@ -31,7 +30,7 @@ function Navbar() {
           <a href="#dashboard">Dashboard</a>
           <a href="#conviction">Multiplier</a>
           <a href="#bull-board">Last Standing</a>
-          <a href="#feedings">Feedings</a>
+          <a href="#airdrops">Airdrops</a>
           <a href="/fallen-bulls">Fallen Bulls</a>
         </nav>
         <div className="nav-actions">
@@ -39,7 +38,7 @@ function Navbar() {
             <CopyCaButton address={CONTRACT_ADDRESS} label={shortAddress(CONTRACT_ADDRESS)} />
           ) : null}
           <a className="cta secondary" href="/dashboard">
-            View Feedings
+            View Airdrops
           </a>
         </div>
       </div>
@@ -73,8 +72,8 @@ export default function Page() {
                 <a className="cta" href="#eligibility">
                   Become Eligible <ArrowRight size={18} />
                 </a>
-                <a className="cta secondary" href="#feedings">
-                  View Feedings
+                <a className="cta secondary" href="#airdrops">
+                  View Airdrops
                 </a>
               </div>
             </div>
@@ -84,13 +83,13 @@ export default function Page() {
 
         <LiveProtocolDashboard />
         <PathOfTheBull />
-        <BlackBullSection />
+        <WhyAnsemSection />
 
         <RewardExplanation />
         <ConvictionSection />
         <PermanentEligibility />
         <BullBoard />
-        <RecentFeedings />
+        <RecentAirdrops />
         <HolderLookup />
 
         <section className="section faq-section" id="faq">
@@ -131,7 +130,7 @@ export default function Page() {
             <a href="#eligibility">Eligibility</a>
             <a href="#bull-board">Last Standing</a>
             <a href="/fallen-bulls">Fallen Bulls</a>
-            <a href="#feedings">Feedings</a>
+            <a href="#airdrops">Airdrops</a>
             <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com"} target="_blank" rel="noreferrer">
               X
             </a>
@@ -148,42 +147,40 @@ export default function Page() {
   );
 }
 
-function BlackBullSection() {
+function WhyAnsemSection() {
   return (
-    <section className="section black-bull-section" id="black-bull">
+    <section className="section ansem-section" id="why-ansem">
       <div className="black-bull-glow" aria-hidden="true" />
       <div className="container black-bull-grid">
         <aside className="black-bull-card">
           <div className="black-bull-portrait">
-            <img src="/brand/ansem-black-bull.jpg" alt="Ansem / The Black Bull" />
+            <img src="/brand/backgrounds/bull-mountain-2.jpg" alt="ANSEM market thesis" />
           </div>
           <div className="black-bull-card-head">
-            <span>Ansem / The Black Bull</span>
-            <a href={ANSEM_X_URL} target="_blank" rel="noreferrer">
-              View X <ArrowRight size={15} />
-            </a>
+            <span>ANSEM thesis</span>
+            <strong>200K to 170M</strong>
           </div>
           <div className="bull-signal-list">
-            <span>Recent Virality</span>
-            <span>Trenches revived</span>
-            <span>Reward meta activated</span>
-            <span>Bull season energy</span>
+            <span>3 day expansion</span>
+            <span>Trenches watching</span>
+            <span>Final-cycle signal</span>
+            <span>Airdrop utility</span>
           </div>
         </aside>
 
         <div className="black-bull-copy">
-          <div className="section-kicker">The inspiration</div>
-          <h2>THE BLACK BULL</h2>
+          <div className="section-kicker">Why ANSEM?</div>
+          <h2>THE TOKEN THE MARKET STARTED WATCHING</h2>
           <div className="lore-copy">
-            <p>Before the herd saw it, the Black Bull was already moving.</p>
-            <p>Ansem brought energy back to the timeline and made the bull feel alive again.</p>
-            <p>The final market cycle rewards the holders who stay.</p>
-            <p>The longer you hold, the larger your share becomes.</p>
+            <p>Final Bull distributes ANSEM because it already carries the same final-cycle energy this site is built around.</p>
+            <p>The token moved from roughly 200K to 170M in three days, and traders started pointing to it as a signal that the Final Bull could be beginning.</p>
+            <p>The idea is simple: hold BULL, stay eligible, and receive the asset the trenches keep watching.</p>
+            <p>No claiming. No wallet connection. Just automatic ANSEM airdrops for the last wallets still standing.</p>
           </div>
         </div>
       </div>
-      <div className="container black-bull-timeline" aria-label="Black Bull lore timeline">
-        {["Trenches revived", "Timeline energy", "Reward meta", "Bull season"].map((item) => (
+      <div className="container black-bull-timeline" aria-label="ANSEM thesis timeline">
+        {["200K start", "170M breakout", "Trenches notice", "Final Bull airdrops"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>

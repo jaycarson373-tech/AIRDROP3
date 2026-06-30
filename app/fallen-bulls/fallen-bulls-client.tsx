@@ -104,7 +104,7 @@ export function FallenBullsClient() {
                       <th>Total ANSEM Earned</th>
                       <th>Last Multiplier</th>
                       <th>Final Streak</th>
-                      <th>Last Feeding</th>
+                      <th>Last Airdrop</th>
                       <th>Removed At</th>
                     </tr>
                   </thead>

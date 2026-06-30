@@ -174,7 +174,7 @@ export function HeroCountdown() {
 
   return (
     <div className="hero-countdown" aria-live="polite">
-      <span>Next Feeding</span>
+      <span>Next Airdrop</span>
       <strong>{countdown}</strong>
     </div>
   );
@@ -183,19 +183,19 @@ export function HeroCountdown() {
 export function LiveProtocolDashboard() {
   const { stats } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
-  const todaysFeedings = countToday(rounds);
+  const todaysAirdrops = countToday(rounds);
 
   return (
-    <section className="section live-section feeding-section" id="dashboard">
+    <section className="section live-section airdrop-section" id="dashboard">
       <div className="container">
-        <div className="section-kicker">Feeding stats</div>
+        <div className="section-kicker">Airdrop stats</div>
         <div className="section-head split-head">
-          <h2>The protocol feeds live.</h2>
+          <h2>The protocol airdrops live.</h2>
           <p>Live values come from the existing reward backend. No fake production data.</p>
         </div>
-        <div className="lux-grid dashboard-grid feeding-grid">
+        <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="ANSEM Purchased" value={formatAmount(sumRounds(rounds, "rewardBought"), "ANSEM")} />
-          <MetricCard label="Today's Feedings" value={stats ? formatCount(todaysFeedings) : "Loading"} />
+          <MetricCard label="Today's Airdrops" value={stats ? formatCount(todaysAirdrops) : "Loading"} />
           <MetricCard label="Current Epoch" value={stats ? formatCount(stats.currentEpoch) : "Loading"} />
           <MetricCard label="Eligible Bulls" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} strong />
           <MetricCard label="Average Multiplier" value={formatMultiplier(stats?.averageMultiplier)} muted />
@@ -396,7 +396,7 @@ export function BullBoard() {
                   <th>Current Hold Time</th>
                   <th>Current Multiplier</th>
                   <th>Total ANSEM Earned</th>
-                  <th>Last Feeding</th>
+                  <th>Last Airdrop</th>
                   <th>Current Streak</th>
                 </tr>
               </thead>
@@ -411,7 +411,7 @@ export function BullBoard() {
                         <td>{holder.currentHoldTime ?? "Awaiting live state"}</td>
                         <td>{holder.currentMultiplier ?? "Awaiting live state"}</td>
                         <td>{recentEarned > 0 ? formatAmount(recentEarned, "ANSEM") : "Awaiting holder totals"}</td>
-                        <td>{holder.lastFeedingAt ? formatDate(holder.lastFeedingAt) : lastReward ? formatDate(lastReward.time) : "Awaiting feeding"}</td>
+                        <td>{holder.lastFeedingAt ? formatDate(holder.lastFeedingAt) : lastReward ? formatDate(lastReward.time) : "Awaiting airdrop"}</td>
                         <td>{holder.currentStreak !== null && holder.currentStreak !== undefined ? `${holder.currentStreak} epochs` : "Awaiting live state"}</td>
                       </tr>
                     );
@@ -430,16 +430,16 @@ export function BullBoard() {
   );
 }
 
-export function RecentFeedings() {
+export function RecentAirdrops() {
   const { stats } = useProtocolData();
   const rewards = stats?.recentRewards ?? [];
 
   return (
-    <section className="section recent-feedings-section" id="feedings">
+    <section className="section recent-airdrops-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker">Recent feedings</div>
+        <div className="section-kicker">Recent airdrops</div>
         <div className="section-head split-head">
-          <h2>Proof the Bull is eating.</h2>
+          <h2>Proof the drops are live.</h2>
           <p>Settled ANSEM transfers from the live reward backend.</p>
         </div>
         <div className="history-card">
@@ -475,7 +475,7 @@ export function RecentFeedings() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5}>Awaiting settled ANSEM feedings.</td>
+                    <td colSpan={5}>Awaiting settled ANSEM airdrops.</td>
                   </tr>
                 )}
               </tbody>
@@ -533,17 +533,17 @@ export function HolderLookup() {
   );
 }
 
-export function FeedingHistory() {
+export function AirdropHistory() {
   const { stats } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
 
   return (
-    <section className="section history-section" id="feedings-history">
+    <section className="section history-section" id="airdrops-history">
       <div className="container">
-        <div className="section-kicker">Feeding history</div>
+        <div className="section-kicker">Airdrop history</div>
         <div className="section-head split-head">
           <h2>ANSEM Distributions</h2>
-          <p>Settled feedings only. Failed or skipped worker attempts are not counted.</p>
+          <p>Settled airdrops only. Failed or skipped worker attempts are not counted.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -580,7 +580,7 @@ export function FeedingHistory() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6}>Awaiting settled ANSEM feedings.</td>
+                    <td colSpan={6}>Awaiting settled ANSEM airdrops.</td>
                   </tr>
                 )}
               </tbody>

@@ -523,7 +523,8 @@ h3 {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.feeding-section {
+.feeding-section,
+.airdrop-section {
   --section-art: url("/brand/backgrounds/bull-mountain-2.jpg");
   --section-art-position: center 45%;
   --section-art-speed: -0.01;
@@ -532,7 +533,8 @@ h3 {
     linear-gradient(180deg, rgba(7, 8, 6, 0.96), rgba(3, 3, 3, 0.96));
 }
 
-.feeding-grid {
+.feeding-grid,
+.airdrop-grid {
   align-items: stretch;
 }
 
@@ -839,6 +841,17 @@ h3 {
     #020202;
 }
 
+.ansem-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art-position: center 48%;
+  --section-art-speed: -0.014;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 18% 36%, rgba(202, 164, 106, 0.18), transparent 36%),
+    radial-gradient(ellipse at 84% 48%, rgba(111, 139, 82, 0.18), transparent 40%),
+    #020202;
+}
+
 .black-bull-glow {
   position: absolute;
   inset: 0;
@@ -954,6 +967,17 @@ h3 {
   font-size: 0.78rem;
   font-weight: 800;
   text-transform: uppercase;
+}
+
+.black-bull-card-head strong {
+  color: var(--ivory);
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(1.1rem, 2vw, 1.65rem);
+  letter-spacing: 0.04em;
+}
+
+.ansem-section .black-bull-portrait {
+  aspect-ratio: 1.35;
 }
 
 .bull-signal-list {
@@ -1444,7 +1468,8 @@ h3 {
     linear-gradient(180deg, rgba(4, 4, 3, 0.97), rgba(9, 8, 7, 0.98));
 }
 
-.recent-feedings-section {
+.recent-feedings-section,
+.recent-airdrops-section {
   --section-art: url("/brand/backgrounds/bull-mountain-2.jpg");
   --section-art-position: center 42%;
   --section-art-speed: -0.012;
