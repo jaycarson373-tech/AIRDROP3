@@ -456,6 +456,8 @@ h3 {
 
 .section {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding: 110px 0;
   background:
     radial-gradient(ellipse at 12% 0%, rgba(111, 139, 82, 0.07), transparent 34%),
@@ -467,13 +469,34 @@ h3 {
 .section::before {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   content: "";
+  pointer-events: none;
   background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.7)),
+    var(--section-art, linear-gradient(transparent, transparent)),
     linear-gradient(rgba(202, 164, 106, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(202, 164, 106, 0.025) 1px, transparent 1px);
-  background-size: 96px 96px;
-  opacity: 0.46;
+  background-position:
+    center,
+    var(--section-art-position, center),
+    center,
+    center;
+  background-size:
+    cover,
+    var(--section-art-size, cover),
+    96px 96px,
+    96px 96px;
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  opacity: 0.7;
+  filter: saturate(0.84) contrast(1.05);
+  transform: translate3d(0, calc(var(--scroll-y) * var(--section-art-speed, -0.012)), 0) scale(1.03);
+  will-change: transform;
+}
+
+.section > .container {
+  position: relative;
+  z-index: 2;
 }
 
 .section-head {
@@ -501,6 +524,9 @@ h3 {
 }
 
 .feeding-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-2.jpg");
+  --section-art-position: center 45%;
+  --section-art-speed: -0.01;
   background:
     radial-gradient(ellipse at 50% 0%, rgba(202, 164, 106, 0.12), transparent 42%),
     linear-gradient(180deg, rgba(7, 8, 6, 0.96), rgba(3, 3, 3, 0.96));
@@ -578,6 +604,9 @@ h3 {
 }
 
 .reward-explainer-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-1.jpg");
+  --section-art-position: center 48%;
+  --section-art-speed: -0.014;
   background:
     radial-gradient(ellipse at 14% 12%, rgba(111, 139, 82, 0.12), transparent 38%),
     radial-gradient(ellipse at 86% 10%, rgba(202, 164, 106, 0.12), transparent 36%),
@@ -684,6 +713,9 @@ h3 {
 }
 
 .path-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-3.jpg");
+  --section-art-position: center 45%;
+  --section-art-speed: -0.018;
   overflow: hidden;
   background: #030303;
 }
@@ -691,8 +723,9 @@ h3 {
 .path-section::after {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
   content: "";
+  pointer-events: none;
   background:
     radial-gradient(ellipse at 8% 42%, rgba(111, 139, 82, 0.12), transparent 34%),
     radial-gradient(ellipse at 78% 24%, rgba(202, 164, 106, 0.13), transparent 36%),
@@ -702,7 +735,7 @@ h3 {
 .path-parallax {
   position: absolute;
   inset: -20% 0;
-  z-index: -1;
+  z-index: 1;
   pointer-events: none;
   background:
     linear-gradient(115deg, transparent 0 34%, rgba(202, 164, 106, 0.08) 34% 35%, transparent 35% 100%),
@@ -796,6 +829,9 @@ h3 {
 }
 
 .black-bull-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-1.jpg");
+  --section-art-position: center 50%;
+  --section-art-speed: -0.016;
   overflow: hidden;
   background:
     radial-gradient(ellipse at 18% 36%, rgba(127, 47, 36, 0.24), transparent 34%),
@@ -806,7 +842,7 @@ h3 {
 .black-bull-glow {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
   pointer-events: none;
   background:
     linear-gradient(115deg, rgba(202, 164, 106, 0.05), transparent 34%),
@@ -994,6 +1030,12 @@ h3 {
   display: grid;
   margin-top: 32px;
   border-top: 1px solid var(--border);
+}
+
+.conviction-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-3.jpg");
+  --section-art-position: center 48%;
+  --section-art-speed: -0.013;
 }
 
 .multiplier-grid {
@@ -1266,6 +1308,12 @@ h3 {
   margin-top: 18px;
 }
 
+.eligibility-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-1.jpg");
+  --section-art-position: center 50%;
+  --section-art-speed: -0.012;
+}
+
 .eligibility-flow {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1339,6 +1387,12 @@ h3 {
   padding: 28px;
 }
 
+.lookup-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-2.jpg");
+  --section-art-position: center 48%;
+  --section-art-speed: -0.01;
+}
+
 .lookup-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1374,7 +1428,16 @@ h3 {
   overflow: hidden;
 }
 
+.history-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art-position: center 46%;
+  --section-art-speed: -0.012;
+}
+
 .bull-board-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art-position: center 46%;
+  --section-art-speed: -0.01;
   background:
     radial-gradient(ellipse at 18% 8%, rgba(202, 164, 106, 0.1), transparent 38%),
     radial-gradient(ellipse at 78% 42%, rgba(111, 139, 82, 0.1), transparent 36%),
@@ -1382,6 +1445,9 @@ h3 {
 }
 
 .recent-feedings-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-2.jpg");
+  --section-art-position: center 42%;
+  --section-art-speed: -0.012;
   background:
     radial-gradient(ellipse at 72% 0%, rgba(202, 164, 106, 0.11), transparent 40%),
     linear-gradient(180deg, rgba(10, 9, 8, 0.98), rgba(3, 3, 3, 0.98));
@@ -1441,6 +1507,9 @@ td a,
 }
 
 .philosophy-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-3.jpg");
+  --section-art-position: center 50%;
+  --section-art-speed: -0.014;
   background:
     radial-gradient(ellipse at 50% 0%, rgba(202, 164, 106, 0.12), transparent 44%),
     linear-gradient(180deg, rgba(4, 4, 3, 0.96), rgba(8, 7, 6, 0.96));
@@ -1471,7 +1540,16 @@ td a,
   line-height: 1.05;
 }
 
+.faq-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art-position: center 46%;
+  --section-art-speed: -0.01;
+}
+
 .final-bull-section {
+  --section-art: url("/brand/backgrounds/bull-mountain-1.jpg");
+  --section-art-position: center 48%;
+  --section-art-speed: -0.014;
   min-height: 82vh;
   display: grid;
   align-items: end;
@@ -1482,7 +1560,7 @@ td a,
 .final-bull-art {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 1;
   pointer-events: none;
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22) 56%, rgba(0, 0, 0, 0.82)),
