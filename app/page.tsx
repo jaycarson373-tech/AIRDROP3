@@ -29,8 +29,6 @@ function Navbar() {
         </a>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#dashboard">Dashboard</a>
-          <a href="#path">Path</a>
-          <a href="#black-bull">Black Bull</a>
           <a href="#conviction">Multiplier</a>
           <a href="#bull-board">Bull Board</a>
           <a href="#feedings">Feedings</a>
