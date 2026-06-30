@@ -70,12 +70,10 @@ export async function runEpoch(date = new Date()) {
       buy.txSig
     );
 
-    const rewardBalance = await treasuryRewardBalanceRaw();
-    const availableRewardRaw =
-      buy.txSig && buy.rewardReceivedRaw > 0n && buy.rewardReceivedRaw < rewardBalance ? buy.rewardReceivedRaw : rewardBalance;
+    const availableRewardRaw = await treasuryRewardBalanceRaw();
     const rewardPoolRaw = (availableRewardRaw * BigInt(config.airdropRewardBps)) / 10_000n;
     console.log(
-      `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw available (${config.airdropRewardBps} bps)`
+      `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
     const goldenPool = computeGoldenRewardPool(epochId, holders, rewardPoolRaw);
     const allocations = await computeAllocations(holders, goldenPool.rewardPoolRaw);
