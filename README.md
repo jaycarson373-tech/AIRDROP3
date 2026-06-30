@@ -93,12 +93,12 @@ Reward settings:
 ```bash
 EPOCH_MINUTES=5
 ELIGIBILITY_MIN=1000000
-MAX_WALLETS_PER_EPOCH=50
+MAX_WALLETS_PER_EPOCH=75
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=
 SWAP_BALANCE_BPS=9000
-MIN_SOL_RESERVE=0.125
-AIRDROP_SOL_RESERVE=0.125
+MIN_SOL_RESERVE=0.2
+AIRDROP_SOL_RESERVE=0.05
 AIRDROP_BATCH_SIZE=4
 AIRDROP_REWARD_BPS=4000
 SWAP_SLIPPAGE_BPS=300
@@ -106,7 +106,8 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-`SWAP_BALANCE_BPS=9000` spends up to 90% of SOL while also respecting `MIN_SOL_RESERVE`, so the treasury keeps SOL for airdrop fees.
+`SWAP_BALANCE_BPS=9000` spends up to 90% of SOL while also respecting `MIN_SOL_RESERVE`, so the treasury keeps at least 0.2 SOL after the buy. The worker enforces a minimum `MIN_SOL_RESERVE` of 0.2 and a minimum `AIRDROP_SOL_RESERVE` of 0.05 even if lower env values are configured.
+During payout, SOL above the 0.05 airdrop reserve can be used to create missing ANSEM associated token accounts. The worker does not send SOL directly to holder wallets.
 `AIRDROP_REWARD_BPS=4000` distributes 40% of available reward tokens each epoch and leaves the rest in treasury.
 
 ## Commands

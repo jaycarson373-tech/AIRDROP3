@@ -1,9 +1,11 @@
 import { createHash } from "crypto";
 import { LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import {
+  ACCOUNT_SIZE,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_2022_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccountIdempotentInstruction,
   createTransferCheckedInstruction,
   getAssociatedTokenAddressSync,
   getMint
@@ -15,7 +17,6 @@ import type { Holder } from "./snapshot.js";
 
 export const GOLDEN_MULTIPLIER = 10;
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
-const AIRDROP_EXTRA_CUSHION_LAMPORTS = 5_000_000n;
 
 export type Allocation = {
   wallet: string;
@@ -59,6 +60,14 @@ type PreparedAllocation = Allocation & {
   destinationAta: PublicKey;
 };
 
+type PayoutReserve = {
+  totalLamports: bigint;
+  reserveLamports: bigint;
+  estimatedRentLamports: bigint;
+  estimatedFeeLamports: bigint;
+  missingAtas: Set<string>;
+};
+
 async function tokenProgramForMint() {
   const info = await connection.getAccountInfo(config.rewardTokenMint);
   if (!info) throw new Error(`Reward mint not found: ${config.rewardTokenMint.toBase58()}`);
@@ -99,26 +108,6 @@ export async function treasuryRewardBalanceRaw() {
   } catch {
     return 0n;
   }
-}
-
-export async function filterHoldersWithRewardAccounts(holders: Holder[]) {
-  if (!holders.length) return { holders, skipped: [] as Holder[] };
-
-  const tokenProgram = await tokenProgramForMint();
-  const atas = holders.map((holder) => rewardAtaForOwner(new PublicKey(holder.wallet), tokenProgram));
-  const accounts = await connection.getMultipleAccountsInfo(atas, "confirmed");
-  const ready: Holder[] = [];
-  const skipped: Holder[] = [];
-
-  accounts.forEach((account, index) => {
-    if (account) {
-      ready.push(holders[index]);
-    } else {
-      skipped.push(holders[index]);
-    }
-  });
-
-  return { holders: ready, skipped };
 }
 
 export async function computeAllocations(holders: Holder[], rewardRaw: bigint): Promise<Allocation[]> {
@@ -238,16 +227,26 @@ function chunk<T>(items: T[], size: number): T[][] {
   return chunks;
 }
 
-async function payoutReserveForAtas(atas: PublicKey[]) {
+async function payoutReserveForAtas(atas: PublicKey[]): Promise<PayoutReserve> {
   const reserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
   const batchCount = BigInt(Math.max(1, Math.ceil(atas.length / config.airdropBatchSize)));
   const estimatedFeeLamports = batchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
+  const accounts = atas.length ? await connection.getMultipleAccountsInfo(atas, "confirmed") : [];
+  const missingAtas = new Set<string>();
+
+  accounts.forEach((account, index) => {
+    if (!account) missingAtas.add(atas[index].toBase58());
+  });
+
+  const rentLamports = BigInt(await connection.getMinimumBalanceForRentExemption(ACCOUNT_SIZE));
+  const estimatedRentLamports = BigInt(missingAtas.size) * rentLamports;
+
   return {
-    totalLamports: reserveLamports + estimatedFeeLamports + AIRDROP_EXTRA_CUSHION_LAMPORTS,
+    totalLamports: reserveLamports + estimatedFeeLamports + estimatedRentLamports,
     reserveLamports,
-    estimatedRentLamports: 0n,
+    estimatedRentLamports,
     estimatedFeeLamports,
-    cushionLamports: AIRDROP_EXTRA_CUSHION_LAMPORTS
+    missingAtas
   };
 }
 
@@ -258,7 +257,7 @@ export async function estimatePayoutReserveLamports(wallets: string[]) {
   const atas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), tokenProgram));
   const reserve = await payoutReserveForAtas(atas);
   console.log(
-    `[RESERVE] payout reserve for ${wallets.length} wallets: total=${reserve.totalLamports}, base=${reserve.reserveLamports}, recipientRent=0, fees=${reserve.estimatedFeeLamports}, extraCushion=${reserve.cushionLamports}`
+    `[RESERVE] payout reserve for ${wallets.length} wallets: total=${reserve.totalLamports}, base=${reserve.reserveLamports}, ataRent=${reserve.estimatedRentLamports}, missingAtas=${reserve.missingAtas.size}, fees=${reserve.estimatedFeeLamports}`
   );
   return reserve.totalLamports;
 }
@@ -322,38 +321,17 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     });
   }
 
-  const fullReserve = await payoutReserveForAtas(prepared.map((allocation) => allocation.destinationAta));
-  const startingBalanceLamports = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
-  if (startingBalanceLamports < fullReserve.totalLamports) {
-    stoppedForReserve = true;
-    const error = new Error(
-      `Treasury SOL below full payout reserve: balance=${startingBalanceLamports}, required=${fullReserve.totalLamports}, reserve=${fullReserve.reserveLamports}, recipientRent=${fullReserve.estimatedRentLamports}, estimatedFees=${fullReserve.estimatedFeeLamports}, extraCushion=${fullReserve.cushionLamports}`
-    );
-    console.error(`[${epochId}] stopping airdrop before first batch: ${error.message}`);
-    for (const allocation of prepared) {
-      await failPayout(epochId, allocation.wallet, error);
-    }
-    return {
-      signatures,
-      settledCount,
-      settledRaw,
-      settledUi,
-      stoppedForReserve
-    };
-  }
-
   const batches = chunk(prepared, config.airdropBatchSize);
   for (let batchIndex = 0; batchIndex < batches.length; batchIndex += 1) {
     const batch = batches[batchIndex];
-    const reserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
-    const estimatedFeeLamports = AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
-    const requiredLamports = reserveLamports + estimatedFeeLamports;
+    const reserve = await payoutReserveForAtas(batch.map((allocation) => allocation.destinationAta));
+    const requiredLamports = reserve.totalLamports;
     const balanceLamports = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
 
     if (balanceLamports < requiredLamports) {
       stoppedForReserve = true;
       const error = new Error(
-        `Treasury SOL below airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, reserve=${reserveLamports}, recipientRent=0`
+        `Treasury SOL below airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, reserve=${reserve.reserveLamports}, ataRent=${reserve.estimatedRentLamports}, missingAtas=${reserve.missingAtas.size}`
       );
       console.error(`[${epochId}] stopping airdrop batch: ${error.message}`);
       const remaining = batches.slice(batchIndex).flat();
@@ -366,6 +344,19 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     try {
       const tx = new Transaction();
       for (const allocation of batch) {
+        if (reserve.missingAtas.has(allocation.destinationAta.toBase58())) {
+          tx.add(
+            createAssociatedTokenAccountIdempotentInstruction(
+              treasury.publicKey,
+              allocation.destinationAta,
+              allocation.owner,
+              config.rewardTokenMint,
+              tokenProgram,
+              ASSOCIATED_TOKEN_PROGRAM_ID
+            )
+          );
+        }
+
         tx.add(
           createTransferCheckedInstruction(
             sourceAta,
