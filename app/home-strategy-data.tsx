@@ -234,13 +234,14 @@ function MetricCard({
 }
 
 const multiplierTiers = [
-  ["Bull", "Bull", "0-4 min", "1.00×"],
-  ["Standing", "Still Standing", "5-14 min", "2.00×"],
-  ["Strong", "Strong Bull", "15-29 min", "5.00×"],
-  ["Diamond", "Diamond Bull", "30+ min", "10.00×"]
+  ["Base", "Standing Bull", "Start", "1.00×"],
+  ["Hour", "One Hour", "1 hour", "2.00×"],
+  ["Day", "One Day", "1 day", "4.00×"],
+  ["Week", "One Week", "1 week", "8.00×"],
+  ["Month", "Final Bull", "1 month", "15.00×"]
 ];
 
-const ranks = ["Bull", "Standing", "Strong Bull", "Diamond Bull", "Last Bull", "Final Bull"];
+const ranks = ["Standing", "One Hour", "One Day", "One Week", "One Month", "Final Bull"];
 
 export function ConvictionSection() {
   return (
@@ -248,8 +249,8 @@ export function ConvictionSection() {
       <div className="container">
         <div className="section-kicker">Current Multiplier</div>
         <div className="section-head split-head">
-          <h2>Stay standing. Earn a larger share.</h2>
-          <p>Every 5 minutes = one epoch.</p>
+          <h2>The longer you survive, the larger your share.</h2>
+          <p>Every 5 minutes = one epoch. Your streak only grows while you stay eligible.</p>
         </div>
         <div className="multiplier-grid">
           {multiplierTiers.map(([icon, title, time, multiplier]) => (
@@ -264,7 +265,7 @@ export function ConvictionSection() {
         <div className="reset-warning-card">
           <span>Permanent rule</span>
           <strong>Selling any amount of $BULL permanently removes eligibility.</strong>
-          <p>Dropping below 1,000,000 $BULL also permanently removes eligibility.</p>
+          <p>One sell means you are out forever. Dropping below 1,000,000 $BULL also permanently removes eligibility.</p>
         </div>
         <div className="conviction-card streak-card">
           <span>Live hold time</span>
@@ -280,7 +281,7 @@ export function ConvictionSection() {
             </div>
             <div>
               <span>Next Milestone</span>
-              <strong>5 min</strong>
+              <strong>1 hour</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
@@ -289,7 +290,7 @@ export function ConvictionSection() {
           <p>Selling ends eligibility. The Bull only remembers who stayed standing.</p>
           <div className="max-row">
             <span>Maximum</span>
-            <b>10×</b>
+            <b>15×</b>
           </div>
         </div>
       </div>
@@ -330,14 +331,15 @@ export function RewardExplanation() {
         <div className="section-kicker">How rewards work</div>
         <div className="section-head split-head">
           <h2>Simple: hold BULL, receive ANSEM.</h2>
-          <p>Your multiplier increases your share of every distribution.</p>
+          <p>Your streak multiplier increases your share of every distribution. One sell makes the wallet permanently ineligible.</p>
         </div>
         <div className="reward-flow">
           {[
             "Hold at least 1,000,000 $BULL",
             "Creator fees buy ANSEM every 5 minutes",
             "ANSEM is distributed to every eligible holder",
-            "Your multiplier increases your share"
+            "Your multiplier increases your share",
+            "Selling once removes eligibility forever"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
               <strong>{item}</strong>
@@ -347,8 +349,8 @@ export function RewardExplanation() {
         <div className="share-example">
           {[
             ["Holder A", "1×", "receives one share"],
-            ["Holder B", "5×", "receives five shares"],
-            ["Holder C", "10×", "receives ten shares"]
+            ["Holder B", "8×", "receives eight shares"],
+            ["Holder C", "15×", "receives fifteen shares"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
               <span>{holder}</span>

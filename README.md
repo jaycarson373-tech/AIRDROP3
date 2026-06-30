@@ -18,8 +18,20 @@ Every epoch:
 3. Snapshot `$BULL` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, and holders above `MAX_HOLDER_PCT`.
 5. Select `MAX_WALLETS_PER_EPOCH` deterministic-random eligible holders for the epoch and airdrop the reward-token balance across those recipients.
-6. Pick one selected recipient as the 10x Black Bull Bonus winner when balance allows.
+6. Pick one selected recipient as the 10x Lucky Bonus winner when balance allows.
 7. Store epochs, buys, snapshots, claims, bonus fields, and payouts in Supabase for the dashboard.
+
+## Multiplier Ladder
+
+The holder-state tracker applies the long-term Final Bull Standing ladder:
+
+- Start: 1x
+- 1 hour continuously eligible: 2x
+- 1 day continuously eligible: 4x
+- 1 week continuously eligible: 8x
+- 1 month continuously eligible: 15x
+
+Every epoch is 5 minutes. Selling any amount of `$BULL`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions. The 10x Lucky Bonus winner still runs separately on top of the normal multiplier-weighted distribution.
 
 ## Supabase
 

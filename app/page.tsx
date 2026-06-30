@@ -99,8 +99,8 @@ export default function Page() {
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $BULL and stay above that threshold." />
               <FaqItem title="How often are distributions?" body="Creator fees buy ANSEM every five minutes, then the existing backend distributes it automatically when live conditions are met." />
-              <FaqItem title="What removes eligibility?" body="Selling any $BULL or falling below 1,000,000 $BULL permanently removes eligibility from tracked distributions." />
-              <FaqItem title="How do multipliers work?" body="Your multiplier rises with continuous hold time: 1×, 2×, 5×, then 10× after thirty minutes." />
+              <FaqItem title="What removes eligibility?" body="Selling any $BULL or falling below 1,000,000 $BULL permanently removes eligibility from tracked distributions. Sell once and that wallet is out forever." />
+              <FaqItem title="How do multipliers work?" body="Your multiplier rises with continuous hold time: 2× after 1 hour, 4× after 1 day, 8× after 1 week, and 15× after 1 month." />
               <FaqItem title="How is ANSEM purchased?" body="Creator fees are routed into ANSEM purchases by the existing backend flow, then distributed to eligible holders." />
             </div>
           </div>

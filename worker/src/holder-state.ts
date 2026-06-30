@@ -14,10 +14,16 @@ type HolderStateRow = {
   ineligible_reason: string | null;
 };
 
+const EPOCHS_PER_HOUR = 12;
+const EPOCHS_PER_DAY = EPOCHS_PER_HOUR * 24;
+const EPOCHS_PER_WEEK = EPOCHS_PER_DAY * 7;
+const EPOCHS_PER_MONTH = EPOCHS_PER_DAY * 30;
+
 const MULTIPLIER_TIERS = [
-  { minEpochs: 7, bps: 100_000 },
-  { minEpochs: 4, bps: 50_000 },
-  { minEpochs: 2, bps: 20_000 },
+  { minEpochs: EPOCHS_PER_MONTH, bps: 150_000 },
+  { minEpochs: EPOCHS_PER_WEEK, bps: 80_000 },
+  { minEpochs: EPOCHS_PER_DAY, bps: 40_000 },
+  { minEpochs: EPOCHS_PER_HOUR, bps: 20_000 },
   { minEpochs: 0, bps: 10_000 }
 ];
 

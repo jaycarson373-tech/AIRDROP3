@@ -324,7 +324,7 @@ export function DashboardClient() {
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
                     {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Awaiting first winner"}
                   </strong>
-                  <span>10x Final Bull</span>
+                  <span>Lucky Bonus Winner</span>
                 </div>
                 <div className="stat">
                   <strong>
