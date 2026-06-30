@@ -11,7 +11,7 @@ import {
   RewardExplanation
 } from "./home-strategy-data";
 
-const PROJECT_NAME = "The Nietzschean Bull";
+const PROJECT_NAME = "The Final Bull";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? "";
 const ANSEM_X_URL = "https://x.com/blknoiz06?s=21";
@@ -23,8 +23,8 @@ function Navbar() {
         <a className="brand" href="/">
           <img className="brand-logo" src="/brand/nietzschean-crest.jpg" alt={`${PROJECT_NAME} logo`} />
           <span>
-            The Nietzschean Bull
-            <small>Conviction Protocol</small>
+            The Final Bull
+            <small>Final Bull Protocol</small>
           </span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
@@ -60,13 +60,13 @@ export default function Page() {
 
           <div className="container hero-inner">
             <div className="hero-copy-stack">
-              <div className="section-kicker">Ancient reward protocol</div>
+              <div className="section-kicker">The final bull market</div>
               <h1>
-                <span>The Nietzschean</span>
+                <span>The Final</span>
                 <span>Bull</span>
               </h1>
               <p className="hero-subtitle">
-                The Nietzschean Bull rewards conviction. Weak hands leave. Strong hands inherit the Black Bull.
+                The Final Bull rewards the holders who stay through the last great cycle. Hold BULL. Earn ANSEM. Do not get shaken out.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#eligibility">
@@ -91,23 +91,6 @@ export default function Page() {
         <BullBoard />
         <RecentFeedings />
         <HolderLookup />
-
-        <section className="section philosophy-section" id="philosophy">
-          <div className="container">
-            <div className="section-kicker">The philosophy</div>
-            <div className="section-head split-head">
-              <h2>The Herd Reacts. The Bull Accumulates.</h2>
-              <p>The longer you stay, the larger your share becomes.</p>
-            </div>
-            <div className="philosophy-cards">
-              {["Accumulate.", "Hold.", "Increase Your Share.", "Become Harder To Shake Out."].map((item) => (
-                <article className="philosophy-card" key={item}>
-                  <span>{item}</span>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
 
         <section className="section faq-section" id="faq">
           <div className="container">
@@ -138,7 +121,7 @@ export default function Page() {
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src="/brand/nietzschean-crest.jpg" alt={`${PROJECT_NAME} logo`} />
-            <strong>The Nietzschean Bull</strong>
+            <strong>The Final Bull</strong>
           </div>
           <p>Hold. Accumulate. Build your hold time.</p>
           <div className="footer-links">
@@ -192,8 +175,8 @@ function BlackBullSection() {
           <div className="lore-copy">
             <p>Before the herd saw it, the Black Bull was already moving.</p>
             <p>Ansem brought energy back to the timeline and made the bull feel alive again.</p>
-            <p>The Herd Reacts. The Bull Accumulates.</p>
-            <p>The longer you stay, the larger your share becomes.</p>
+            <p>The final market cycle rewards the holders who stay.</p>
+            <p>The longer you hold, the larger your share becomes.</p>
           </div>
         </div>
       </div>
@@ -244,8 +227,8 @@ const bullPath = [
   },
   {
     year: "Today",
-    title: "The Nietzschean Bull continues forward.",
-    body: "Never rushing. Never reacting. Only accumulating."
+    title: "The Final Bull moves forward.",
+    body: "The final cycle belongs to holders who keep accumulating."
   }
 ];
 
@@ -256,8 +239,8 @@ function PathOfTheBull() {
       <div className="container">
         <div className="section-kicker">The Bull's Journey</div>
         <div className="section-head split-head">
-          <h2>Markets collapse. The Bull advances.</h2>
-          <p>Another cycle. Another panic. The Bull continues forward.</p>
+          <h2>Every cycle ended. This one decides who stayed.</h2>
+          <p>The timeline remains the same: panic, euphoria, collapse, accumulation. The Final Bull keeps moving.</p>
         </div>
         <div className="bull-path" aria-label="The Bull's Journey timeline">
           {bullPath.map((milestone) => (

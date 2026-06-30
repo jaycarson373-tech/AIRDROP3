@@ -69,7 +69,7 @@ export function AppPolish() {
       <div className="loader-mascot">
         <img src="/brand/nietzschean-crest.jpg" alt="" />
       </div>
-      <div className="loader-text">The Nietzschean Bull</div>
+      <div className="loader-text">The Final Bull</div>
       <div className="loader-line" aria-hidden="true">
         <span />
       </div>

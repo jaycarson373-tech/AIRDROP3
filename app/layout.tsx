@@ -4,27 +4,27 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://thenietzscheanbull.fun"),
-  title: "The Nietzschean Bull",
-  description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
+  title: "The Final Bull",
+  description: "The final bull market rewards holders. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
   openGraph: {
-    title: "The Nietzschean Bull",
-    description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
+    title: "The Final Bull",
+    description: "The final bull market rewards holders. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
     url: "https://thenietzscheanbull.fun",
-    siteName: "The Nietzschean Bull",
+    siteName: "The Final Bull",
     images: [
       {
         url: "/brand/nietzschean-hero-alt.jpg",
         width: 1200,
         height: 780,
-        alt: "The Nietzschean Bull"
+        alt: "The Final Bull"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Nietzschean Bull",
-    description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
+    title: "The Final Bull",
+    description: "The final bull market rewards holders. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
     images: ["/brand/nietzschean-hero-alt.jpg"]
   },
   icons: {

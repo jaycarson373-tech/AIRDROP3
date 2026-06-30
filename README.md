@@ -1,4 +1,4 @@
-# The Nietzschean Bull
+# The Final Bull
 
 Source token: `$BULL`
 Reward token: `$ANSEM`
@@ -34,6 +34,7 @@ If the first migration already exists in your project, also run the follow-up mi
 ```sql
 -- supabase/migrations/002_golden_airdrop.sql
 -- supabase/migrations/003_settled_payouts_only.sql
+-- supabase/migrations/004_holder_states.sql
 ```
 
 The migration enables public read policies for dashboard tables. The worker still uses the service-role key for writes.
@@ -43,7 +44,7 @@ The migration enables public read policies for dashboard tables. The worker stil
 Required:
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="The Nietzschean Bull"
+NEXT_PUBLIC_PROJECT_NAME="The Final Bull"
 NEXT_PUBLIC_SOURCE_SYMBOL=BULL
 NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=<BULL_MINT>

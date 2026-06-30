@@ -228,7 +228,7 @@ const multiplierTiers = [
   ["Diamond", "Diamond Bull", "30+ min", "10.00×"]
 ];
 
-const ranks = ["Initiate", "Disciple", "Stoic", "Sage", "Ascended", "Nietzschean"];
+const ranks = ["Initiate", "Holder", "Conviction", "Strong Bull", "Diamond Bull", "Final Bull"];
 
 export function ConvictionSection() {
   return (

@@ -85,7 +85,7 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = "The Nietzschean Bull";
+const PROJECT_NAME = "The Final Bull";
 const SOURCE_SYMBOL = "BULL";
 const REWARD_SYMBOL = "ANSEM";
 
@@ -278,8 +278,8 @@ export function DashboardClient() {
           <Link className="brand" href="/">
             <img className="brand-logo" src="/brand/nietzschean-crest.jpg" alt={`${PROJECT_NAME} logo`} />
             <span>
-              The Nietzschean Bull
-              <small>Conviction Protocol</small>
+              The Final Bull
+              <small>Final Bull Protocol</small>
             </span>
           </Link>
           <div className="nav-links">
