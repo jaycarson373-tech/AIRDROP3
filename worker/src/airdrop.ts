@@ -15,7 +15,7 @@ import type { Holder } from "./snapshot.js";
 
 export const GOLDEN_MULTIPLIER = 10;
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
-const AIRDROP_RENT_CUSHION_LAMPORTS = 5_000_000n;
+const AIRDROP_EXTRA_CUSHION_LAMPORTS = 5_000_000n;
 
 export type Allocation = {
   wallet: string;
@@ -75,6 +75,10 @@ function minBigInt(a: bigint, b: bigint) {
   return a < b ? a : b;
 }
 
+function holderWeight(holder: Holder) {
+  return holder.rawBalance * BigInt(holder.multiplierBps ?? 10_000);
+}
+
 function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
   return getAssociatedTokenAddressSync(
     config.rewardTokenMint,
@@ -121,11 +125,11 @@ export async function computeAllocations(holders: Holder[], rewardRaw: bigint): 
   if (!holders.length || rewardRaw <= config.minRewardRawToAirdrop) return [];
   const tokenProgram = await tokenProgramForMint();
   const mintInfo = await getMint(connection, config.rewardTokenMint, "confirmed", tokenProgram);
-  const totalWeight = holders.reduce((sum, holder) => sum + holder.rawBalance, 0n);
+  const totalWeight = holders.reduce((sum, holder) => sum + holderWeight(holder), 0n);
 
   return holders
     .map((holder) => {
-      const amount = (rewardRaw * holder.rawBalance) / totalWeight;
+      const amount = (rewardRaw * holderWeight(holder)) / totalWeight;
       return {
         wallet: holder.wallet,
         amount,
@@ -143,7 +147,9 @@ export async function computeAllocations(holders: Holder[], rewardRaw: bigint): 
 }
 
 function snapshotHash(holders: Holder[]) {
-  const canonical = holders.map((holder) => `${holder.wallet}:${holder.rawBalance.toString()}`).join("|");
+  const canonical = holders
+    .map((holder) => `${holder.wallet}:${holder.rawBalance.toString()}:${holder.multiplierBps ?? 10_000}`)
+    .join("|");
   return createHash("sha256").update(canonical).digest("hex");
 }
 
@@ -160,10 +166,10 @@ export function computeGoldenRewardPool(epochId: string, holders: Holder[], avai
   const hash = snapshotHash(holders);
   const winnerIndex = deterministicIndex(epochId, hash, holders.length);
   const winner = holders[winnerIndex];
-  const totalWeight = holders.reduce((sum, holder) => sum + holder.rawBalance, 0n);
+  const totalWeight = holders.reduce((sum, holder) => sum + holderWeight(holder), 0n);
   if (totalWeight <= 0n) return { rewardPoolRaw: 0n, snapshotHash: hash };
 
-  const denominator = totalWeight + winner.rawBalance * BigInt(GOLDEN_MULTIPLIER - 1);
+  const denominator = totalWeight + holderWeight(winner) * BigInt(GOLDEN_MULTIPLIER - 1);
   const rewardPoolRaw = (availableRewardRaw * totalWeight) / denominator;
   return { rewardPoolRaw, snapshotHash: hash };
 }
@@ -237,11 +243,11 @@ async function payoutReserveForAtas(atas: PublicKey[]) {
   const batchCount = BigInt(Math.max(1, Math.ceil(atas.length / config.airdropBatchSize)));
   const estimatedFeeLamports = batchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
   return {
-    totalLamports: reserveLamports + estimatedFeeLamports + AIRDROP_RENT_CUSHION_LAMPORTS,
+    totalLamports: reserveLamports + estimatedFeeLamports + AIRDROP_EXTRA_CUSHION_LAMPORTS,
     reserveLamports,
     estimatedRentLamports: 0n,
     estimatedFeeLamports,
-    cushionLamports: AIRDROP_RENT_CUSHION_LAMPORTS
+    cushionLamports: AIRDROP_EXTRA_CUSHION_LAMPORTS
   };
 }
 
@@ -252,7 +258,7 @@ export async function estimatePayoutReserveLamports(wallets: string[]) {
   const atas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), tokenProgram));
   const reserve = await payoutReserveForAtas(atas);
   console.log(
-    `[RESERVE] payout reserve for ${wallets.length} wallets: total=${reserve.totalLamports}, base=${reserve.reserveLamports}, rent=0, fees=${reserve.estimatedFeeLamports}, cushion=${reserve.cushionLamports}`
+    `[RESERVE] payout reserve for ${wallets.length} wallets: total=${reserve.totalLamports}, base=${reserve.reserveLamports}, recipientRent=0, fees=${reserve.estimatedFeeLamports}, extraCushion=${reserve.cushionLamports}`
   );
   return reserve.totalLamports;
 }
@@ -321,7 +327,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
   if (startingBalanceLamports < fullReserve.totalLamports) {
     stoppedForReserve = true;
     const error = new Error(
-      `Treasury SOL below full payout reserve: balance=${startingBalanceLamports}, required=${fullReserve.totalLamports}, reserve=${fullReserve.reserveLamports}, estimatedAtaRent=${fullReserve.estimatedRentLamports}, estimatedFees=${fullReserve.estimatedFeeLamports}, cushion=${fullReserve.cushionLamports}`
+      `Treasury SOL below full payout reserve: balance=${startingBalanceLamports}, required=${fullReserve.totalLamports}, reserve=${fullReserve.reserveLamports}, recipientRent=${fullReserve.estimatedRentLamports}, estimatedFees=${fullReserve.estimatedFeeLamports}, extraCushion=${fullReserve.cushionLamports}`
     );
     console.error(`[${epochId}] stopping airdrop before first batch: ${error.message}`);
     for (const allocation of prepared) {
@@ -347,7 +353,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     if (balanceLamports < requiredLamports) {
       stoppedForReserve = true;
       const error = new Error(
-        `Treasury SOL below airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, reserve=${reserveLamports}, estimatedAtaRent=0`
+        `Treasury SOL below airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, reserve=${reserveLamports}, recipientRent=0`
       );
       console.error(`[${epochId}] stopping airdrop batch: ${error.message}`);
       const remaining = batches.slice(batchIndex).flat();

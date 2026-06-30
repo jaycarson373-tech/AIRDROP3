@@ -67,7 +67,7 @@ export function AppPolish() {
   return (
     <div className={`loading-screen${leaving ? " is-leaving" : ""}`}>
       <div className="loader-mascot">
-        <img src="/brand/nietzschean-logo.webp" alt="" />
+        <img src="/brand/nietzschean-crest.jpg" alt="" />
       </div>
       <div className="loader-text">The Nietzschean Bull</div>
       <div className="loader-line" aria-hidden="true">

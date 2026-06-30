@@ -14,7 +14,6 @@ import {
 const PROJECT_NAME = "The Nietzschean Bull";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? "";
-const CONTRACT_URL = CONTRACT_ADDRESS ? `https://solscan.io/token/${CONTRACT_ADDRESS}` : "https://solscan.io";
 const ANSEM_X_URL = "https://x.com/blknoiz06?s=21";
 
 function Navbar() {
@@ -22,7 +21,7 @@ function Navbar() {
     <header className="nav">
       <div className="container nav-inner">
         <a className="brand" href="/">
-          <img className="brand-logo" src="/brand/nietzschean-logo.webp" alt={`${PROJECT_NAME} logo`} />
+          <img className="brand-logo" src="/brand/nietzschean-crest.jpg" alt={`${PROJECT_NAME} logo`} />
           <span>
             The Nietzschean Bull
             <small>Conviction Protocol</small>
@@ -117,8 +116,8 @@ export default function Page() {
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $BULL and stay above that threshold." />
               <FaqItem title="How often are distributions?" body="Creator fees buy ANSEM every five minutes, then the existing backend distributes it automatically when live conditions are met." />
-              <FaqItem title="What resets my multiplier?" body="Selling any $BULL or falling below 1,000,000 $BULL resets your multiplier back to 1.00×." />
-              <FaqItem title="How do multipliers work?" body="Your multiplier rises with continuous hold time: 1×, 2×, 5×, then 10× after four hours." />
+              <FaqItem title="What removes eligibility?" body="Selling any $BULL or falling below 1,000,000 $BULL permanently removes eligibility from tracked distributions." />
+              <FaqItem title="How do multipliers work?" body="Your multiplier rises with continuous hold time: 1×, 2×, 5×, then 10× after thirty minutes." />
               <FaqItem title="How is ANSEM purchased?" body="Creator fees are routed into ANSEM purchases by the existing backend flow, then distributed to eligible holders." />
             </div>
           </div>
@@ -138,7 +137,7 @@ export default function Page() {
       <footer className="footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img className="brand-logo" src="/brand/nietzschean-logo.webp" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/nietzschean-crest.jpg" alt={`${PROJECT_NAME} logo`} />
             <strong>The Nietzschean Bull</strong>
           </div>
           <p>Hold. Accumulate. Build your hold time.</p>
@@ -155,9 +154,7 @@ export default function Page() {
           {CONTRACT_ADDRESS ? (
             <div className="footer-ca">
               <span>CA:</span>
-              <a href={CONTRACT_URL} target="_blank" rel="noreferrer">
-                {CONTRACT_ADDRESS}
-              </a>
+              <span>{CONTRACT_ADDRESS}</span>
             </div>
           ) : null}
         </div>

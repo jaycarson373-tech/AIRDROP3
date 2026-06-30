@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     siteName: "The Nietzschean Bull",
     images: [
       {
-        url: "/brand/nietzschean-hero.webp",
+        url: "/brand/nietzschean-hero-alt.jpg",
         width: 1200,
         height: 780,
         alt: "The Nietzschean Bull"
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "The Nietzschean Bull",
     description: "The Bull rewards conviction. Hold BULL, stay eligible, and receive automatic ANSEM distributions every five minutes.",
-    images: ["/brand/nietzschean-hero.webp"]
+    images: ["/brand/nietzschean-hero-alt.jpg"]
   },
   icons: {
     icon: [

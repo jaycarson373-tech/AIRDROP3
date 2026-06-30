@@ -11,8 +11,9 @@ import {
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
+import { applyHolderState } from "./holder-state.js";
 import { currentEpochId } from "./time.js";
-import { selectRewardRecipients, snapshotEligibleHolders } from "./snapshot.js";
+import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
 
 let running = false;
 
@@ -35,7 +36,9 @@ export async function runEpoch(date = new Date()) {
     await startEpoch(epochId);
     await claimFees(epochId);
 
-    const eligibleHolders = await snapshotEligibleHolders();
+    const sourceHolders = await snapshotSourceHolders();
+    const balanceEligibleHolders = await eligibleHoldersFromSnapshot(sourceHolders);
+    const eligibleHolders = await applyHolderState(epochId, balanceEligibleHolders, sourceHolders);
     await persistSnapshot(
       epochId,
       eligibleHolders.map((holder) => ({
@@ -45,7 +48,9 @@ export async function runEpoch(date = new Date()) {
         holder_pct: holder.holderPct.toString()
       }))
     );
-    console.log(`[${epochId}] snapshot eligible holders: ${eligibleHolders.length}`);
+    console.log(
+      `[${epochId}] snapshot eligible holders: ${eligibleHolders.length}/${balanceEligibleHolders.length} after holder-state rules`
+    );
     const selectedHolders = selectRewardRecipients(epochId, eligibleHolders);
     console.log(`[${epochId}] selected reward recipients: ${selectedHolders.length}`);
     const { holders, skipped } = await filterHoldersWithRewardAccounts(selectedHolders);

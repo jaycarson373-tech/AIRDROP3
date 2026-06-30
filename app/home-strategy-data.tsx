@@ -16,6 +16,7 @@ type Reward = {
   epoch: number;
   wallet: string;
   rewardAmount: number;
+  goldenMultiplier: number;
   time: string;
   status: string;
   txSig: string | null;
@@ -27,6 +28,7 @@ type StatsResponse = {
   lastRewardAirdropped: number;
   totalRewardAirdropped: number;
   latestEligibleHolders: number;
+  averageMultiplier: number | null;
   nextDropTime: string;
   roundHistory: Round[];
   recentRewards: Reward[];
@@ -38,6 +40,14 @@ type HoldersResponse = {
     address: string;
     balance: number;
     percentage: string;
+    currentMultiplier: string | null;
+    currentMultiplierBps: number | null;
+    currentHoldTime: string | null;
+    currentStreak: number | null;
+    totalAnsemEarned: number;
+    lastFeedingAt: string | null;
+    permanentlyIneligible: boolean;
+    ineligibleReason: string | null;
   }>;
 };
 
@@ -47,6 +57,7 @@ const emptyStats: StatsResponse = {
   lastRewardAirdropped: 0,
   totalRewardAirdropped: 0,
   latestEligibleHolders: 0,
+  averageMultiplier: null,
   nextDropTime: new Date().toISOString(),
   roundHistory: [],
   recentRewards: []
@@ -84,6 +95,11 @@ function formatCount(value: number) {
 function formatAmount(value: number, symbol: string, maximumFractionDigits = 2) {
   if (!Number.isFinite(value) || value <= 0) return "Awaiting live distribution";
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
+}
+
+function formatMultiplier(value: number | null | undefined) {
+  if (!Number.isFinite(value ?? NaN) || !value) return "Awaiting live state";
+  return `${value.toFixed(2)}x`;
 }
 
 function formatDate(value: string) {
@@ -170,7 +186,7 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Today's Feedings" value={stats ? formatCount(todaysFeedings) : "Loading"} />
           <MetricCard label="Current Epoch" value={stats ? formatCount(stats.currentEpoch) : "Loading"} />
           <MetricCard label="Eligible Bulls" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} strong />
-          <MetricCard label="Average Multiplier" value="Awaiting streak backend" muted />
+          <MetricCard label="Average Multiplier" value={formatMultiplier(stats?.averageMultiplier)} muted />
         </div>
       </div>
     </section>
@@ -206,10 +222,10 @@ function MetricCard({
 }
 
 const multiplierTiers = [
-  ["🥉", "Bull", "0-14 min", "1.00×"],
-  ["🥈", "Conviction", "15-59 min", "2.00×"],
-  ["🥇", "Strong Bull", "1-3 hr", "5.00×"],
-  ["💎", "Diamond Bull", "4+ hr", "10.00×"]
+  ["Bull", "Bull", "0-4 min", "1.00×"],
+  ["Conviction", "Conviction", "5-14 min", "2.00×"],
+  ["Strong", "Strong Bull", "15-29 min", "5.00×"],
+  ["Diamond", "Diamond Bull", "30+ min", "10.00×"]
 ];
 
 const ranks = ["Initiate", "Disciple", "Stoic", "Sage", "Ascended", "Nietzschean"];
@@ -234,9 +250,9 @@ export function ConvictionSection() {
           ))}
         </div>
         <div className="reset-warning-card">
-          <span>Multiplier reset</span>
-          <strong>Selling any amount of $BULL instantly resets your multiplier back to 1.00×.</strong>
-          <p>Dropping below 1,000,000 $BULL also resets your multiplier.</p>
+          <span>Permanent rule</span>
+          <strong>Selling any amount of $BULL permanently removes eligibility.</strong>
+          <p>Dropping below 1,000,000 $BULL also permanently removes eligibility.</p>
         </div>
         <div className="conviction-card streak-card">
           <span>Live hold time</span>
@@ -244,21 +260,21 @@ export function ConvictionSection() {
           <div className="streak-readout">
             <div>
               <span>Current Multiplier</span>
-              <strong>Awaiting streak backend</strong>
+              <strong>Live after next tracked epoch</strong>
             </div>
             <div>
               <span>Current Hold Time</span>
-              <strong>Awaiting streak backend</strong>
+              <strong>Live after next tracked epoch</strong>
             </div>
             <div>
               <span>Next Milestone</span>
-              <strong>15 min</strong>
+              <strong>5 min</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>Selling resets everything. The Bull only remembers continuous holding.</p>
+          <p>Selling ends eligibility. The Bull only remembers continuous holding.</p>
           <div className="max-row">
             <span>Maximum</span>
             <b>10×</b>
@@ -283,7 +299,7 @@ export function PermanentEligibility() {
           <h2>Holding is everything.</h2>
         </div>
         <div className="eligibility-flow">
-          {["Hold 1,000,000+ $BULL", "Every 5 Minutes", "Hold Time Builds", "Sell = Reset"].map((item, index) => (
+          {["Hold 1,000,000+ $BULL", "Every 5 Minutes", "Hold Time Builds", "Sell = Forever Out"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -354,7 +370,7 @@ export function BullBoard() {
         <div className="section-kicker">Live bull board</div>
         <div className="section-head split-head">
           <h2>THE BULL BOARD</h2>
-          <p>Top holders appear first. Multiplier and hold-time fields update when the streak backend is connected.</p>
+          <p>Top eligible holders appear first. Permanent-ineligible wallets are removed from the board.</p>
         </div>
         <div className="history-card bull-board-card">
           <div className="table-wrap">
@@ -373,15 +389,15 @@ export function BullBoard() {
                 {rows.length ? (
                   rows.slice(0, 25).map((holder) => {
                     const lastReward = recentRewards.find((reward) => reward.wallet === holder.address);
-                    const recentEarned = earnedByWallet.get(holder.address) ?? 0;
+                    const recentEarned = holder.totalAnsemEarned ?? earnedByWallet.get(holder.address) ?? 0;
                     return (
                       <tr key={holder.address}>
                         <td>{compactAddress(holder.address)}</td>
-                        <td>Awaiting streak</td>
-                        <td>Awaiting hold time</td>
+                        <td>{holder.currentMultiplier ?? "Awaiting live state"}</td>
+                        <td>{holder.currentHoldTime ?? "Awaiting live state"}</td>
                         <td>{recentEarned > 0 ? formatAmount(recentEarned, "ANSEM") : "Awaiting holder totals"}</td>
-                        <td>{lastReward ? formatDate(lastReward.time) : "Awaiting feeding"}</td>
-                        <td>Awaiting streak</td>
+                        <td>{holder.lastFeedingAt ? formatDate(holder.lastFeedingAt) : lastReward ? formatDate(lastReward.time) : "Awaiting feeding"}</td>
+                        <td>{holder.currentStreak !== null && holder.currentStreak !== undefined ? `${holder.currentStreak} epochs` : "Awaiting live state"}</td>
                       </tr>
                     );
                   })
@@ -428,7 +444,7 @@ export function RecentFeedings() {
                   rewards.slice(0, 50).map((reward) => (
                     <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
                       <td>{compactAddress(reward.wallet)}</td>
-                      <td>Awaiting streak</td>
+                      <td>{reward.goldenMultiplier > 1 ? `${reward.goldenMultiplier.toFixed(2)}x bonus` : "Live"}</td>
                       <td>{formatAmount(reward.rewardAmount, "ANSEM")}</td>
                       <td>{formatDate(reward.time)}</td>
                       <td>
@@ -472,7 +488,7 @@ export function HolderLookup() {
           <div className="section-kicker">Holder lookup</div>
           <h2>Measure conviction.</h2>
           <p className="lead">
-            Wallet-level multiplier, hold time, estimated reward, and rank require the streak backend endpoint.
+            Wallet-level status uses the live holder-state tracker after the first tracked epoch.
           </p>
         </div>
         <form className="lookup-card" onSubmit={handleSubmit}>
@@ -534,7 +550,7 @@ export function FeedingHistory() {
                       <td>#{round.epoch}</td>
                       <td>{formatAmount(round.rewardBought, "ANSEM")}</td>
                       <td>{round.distributedPump > 0 ? "Settled" : statusLabel(round.status)}</td>
-                      <td>Awaiting conviction backend</td>
+                      <td>Live holder state</td>
                       <td>{formatAmount(round.distributedPump, "ANSEM")}</td>
                       <td>
                         {round.txSig ? (

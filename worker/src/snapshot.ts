@@ -12,6 +12,9 @@ export type Holder = {
   rawBalance: bigint;
   uiBalance: number;
   holderPct: number;
+  multiplierBps?: number;
+  streakEpochs?: number;
+  eligibleSince?: string | null;
 };
 
 async function tokenProgramForMint(mint: PublicKey) {
@@ -90,9 +93,8 @@ export function selectRewardRecipients(epochId: string, holders: Holder[]) {
   return recipients;
 }
 
-export async function snapshotEligibleHolders(): Promise<Holder[]> {
+export async function snapshotSourceHolders(): Promise<Holder[]> {
   const tokenProgram = await tokenProgramForMint(config.sourceTokenMint);
-  const mintInfo = await getMint(connection, config.sourceTokenMint, "confirmed", tokenProgram);
   const supply = await connection.getTokenSupply(config.sourceTokenMint, "confirmed");
   const rawSupply = BigInt(supply.value.amount);
   if (rawSupply <= 0n) throw new Error(`Source token supply is zero: ${config.sourceTokenMint.toBase58()}`);
@@ -133,8 +135,15 @@ export async function snapshotEligibleHolders(): Promise<Holder[]> {
     console.log(`top 3 balances seen: ${topBalances.join(", ")}`);
   }
 
+  return aggregated.sort((a, b) => (a.rawBalance === b.rawBalance ? 0 : a.rawBalance > b.rawBalance ? -1 : 1));
+}
+
+export async function eligibleHoldersFromSnapshot(holders: Holder[]): Promise<Holder[]> {
+  const tokenProgram = await tokenProgramForMint(config.sourceTokenMint);
+  const mintInfo = await getMint(connection, config.sourceTokenMint, "confirmed", tokenProgram);
   const excluded = excludedWallets(mintInfo.mintAuthority);
-  return eligibleByBalance
+  return holders
+    .filter((holder) => holder.uiBalance >= config.eligibilityMin)
     .filter((holder) => !excluded.has(holder.wallet))
     .filter((holder) => {
       const isWhale = holder.holderPct > config.maxHolderPct;
@@ -144,4 +153,8 @@ export async function snapshotEligibleHolders(): Promise<Holder[]> {
       return !isWhale;
     })
     .sort((a, b) => (a.rawBalance === b.rawBalance ? 0 : a.rawBalance > b.rawBalance ? -1 : 1));
+}
+
+export async function snapshotEligibleHolders(): Promise<Holder[]> {
+  return eligibleHoldersFromSnapshot(await snapshotSourceHolders());
 }

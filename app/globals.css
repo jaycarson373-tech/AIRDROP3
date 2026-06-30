@@ -151,7 +151,7 @@ h3 {
   z-index: -4;
   pointer-events: none;
   background:
-    url("/brand/nietzschean-logo.webp") 92% 14% / 360px auto no-repeat,
+    url("/brand/nietzschean-crest.jpg") 92% 14% / 360px auto no-repeat,
     var(--black);
   opacity: 0.12;
   filter: grayscale(1);
@@ -349,7 +349,7 @@ h3 {
 }
 
 .hero-mountains {
-  background-image: url("/brand/nietzschean-hero.webp");
+  background-image: url("/brand/nietzschean-hero-alt.jpg");
   background-position: center 46%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -1487,7 +1487,7 @@ td a,
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22) 56%, rgba(0, 0, 0, 0.82)),
     linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.86)),
-    url("/brand/ansem-black-bull.jpg") 72% center / min(64vw, 760px) auto no-repeat;
+    url("/brand/nietzschean-crest.jpg") 72% center / min(64vw, 760px) auto no-repeat;
   filter: saturate(0.88) contrast(1.1);
   transform: translate3d(0, calc(var(--scroll-y) * -0.018), 0);
 }
@@ -2058,7 +2058,7 @@ td a,
   .final-bull-art {
     background:
       linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.9)),
-      url("/brand/ansem-black-bull.jpg") center 16% / min(108vw, 620px) auto no-repeat;
+      url("/brand/nietzschean-crest.jpg") center 16% / min(108vw, 620px) auto no-repeat;
   }
 
   .activity-row,
