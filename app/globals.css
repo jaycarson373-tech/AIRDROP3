@@ -463,6 +463,23 @@ h3 {
   line-height: 0.9;
 }
 
+.hero-total-distributed {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid rgba(202, 164, 106, 0.22);
+  padding-top: 18px;
+}
+
+.hero-total-distributed b {
+  color: var(--ivory);
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(1.45rem, 3vw, 2.3rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .section {
   position: relative;
   isolation: isolate;

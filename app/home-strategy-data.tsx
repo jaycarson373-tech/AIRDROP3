@@ -173,11 +173,19 @@ export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
+  const totalDistributed =
+    stats && stats.totalRewardAirdropped > 0
+      ? `${stats.totalRewardAirdropped.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${REWARD_SYMBOL}`
+      : "Awaiting first drop";
 
   return (
     <div className="hero-countdown" aria-live="polite">
       <span>Next Reward Drop</span>
       <strong>{countdown}</strong>
+      <div className="hero-total-distributed">
+        <span>Total {REWARD_SYMBOL} Distributed</span>
+        <b>{totalDistributed}</b>
+      </div>
     </div>
   );
 }
