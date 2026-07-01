@@ -2200,3 +2200,388 @@ td a,
     justify-content: flex-start;
   }
 }
+
+/* HOOD Strategy fintech rebrand */
+:root {
+  --black: #020403;
+  --charcoal: #06100a;
+  --charcoal-2: #0b1510;
+  --stone: #111816;
+  --stone-2: #151f1a;
+  --bronze: #7f8a35;
+  --bronze-soft: #344018;
+  --gold: #e7ff00;
+  --gold-soft: #b7d400;
+  --green: #00c805;
+  --green-soft: #123f22;
+  --ivory: #f7faf5;
+  --muted: #8c958d;
+  --faint: rgba(247, 250, 245, 0.68);
+  --border: rgba(231, 255, 0, 0.24);
+  --border-soft: rgba(247, 250, 245, 0.1);
+  --panel: rgba(9, 16, 12, 0.9);
+  --panel-2: rgba(13, 24, 17, 0.92);
+  --success: #00c805;
+}
+
+.hood-strategy-page,
+.dashboard,
+.fallen-bulls-page {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(231, 255, 0, 0.16), transparent 26%),
+    radial-gradient(circle at 14% 18%, rgba(0, 200, 5, 0.14), transparent 22%),
+    linear-gradient(180deg, #020403, #060907 48%, #020403);
+}
+
+.hood-strategy-page h1,
+.hood-strategy-page h2,
+.hood-strategy-page h3,
+.hood-strategy-page .brand span,
+.hood-strategy-page .section-kicker,
+.dashboard h1,
+.dashboard h2,
+.dashboard h3,
+.dashboard .brand span {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.hood-strategy-page h1 {
+  display: block;
+  max-width: 820px;
+  font-size: clamp(4.2rem, 10vw, 10rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  text-shadow: none;
+}
+
+.hood-strategy-page h1 span,
+.hood-strategy-page h1 span:first-child {
+  display: block;
+  font-size: 1em;
+  letter-spacing: -0.04em;
+}
+
+.hood-strategy-page h2,
+.dashboard h1,
+.dashboard-title {
+  font-size: clamp(2.4rem, 5vw, 5.4rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+}
+
+.nav {
+  border-bottom-color: rgba(231, 255, 0, 0.16);
+  background: rgba(2, 4, 3, 0.84);
+  backdrop-filter: blur(18px);
+}
+
+.is-scrolled .nav {
+  background: rgba(2, 4, 3, 0.96);
+  border-color: rgba(231, 255, 0, 0.28);
+}
+
+.brand-logo,
+.loader-mascot {
+  border-color: rgba(231, 255, 0, 0.38);
+  border-radius: 16px;
+  background: #e7ff00;
+  object-fit: cover;
+  box-shadow: 0 0 34px rgba(231, 255, 0, 0.12);
+}
+
+.brand small,
+.nav-links a,
+.footer-links a,
+.footer-links span {
+  letter-spacing: 0.06em;
+}
+
+.nav-links a:hover,
+.footer-links a:hover {
+  color: var(--green);
+}
+
+.cta,
+.mini-button,
+.details-button,
+.lookup-card button {
+  border-color: rgba(231, 255, 0, 0.55);
+  border-radius: 14px;
+  background: #e7ff00;
+  color: #020403;
+  box-shadow: 0 16px 48px rgba(231, 255, 0, 0.16);
+}
+
+.cta.secondary,
+.mini-button {
+  background: rgba(247, 250, 245, 0.04);
+  color: var(--ivory);
+}
+
+.hood-hero {
+  display: grid;
+  min-height: 100svh;
+  align-items: end;
+  padding: 152px 0 78px;
+  background:
+    linear-gradient(rgba(231, 255, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(231, 255, 0, 0.035) 1px, transparent 1px),
+    #020403;
+  background-size: 72px 72px;
+}
+
+.hood-hero::after {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 22vh;
+  content: "";
+  background: linear-gradient(180deg, transparent, #020403);
+}
+
+.hood-hero .hero-mountains {
+  background:
+    linear-gradient(135deg, transparent 0 48%, rgba(231, 255, 0, 0.2) 48% 48.25%, transparent 48.25%),
+    linear-gradient(160deg, transparent 0 62%, rgba(0, 200, 5, 0.22) 62% 62.3%, transparent 62.3%),
+    url("/brand/hood-strategy-logo.png") right 7vw center / min(42vw, 520px) auto no-repeat;
+  opacity: 0.92;
+  transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0);
+}
+
+.hood-hero .hero-shade {
+  background:
+    radial-gradient(circle at 75% 36%, rgba(231, 255, 0, 0.2), transparent 28%),
+    linear-gradient(90deg, rgba(2, 4, 3, 0.96), rgba(2, 4, 3, 0.74) 46%, rgba(2, 4, 3, 0.3) 74%, rgba(2, 4, 3, 0.78)),
+    linear-gradient(180deg, rgba(2, 4, 3, 0.12), rgba(2, 4, 3, 0.86));
+}
+
+.hero-subtitle {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.hero-lead {
+  color: rgba(247, 250, 245, 0.76);
+}
+
+.hero-countdown {
+  border-radius: 22px;
+  border-color: rgba(231, 255, 0, 0.2);
+  background:
+    linear-gradient(180deg, rgba(247, 250, 245, 0.05), transparent),
+    rgba(5, 10, 7, 0.86);
+  backdrop-filter: blur(18px);
+}
+
+.hero-countdown strong,
+.hero-total-distributed b,
+.metric-card strong,
+.share-card strong,
+.max-row b,
+.live-stat strong {
+  color: var(--gold);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.04em;
+}
+
+.section {
+  background:
+    radial-gradient(circle at 84% 8%, rgba(231, 255, 0, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(2, 4, 3, 0.98), rgba(6, 9, 7, 0.98));
+}
+
+.section::before {
+  background-image:
+    linear-gradient(rgba(231, 255, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(231, 255, 0, 0.025) 1px, transparent 1px);
+  background-size: 96px 96px, 96px 96px;
+  opacity: 0.36;
+  filter: none;
+  transform: none;
+}
+
+.metric-card,
+.history-card,
+.conviction-card,
+.multiplier-card,
+.reset-warning-card,
+.reward-flow-card,
+.share-card,
+.warning-card,
+.lookup-card,
+.faq-item,
+.flow-step,
+.card,
+.stat,
+.status-item,
+.black-bull-card,
+.eligibility-card {
+  border-radius: 18px;
+  border-color: rgba(247, 250, 245, 0.1);
+  background:
+    linear-gradient(180deg, rgba(247, 250, 245, 0.055), rgba(247, 250, 245, 0.015)),
+    rgba(7, 13, 9, 0.88);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.28);
+}
+
+.dashboard-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.metric-card {
+  min-height: 138px;
+}
+
+.reward-flow-card,
+.eligibility-card {
+  min-height: 150px;
+}
+
+.reward-flow-card::before,
+.section-kicker,
+.metric-card-strong strong {
+  color: var(--green);
+}
+
+.reward-flow-card:not(:last-child)::after,
+.eligibility-card:not(:last-child)::after {
+  color: var(--green);
+}
+
+.multiplier-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.multiplier-card {
+  min-height: 196px;
+}
+
+.multiplier-card > span,
+.multiplier-card strong {
+  color: var(--gold);
+}
+
+.boost-strip span,
+.rank-strip span {
+  border-radius: 999px;
+  border-color: rgba(231, 255, 0, 0.24);
+  background: rgba(231, 255, 0, 0.055);
+}
+
+.strategy-thesis-section .black-bull-portrait {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: #e7ff00;
+}
+
+.strategy-thesis-section .black-bull-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
+}
+
+.black-bull-card-head span,
+.black-bull-timeline span,
+.black-bull-card-head strong,
+.reward-flow-card strong,
+.eligibility-card strong,
+.footer-brand strong {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.bull-signal-list span {
+  border-radius: 12px;
+  border-color: rgba(231, 255, 0, 0.18);
+  background: rgba(231, 255, 0, 0.04);
+}
+
+.black-bull-timeline {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.black-bull-timeline::before {
+  background: linear-gradient(90deg, transparent, rgba(231, 255, 0, 0.8), transparent);
+}
+
+.black-bull-timeline span::before {
+  background: var(--green);
+}
+
+.bull-board-card table {
+  min-width: 1180px;
+}
+
+th {
+  color: #aab3aa;
+  letter-spacing: 0.08em;
+}
+
+td {
+  color: rgba(247, 250, 245, 0.9);
+}
+
+td a,
+.details-button {
+  color: var(--green);
+}
+
+.final-bull-art {
+  background:
+    radial-gradient(circle at 76% 44%, rgba(231, 255, 0, 0.18), transparent 24%),
+    url("/brand/hood-strategy-logo.png") 78% center / min(48vw, 640px) auto no-repeat;
+  filter: none;
+}
+
+.final-bull-copy strong {
+  color: var(--green);
+}
+
+.footer {
+  border-top-color: rgba(231, 255, 0, 0.16);
+  background: #020403;
+}
+
+.loader-text {
+  color: var(--gold);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.loader-line span {
+  background: var(--green);
+}
+
+@media (max-width: 1080px) {
+  .dashboard-grid,
+  .multiplier-grid,
+  .black-bull-timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .hood-hero {
+    padding: 116px 0 36px;
+  }
+
+  .hood-strategy-page h1 {
+    font-size: clamp(3.4rem, 18vw, 5.8rem);
+  }
+
+  .hood-hero .hero-mountains {
+    background:
+      radial-gradient(circle at 50% 24%, rgba(231, 255, 0, 0.18), transparent 32%),
+      url("/brand/hood-strategy-logo.png") center 12% / min(86vw, 420px) auto no-repeat;
+    opacity: 0.42;
+  }
+
+  .dashboard-grid,
+  .multiplier-grid,
+  .black-bull-timeline {
+    grid-template-columns: 1fr;
+  }
+}

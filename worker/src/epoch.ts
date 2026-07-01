@@ -67,7 +67,7 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] no reward-ready holders, skipped buy and airdrop`);
+      console.log(`[${epochId}] no reward-ready holders, skipped reward distribution`);
       return;
     }
 
@@ -106,6 +106,16 @@ export async function runEpoch(date = new Date()) {
     console.log(
       `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
+    if (rewardPoolRaw <= config.minRewardRawToAirdrop) {
+      await completeEpoch(epochId, {
+        eligible_count: eligibleHolders.length,
+        reward_bought: buy.rewardReceivedUi.toString(),
+        reward_distributed: "0",
+        status: "skipped"
+      });
+      console.log(`[${epochId}] insufficient usable SOL after 0.30 reserve and 0.05 buffer, skipped epoch`);
+      return;
+    }
     const goldenPool = await computeGoldenRewardPool(epochId, holders, rewardPoolRaw);
     const allocations = await computeAllocations(holders, goldenPool.rewardPoolRaw);
     if (!allocations.length) {

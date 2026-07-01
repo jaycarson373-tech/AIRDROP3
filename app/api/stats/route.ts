@@ -53,6 +53,7 @@ type PayoutRow = {
 
 type HolderStateRow = {
   current_multiplier_bps: number | null;
+  source_balance: string | number | null;
   permanently_ineligible: boolean | null;
 };
 
@@ -173,10 +174,17 @@ function toNumber(value: unknown) {
   return Number.isFinite(number) ? number : 0;
 }
 
-function averageMultiplier(holderStates: HolderStateRow[] | null) {
+function holderBoostBps(balance: number) {
+  if (balance < 500_000) return 13500;
+  if (balance < 1_000_000) return 12000;
+  if (balance < 3_000_000) return 11000;
+  return 10000;
+}
+
+function averageBoost(holderStates: HolderStateRow[] | null) {
   const active = (holderStates ?? []).filter((row) => !row.permanently_ineligible);
   if (!active.length) return null;
-  const totalBps = active.reduce((sum, row) => sum + (row.current_multiplier_bps ?? 10000), 0);
+  const totalBps = active.reduce((sum, row) => sum + holderBoostBps(toNumber(row.source_balance)), 0);
   return totalBps / active.length / 10000;
 }
 
@@ -284,7 +292,7 @@ async function liveEligibleHolderCount() {
   const mint = sourceTokenMint();
   if (!mint) return null;
 
-  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 1_000_000));
+  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 250_000));
   const maxHolderPct = numberEnv("MAX_HOLDER_PCT", 5);
   const endpoint = rpcUrl();
   const cacheKey = `${endpoint}:${mint.toBase58()}:${eligibilityMin}:${maxHolderPct}`;
@@ -400,9 +408,9 @@ export async function GET() {
     const payoutRows = await getSettledPayouts(config);
     const holderStates = await getOptionalSupabaseJson<HolderStateRow[]>(
       config,
-      "holder_states?select=current_multiplier_bps,permanently_ineligible&permanently_ineligible=eq.false&limit=10000"
+      "holder_states?select=current_multiplier_bps,source_balance,permanently_ineligible&permanently_ineligible=eq.false&limit=10000"
     );
-    const avgMultiplier = averageMultiplier(holderStates);
+    const avgMultiplier = averageBoost(holderStates);
     const payoutsByEpoch = new Map<string, EpochPayoutSummary>();
 
     for (const payout of payoutRows) {

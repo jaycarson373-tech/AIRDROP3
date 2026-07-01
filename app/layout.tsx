@@ -3,29 +3,29 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://robinhood.fun"),
-  title: "Robin Hood",
-  description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic SOL airdrops.",
+  metadataBase: new URL("https://hoodstrategy.fun"),
+  title: "HOOD Strategy",
+  description: "The Robinhood meta, rebuilt for the trenches. Hold HOOD and track live reward distributions.",
   openGraph: {
-    title: "Robin Hood",
-    description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic SOL airdrops.",
-    url: "https://robinhood.fun",
-    siteName: "Robin Hood",
+    title: "HOOD Strategy",
+    description: "The Robinhood meta, rebuilt for the trenches. Hold HOOD and track live reward distributions.",
+    url: "https://hoodstrategy.fun",
+    siteName: "HOOD Strategy",
     images: [
       {
-        url: "/brand/robin-hood-hero.jpg",
+        url: "/brand/hood-strategy-logo.png",
         width: 1200,
-        height: 780,
-        alt: "Robin Hood"
+        height: 1200,
+        alt: "HOOD Strategy"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Robin Hood",
-    description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic SOL airdrops.",
-    images: ["/brand/robin-hood-hero.jpg"]
+    title: "HOOD Strategy",
+    description: "The Robinhood meta, rebuilt for the trenches. Hold HOOD and track live reward distributions.",
+    images: ["/brand/hood-strategy-logo.png"]
   },
   icons: {
     icon: [

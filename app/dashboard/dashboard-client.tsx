@@ -85,7 +85,7 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = "Robin Hood";
+const PROJECT_NAME = "HOOD Strategy";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "SOL";
 
@@ -276,16 +276,16 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/robin-hood-logo.jpg" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
-              Robin Hood
-              <small>Trench Rewards</small>
+              HOOD Strategy
+              <small>Market Rewards</small>
             </span>
           </Link>
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/fallen-bulls">Outlaws</Link>
+            <Link href="/fallen-bulls">Ineligible</Link>
           </div>
         </div>
       </header>
@@ -468,7 +468,7 @@ export function DashboardClient() {
                           <div>
                             <strong className="mono">
                               {compactAddress(reward.wallet)}
-                              {reward.isGolden ? <span className="golden-badge">Hood Bonus {reward.goldenMultiplier}x</span> : null}
+                              {reward.isGolden ? <span className="golden-badge">Strategy Bonus {reward.goldenMultiplier}x</span> : null}
                             </strong>
                             <span>{formatTime(reward.time)}</span>
                           </div>

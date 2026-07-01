@@ -71,16 +71,16 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/robin-hood-logo.jpg" alt="Robin Hood logo" />
+            <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt="HOOD Strategy logo" />
             <span>
-              Robin Hood
-              <small>Outlawed Wallets</small>
+              HOOD Strategy
+              <small>Ineligible Wallets</small>
             </span>
           </Link>
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/fallen-bulls">Outlaws</Link>
+            <Link href="/fallen-bulls">Ineligible</Link>
           </div>
         </div>
       </header>
@@ -88,10 +88,10 @@ export function FallenBullsClient() {
       <main className="dashboard fallen-bulls-page">
         <section className="section history-section">
           <div className="container">
-            <div className="section-kicker">Permanent ineligibility ledger</div>
+            <div className="section-kicker">Ineligibility ledger</div>
             <div className="section-head split-head">
-              <h1 className="dashboard-title">Outlawed Wallets</h1>
-              <p>Wallets that lost eligibility by selling or falling below the 1,000,000 HOOD requirement.</p>
+              <h1 className="dashboard-title">Ineligible Wallets</h1>
+              <p>Wallets that lost eligibility by selling or falling below the 250,000 HOOD requirement.</p>
             </div>
 
             <div className="history-card bull-board-card">
@@ -115,7 +115,7 @@ export function FallenBullsClient() {
                           <td>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
                           <td>{formatNumber(wallet.totalRewardEarned)} SOL</td>
-                          <td>Outlawed</td>
+                          <td>Ineligible</td>
                           <td>{wallet.currentStreak ?? 0} epochs</td>
                           <td>{formatDate(wallet.lastAirdropAt)}</td>
                           <td>{formatDate(wallet.ineligibleAt ?? wallet.lastSeenAt)}</td>
@@ -123,7 +123,7 @@ export function FallenBullsClient() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={7}>No outlawed wallets recorded yet.</td>
+                        <td colSpan={7}>No ineligible wallets recorded yet.</td>
                       </tr>
                     )}
                   </tbody>

@@ -11,7 +11,7 @@ import {
   RewardExplanation
 } from "./home-strategy-data";
 
-const PROJECT_NAME = "Robin Hood";
+const PROJECT_NAME = "HOOD Strategy";
 const DEFAULT_CA = "8u3oshsLdVmkLnGi4WuPUZVYLLzHccXFajHKQYNzpump";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
@@ -21,18 +21,19 @@ function Navbar() {
     <header className="nav">
       <div className="container nav-inner">
         <a className="brand" href="/">
-          <img className="brand-logo" src="/brand/robin-hood-logo.jpg" alt={`${PROJECT_NAME} logo`} />
+          <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
           <span>
-            Robin Hood
-            <small>Trench Rewards</small>
+            HOOD Strategy
+            <small>Market Rewards</small>
           </span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="#dashboard">Dashboard</a>
-          <a href="#hood-bonus">Hood Bonus</a>
-          <a href="#hood-board">Hood Board</a>
+          <a href="#dashboard">Live Data</a>
+          <a href="#strategy">Strategy</a>
+          <a href="#how">Rewards</a>
+          <a href="#hood-bonus">Boost Model</a>
+          <a href="#hood-board">Board</a>
           <a href="#airdrops">Airdrops</a>
-          <a href="/fallen-bulls">Outlaws</a>
         </nav>
         <div className="nav-actions">
           {CONTRACT_ADDRESS ? (
@@ -49,35 +50,33 @@ function Navbar() {
 
 export default function Page() {
   return (
-    <div className="page robin-page">
+    <div className="page hood-strategy-page">
       <Navbar />
 
       <main>
-        <section className="hero robin-hero" id="strategy">
+        <section className="hero hood-hero" id="top">
           <div className="hero-art hero-mountains" aria-hidden="true" />
-          <div className="hero-clouds" aria-hidden="true" />
-          <div className="hero-fog" aria-hidden="true" />
           <div className="hero-shade" aria-hidden="true" />
 
           <div className="container hero-inner">
             <div className="hero-copy-stack">
-              <div className="section-kicker">Steal from the rich</div>
+              <div className="section-kicker">Public market reward strategy</div>
               <h1>
-                <span>Robin</span>
-                <span>Hood</span>
+                <span>HOOD</span>
+                <span>Strategy</span>
               </h1>
               <p className="hero-subtitle">
-                Steal from the rich. Give to the trenches.
+                The Robinhood meta, rebuilt for the trenches.
               </p>
               <p className="hero-lead">
-                Creator fees stay in SOL and airdrop every 5 minutes. Rewards remain primarily supply-weighted, with a Robin Hood boost that slightly favors smaller holders and lower-balance wallets.
+                Robinhood is bringing memecoins to retail. HOOD Strategy turns that narrative into an airdrop engine for eligible $HOOD holders.
               </p>
               <div className="hero-actions">
-                <a className="cta" href="#eligibility">
-                  Enter The Hood <ArrowRight size={18} />
+                <a className="cta" href="#strategy">
+                  View Strategy <ArrowRight size={18} />
                 </a>
                 <a className="cta secondary" href="#airdrops">
-                  View Airdrops
+                  View Rewards
                 </a>
               </div>
             </div>
@@ -86,7 +85,7 @@ export default function Page() {
         </section>
 
         <LiveProtocolDashboard />
-        <ForestCodeSection />
+        <StrategySection />
         <RewardExplanation />
         <HoodBonusSection />
         <PermanentEligibility />
@@ -97,13 +96,13 @@ export default function Page() {
         <section className="section faq-section" id="faq">
           <div className="container">
             <div className="section-kicker">FAQ</div>
-            <h2>Rules of the Hood.</h2>
+            <h2>Strategy notes.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $HOOD and stay above that threshold." />
-              <FaqItem title="How often are rewards sent?" body="Creator fees stay in SOL and are airdropped every five minutes when live conditions are met." />
-              <FaqItem title="How does the Hood Score work?" body="Rewards remain primarily supply-weighted, with a Robin Hood boost that slightly favors smaller holders and lower-balance wallets." />
-              <FaqItem title="What is the Hood Bonus?" body="One eligible wallet can receive the 5x Hood Bonus on a live airdrop." />
-              <FaqItem title="Is there claiming?" body="No. The backend handles SOL airdrops automatically. No wallet connection is required to receive rewards." />
+              <FaqItem title="How do I qualify?" body="Hold at least 250,000 $HOOD and stay above that threshold." />
+              <FaqItem title="How often are rewards sent?" body="Creator fees fund rewards every epoch when live conditions are met." />
+              <FaqItem title="How does the boost work?" body="Rewards are mostly supply-weighted, with capped boosts for smaller $HOOD holders and lower SOL-balance wallets." />
+              <FaqItem title="Does supply still matter?" body="Yes. The $HOOD balance is the base weight, so larger holders can still earn more." />
+              <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
           </div>
         </section>
@@ -111,10 +110,10 @@ export default function Page() {
         <section className="section final-bull-section">
           <div className="final-bull-art" aria-hidden="true" />
           <div className="container final-bull-copy">
-            <h2>THE TRENCHES GET PAID</h2>
-            <p>The forest watches.</p>
-            <p>The fees keep moving.</p>
-            <strong>Hold $HOOD. Let the protocol redistribute.</strong>
+            <h2>RETAIL META. PUBLIC STRATEGY. LIVE REWARDS.</h2>
+            <p>Hold $HOOD.</p>
+            <p>Track the engine.</p>
+            <strong>Let the strategy run.</strong>
           </div>
         </section>
       </main>
@@ -122,16 +121,15 @@ export default function Page() {
       <footer className="footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img className="brand-logo" src="/brand/robin-hood-logo.jpg" alt={`${PROJECT_NAME} logo`} />
-            <strong>Robin Hood</strong>
+            <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+            <strong>HOOD Strategy</strong>
           </div>
-          <p>Steal from the rich. Give to the trenches.</p>
+          <p>The Robinhood meta, rebuilt for the trenches.</p>
           <div className="footer-links">
-            <a href="#dashboard">Dashboard</a>
-            <a href="#hood-bonus">Hood Bonus</a>
-            <a href="#eligibility">Eligibility</a>
-            <a href="#hood-board">Hood Board</a>
-            <a href="/fallen-bulls">Outlaws</a>
+            <a href="#dashboard">Live Data</a>
+            <a href="#strategy">Strategy</a>
+            <a href="#hood-bonus">Boost Model</a>
+            <a href="#hood-board">Board</a>
             <a href="#airdrops">Airdrops</a>
             <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com"} target="_blank" rel="noreferrer">
               X
@@ -149,41 +147,40 @@ export default function Page() {
   );
 }
 
-function ForestCodeSection() {
+function StrategySection() {
   return (
-    <section className="section ansem-section" id="forest-code">
+    <section className="section strategy-thesis-section" id="strategy">
       <div className="black-bull-glow" aria-hidden="true" />
       <div className="container black-bull-grid">
         <aside className="black-bull-card">
           <div className="black-bull-portrait">
-            <img src="/brand/backgrounds/robin-forest.png" alt="Dark Solana forest" />
+            <img src="/brand/hood-strategy-logo.png" alt="HOOD Strategy mark" />
           </div>
           <div className="black-bull-card-head">
-            <span>The forest code</span>
-            <strong>Hood Score</strong>
+            <span>Strategy stack</span>
+            <strong>HOOD Strategy</strong>
           </div>
           <div className="bull-signal-list">
-            <span>Hold $HOOD</span>
-            <span>Fees stay SOL</span>
-            <span>Smaller holders get a tilt</span>
-            <span>Lower-balance wallets get a tilt</span>
-            <span>5x Hood Bonus</span>
+            <span>Airdrop tech</span>
+            <span>Retail meta</span>
+            <span>HOOD stock thesis</span>
+            <span>Trenches redistribution</span>
           </div>
         </aside>
 
         <div className="black-bull-copy">
-          <div className="section-kicker">The Hood model</div>
-          <h2>WEIGHTED FOR THE TRENCHES</h2>
+          <div className="section-kicker">The strategy</div>
+          <h2>MARKET NARRATIVE MEETS REWARD INFRASTRUCTURE.</h2>
           <div className="lore-copy">
-            <p>Robin Hood keeps the math clear. The amount of $HOOD you hold is still the foundation.</p>
-            <p>Creator fees are not swapped. They stay SOL and are distributed directly to eligible wallets.</p>
-            <p>The Hood boost slightly favors smaller holders and wallets with lower SOL balances.</p>
-            <p>No claiming. No wallet connection. Just automatic SOL airdrops from the live reward backend.</p>
+            <p>HOOD Strategy combines the Robinhood memecoin narrative, HOOD stock momentum, and automated reward distribution into one clean holder system.</p>
+            <p>Creator fees fund rewards. Eligible $HOOD holders are scored every epoch.</p>
+            <p>Supply weighting dominates, while capped boost tiers slightly favor smaller holders and lower SOL-balance wallets.</p>
+            <p>No claiming. No wallet connection. Just a public strategy dashboard backed by live reward data.</p>
           </div>
         </div>
       </div>
-      <div className="container black-bull-timeline" aria-label="Robin Hood reward model">
-        {["Creator fees", "Stay SOL", "Scan holders", "Score wallets", "5x Hood Bonus"].map((item) => (
+      <div className="container black-bull-timeline" aria-label="HOOD Strategy reward model">
+        {["Creator fees", "Reward pool", "Holder scan", "Boost model", "Airdrop ledger"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>

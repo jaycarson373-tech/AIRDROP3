@@ -17,9 +17,6 @@ import type { Holder } from "./snapshot.js";
 
 export const GOLDEN_MULTIPLIER = 5;
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
-const ROBIN_HOOD_BASE_BPS = 10_000;
-const ROBIN_HOOD_MAX_TILT_BPS = 2_500;
-const LOW_SOL_SIGNAL_CAP_LAMPORTS = 10n * BigInt(LAMPORTS_PER_SOL);
 
 export type Allocation = {
   wallet: string;
@@ -66,7 +63,9 @@ type PreparedAllocation = Allocation & {
 type WeightedHolder = {
   holder: Holder;
   weight: bigint;
-  robinHoodBps: number;
+  holderBoostBps: number;
+  solBoostBps: number;
+  finalBoostBps: number;
   solLamports: bigint;
 };
 
@@ -112,19 +111,22 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
   );
 }
 
-function clampBps(value: number) {
-  return Math.max(0, Math.min(10_000, Math.round(value)));
+function boostLabel(bps: number) {
+  return `${(bps / 10_000).toFixed(2)}x`;
 }
 
-function smallHolderSignalBps(holder: Holder) {
-  const maxPct = Math.max(config.maxHolderPct, 0.0001);
-  const signal = ((maxPct - holder.holderPct) / maxPct) * 10_000;
-  return clampBps(signal);
+function holderBoostBps(holder: Holder) {
+  if (holder.uiBalance < 500_000) return 13_500;
+  if (holder.uiBalance < 1_000_000) return 12_000;
+  if (holder.uiBalance < 3_000_000) return 11_000;
+  return 10_000;
 }
 
-function lowSolSignalBps(solLamports: bigint) {
-  if (solLamports >= LOW_SOL_SIGNAL_CAP_LAMPORTS) return 0;
-  return Number(((LOW_SOL_SIGNAL_CAP_LAMPORTS - solLamports) * 10_000n) / LOW_SOL_SIGNAL_CAP_LAMPORTS);
+function solBalanceBoostBps(solLamports: bigint) {
+  if (solLamports < 1n * BigInt(LAMPORTS_PER_SOL)) return 13_500;
+  if (solLamports < 5n * BigInt(LAMPORTS_PER_SOL)) return 12_000;
+  if (solLamports < 20n * BigInt(LAMPORTS_PER_SOL)) return 11_000;
+  return 10_000;
 }
 
 async function holderSolBalances(holders: Holder[]) {
@@ -139,18 +141,26 @@ async function holderSolBalances(holders: Holder[]) {
   return balances;
 }
 
-async function computeRobinWeights(holders: Holder[]): Promise<WeightedHolder[]> {
+async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder[]> {
   const solBalances = await holderSolBalances(holders);
 
   return holders.map((holder) => {
     const solLamports = solBalances.get(holder.wallet) ?? 0n;
-    const robinSignalBps = Math.round((smallHolderSignalBps(holder) + lowSolSignalBps(solLamports)) / 2);
-    const robinHoodBps = ROBIN_HOOD_BASE_BPS + Math.round((robinSignalBps * ROBIN_HOOD_MAX_TILT_BPS) / 10_000);
+    const holderBps = holderBoostBps(holder);
+    const solBps = solBalanceBoostBps(solLamports);
+    const finalBoostBps = Math.round((holderBps * solBps) / 10_000);
+    const weight = holder.rawBalance * BigInt(finalBoostBps);
+
+    console.log(
+      `[WEIGHT] wallet=${holder.wallet} hood=${holder.uiBalance} sol=${Number(solLamports) / LAMPORTS_PER_SOL} holderBoost=${boostLabel(holderBps)} solBoost=${boostLabel(solBps)} finalBoost=${boostLabel(finalBoostBps)} finalWeight=${weight.toString()}`
+    );
 
     return {
       holder,
-      weight: holder.rawBalance * BigInt(robinHoodBps),
-      robinHoodBps,
+      weight,
+      holderBoostBps: holderBps,
+      solBoostBps: solBps,
+      finalBoostBps,
       solLamports
     };
   });
@@ -176,7 +186,7 @@ export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
 export async function computeAllocations(holders: Holder[], rewardRaw: bigint): Promise<Allocation[]> {
   if (!holders.length || rewardRaw <= config.minRewardRawToAirdrop) return [];
   const decimals = await rewardDecimals();
-  const weightedHolders = await computeRobinWeights(holders);
+  const weightedHolders = await computeStrategyWeights(holders);
   const totalWeight = weightedHolders.reduce((sum, holder) => sum + holder.weight, 0n);
   if (totalWeight <= 0n) return [];
 
@@ -201,7 +211,10 @@ export async function computeAllocations(holders: Holder[], rewardRaw: bigint): 
 
 function snapshotHash(holders: WeightedHolder[]) {
   const canonical = holders
-    .map(({ holder, robinHoodBps, solLamports }) => `${holder.wallet}:${holder.rawBalance.toString()}:${robinHoodBps}:${solLamports.toString()}`)
+    .map(
+      ({ holder, holderBoostBps, solBoostBps, finalBoostBps, solLamports }) =>
+        `${holder.wallet}:${holder.rawBalance.toString()}:${holderBoostBps}:${solBoostBps}:${finalBoostBps}:${solLamports.toString()}`
+    )
     .join("|");
   return createHash("sha256").update(canonical).digest("hex");
 }
@@ -212,7 +225,7 @@ function deterministicIndex(epochId: string, hash: string, count: number) {
 }
 
 export async function computeGoldenRewardPool(epochId: string, holders: Holder[], availableRewardRaw: bigint): Promise<GoldenRewardPool> {
-  const weightedHolders = holders.length ? await computeRobinWeights(holders) : [];
+  const weightedHolders = holders.length ? await computeStrategyWeights(holders) : [];
   if (!holders.length || availableRewardRaw <= 0n) {
     return { rewardPoolRaw: availableRewardRaw, snapshotHash: weightedHolders.length ? snapshotHash(weightedHolders) : null };
   }
@@ -236,7 +249,7 @@ export async function applyGoldenAirdrop(
   precomputedSnapshotHash?: string | null
 ): Promise<GoldenSummary> {
   const decimals = await rewardDecimals();
-  const hash = precomputedSnapshotHash ?? snapshotHash(await computeRobinWeights(holders));
+  const hash = precomputedSnapshotHash ?? snapshotHash(await computeStrategyWeights(holders));
 
   if (!allocations.length) {
     return {
@@ -268,7 +281,7 @@ export async function applyGoldenAirdrop(
   winner.goldenCapped = capped;
 
   console.log(
-    `[${epochId}] hood bonus winner ${winner.wallet}: base=${winner.normalAmount.toString()} raw, bonus=${bonusRaw.toString()} raw, multiplier=${GOLDEN_MULTIPLIER}x${capped ? " capped" : ""}`
+    `[${epochId}] strategy bonus winner ${winner.wallet}: base=${winner.normalAmount.toString()} raw, bonus=${bonusRaw.toString()} raw, multiplier=${GOLDEN_MULTIPLIER}x${capped ? " capped" : ""}`
   );
 
   return {
@@ -315,15 +328,16 @@ async function payoutReserveForAtas(atas: PublicKey[]): Promise<PayoutReserve> {
 }
 
 export async function estimatePayoutReserveLamports(wallets: string[]) {
-  if (!wallets.length) return BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
+  const permanentReserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
+  const airdropReserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
+  if (!wallets.length) return permanentReserveLamports + airdropReserveLamports;
 
   if (config.rewardMode === "sol") {
-    const reserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
     const batchCount = BigInt(Math.max(1, Math.ceil(wallets.length / config.airdropBatchSize)));
     const estimatedFeeLamports = batchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
-    const totalLamports = reserveLamports + estimatedFeeLamports;
+    const totalLamports = permanentReserveLamports + airdropReserveLamports + estimatedFeeLamports;
     console.log(
-      `[RESERVE] SOL payout reserve for ${wallets.length} wallets: total=${totalLamports}, base=${reserveLamports}, fees=${estimatedFeeLamports}`
+      `[RESERVE] SOL payout reserve for ${wallets.length} wallets: total=${totalLamports}, permanent=${permanentReserveLamports}, buffer=${airdropReserveLamports}, fees=${estimatedFeeLamports}`
     );
     return totalLamports;
   }
@@ -540,17 +554,18 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
   }
 
   const batches = chunk(prepared, config.airdropBatchSize);
+  const permanentReserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
   const reserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
   for (let batchIndex = 0; batchIndex < batches.length; batchIndex += 1) {
     const batch = batches[batchIndex];
     const batchAmountLamports = batch.reduce((sum, allocation) => sum + allocation.amount, 0n);
-    const requiredLamports = reserveLamports + AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS + batchAmountLamports;
+    const requiredLamports = permanentReserveLamports + reserveLamports + AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS + batchAmountLamports;
     const balanceLamports = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
 
     if (balanceLamports < requiredLamports) {
       stoppedForReserve = true;
       const error = new Error(
-        `Treasury SOL below SOL airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, reserve=${reserveLamports}, batch=${batchAmountLamports}`
+        `Treasury SOL below SOL airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, permanent=${permanentReserveLamports}, buffer=${reserveLamports}, batch=${batchAmountLamports}`
       );
       console.error(`[${epochId}] stopping SOL airdrop batch: ${error.message}`);
       const remaining = batches.slice(batchIndex).flat();

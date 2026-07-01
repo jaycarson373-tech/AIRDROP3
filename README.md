@@ -1,4 +1,4 @@
-# Robin Hood
+# HOOD Strategy
 
 Source token: `$HOOD`
 Reward asset: `SOL`
@@ -18,22 +18,28 @@ Every epoch:
 3. Snapshot `$HOOD` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, holders above `MAX_HOLDER_PCT`, and wallets that permanently lost eligibility.
 5. Select up to `MAX_WALLETS_PER_EPOCH` deterministic-random eligible holders for the epoch.
-6. Score selected holders primarily by `$HOOD` held, with a Robin Hood boost that slightly favors smaller holders and lower-SOL-balance wallets.
+6. Score selected holders primarily by `$HOOD` held, with capped boosts for smaller holders and lower-SOL-balance wallets.
 7. Airdrop native SOL directly to selected wallets.
-8. Pick one selected recipient as the separate 5x Hood Bonus winner when balance allows.
+8. Pick one selected recipient as the separate 5x Strategy Bonus winner when balance allows.
 9. Store epochs, snapshots, claims, bonus fields, SOL reward pools, and payouts in Supabase for the dashboard.
 
-## Robin Hood Weighting
+## HOOD Strategy Weighting
 
 Reward weight stays simple and starts from `$HOOD` held:
 
 - `$HOOD` balance is the foundation of the score.
-- Smaller holders receive a modest Robin Hood score boost.
-- Wallets with lower SOL balances receive a modest Robin Hood score boost.
+- 250K-500K HOOD receives a 1.35x holder boost.
+- 500K-1M HOOD receives a 1.20x holder boost.
+- 1M-3M HOOD receives a 1.10x holder boost.
+- 3M+ HOOD receives a 1.00x holder boost.
+- Wallets with less than 1 SOL receive a 1.35x SOL boost.
+- Wallets with 1-5 SOL receive a 1.20x SOL boost.
+- Wallets with 5-20 SOL receive a 1.10x SOL boost.
+- Wallets with 20+ SOL receive a 1.00x SOL boost.
 - The boost is capped, so supply held still dominates.
-- One selected recipient can receive the separate 5x Hood Bonus.
+- One selected recipient can receive the separate 5x Strategy Bonus.
 
-Every epoch is 5 minutes. Selling any amount of `$HOOD`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
+Every epoch is 5 minutes. Default eligibility is 250,000 `$HOOD`. Selling any amount of `$HOOD`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
 
 ## Supabase
 
@@ -78,7 +84,7 @@ commit;
 Required:
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Robin Hood"
+NEXT_PUBLIC_PROJECT_NAME="HOOD Strategy"
 NEXT_PUBLIC_CA=8u3oshsLdVmkLnGi4WuPUZVYLLzHccXFajHKQYNzpump
 NEXT_PUBLIC_SOURCE_SYMBOL=HOOD
 NEXT_PUBLIC_REWARD_SYMBOL=SOL
@@ -126,11 +132,11 @@ Reward settings:
 
 ```bash
 EPOCH_MINUTES=5
-ELIGIBILITY_MIN=1000000
-MAX_WALLETS_PER_EPOCH=75
+ELIGIBILITY_MIN=250000
+MAX_WALLETS_PER_EPOCH=150
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=
-MIN_SOL_RESERVE=0.2
+MIN_SOL_RESERVE=0.3
 AIRDROP_SOL_RESERVE=0.05
 AIRDROP_BATCH_SIZE=4
 AIRDROP_REWARD_BPS=9000
@@ -138,7 +144,7 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-`MIN_SOL_RESERVE=0.2` keeps at least 0.2 SOL available before the reward pool is calculated. `AIRDROP_SOL_RESERVE=0.05` is the second reserve checked during native SOL transfers. `AIRDROP_REWARD_BPS=9000` distributes 90% of the available SOL reward pool each epoch after reserve.
+`MIN_SOL_RESERVE=0.3` keeps at least 0.30 SOL untouched before the reward pool is calculated. `AIRDROP_SOL_RESERVE=0.05` is the post-airdrop transaction buffer. Together they reserve 0.35 SOL before distribution. `AIRDROP_REWARD_BPS=9000` distributes 90% of the available SOL reward pool each epoch after reserve.
 
 `REWARD_TOKEN_MINT`, `SWAP_BALANCE_BPS`, and `SWAP_SLIPPAGE_BPS` are not required in SOL mode.
 
