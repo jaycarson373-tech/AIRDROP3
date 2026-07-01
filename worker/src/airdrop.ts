@@ -17,9 +17,11 @@ import type { Holder } from "./snapshot.js";
 
 export const GOLDEN_MULTIPLIER = 5;
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
-const ROBIN_HOOD_BASE_BPS = 8_000;
-const ROBIN_HOOD_MAX_TILT_BPS = 2_000;
-const LOW_SOL_SIGNAL_CAP_LAMPORTS = 10n * BigInt(LAMPORTS_PER_SOL);
+const BASE_SCORE_BPS = 10_000;
+const HOLD_TIME_MAX_BPS = 1_500;
+const WALLET_VALUE_MAX_BPS = 1_000;
+const CLEAN_HOLDER_BPS = 500;
+const WALLET_VALUE_SIGNAL_CAP_LAMPORTS = 10n * BigInt(LAMPORTS_PER_SOL);
 
 export type Allocation = {
   wallet: string;
@@ -66,7 +68,7 @@ type PreparedAllocation = Allocation & {
 type WeightedHolder = {
   holder: Holder;
   weight: bigint;
-  robinHoodBps: number;
+  scoreBps: number;
   solLamports: bigint;
 };
 
@@ -108,15 +110,15 @@ function clampBps(value: number) {
   return Math.max(0, Math.min(10_000, Math.round(value)));
 }
 
-function smallHolderSignalBps(holder: Holder) {
-  const maxPct = Math.max(config.maxHolderPct, 0.0001);
-  const signal = ((maxPct - holder.holderPct) / maxPct) * 10_000;
-  return clampBps(signal);
+function holdTimeSignalBps(holder: Holder) {
+  const streakEpochs = Number(holder.streakEpochs ?? 0);
+  const oneWeekEpochs = Math.max(1, Math.round((7 * 24 * 60) / config.epochMinutes));
+  return clampBps((streakEpochs / oneWeekEpochs) * 10_000);
 }
 
-function lowSolSignalBps(solLamports: bigint) {
-  if (solLamports >= LOW_SOL_SIGNAL_CAP_LAMPORTS) return 0;
-  return Number(((LOW_SOL_SIGNAL_CAP_LAMPORTS - solLamports) * 10_000n) / LOW_SOL_SIGNAL_CAP_LAMPORTS);
+function walletValueSignalBps(solLamports: bigint) {
+  if (solLamports >= WALLET_VALUE_SIGNAL_CAP_LAMPORTS) return 10_000;
+  return Number((solLamports * 10_000n) / WALLET_VALUE_SIGNAL_CAP_LAMPORTS);
 }
 
 async function holderSolBalances(holders: Holder[]) {
@@ -136,13 +138,15 @@ async function computeRobinWeights(holders: Holder[]): Promise<WeightedHolder[]>
 
   return holders.map((holder) => {
     const solLamports = solBalances.get(holder.wallet) ?? 0n;
-    const robinSignalBps = Math.round((smallHolderSignalBps(holder) + lowSolSignalBps(solLamports)) / 2);
-    const robinHoodBps = ROBIN_HOOD_BASE_BPS + Math.round((robinSignalBps * ROBIN_HOOD_MAX_TILT_BPS) / 10_000);
+    const holdTimeBps = Math.round((holdTimeSignalBps(holder) * HOLD_TIME_MAX_BPS) / 10_000);
+    const walletValueBps = Math.round((walletValueSignalBps(solLamports) * WALLET_VALUE_MAX_BPS) / 10_000);
+    const cleanHolderBps = (holder.streakEpochs ?? 0) > 0 ? CLEAN_HOLDER_BPS : 0;
+    const scoreBps = BASE_SCORE_BPS + holdTimeBps + walletValueBps + cleanHolderBps;
 
     return {
       holder,
-      weight: holder.rawBalance * BigInt(robinHoodBps),
-      robinHoodBps,
+      weight: holder.rawBalance * BigInt(scoreBps),
+      scoreBps,
       solLamports
     };
   });
@@ -189,7 +193,7 @@ export async function computeAllocations(holders: Holder[], rewardRaw: bigint): 
 
 function snapshotHash(holders: WeightedHolder[]) {
   const canonical = holders
-    .map(({ holder, robinHoodBps, solLamports }) => `${holder.wallet}:${holder.rawBalance.toString()}:${robinHoodBps}:${solLamports.toString()}`)
+    .map(({ holder, scoreBps, solLamports }) => `${holder.wallet}:${holder.rawBalance.toString()}:${scoreBps}:${holder.streakEpochs ?? 0}:${solLamports.toString()}`)
     .join("|");
   return createHash("sha256").update(canonical).digest("hex");
 }

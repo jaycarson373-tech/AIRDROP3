@@ -69,7 +69,7 @@ export default function Page() {
                 Steal from the rich. Give to the trenches.
               </p>
               <p className="hero-lead">
-                Creator fees buy rewards every 5 minutes. Rewards are primarily based on $HOOD holdings, with a Robin Hood boost that slightly favors smaller holders and wallets with lower SOL balances.
+                Creator fees buy rewards every 5 minutes. Rewards mix $HOOD held, hold time, no-sell status, and on-chain wallet value.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#eligibility">
@@ -100,7 +100,7 @@ export default function Page() {
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $HOOD and stay above that threshold." />
               <FaqItem title="How often are rewards sent?" body="Creator fees buy rewards every five minutes, then the existing backend distributes them automatically when live conditions are met." />
-              <FaqItem title="How does the Robin Hood boost work?" body="About 80% of reward weight comes from $HOOD held. About 20% slightly favors smaller supply percentages and lower SOL balances." />
+              <FaqItem title="How does the Hood Score work?" body="The score starts with $HOOD held, then adds capped signals for hold time, no-sell status, and wallet value." />
               <FaqItem title="What is the Hood Bonus?" body="One eligible wallet can receive the 5x Hood Bonus on a live airdrop." />
               <FaqItem title="Is there claiming?" body="No. The backend handles purchases and airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
@@ -159,12 +159,13 @@ function ForestCodeSection() {
           </div>
           <div className="black-bull-card-head">
             <span>The forest code</span>
-            <strong>80 / 20</strong>
+            <strong>Hood Score</strong>
           </div>
           <div className="bull-signal-list">
             <span>Hold $HOOD</span>
-            <span>Smaller holders get a tilt</span>
-            <span>Lower SOL gets a tilt</span>
+            <span>Build hold time</span>
+            <span>Do not sell</span>
+            <span>Wallet value matters</span>
             <span>5x Hood Bonus</span>
           </div>
         </aside>
@@ -173,15 +174,15 @@ function ForestCodeSection() {
           <div className="section-kicker">The Hood model</div>
           <h2>WEIGHTED FOR THE TRENCHES</h2>
           <div className="lore-copy">
-            <p>Robin Hood keeps the math simple. The amount of $HOOD you hold still matters most.</p>
-            <p>A small part of each reward weight leans toward wallets with a smaller share of supply and lower SOL balances.</p>
-            <p>It is not complicated. Roughly 80% supply weight. Roughly 20% Robin Hood boost.</p>
+            <p>Robin Hood keeps the math clear. The amount of $HOOD you hold is the foundation.</p>
+            <p>The reward score also looks at hold time, whether the wallet has sold, and on-chain wallet value.</p>
+            <p>This avoids a simple reverse-skew toward smaller wallets while still rewarding real trench holders.</p>
             <p>No claiming. No wallet connection. Just automatic airdrops from the live reward backend.</p>
           </div>
         </div>
       </div>
       <div className="container black-bull-timeline" aria-label="Robin Hood reward model">
-        {["Creator fees", "Buy rewards", "80% holdings", "20% trench tilt", "5x Hood Bonus"].map((item) => (
+        {["Creator fees", "Buy rewards", "Scan holders", "Score wallets", "5x Hood Bonus"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>

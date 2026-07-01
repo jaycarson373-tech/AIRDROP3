@@ -236,8 +236,10 @@ function MetricCard({
 }
 
 const hoodModelCards = [
-  ["80%", "Supply weight", `$${SOURCE_SYMBOL} held still drives most of the allocation.`],
-  ["20%", "Robin Hood boost", "Smaller supply share and lower SOL balance get a slight tilt."],
+  ["Holdings", "Supply held", `$${SOURCE_SYMBOL} balance is the foundation of every reward score.`],
+  ["Streak", "Hold time", "Remaining eligible across epochs strengthens the score."],
+  ["Clean", "No sells", "Selling removes eligibility from the tracked reward set."],
+  ["Value", "Wallet value", "On-chain wallet value is included as a capped signal."],
   ["5×", "Hood Bonus", "One eligible wallet can receive the special bonus on a live drop."]
 ];
 
@@ -247,8 +249,8 @@ export function HoodBonusSection() {
       <div className="container">
         <div className="section-kicker">Hood Bonus</div>
         <div className="section-head split-head">
-          <h2>One bonus. Simple math.</h2>
-          <p>Rewards are primarily based on holdings. The Robin Hood tilt is intentionally small and transparent.</p>
+          <h2>One bonus. Clear scoring.</h2>
+          <p>Rewards mix supply held, hold time, no-sell status, wallet value, and the 5x Hood Bonus.</p>
         </div>
         <div className="multiplier-grid">
           {hoodModelCards.map(([value, title, copy]) => (
@@ -260,32 +262,27 @@ export function HoodBonusSection() {
             </article>
           ))}
         </div>
-        <div className="reset-warning-card">
-          <span>Important</span>
-          <strong>The old hold-time multiplier is removed.</strong>
-          <p>The live allocation now uses $HOOD balance plus the lightweight Robin Hood boost. The separate lucky bonus is 5x.</p>
-        </div>
         <div className="conviction-card streak-card">
           <span>Transparent reward weight</span>
-          <h3>Robin Hood weighting</h3>
+          <h3>Hood Score</h3>
           <div className="streak-readout">
             <div>
-              <span>Primary weight</span>
-              <strong>~80% $HOOD held</strong>
+              <span>Base</span>
+              <strong>$HOOD held</strong>
             </div>
             <div>
-              <span>Trench tilt</span>
-              <strong>~20% smaller holder / lower SOL</strong>
+              <span>Signals</span>
+              <strong>Hold time + no sells</strong>
             </div>
             <div>
-              <span>Bonus</span>
-              <strong>5x Hood Bonus</strong>
+              <span>Value</span>
+              <strong>Wallet value + 5x bonus</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>Supply weighting still dominates. The boost only nudges rewards toward the trenches.</p>
+          <p>The score does not reverse-skew toward smaller wallets. Holding more $HOOD still matters most.</p>
           <div className="max-row">
             <span>Bonus max</span>
             <b>5×</b>
@@ -293,7 +290,7 @@ export function HoodBonusSection() {
         </div>
       </div>
       <div className="container rank-strip" aria-label="Reward model">
-        {["Hold", "Fees buy rewards", "80% holdings", "20% trench tilt", "5x bonus"].map((rank) => (
+        {["Hold $HOOD", "Stay eligible", "Do not sell", "Build wallet value", "5x bonus"].map((rank) => (
           <span key={rank}>{rank}</span>
         ))}
       </div>
@@ -329,15 +326,15 @@ export function RewardExplanation() {
         <div className="section-kicker">How rewards work</div>
         <div className="section-head split-head">
           <h2>Simple: hold HOOD, receive rewards.</h2>
-          <p>Most of your allocation comes from how much $HOOD you hold. A smaller portion gives a Robin Hood tilt to the trenches.</p>
+          <p>Your reward score is a mixture of supply held, hold time, whether the wallet has sold, and on-chain wallet value.</p>
         </div>
         <div className="reward-flow">
           {[
             `Hold at least 1,000,000 $${SOURCE_SYMBOL}`,
             `Creator fees buy ${REWARD_SYMBOL} every 5 minutes`,
-            `${REWARD_SYMBOL} is distributed to eligible holders`,
-            "~80% of weight comes from $HOOD held",
-            "~20% slightly favors smaller holders and lower SOL wallets"
+            "The backend scans eligible holder balances",
+            "Hold time, no-sell status, and wallet value strengthen the score",
+            `${REWARD_SYMBOL} is automatically distributed to eligible wallets`
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
               <strong>{item}</strong>
@@ -346,8 +343,8 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Holder A", "More $HOOD", "receives a larger base share"],
-            ["Holder B", "Smaller wallet", "can receive a slight boost"],
+            ["Holder A", "More $HOOD", "larger base score"],
+            ["Holder B", "Longer hold", "stronger score signal"],
             ["Holder C", "Hood Bonus", "can receive the 5x bonus"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
@@ -565,7 +562,7 @@ export function AirdropHistory() {
                       <td>#{round.epoch}</td>
                       <td>{formatAmount(round.rewardBought, REWARD_SYMBOL)}</td>
                       <td>{round.distributedPump > 0 ? "Settled" : statusLabel(round.status)}</td>
-                      <td>80/20 live model</td>
+                      <td>Hood Score</td>
                       <td>{formatAmount(round.distributedPump, REWARD_SYMBOL)}</td>
                       <td>
                         {round.txSig ? (

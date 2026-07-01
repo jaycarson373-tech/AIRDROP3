@@ -23,10 +23,12 @@ Every epoch:
 
 ## Robin Hood Weighting
 
-Normal hold-time multipliers are disabled. Reward weight is intentionally simple:
+Reward weight is intentionally simple and starts from `$HOOD` held:
 
-- About 80% comes from `$HOOD` balance.
-- About 20% slightly favors wallets with a smaller supply percentage and lower SOL balance.
+- `$HOOD` balance is the foundation of the score.
+- Continuous eligibility / hold time adds a capped score boost.
+- Wallets that sell or drop below `ELIGIBILITY_MIN` are removed from future tracked distributions.
+- On-chain wallet value adds a capped score signal.
 - One selected recipient can receive the separate 5x Hood Bonus.
 
 Every epoch is 5 minutes. Selling any amount of `$HOOD`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
