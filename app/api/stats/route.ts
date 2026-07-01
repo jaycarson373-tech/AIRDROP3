@@ -480,7 +480,7 @@ export async function GET() {
         goldenBaseReward: toNumber(goldenPayout?.normal_reward_amount),
         goldenBonusReward: toNumber(goldenPayout?.golden_bonus_reward),
         goldenTotalReward: toNumber(goldenPayout?.reward_amount),
-        goldenMultiplier: goldenPayout?.golden_multiplier ?? row?.golden_multiplier ?? 10,
+        goldenMultiplier: goldenPayout?.golden_multiplier ?? row?.golden_multiplier ?? 5,
         goldenCapped: goldenPayout?.golden_capped ?? false,
         goldenTxSig: goldenPayout?.tx_sig ?? null,
         txSig: payoutSummary?.latestTxSig ?? claim?.tx_sig ?? buy?.tx_sig ?? null
@@ -507,7 +507,7 @@ export async function GET() {
           baseReward: toNumber(latestGoldenRow.normal_reward_amount),
           bonusReward: toNumber(latestGoldenRow.golden_bonus_reward),
           totalReward: toNumber(latestGoldenRow.reward_amount),
-          multiplier: latestGoldenRow.golden_multiplier ?? 10,
+          multiplier: latestGoldenRow.golden_multiplier ?? 5,
           capped: latestGoldenRow.golden_capped ?? false,
           txSig: latestGoldenRow.tx_sig
         }

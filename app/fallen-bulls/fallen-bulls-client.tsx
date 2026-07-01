@@ -71,16 +71,16 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/nietzschean-crest.jpg" alt="The Final Bull logo" />
+            <img className="brand-logo" src="/brand/robin-hood-logo.jpg" alt="Robin Hood logo" />
             <span>
-              The Final Bull
-              <small>Fallen Bulls</small>
+              Robin Hood
+              <small>Outlawed Wallets</small>
             </span>
           </Link>
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/fallen-bulls">Fallen Bulls</Link>
+            <Link href="/fallen-bulls">Outlaws</Link>
           </div>
         </div>
       </header>
@@ -90,8 +90,8 @@ export function FallenBullsClient() {
           <div className="container">
             <div className="section-kicker">Permanent ineligibility ledger</div>
             <div className="section-head split-head">
-              <h1 className="dashboard-title">Fallen Bulls</h1>
-              <p>Wallets that lost eligibility by selling or falling below the 1,000,000 BULL requirement.</p>
+              <h1 className="dashboard-title">Outlawed Wallets</h1>
+              <p>Wallets that lost eligibility by selling or falling below the 1,000,000 HOOD requirement.</p>
             </div>
 
             <div className="history-card bull-board-card">
@@ -101,8 +101,8 @@ export function FallenBullsClient() {
                     <tr>
                       <th>Wallet</th>
                       <th>Reason</th>
-                      <th>Total ANSEM Earned</th>
-                      <th>Last Multiplier</th>
+                      <th>Total Rewards Earned</th>
+                      <th>Last Bonus State</th>
                       <th>Final Streak</th>
                       <th>Last Airdrop</th>
                       <th>Removed At</th>
@@ -110,20 +110,20 @@ export function FallenBullsClient() {
                   </thead>
                   <tbody>
                     {fallenBulls.length ? (
-                      fallenBulls.map((bull) => (
-                        <tr key={`${bull.address}-${bull.ineligibleAt ?? bull.lastSeenAt ?? "fallen"}`}>
-                          <td>{compactAddress(bull.address)}</td>
-                          <td>{bull.ineligibleReason}</td>
-                          <td>{formatNumber(bull.totalAnsemEarned)} ANSEM</td>
-                          <td>{bull.currentMultiplier ?? "1.00x"}</td>
-                          <td>{bull.currentStreak ?? 0} epochs</td>
-                          <td>{formatDate(bull.lastFeedingAt)}</td>
-                          <td>{formatDate(bull.ineligibleAt ?? bull.lastSeenAt)}</td>
+                      fallenBulls.map((wallet) => (
+                        <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "fallen"}`}>
+                          <td>{compactAddress(wallet.address)}</td>
+                          <td>{wallet.ineligibleReason}</td>
+                          <td>{formatNumber(wallet.totalAnsemEarned)} rewards</td>
+                          <td>{wallet.currentMultiplier ?? "1.00x"}</td>
+                          <td>{wallet.currentStreak ?? 0} epochs</td>
+                          <td>{formatDate(wallet.lastFeedingAt)}</td>
+                          <td>{formatDate(wallet.ineligibleAt ?? wallet.lastSeenAt)}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={7}>No fallen bulls recorded yet.</td>
+                        <td colSpan={7}>No outlawed wallets recorded yet.</td>
                       </tr>
                     )}
                   </tbody>

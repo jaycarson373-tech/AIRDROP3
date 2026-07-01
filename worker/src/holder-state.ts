@@ -14,29 +14,12 @@ type HolderStateRow = {
   ineligible_reason: string | null;
 };
 
-const EPOCHS_PER_HOUR = 12;
-const EPOCHS_PER_DAY = EPOCHS_PER_HOUR * 24;
-const EPOCHS_PER_WEEK = EPOCHS_PER_DAY * 7;
-const EPOCHS_PER_MONTH = EPOCHS_PER_DAY * 30;
-
-const MULTIPLIER_TIERS = [
-  { minEpochs: EPOCHS_PER_MONTH, bps: 150_000 },
-  { minEpochs: EPOCHS_PER_WEEK, bps: 80_000 },
-  { minEpochs: EPOCHS_PER_DAY, bps: 40_000 },
-  { minEpochs: EPOCHS_PER_HOUR, bps: 20_000 },
-  { minEpochs: 0, bps: 10_000 }
-];
-
 function parseRaw(value: unknown) {
   try {
     return BigInt(String(value ?? "0"));
   } catch {
     return 0n;
   }
-}
-
-function multiplierBpsForStreak(streakEpochs: number) {
-  return MULTIPLIER_TIERS.find((tier) => streakEpochs >= tier.minEpochs)?.bps ?? 10_000;
 }
 
 function isMissingHolderStateTable(error: unknown) {
@@ -143,7 +126,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       }
 
       const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
-      const multiplierBps = multiplierBpsForStreak(nextStreak);
+      const multiplierBps = 10_000;
       const eligibleSince = existing?.eligible_since ?? now;
       const nextHighest = highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance;
 

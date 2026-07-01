@@ -81,7 +81,7 @@ export async function runEpoch(date = new Date()) {
     console.log(
       `[${epochId}] reward pool: ${rewardPoolRaw.toString()} raw of ${availableRewardRaw.toString()} raw treasury balance (${config.airdropRewardBps} bps)`
     );
-    const goldenPool = computeGoldenRewardPool(epochId, holders, rewardPoolRaw);
+    const goldenPool = await computeGoldenRewardPool(epochId, holders, rewardPoolRaw);
     const allocations = await computeAllocations(holders, goldenPool.rewardPoolRaw);
     if (!allocations.length) {
       await completeEpoch(epochId, {

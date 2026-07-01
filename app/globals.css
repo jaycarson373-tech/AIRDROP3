@@ -3,26 +3,26 @@
 :root {
   color-scheme: dark;
   --black: #030303;
-  --charcoal: #090908;
-  --charcoal-2: #11100e;
-  --stone: #181613;
-  --stone-2: #211d17;
-  --bronze: #8c6a3a;
-  --bronze-soft: #5f4728;
-  --gold: #caa46a;
-  --gold-soft: #a6814e;
-  --green: #6f8b52;
-  --green-soft: #405233;
-  --red-glow: #7f2f24;
-  --ivory: #ede5d4;
-  --muted: #aaa193;
-  --faint: rgba(237, 229, 212, 0.64);
-  --border: rgba(202, 164, 106, 0.22);
-  --border-soft: rgba(237, 229, 212, 0.1);
-  --panel: rgba(16, 15, 13, 0.96);
-  --panel-2: rgba(24, 22, 19, 0.96);
-  --danger: #c98872;
-  --success: #b7a981;
+  --charcoal: #061008;
+  --charcoal-2: #0b180e;
+  --stone: #111a12;
+  --stone-2: #172416;
+  --bronze: #8b5a2b;
+  --bronze-soft: #5b3b21;
+  --gold: #c99a54;
+  --gold-soft: #9e6c34;
+  --green: #5a8f3d;
+  --green-soft: #264b2a;
+  --red-glow: #8c351f;
+  --ivory: #f0ead8;
+  --muted: #aaa78f;
+  --faint: rgba(240, 234, 216, 0.66);
+  --border: rgba(114, 155, 68, 0.28);
+  --border-soft: rgba(240, 234, 216, 0.11);
+  --panel: rgba(7, 15, 9, 0.94);
+  --panel-2: rgba(13, 24, 14, 0.94);
+  --danger: #d88461;
+  --success: #9bd46b;
   --scroll-y: 0px;
 }
 
@@ -151,7 +151,7 @@ h3 {
   z-index: -4;
   pointer-events: none;
   background:
-    url("/brand/nietzschean-crest.jpg") 92% 14% / 360px auto no-repeat,
+    url("/brand/robin-hood-logo.jpg") 92% 14% / 360px auto no-repeat,
     var(--black);
   opacity: 0.12;
   filter: grayscale(1);
@@ -315,14 +315,16 @@ h3 {
   overflow: hidden;
 }
 
-.nietzschean-hero {
+.nietzschean-hero,
+.robin-hero {
   display: grid;
   align-items: end;
   padding: 150px 0 76px;
   background: var(--black);
 }
 
-.nietzschean-hero::after {
+.nietzschean-hero::after,
+.robin-hero::after {
   position: absolute;
   right: 0;
   bottom: -2px;
@@ -349,8 +351,8 @@ h3 {
 }
 
 .hero-mountains {
-  background-image: url("/brand/nietzschean-hero-alt.jpg");
-  background-position: center 46%;
+  background-image: url("/brand/robin-hood-hero.jpg");
+  background-position: center 42%;
   background-repeat: no-repeat;
   background-size: cover;
   transform: translate3d(0, calc(var(--scroll-y) * 0.026), 0) scale(1.08);
@@ -375,9 +377,16 @@ h3 {
 
 .hero-shade {
   background:
-    radial-gradient(ellipse at 62% 20%, rgba(226, 195, 131, 0.22), transparent 32%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.38) 42%, rgba(0, 0, 0, 0.08) 69%, rgba(0, 0, 0, 0.55)),
+    radial-gradient(ellipse at 62% 20%, rgba(73, 170, 72, 0.18), transparent 32%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.44) 42%, rgba(0, 0, 0, 0.12) 69%, rgba(0, 0, 0, 0.58)),
     linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 32%, rgba(0, 0, 0, 0.9));
+}
+
+.hero-lead {
+  max-width: 700px;
+  color: rgba(240, 234, 216, 0.78);
+  font-size: clamp(1rem, 1.7vw, 1.16rem);
+  line-height: 1.72;
 }
 
 .hero-inner {
@@ -525,7 +534,7 @@ h3 {
 
 .feeding-section,
 .airdrop-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-2.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 45%;
   --section-art-speed: -0.01;
   background:
@@ -606,7 +615,7 @@ h3 {
 }
 
 .reward-explainer-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-1.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   background:
@@ -715,7 +724,7 @@ h3 {
 }
 
 .path-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-3.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 45%;
   --section-art-speed: -0.018;
   overflow: hidden;
@@ -831,7 +840,7 @@ h3 {
 }
 
 .black-bull-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-1.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 50%;
   --section-art-speed: -0.016;
   overflow: hidden;
@@ -842,7 +851,7 @@ h3 {
 }
 
 .ansem-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   overflow: hidden;
@@ -1057,14 +1066,14 @@ h3 {
 }
 
 .conviction-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-3.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.013;
 }
 
 .multiplier-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -1333,7 +1342,7 @@ h3 {
 }
 
 .eligibility-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-1.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 50%;
   --section-art-speed: -0.012;
 }
@@ -1412,7 +1421,7 @@ h3 {
 }
 
 .lookup-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-2.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.01;
 }
@@ -1453,13 +1462,13 @@ h3 {
 }
 
 .history-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 46%;
   --section-art-speed: -0.012;
 }
 
 .bull-board-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 46%;
   --section-art-speed: -0.01;
   background:
@@ -1470,7 +1479,7 @@ h3 {
 
 .recent-feedings-section,
 .recent-airdrops-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-2.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 42%;
   --section-art-speed: -0.012;
   background:
@@ -1532,7 +1541,7 @@ td a,
 }
 
 .philosophy-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-3.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 50%;
   --section-art-speed: -0.014;
   background:
@@ -1566,13 +1575,13 @@ td a,
 }
 
 .faq-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-4.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 46%;
   --section-art-speed: -0.01;
 }
 
 .final-bull-section {
-  --section-art: url("/brand/backgrounds/bull-mountain-1.jpg");
+  --section-art: url("/brand/backgrounds/robin-forest.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   min-height: 82vh;
@@ -1590,7 +1599,7 @@ td a,
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22) 56%, rgba(0, 0, 0, 0.82)),
     linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.86)),
-    url("/brand/nietzschean-crest.jpg") 72% center / min(64vw, 760px) auto no-repeat;
+    url("/brand/robin-hood-logo.jpg") 72% center / min(64vw, 760px) auto no-repeat;
   filter: saturate(0.88) contrast(1.1);
   transform: translate3d(0, calc(var(--scroll-y) * -0.018), 0);
 }
@@ -2047,7 +2056,8 @@ td a,
     font-size: 0.78rem;
   }
 
-  .nietzschean-hero {
+  .nietzschean-hero,
+  .robin-hero {
     min-height: 100svh;
     padding: 118px 0 34px;
   }
@@ -2161,7 +2171,7 @@ td a,
   .final-bull-art {
     background:
       linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.9)),
-      url("/brand/nietzschean-crest.jpg") center 16% / min(108vw, 620px) auto no-repeat;
+      url("/brand/robin-hood-logo.jpg") center 16% / min(108vw, 620px) auto no-repeat;
   }
 
   .activity-row,

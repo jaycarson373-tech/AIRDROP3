@@ -85,9 +85,9 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = "The Final Bull";
-const SOURCE_SYMBOL = "BULL";
-const REWARD_SYMBOL = "ANSEM";
+const PROJECT_NAME = "Robin Hood";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "rewards";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -276,16 +276,16 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/nietzschean-crest.jpg" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/robin-hood-logo.jpg" alt={`${PROJECT_NAME} logo`} />
             <span>
-              The Final Bull
-              <small>Final Bull Protocol</small>
+              Robin Hood
+              <small>Trench Rewards</small>
             </span>
           </Link>
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/fallen-bulls">Fallen Bulls</Link>
+            <Link href="/fallen-bulls">Outlaws</Link>
           </div>
         </div>
       </header>
@@ -296,7 +296,7 @@ export function DashboardClient() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Live standing ledger
+                Live reward ledger
               </div>
               <h1 className="dashboard-title">Airdrop Ledger</h1>
             </div>
@@ -318,7 +318,7 @@ export function DashboardClient() {
                   <strong className={hasRewards ? "" : "empty-value"}>
                     <AnimatedValue value={hasRewards ? liveStats.lastRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
                   </strong>
-                  <span>Last ANSEM Drop</span>
+                  <span>Last {REWARD_SYMBOL} Drop</span>
                 </div>
                 <div className="stat">
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
@@ -336,14 +336,14 @@ export function DashboardClient() {
                   <strong className={hasRewards ? "" : "empty-value"}>
                     <AnimatedValue value={hasRewards ? liveStats.totalRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
                   </strong>
-                  <span>Total ANSEM Distributed</span>
+                  <span>Total {REWARD_SYMBOL} Distributed</span>
                 </div>
               </div>
 
               <section className="history-card" style={{ marginTop: 16 }}>
                 <div className="history-head">
                   <h3>Epoch History</h3>
-                  <span>Latest settled ANSEM rounds</span>
+                  <span>Latest settled reward rounds</span>
                 </div>
                 <div className="table-wrap">
                   <table className="history-table">
@@ -354,12 +354,12 @@ export function DashboardClient() {
                         <th>Started</th>
                         <th>Duration</th>
                         <th className="right">Fees Collected</th>
-                          <th className="right">ANSEM Purchased</th>
+                          <th className="right">{REWARD_SYMBOL} Purchased</th>
                         <th className="right">Rewards Sent</th>
                         <th>Lucky Winner</th>
                         <th className="right">Bonus Amount</th>
                         <th className="right">Bonus Tx</th>
-                          <th className="right">ANSEM Distributed</th>
+                          <th className="right">{REWARD_SYMBOL} Distributed</th>
                         <th className="right">Action</th>
                       </tr>
                     </thead>
@@ -450,7 +450,7 @@ export function DashboardClient() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={12}>Awaiting first ANSEM distribution.</td>
+                          <td colSpan={12}>Awaiting first reward distribution.</td>
                         </tr>
                       )}
                     </tbody>
@@ -460,7 +460,7 @@ export function DashboardClient() {
 
               <div className="dash-grid" style={{ marginTop: 16 }}>
                 <section className="card">
-                  <h3>Last 50 Winners</h3>
+                  <h3>Recent Drops</h3>
                   <div className="activity-feed" style={{ marginTop: 14 }}>
                     {liveStats.recentRewards.length ? (
                       liveStats.recentRewards.map((reward) => (
@@ -468,7 +468,7 @@ export function DashboardClient() {
                           <div>
                             <strong className="mono">
                               {compactAddress(reward.wallet)}
-                              {reward.isGolden ? <span className="golden-badge">Bonus {reward.goldenMultiplier}x</span> : null}
+                              {reward.isGolden ? <span className="golden-badge">Hood Bonus {reward.goldenMultiplier}x</span> : null}
                             </strong>
                             <span>{formatTime(reward.time)}</span>
                           </div>
@@ -502,7 +502,7 @@ export function DashboardClient() {
                         </div>
                       ))
                     ) : (
-                      <div className="empty-state">Winners will appear here after settled ANSEM payouts.</div>
+                      <div className="empty-state">Drops will appear here after settled reward payouts.</div>
                     )}
                   </div>
                 </section>

@@ -77,6 +77,8 @@ const emptyStats: StatsResponse = {
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "rewards";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -174,7 +176,7 @@ export function HeroCountdown() {
 
   return (
     <div className="hero-countdown" aria-live="polite">
-      <span>Next Airdrop</span>
+      <span>Next Reward Drop</span>
       <strong>{countdown}</strong>
     </div>
   );
@@ -188,17 +190,17 @@ export function LiveProtocolDashboard() {
   return (
     <section className="section live-section airdrop-section" id="dashboard">
       <div className="container">
-        <div className="section-kicker">Airdrop stats</div>
+        <div className="section-kicker">Proof section</div>
         <div className="section-head split-head">
-          <h2>The protocol airdrops live.</h2>
+          <h2>The Hood pays live.</h2>
           <p>Live values come from the existing reward backend. No fake production data.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label="ANSEM Purchased" value={formatAmount(sumRounds(rounds, "rewardBought"), "ANSEM")} />
-          <MetricCard label="Today's Airdrops" value={stats ? formatCount(todaysAirdrops) : "Loading"} />
+          <MetricCard label={`${REWARD_SYMBOL} Purchased`} value={formatAmount(sumRounds(rounds, "rewardBought"), REWARD_SYMBOL)} />
+          <MetricCard label="Today's Drops" value={stats ? formatCount(todaysAirdrops) : "Loading"} />
           <MetricCard label="Current Epoch" value={stats ? formatCount(stats.currentEpoch) : "Loading"} />
-          <MetricCard label="Eligible Bulls" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} strong />
-          <MetricCard label="Average Multiplier" value={formatMultiplier(stats?.averageMultiplier)} muted />
+          <MetricCard label={`Eligible ${SOURCE_SYMBOL} Holders`} value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} strong />
+          <MetricCard label="Hood Bonus" value="5.00x" muted />
         </div>
       </div>
     </section>
@@ -233,69 +235,65 @@ function MetricCard({
   );
 }
 
-const multiplierTiers = [
-  ["Base", "Standing Bull", "Start", "1.00×"],
-  ["Hour", "One Hour", "1 hour", "2.00×"],
-  ["Day", "One Day", "1 day", "4.00×"],
-  ["Week", "One Week", "1 week", "8.00×"],
-  ["Month", "Final Bull", "1 month", "15.00×"]
+const hoodModelCards = [
+  ["80%", "Supply weight", `$${SOURCE_SYMBOL} held still drives most of the allocation.`],
+  ["20%", "Robin Hood boost", "Smaller supply share and lower SOL balance get a slight tilt."],
+  ["5×", "Hood Bonus", "One eligible wallet can receive the special bonus on a live drop."]
 ];
 
-const ranks = ["Standing", "One Hour", "One Day", "One Week", "One Month", "Final Bull"];
-
-export function ConvictionSection() {
+export function HoodBonusSection() {
   return (
-    <section className="section conviction-section" id="conviction">
+    <section className="section conviction-section" id="hood-bonus">
       <div className="container">
-        <div className="section-kicker">Current Multiplier</div>
+        <div className="section-kicker">Hood Bonus</div>
         <div className="section-head split-head">
-          <h2>The longer you survive, the larger your share.</h2>
-          <p>Every 5 minutes = one epoch. Your streak only grows while you stay eligible.</p>
+          <h2>One bonus. Simple math.</h2>
+          <p>Rewards are primarily based on holdings. The Robin Hood tilt is intentionally small and transparent.</p>
         </div>
         <div className="multiplier-grid">
-          {multiplierTiers.map(([icon, title, time, multiplier]) => (
+          {hoodModelCards.map(([value, title, copy]) => (
             <article className="multiplier-card" key={title}>
-              <span>{icon}</span>
+              <span>{value}</span>
               <h3>{title}</h3>
-              <p>{time}</p>
-              <strong>{multiplier}</strong>
+              <p>{copy}</p>
+              <strong>{value}</strong>
             </article>
           ))}
         </div>
         <div className="reset-warning-card">
-          <span>Permanent rule</span>
-          <strong>Selling any amount of $BULL permanently removes eligibility.</strong>
-          <p>One sell means you are out forever. Dropping below 1,000,000 $BULL also permanently removes eligibility.</p>
+          <span>Important</span>
+          <strong>The old hold-time multiplier is removed.</strong>
+          <p>The live allocation now uses $HOOD balance plus the lightweight Robin Hood boost. The separate lucky bonus is 5x.</p>
         </div>
         <div className="conviction-card streak-card">
-          <span>Live hold time</span>
-          <h3>Current Multiplier</h3>
+          <span>Transparent reward weight</span>
+          <h3>Robin Hood weighting</h3>
           <div className="streak-readout">
             <div>
-              <span>Current Multiplier</span>
-              <strong>Live after next tracked epoch</strong>
+              <span>Primary weight</span>
+              <strong>~80% $HOOD held</strong>
             </div>
             <div>
-              <span>Current Hold Time</span>
-              <strong>Live after next tracked epoch</strong>
+              <span>Trench tilt</span>
+              <strong>~20% smaller holder / lower SOL</strong>
             </div>
             <div>
-              <span>Next Milestone</span>
-              <strong>1 hour</strong>
+              <span>Bonus</span>
+              <strong>5x Hood Bonus</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>Selling ends eligibility. The Bull only remembers who stayed standing.</p>
+          <p>Supply weighting still dominates. The boost only nudges rewards toward the trenches.</p>
           <div className="max-row">
-            <span>Maximum</span>
-            <b>15×</b>
+            <span>Bonus max</span>
+            <b>5×</b>
           </div>
         </div>
       </div>
-      <div className="container rank-strip" aria-label="Standing ranks">
-        {ranks.map((rank) => (
+      <div className="container rank-strip" aria-label="Reward model">
+        {["Hold", "Fees buy rewards", "80% holdings", "20% trench tilt", "5x bonus"].map((rank) => (
           <span key={rank}>{rank}</span>
         ))}
       </div>
@@ -309,10 +307,10 @@ export function PermanentEligibility() {
       <div className="container warning-layout">
         <div>
           <div className="section-kicker">Eligibility rules</div>
-          <h2>Outlast the herd.</h2>
+          <h2>Stay in the forest.</h2>
         </div>
         <div className="eligibility-flow">
-          {["1M+ $BULL", "Stay Eligible", "Every 5 Minutes", "Multiplier Grows", "Sell Once", "Permanently Ineligible"].map((item, index) => (
+          {[`1M+ $${SOURCE_SYMBOL}`, "Stay Eligible", "Every 5 Minutes", "Rewards Buy", "Hood Weight", "Automatic Airdrop"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -330,16 +328,16 @@ export function RewardExplanation() {
       <div className="container">
         <div className="section-kicker">How rewards work</div>
         <div className="section-head split-head">
-          <h2>Simple: hold BULL, receive ANSEM.</h2>
-          <p>Your streak multiplier increases your share of every distribution. One sell makes the wallet permanently ineligible.</p>
+          <h2>Simple: hold HOOD, receive rewards.</h2>
+          <p>Most of your allocation comes from how much $HOOD you hold. A smaller portion gives a Robin Hood tilt to the trenches.</p>
         </div>
         <div className="reward-flow">
           {[
-            "Hold at least 1,000,000 $BULL",
-            "Creator fees buy ANSEM every 5 minutes",
-            "ANSEM is distributed to every eligible holder",
-            "Your multiplier increases your share",
-            "Selling once removes eligibility forever"
+            `Hold at least 1,000,000 $${SOURCE_SYMBOL}`,
+            `Creator fees buy ${REWARD_SYMBOL} every 5 minutes`,
+            `${REWARD_SYMBOL} is distributed to eligible holders`,
+            "~80% of weight comes from $HOOD held",
+            "~20% slightly favors smaller holders and lower SOL wallets"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
               <strong>{item}</strong>
@@ -348,9 +346,9 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Holder A", "1×", "receives one share"],
-            ["Holder B", "8×", "receives eight shares"],
-            ["Holder C", "15×", "receives fifteen shares"]
+            ["Holder A", "More $HOOD", "receives a larger base share"],
+            ["Holder B", "Smaller wallet", "can receive a slight boost"],
+            ["Holder C", "Hood Bonus", "can receive the 5x bonus"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
               <span>{holder}</span>
@@ -379,14 +377,14 @@ export function BullBoard() {
   const rows = holders?.topHolders ?? [];
 
   return (
-    <section className="section bull-board-section" id="bull-board">
+    <section className="section bull-board-section" id="hood-board">
       <div className="container">
-        <div className="section-kicker">Last bulls standing</div>
+        <div className="section-kicker">The Hood Board</div>
         <div className="section-head split-head">
-          <h2>LAST BULLS STANDING</h2>
-          <p>Ranked by longest eligible streak, highest multiplier, total ANSEM earned, then current hold time.</p>
+          <h2>THE HOOD BOARD</h2>
+          <p>Ranked by settled rewards earned, then current $HOOD balance.</p>
           <a className="cta secondary" href="/fallen-bulls">
-            Fallen Bulls
+            Outlawed Wallets
           </a>
         </div>
         <div className="history-card bull-board-card">
@@ -395,11 +393,11 @@ export function BullBoard() {
               <thead>
                 <tr>
                   <th>Wallet</th>
-                  <th>Current Hold Time</th>
-                  <th>Current Multiplier</th>
-                  <th>Total ANSEM Earned</th>
+                  <th>$HOOD Held</th>
+                  <th>Supply Share</th>
+                  <th>Total {REWARD_SYMBOL} Earned</th>
                   <th>Last Airdrop</th>
-                  <th>Current Streak</th>
+                  <th>Hood Bonus</th>
                 </tr>
               </thead>
               <tbody>
@@ -410,17 +408,17 @@ export function BullBoard() {
                     return (
                       <tr key={holder.address}>
                         <td>{compactAddress(holder.address)}</td>
-                        <td>{holder.currentHoldTime ?? "Awaiting live state"}</td>
-                        <td>{holder.currentMultiplier ?? "Awaiting live state"}</td>
-                        <td>{recentEarned > 0 ? formatAmount(recentEarned, "ANSEM") : "Awaiting holder totals"}</td>
+                        <td>{formatNumber(holder.balance, 0)}</td>
+                        <td>{holder.percentage}%</td>
+                        <td>{recentEarned > 0 ? formatAmount(recentEarned, REWARD_SYMBOL) : "Awaiting holder totals"}</td>
                         <td>{holder.lastFeedingAt ? formatDate(holder.lastFeedingAt) : lastReward ? formatDate(lastReward.time) : "Awaiting airdrop"}</td>
-                        <td>{holder.currentStreak !== null && holder.currentStreak !== undefined ? `${holder.currentStreak} epochs` : "Awaiting live state"}</td>
+                        <td>Eligible for 5x</td>
                       </tr>
                     );
                   })
                 ) : (
                   <tr>
-                    <td colSpan={6}>Awaiting Last Bulls Standing.</td>
+                    <td colSpan={6}>Awaiting The Hood Board.</td>
                   </tr>
                 )}
               </tbody>
@@ -442,7 +440,7 @@ export function RecentAirdrops() {
         <div className="section-kicker">Recent airdrops</div>
         <div className="section-head split-head">
           <h2>Proof the drops are live.</h2>
-          <p>Settled ANSEM transfers from the live reward backend.</p>
+          <p>Settled reward transfers from the live backend.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -450,8 +448,8 @@ export function RecentAirdrops() {
               <thead>
                 <tr>
                   <th>Wallet</th>
-                  <th>Multiplier</th>
-                  <th>ANSEM Received</th>
+                  <th>Bonus</th>
+                  <th>{REWARD_SYMBOL} Received</th>
                   <th>Time</th>
                   <th>TX Link</th>
                 </tr>
@@ -461,8 +459,8 @@ export function RecentAirdrops() {
                   rewards.slice(0, 50).map((reward) => (
                     <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
                       <td>{compactAddress(reward.wallet)}</td>
-                      <td>{reward.goldenMultiplier > 1 ? `${reward.goldenMultiplier.toFixed(2)}x bonus` : "Live"}</td>
-                      <td>{formatAmount(reward.rewardAmount, "ANSEM")}</td>
+                      <td>{reward.goldenMultiplier > 1 ? `${reward.goldenMultiplier.toFixed(2)}x Hood Bonus` : "Base"}</td>
+                      <td>{formatAmount(reward.rewardAmount, REWARD_SYMBOL)}</td>
                       <td>{formatDate(reward.time)}</td>
                       <td>
                         {reward.txSig ? (
@@ -477,7 +475,7 @@ export function RecentAirdrops() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5}>Awaiting settled ANSEM airdrops.</td>
+                    <td colSpan={5}>Awaiting settled reward airdrops.</td>
                   </tr>
                 )}
               </tbody>
@@ -503,7 +501,7 @@ export function HolderLookup() {
       <div className="container split-section">
         <div>
           <div className="section-kicker">Holder lookup</div>
-          <h2>Check your standing.</h2>
+          <h2>Check your place in the Hood.</h2>
           <p className="lead">
             Wallet-level status uses the live holder-state tracker after the first tracked epoch.
           </p>
@@ -523,7 +521,7 @@ export function HolderLookup() {
             {submitted ? (
               <>
                 <strong>{compactAddress(wallet)}</strong>
-                <span>Awaiting live backend integration for standing status.</span>
+                <span>Awaiting live backend integration for wallet-level Hood status.</span>
               </>
             ) : (
               <span>Enter a wallet to check eligibility once lookup integration is live.</span>
@@ -544,7 +542,7 @@ export function AirdropHistory() {
       <div className="container">
         <div className="section-kicker">Airdrop history</div>
         <div className="section-head split-head">
-          <h2>ANSEM Distributions</h2>
+          <h2>{REWARD_SYMBOL} Distributions</h2>
           <p>Settled airdrops only. Failed or skipped worker attempts are not counted.</p>
         </div>
         <div className="history-card">
@@ -553,9 +551,9 @@ export function AirdropHistory() {
               <thead>
                 <tr>
                   <th>Epoch</th>
-                  <th>ANSEM Purchased</th>
+                  <th>{REWARD_SYMBOL} Purchased</th>
                   <th>Recipients</th>
-                  <th>Average Multiplier</th>
+                  <th>Hood Weight</th>
                   <th>Total Distributed</th>
                   <th>Transaction</th>
                 </tr>
@@ -565,10 +563,10 @@ export function AirdropHistory() {
                   rounds.map((round) => (
                     <tr key={`${round.epoch}-${round.startedAt}`}>
                       <td>#{round.epoch}</td>
-                      <td>{formatAmount(round.rewardBought, "ANSEM")}</td>
+                      <td>{formatAmount(round.rewardBought, REWARD_SYMBOL)}</td>
                       <td>{round.distributedPump > 0 ? "Settled" : statusLabel(round.status)}</td>
-                      <td>Live holder state</td>
-                      <td>{formatAmount(round.distributedPump, "ANSEM")}</td>
+                      <td>80/20 live model</td>
+                      <td>{formatAmount(round.distributedPump, REWARD_SYMBOL)}</td>
                       <td>
                         {round.txSig ? (
                           <a href={`https://solscan.io/tx/${round.txSig}`} target="_blank" rel="noreferrer">
@@ -582,7 +580,7 @@ export function AirdropHistory() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6}>Awaiting settled ANSEM airdrops.</td>
+                    <td colSpan={6}>Awaiting settled reward airdrops.</td>
                   </tr>
                 )}
               </tbody>

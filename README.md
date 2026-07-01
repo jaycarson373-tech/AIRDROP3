@@ -1,7 +1,7 @@
-# The Final Bull
+# Robin Hood
 
-Source token: `$BULL`
-Reward token: `$ANSEM`
+Source token: `$HOOD`
+Reward token: configured by `REWARD_TOKEN_MINT`
 
 One repo for:
 
@@ -14,24 +14,22 @@ One repo for:
 Every epoch:
 
 1. Claim creator fees to the treasury wallet.
-2. Swap available SOL to the reward token, `$ANSEM`, through Jupiter.
-3. Snapshot `$BULL` holders with at least `ELIGIBILITY_MIN`.
+2. Swap available SOL to the reward token through Jupiter.
+3. Snapshot `$HOOD` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, and holders above `MAX_HOLDER_PCT`.
 5. Select `MAX_WALLETS_PER_EPOCH` deterministic-random eligible holders for the epoch and airdrop the reward-token balance across those recipients.
-6. Pick one selected recipient as the 10x Lucky Bonus winner when balance allows.
+6. Pick one selected recipient as the 5x Hood Bonus winner when balance allows.
 7. Store epochs, buys, snapshots, claims, bonus fields, and payouts in Supabase for the dashboard.
 
-## Multiplier Ladder
+## Robin Hood Weighting
 
-The holder-state tracker applies the long-term Final Bull Standing ladder:
+Normal hold-time multipliers are disabled. Reward weight is intentionally simple:
 
-- Start: 1x
-- 1 hour continuously eligible: 2x
-- 1 day continuously eligible: 4x
-- 1 week continuously eligible: 8x
-- 1 month continuously eligible: 15x
+- About 80% comes from `$HOOD` balance.
+- About 20% slightly favors wallets with a smaller supply percentage and lower SOL balance.
+- One selected recipient can receive the separate 5x Hood Bonus.
 
-Every epoch is 5 minutes. Selling any amount of `$BULL`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions. The 10x Lucky Bonus winner still runs separately on top of the normal multiplier-weighted distribution.
+Every epoch is 5 minutes. Selling any amount of `$HOOD`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
 
 ## Supabase
 
@@ -56,12 +54,12 @@ The migration enables public read policies for dashboard tables. The worker stil
 Required:
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="The Final Bull"
-NEXT_PUBLIC_CA=<BULL_MINT>
-NEXT_PUBLIC_SOURCE_SYMBOL=BULL
-NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<BULL_MINT>
-NEXT_PUBLIC_REWARD_TOKEN_MINT=<ANSEM_MINT>
+NEXT_PUBLIC_PROJECT_NAME="Robin Hood"
+NEXT_PUBLIC_CA=<HOOD_MINT>
+NEXT_PUBLIC_SOURCE_SYMBOL=HOOD
+NEXT_PUBLIC_REWARD_SYMBOL=<REWARD_SYMBOL>
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<HOOD_MINT>
+NEXT_PUBLIC_REWARD_TOKEN_MINT=<REWARD_MINT>
 NEXT_PUBLIC_X_URL=https://x.com
 NEXT_PUBLIC_BUY_URL=<BUY_LINK>
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
@@ -84,8 +82,8 @@ Required:
 
 ```bash
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<BULL_MINT>
-REWARD_TOKEN_MINT=<ANSEM_MINT>
+SOURCE_TOKEN_MINT=<HOOD_MINT>
+REWARD_TOKEN_MINT=<REWARD_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
@@ -120,7 +118,7 @@ MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
 `SWAP_BALANCE_BPS=9000` spends up to 90% of SOL while also respecting `MIN_SOL_RESERVE`, so the treasury keeps at least 0.2 SOL after the buy. The worker enforces a minimum `MIN_SOL_RESERVE` of 0.2 and a minimum `AIRDROP_SOL_RESERVE` of 0.05 even if lower env values are configured.
-During payout, SOL above the 0.05 airdrop reserve can be used to create missing ANSEM associated token accounts. The worker does not send SOL directly to holder wallets.
+During payout, SOL above the 0.05 airdrop reserve can be used to create missing reward-token associated token accounts. The worker does not send SOL directly to holder wallets.
 `AIRDROP_REWARD_BPS=4000` distributes 40% of available reward tokens each epoch and leaves the rest in treasury.
 
 ## Commands

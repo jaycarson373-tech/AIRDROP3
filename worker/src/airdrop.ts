@@ -15,8 +15,11 @@ import { connection } from "./solana.js";
 import { dryRunPayout, failPayout, planPayout, recordGoldenPayoutTx, settlePayout } from "./db.js";
 import type { Holder } from "./snapshot.js";
 
-export const GOLDEN_MULTIPLIER = 10;
+export const GOLDEN_MULTIPLIER = 5;
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
+const ROBIN_HOOD_BASE_BPS = 8_000;
+const ROBIN_HOOD_MAX_TILT_BPS = 2_000;
+const LOW_SOL_SIGNAL_CAP_LAMPORTS = 10n * BigInt(LAMPORTS_PER_SOL);
 
 export type Allocation = {
   wallet: string;
@@ -60,6 +63,13 @@ type PreparedAllocation = Allocation & {
   destinationAta: PublicKey;
 };
 
+type WeightedHolder = {
+  holder: Holder;
+  weight: bigint;
+  robinHoodBps: number;
+  solLamports: bigint;
+};
+
 type PayoutReserve = {
   totalLamports: bigint;
   reserveLamports: bigint;
@@ -84,10 +94,6 @@ function minBigInt(a: bigint, b: bigint) {
   return a < b ? a : b;
 }
 
-function holderWeight(holder: Holder) {
-  return holder.rawBalance * BigInt(holder.multiplierBps ?? 10_000);
-}
-
 function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
   return getAssociatedTokenAddressSync(
     config.rewardTokenMint,
@@ -96,6 +102,50 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
     tokenProgram,
     ASSOCIATED_TOKEN_PROGRAM_ID
   );
+}
+
+function clampBps(value: number) {
+  return Math.max(0, Math.min(10_000, Math.round(value)));
+}
+
+function smallHolderSignalBps(holder: Holder) {
+  const maxPct = Math.max(config.maxHolderPct, 0.0001);
+  const signal = ((maxPct - holder.holderPct) / maxPct) * 10_000;
+  return clampBps(signal);
+}
+
+function lowSolSignalBps(solLamports: bigint) {
+  if (solLamports >= LOW_SOL_SIGNAL_CAP_LAMPORTS) return 0;
+  return Number(((LOW_SOL_SIGNAL_CAP_LAMPORTS - solLamports) * 10_000n) / LOW_SOL_SIGNAL_CAP_LAMPORTS);
+}
+
+async function holderSolBalances(holders: Holder[]) {
+  const balances = new Map<string, bigint>();
+  for (const batch of chunk(holders, 100)) {
+    const owners = batch.map((holder) => new PublicKey(holder.wallet));
+    const accounts = await connection.getMultipleAccountsInfo(owners, "confirmed");
+    accounts.forEach((account, index) => {
+      balances.set(batch[index].wallet, BigInt(account?.lamports ?? 0));
+    });
+  }
+  return balances;
+}
+
+async function computeRobinWeights(holders: Holder[]): Promise<WeightedHolder[]> {
+  const solBalances = await holderSolBalances(holders);
+
+  return holders.map((holder) => {
+    const solLamports = solBalances.get(holder.wallet) ?? 0n;
+    const robinSignalBps = Math.round((smallHolderSignalBps(holder) + lowSolSignalBps(solLamports)) / 2);
+    const robinHoodBps = ROBIN_HOOD_BASE_BPS + Math.round((robinSignalBps * ROBIN_HOOD_MAX_TILT_BPS) / 10_000);
+
+    return {
+      holder,
+      weight: holder.rawBalance * BigInt(robinHoodBps),
+      robinHoodBps,
+      solLamports
+    };
+  });
 }
 
 export async function treasuryRewardBalanceRaw() {
@@ -114,11 +164,13 @@ export async function computeAllocations(holders: Holder[], rewardRaw: bigint): 
   if (!holders.length || rewardRaw <= config.minRewardRawToAirdrop) return [];
   const tokenProgram = await tokenProgramForMint();
   const mintInfo = await getMint(connection, config.rewardTokenMint, "confirmed", tokenProgram);
-  const totalWeight = holders.reduce((sum, holder) => sum + holderWeight(holder), 0n);
+  const weightedHolders = await computeRobinWeights(holders);
+  const totalWeight = weightedHolders.reduce((sum, holder) => sum + holder.weight, 0n);
+  if (totalWeight <= 0n) return [];
 
-  return holders
-    .map((holder) => {
-      const amount = (rewardRaw * holderWeight(holder)) / totalWeight;
+  return weightedHolders
+    .map(({ holder, weight }) => {
+      const amount = (rewardRaw * weight) / totalWeight;
       return {
         wallet: holder.wallet,
         amount,
@@ -135,9 +187,9 @@ export async function computeAllocations(holders: Holder[], rewardRaw: bigint): 
     .filter((allocation) => allocation.amount > 0n);
 }
 
-function snapshotHash(holders: Holder[]) {
+function snapshotHash(holders: WeightedHolder[]) {
   const canonical = holders
-    .map((holder) => `${holder.wallet}:${holder.rawBalance.toString()}:${holder.multiplierBps ?? 10_000}`)
+    .map(({ holder, robinHoodBps, solLamports }) => `${holder.wallet}:${holder.rawBalance.toString()}:${robinHoodBps}:${solLamports.toString()}`)
     .join("|");
   return createHash("sha256").update(canonical).digest("hex");
 }
@@ -147,18 +199,19 @@ function deterministicIndex(epochId: string, hash: string, count: number) {
   return Number(seed.readBigUInt64BE(0) % BigInt(count));
 }
 
-export function computeGoldenRewardPool(epochId: string, holders: Holder[], availableRewardRaw: bigint): GoldenRewardPool {
+export async function computeGoldenRewardPool(epochId: string, holders: Holder[], availableRewardRaw: bigint): Promise<GoldenRewardPool> {
+  const weightedHolders = holders.length ? await computeRobinWeights(holders) : [];
   if (!holders.length || availableRewardRaw <= 0n) {
-    return { rewardPoolRaw: availableRewardRaw, snapshotHash: holders.length ? snapshotHash(holders) : null };
+    return { rewardPoolRaw: availableRewardRaw, snapshotHash: weightedHolders.length ? snapshotHash(weightedHolders) : null };
   }
 
-  const hash = snapshotHash(holders);
-  const winnerIndex = deterministicIndex(epochId, hash, holders.length);
-  const winner = holders[winnerIndex];
-  const totalWeight = holders.reduce((sum, holder) => sum + holderWeight(holder), 0n);
+  const hash = snapshotHash(weightedHolders);
+  const winnerIndex = deterministicIndex(epochId, hash, weightedHolders.length);
+  const winner = weightedHolders[winnerIndex];
+  const totalWeight = weightedHolders.reduce((sum, holder) => sum + holder.weight, 0n);
   if (totalWeight <= 0n) return { rewardPoolRaw: 0n, snapshotHash: hash };
 
-  const denominator = totalWeight + holderWeight(winner) * BigInt(GOLDEN_MULTIPLIER - 1);
+  const denominator = totalWeight + winner.weight * BigInt(GOLDEN_MULTIPLIER - 1);
   const rewardPoolRaw = (availableRewardRaw * totalWeight) / denominator;
   return { rewardPoolRaw, snapshotHash: hash };
 }
@@ -172,7 +225,7 @@ export async function applyGoldenAirdrop(
 ): Promise<GoldenSummary> {
   const tokenProgram = await tokenProgramForMint();
   const mintInfo = await getMint(connection, config.rewardTokenMint, "confirmed", tokenProgram);
-  const hash = precomputedSnapshotHash ?? snapshotHash(holders);
+  const hash = precomputedSnapshotHash ?? snapshotHash(await computeRobinWeights(holders));
 
   if (!allocations.length) {
     return {
@@ -204,7 +257,7 @@ export async function applyGoldenAirdrop(
   winner.goldenCapped = capped;
 
   console.log(
-    `[${epochId}] golden winner ${winner.wallet}: base=${winner.normalAmount.toString()} raw, bonus=${bonusRaw.toString()} raw, multiplier=${GOLDEN_MULTIPLIER}x${capped ? " capped" : ""}`
+    `[${epochId}] hood bonus winner ${winner.wallet}: base=${winner.normalAmount.toString()} raw, bonus=${bonusRaw.toString()} raw, multiplier=${GOLDEN_MULTIPLIER}x${capped ? " capped" : ""}`
   );
 
   return {

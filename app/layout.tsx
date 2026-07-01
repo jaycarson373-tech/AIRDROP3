@@ -3,29 +3,29 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://thenietzscheanbull.fun"),
-  title: "The Final Bull",
-  description: "The final bull market rewards the last ones still standing. Hold BULL, stay eligible, and receive automatic ANSEM distributions.",
+  metadataBase: new URL("https://robinhood.fun"),
+  title: "Robin Hood",
+  description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic reward distributions.",
   openGraph: {
-    title: "The Final Bull",
-    description: "The final bull market rewards the last ones still standing. Hold BULL, stay eligible, and receive automatic ANSEM distributions.",
-    url: "https://thenietzscheanbull.fun",
-    siteName: "The Final Bull",
+    title: "Robin Hood",
+    description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic reward distributions.",
+    url: "https://robinhood.fun",
+    siteName: "Robin Hood",
     images: [
       {
-        url: "/brand/nietzschean-hero-alt.jpg",
+        url: "/brand/robin-hood-hero.jpg",
         width: 1200,
         height: 780,
-        alt: "The Final Bull"
+        alt: "Robin Hood"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Final Bull",
-    description: "The final bull market rewards the last ones still standing. Hold BULL, stay eligible, and receive automatic ANSEM distributions.",
-    images: ["/brand/nietzschean-hero-alt.jpg"]
+    title: "Robin Hood",
+    description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic reward distributions.",
+    images: ["/brand/robin-hood-hero.jpg"]
   },
   icons: {
     icon: [

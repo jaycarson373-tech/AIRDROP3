@@ -90,7 +90,7 @@ function holdTimeLabel(streakEpochs: number | null | undefined) {
 }
 
 function reasonLabel(reason: string | null | undefined) {
-  if (reason === "balance_decreased") return "Sold BULL";
+  if (reason === "balance_decreased") return "Sold HOOD";
   if (reason === "dropped_below_threshold") return "Dropped below 1M";
   if (reason === "dropped_below_threshold_or_sold") return "Sold or dropped below 1M";
   return "Permanently ineligible";
@@ -140,10 +140,6 @@ export async function GET() {
         };
       })
         .sort((a, b) => {
-          const streak = (b.currentStreak ?? 0) - (a.currentStreak ?? 0);
-          if (streak) return streak;
-          const multiplier = (b.currentMultiplierBps ?? 0) - (a.currentMultiplierBps ?? 0);
-          if (multiplier) return multiplier;
           const earned = b.totalAnsemEarned - a.totalAnsemEarned;
           if (earned) return earned;
           return b.balance - a.balance;
