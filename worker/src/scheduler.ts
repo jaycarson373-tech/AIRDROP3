@@ -6,6 +6,8 @@ console.log(`GRASS worker started. Schedule: every ${config.epochMinutes} minute
 console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
+console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
+console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
 
 async function loop() {
   await runEpoch();
