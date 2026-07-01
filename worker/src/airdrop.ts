@@ -345,10 +345,11 @@ export async function estimatePayoutReserveLamports(wallets: string[]) {
   const tokenProgram = await tokenProgramForMint();
   const atas = wallets.map((wallet) => rewardAtaForOwner(new PublicKey(wallet), tokenProgram));
   const reserve = await payoutReserveForAtas(atas);
+  const totalLamports = permanentReserveLamports + reserve.totalLamports;
   console.log(
-    `[RESERVE] payout reserve for ${wallets.length} wallets: total=${reserve.totalLamports}, base=${reserve.reserveLamports}, ataRent=${reserve.estimatedRentLamports}, missingAtas=${reserve.missingAtas.size}, fees=${reserve.estimatedFeeLamports}`
+    `[RESERVE] token payout reserve for ${wallets.length} wallets: total=${totalLamports}, permanent=${permanentReserveLamports}, buffer=${reserve.reserveLamports}, ataRent=${reserve.estimatedRentLamports}, missingAtas=${reserve.missingAtas.size}, fees=${reserve.estimatedFeeLamports}`
   );
-  return reserve.totalLamports;
+  return totalLamports;
 }
 
 export async function airdropRewards(epochId: string, allocations: Allocation[]): Promise<AirdropResult> {
@@ -413,16 +414,17 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
   }
 
   const batches = chunk(prepared, config.airdropBatchSize);
+  const permanentReserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
   for (let batchIndex = 0; batchIndex < batches.length; batchIndex += 1) {
     const batch = batches[batchIndex];
     const reserve = await payoutReserveForAtas(batch.map((allocation) => allocation.destinationAta));
-    const requiredLamports = reserve.totalLamports;
+    const requiredLamports = permanentReserveLamports + reserve.totalLamports;
     const balanceLamports = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
 
     if (balanceLamports < requiredLamports) {
       stoppedForReserve = true;
       const error = new Error(
-        `Treasury SOL below airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, reserve=${reserve.reserveLamports}, ataRent=${reserve.estimatedRentLamports}, missingAtas=${reserve.missingAtas.size}`
+        `Treasury SOL below token airdrop reserve: balance=${balanceLamports}, required=${requiredLamports}, permanent=${permanentReserveLamports}, buffer=${reserve.reserveLamports}, ataRent=${reserve.estimatedRentLamports}, missingAtas=${reserve.missingAtas.size}`
       );
       console.error(`[${epochId}] stopping airdrop batch: ${error.message}`);
       const remaining = batches.slice(batchIndex).flat();

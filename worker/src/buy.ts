@@ -44,7 +44,7 @@ async function postBuyReserveLamports() {
   const transferFeeCushionLamports = maxBatchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
   const payoutReserveLamports = airdropReserveLamports + transferFeeCushionLamports + SWAP_EXECUTION_CUSHION_LAMPORTS;
 
-  return payoutReserveLamports > minReserveLamports ? payoutReserveLamports : minReserveLamports;
+  return minReserveLamports + payoutReserveLamports;
 }
 
 export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
