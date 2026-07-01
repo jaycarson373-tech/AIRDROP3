@@ -8,8 +8,8 @@ type FallenBull = {
   balance: number;
   currentMultiplier: string | null;
   currentStreak: number | null;
-  totalAnsemEarned: number;
-  lastFeedingAt: string | null;
+  totalRewardEarned: number;
+  lastAirdropAt: string | null;
   ineligibleReason: string;
   ineligibleAt: string | null;
   lastSeenAt: string | null;
@@ -102,7 +102,7 @@ export function FallenBullsClient() {
                       <th>Wallet</th>
                       <th>Reason</th>
                       <th>Total Rewards Earned</th>
-                      <th>Last Bonus State</th>
+                      <th>Status</th>
                       <th>Final Streak</th>
                       <th>Last Airdrop</th>
                       <th>Removed At</th>
@@ -114,10 +114,10 @@ export function FallenBullsClient() {
                         <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "fallen"}`}>
                           <td>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
-                          <td>{formatNumber(wallet.totalAnsemEarned)} rewards</td>
-                          <td>{wallet.currentMultiplier ?? "1.00x"}</td>
+                          <td>{formatNumber(wallet.totalRewardEarned)} SOL</td>
+                          <td>Outlawed</td>
                           <td>{wallet.currentStreak ?? 0} epochs</td>
-                          <td>{formatDate(wallet.lastFeedingAt)}</td>
+                          <td>{formatDate(wallet.lastAirdropAt)}</td>
                           <td>{formatDate(wallet.ineligibleAt ?? wallet.lastSeenAt)}</td>
                         </tr>
                       ))

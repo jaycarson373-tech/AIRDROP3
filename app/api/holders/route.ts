@@ -133,14 +133,14 @@ export async function GET() {
           currentMultiplierBps: row.current_multiplier_bps ?? 10000,
           currentHoldTime: holdTimeLabel(row.current_streak_epochs),
           currentStreak: row.current_streak_epochs ?? 0,
-          totalAnsemEarned: payout?.total ?? 0,
-          lastFeedingAt: payout?.lastRewardAt ?? null,
+          totalRewardEarned: payout?.total ?? 0,
+          lastAirdropAt: payout?.lastRewardAt ?? null,
           permanentlyIneligible: false,
           ineligibleReason: null
         };
       })
         .sort((a, b) => {
-          const earned = b.totalAnsemEarned - a.totalAnsemEarned;
+          const earned = b.totalRewardEarned - a.totalRewardEarned;
           if (earned) return earned;
           return b.balance - a.balance;
         })
@@ -156,8 +156,8 @@ export async function GET() {
             currentMultiplier: multiplierLabel(row.current_multiplier_bps),
             currentMultiplierBps: row.current_multiplier_bps ?? 10000,
             currentStreak: row.current_streak_epochs ?? 0,
-            totalAnsemEarned: payout?.total ?? 0,
-            lastFeedingAt: payout?.lastRewardAt ?? null,
+            totalRewardEarned: payout?.total ?? 0,
+            lastAirdropAt: payout?.lastRewardAt ?? null,
             ineligibleReason: reasonLabel(row.ineligible_reason),
             ineligibleAt: row.ineligible_at,
             lastSeenAt: row.last_seen_at
@@ -193,13 +193,13 @@ export async function GET() {
         currentMultiplierBps: null,
         currentHoldTime: null,
         currentStreak: null,
-        totalAnsemEarned: payoutsByWallet.get(row.wallet)?.total ?? 0,
-        lastFeedingAt: payoutsByWallet.get(row.wallet)?.lastRewardAt ?? null,
+        totalRewardEarned: payoutsByWallet.get(row.wallet)?.total ?? 0,
+        lastAirdropAt: payoutsByWallet.get(row.wallet)?.lastRewardAt ?? null,
         permanentlyIneligible: false,
         ineligibleReason: null
       };
     })
-      .sort((a, b) => b.totalAnsemEarned - a.totalAnsemEarned || b.balance - a.balance)
+      .sort((a, b) => b.totalRewardEarned - a.totalRewardEarned || b.balance - a.balance)
       .map((row, index) => ({ ...row, rank: index + 1 }));
 
     return NextResponse.json({ topHolders, fallenBulls: [], totalSupply, uniqueHolders: snapshots.length });

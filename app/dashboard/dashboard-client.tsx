@@ -87,7 +87,7 @@ const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
 const PROJECT_NAME = "Robin Hood";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "rewards";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "SOL";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -354,7 +354,7 @@ export function DashboardClient() {
                         <th>Started</th>
                         <th>Duration</th>
                         <th className="right">Fees Collected</th>
-                          <th className="right">{REWARD_SYMBOL} Purchased</th>
+                          <th className="right">{REWARD_SYMBOL} Pool</th>
                         <th className="right">Rewards Sent</th>
                         <th>Lucky Winner</th>
                         <th className="right">Bonus Amount</th>

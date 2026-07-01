@@ -1,7 +1,7 @@
 # Robin Hood
 
 Source token: `$HOOD`
-Reward token: configured by `REWARD_TOKEN_MINT`
+Reward asset: `SOL`
 
 One repo for:
 
@@ -14,21 +14,23 @@ One repo for:
 Every epoch:
 
 1. Claim creator fees to the treasury wallet.
-2. Swap available SOL to the reward token through Jupiter.
+2. Keep those fees as SOL. No swap or reward-token buy runs in SOL mode.
 3. Snapshot `$HOOD` holders with at least `ELIGIBILITY_MIN`.
-4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, and holders above `MAX_HOLDER_PCT`.
-5. Select `MAX_WALLETS_PER_EPOCH` deterministic-random eligible holders for the epoch and airdrop the reward-token balance across those recipients.
-6. Pick one selected recipient as the 5x Hood Bonus winner when balance allows.
-7. Store epochs, buys, snapshots, claims, bonus fields, and payouts in Supabase for the dashboard.
+4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, holders above `MAX_HOLDER_PCT`, and wallets that permanently lost eligibility.
+5. Select up to `MAX_WALLETS_PER_EPOCH` deterministic-random eligible holders for the epoch.
+6. Score selected holders primarily by `$HOOD` held, with a Robin Hood boost that slightly favors smaller holders and lower-SOL-balance wallets.
+7. Airdrop native SOL directly to selected wallets.
+8. Pick one selected recipient as the separate 5x Hood Bonus winner when balance allows.
+9. Store epochs, snapshots, claims, bonus fields, SOL reward pools, and payouts in Supabase for the dashboard.
 
 ## Robin Hood Weighting
 
-Reward weight is intentionally simple and starts from `$HOOD` held:
+Reward weight stays simple and starts from `$HOOD` held:
 
 - `$HOOD` balance is the foundation of the score.
-- Continuous eligibility / hold time adds a capped score boost.
-- Wallets that sell or drop below `ELIGIBILITY_MIN` are removed from future tracked distributions.
-- On-chain wallet value adds a capped score signal.
+- Smaller holders receive a modest Robin Hood score boost.
+- Wallets with lower SOL balances receive a modest Robin Hood score boost.
+- The boost is capped, so supply held still dominates.
 - One selected recipient can receive the separate 5x Hood Bonus.
 
 Every epoch is 5 minutes. Selling any amount of `$HOOD`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
@@ -51,6 +53,26 @@ If the first migration already exists in your project, also run the follow-up mi
 
 The migration enables public read policies for dashboard tables. The worker still uses the service-role key for writes.
 
+To clear launch data right before going live:
+
+```sql
+begin;
+
+do $$
+declare
+  t text;
+begin
+  foreach t in array array['payouts','snapshots','buys','claims','epochs','holder_states']
+  loop
+    if to_regclass('public.' || t) is not null then
+      execute format('truncate table public.%I restart identity cascade', t);
+    end if;
+  end loop;
+end $$;
+
+commit;
+```
+
 ## Vercel Env
 
 Required:
@@ -59,9 +81,8 @@ Required:
 NEXT_PUBLIC_PROJECT_NAME="Robin Hood"
 NEXT_PUBLIC_CA=<HOOD_MINT>
 NEXT_PUBLIC_SOURCE_SYMBOL=HOOD
-NEXT_PUBLIC_REWARD_SYMBOL=<REWARD_SYMBOL>
+NEXT_PUBLIC_REWARD_SYMBOL=SOL
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=<HOOD_MINT>
-NEXT_PUBLIC_REWARD_TOKEN_MINT=<REWARD_MINT>
 NEXT_PUBLIC_X_URL=https://x.com
 NEXT_PUBLIC_BUY_URL=<BUY_LINK>
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
@@ -83,9 +104,9 @@ Never prefix the service-role key with `NEXT_PUBLIC_`.
 Required:
 
 ```bash
+REWARD_MODE=sol
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
 SOURCE_TOKEN_MINT=<HOOD_MINT>
-REWARD_TOKEN_MINT=<REWARD_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
@@ -99,7 +120,7 @@ BUY_ENABLED=false
 AIRDROP_ENABLED=false
 ```
 
-Turn those to `true` only when live.
+Turn `CLAIM_ENABLED` and `AIRDROP_ENABLED` to `true` only when live. `BUY_ENABLED` can stay `false` in `REWARD_MODE=sol`; the worker skips the buy path either way.
 
 Reward settings:
 
@@ -109,19 +130,17 @@ ELIGIBILITY_MIN=1000000
 MAX_WALLETS_PER_EPOCH=75
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=
-SWAP_BALANCE_BPS=9000
 MIN_SOL_RESERVE=0.2
 AIRDROP_SOL_RESERVE=0.05
 AIRDROP_BATCH_SIZE=4
-AIRDROP_REWARD_BPS=4000
-SWAP_SLIPPAGE_BPS=300
+AIRDROP_REWARD_BPS=9000
 PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-`SWAP_BALANCE_BPS=9000` spends up to 90% of SOL while also respecting `MIN_SOL_RESERVE`, so the treasury keeps at least 0.2 SOL after the buy. The worker enforces a minimum `MIN_SOL_RESERVE` of 0.2 and a minimum `AIRDROP_SOL_RESERVE` of 0.05 even if lower env values are configured.
-During payout, SOL above the 0.05 airdrop reserve can be used to create missing reward-token associated token accounts. The worker does not send SOL directly to holder wallets.
-`AIRDROP_REWARD_BPS=4000` distributes 40% of available reward tokens each epoch and leaves the rest in treasury.
+`MIN_SOL_RESERVE=0.2` keeps at least 0.2 SOL available before the reward pool is calculated. `AIRDROP_SOL_RESERVE=0.05` is the second reserve checked during native SOL transfers. `AIRDROP_REWARD_BPS=9000` distributes 90% of the available SOL reward pool each epoch after reserve.
+
+`REWARD_TOKEN_MINT`, `SWAP_BALANCE_BPS`, and `SWAP_SLIPPAGE_BPS` are not required in SOL mode.
 
 ## Commands
 
@@ -147,4 +166,5 @@ The included `railway.json` builds and starts the worker service.
 - A failed claim logs and continues; it does not crash-loop the worker.
 - Epochs are idempotent by `epoch_id`.
 - Payouts are idempotent by `epoch_id:wallet`.
+- In `REWARD_MODE=sol`, the worker does not call Jupiter and does not create token ATAs for holders.
 - Dashboard reads Supabase; it does not need wallet secrets.

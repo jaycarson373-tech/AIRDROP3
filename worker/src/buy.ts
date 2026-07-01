@@ -93,6 +93,11 @@ async function jupiterSwap(baseAmount: bigint, treasuryPublicKey: string) {
 }
 
 export async function buyReward(epochId: string, explicitReserveLamports?: bigint): Promise<BuyResult> {
+  if (config.rewardMode === "sol") {
+    console.log(`[${epochId}] REWARD_MODE=sol, buy path disabled`);
+    return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null };
+  }
+
   const treasury = treasuryKeypair();
   const { amount, balance, reserveLamports } = await treasurySwapAmount(explicitReserveLamports);
   const decimals = await rewardDecimals();

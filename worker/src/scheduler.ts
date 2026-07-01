@@ -4,7 +4,7 @@ import { msUntilNextEpoch } from "./time.js";
 
 console.log(`GRASS worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
-  `Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
+  `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 
 async function loop() {

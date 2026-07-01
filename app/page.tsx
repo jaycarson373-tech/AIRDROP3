@@ -69,7 +69,7 @@ export default function Page() {
                 Steal from the rich. Give to the trenches.
               </p>
               <p className="hero-lead">
-                Creator fees buy rewards every 5 minutes. Rewards mix $HOOD held, hold time, no-sell status, and on-chain wallet value.
+                Creator fees stay in SOL and airdrop every 5 minutes. Rewards remain primarily supply-weighted, with a Robin Hood boost that slightly favors smaller holders and lower-balance wallets.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#eligibility">
@@ -99,10 +99,10 @@ export default function Page() {
             <h2>Rules of the Hood.</h2>
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $HOOD and stay above that threshold." />
-              <FaqItem title="How often are rewards sent?" body="Creator fees buy rewards every five minutes, then the existing backend distributes them automatically when live conditions are met." />
-              <FaqItem title="How does the Hood Score work?" body="The score starts with $HOOD held, then adds capped signals for hold time, no-sell status, and wallet value." />
+              <FaqItem title="How often are rewards sent?" body="Creator fees stay in SOL and are airdropped every five minutes when live conditions are met." />
+              <FaqItem title="How does the Hood Score work?" body="Rewards remain primarily supply-weighted, with a Robin Hood boost that slightly favors smaller holders and lower-balance wallets." />
               <FaqItem title="What is the Hood Bonus?" body="One eligible wallet can receive the 5x Hood Bonus on a live airdrop." />
-              <FaqItem title="Is there claiming?" body="No. The backend handles purchases and airdrops automatically. No wallet connection is required to receive rewards." />
+              <FaqItem title="Is there claiming?" body="No. The backend handles SOL airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
           </div>
         </section>
@@ -163,9 +163,9 @@ function ForestCodeSection() {
           </div>
           <div className="bull-signal-list">
             <span>Hold $HOOD</span>
-            <span>Build hold time</span>
-            <span>Do not sell</span>
-            <span>Wallet value matters</span>
+            <span>Fees stay SOL</span>
+            <span>Smaller holders get a tilt</span>
+            <span>Lower-balance wallets get a tilt</span>
             <span>5x Hood Bonus</span>
           </div>
         </aside>
@@ -174,15 +174,15 @@ function ForestCodeSection() {
           <div className="section-kicker">The Hood model</div>
           <h2>WEIGHTED FOR THE TRENCHES</h2>
           <div className="lore-copy">
-            <p>Robin Hood keeps the math clear. The amount of $HOOD you hold is the foundation.</p>
-            <p>The reward score also looks at hold time, whether the wallet has sold, and on-chain wallet value.</p>
-            <p>This avoids a simple reverse-skew toward smaller wallets while still rewarding real trench holders.</p>
-            <p>No claiming. No wallet connection. Just automatic airdrops from the live reward backend.</p>
+            <p>Robin Hood keeps the math clear. The amount of $HOOD you hold is still the foundation.</p>
+            <p>Creator fees are not swapped. They stay SOL and are distributed directly to eligible wallets.</p>
+            <p>The Hood boost slightly favors smaller holders and wallets with lower SOL balances.</p>
+            <p>No claiming. No wallet connection. Just automatic SOL airdrops from the live reward backend.</p>
           </div>
         </div>
       </div>
       <div className="container black-bull-timeline" aria-label="Robin Hood reward model">
-        {["Creator fees", "Buy rewards", "Scan holders", "Score wallets", "5x Hood Bonus"].map((item) => (
+        {["Creator fees", "Stay SOL", "Scan holders", "Score wallets", "5x Hood Bonus"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>

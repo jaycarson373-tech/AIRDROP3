@@ -44,8 +44,8 @@ type HoldersResponse = {
     currentMultiplierBps: number | null;
     currentHoldTime: string | null;
     currentStreak: number | null;
-    totalAnsemEarned: number;
-    lastFeedingAt: string | null;
+    totalRewardEarned: number;
+    lastAirdropAt: string | null;
     permanentlyIneligible: boolean;
     ineligibleReason: string | null;
   }>;
@@ -55,8 +55,8 @@ type HoldersResponse = {
     currentMultiplier: string | null;
     currentMultiplierBps: number | null;
     currentStreak: number | null;
-    totalAnsemEarned: number;
-    lastFeedingAt: string | null;
+    totalRewardEarned: number;
+    lastAirdropAt: string | null;
     ineligibleReason: string;
     ineligibleAt: string | null;
     lastSeenAt: string | null;
@@ -78,7 +78,7 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "rewards";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "SOL";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -196,7 +196,7 @@ export function LiveProtocolDashboard() {
           <p>Live values come from the existing reward backend. No fake production data.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label={`${REWARD_SYMBOL} Purchased`} value={formatAmount(sumRounds(rounds, "rewardBought"), REWARD_SYMBOL)} />
+          <MetricCard label={`${REWARD_SYMBOL} Reward Pool`} value={formatAmount(sumRounds(rounds, "rewardBought"), REWARD_SYMBOL)} />
           <MetricCard label="Today's Drops" value={stats ? formatCount(todaysAirdrops) : "Loading"} />
           <MetricCard label="Current Epoch" value={stats ? formatCount(stats.currentEpoch) : "Loading"} />
           <MetricCard label={`Eligible ${SOURCE_SYMBOL} Holders`} value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} strong />
@@ -236,10 +236,9 @@ function MetricCard({
 }
 
 const hoodModelCards = [
-  ["Holdings", "Supply held", `$${SOURCE_SYMBOL} balance is the foundation of every reward score.`],
-  ["Streak", "Hold time", "Remaining eligible across epochs strengthens the score."],
-  ["Clean", "No sells", "Selling removes eligibility from the tracked reward set."],
-  ["Value", "Wallet value", "On-chain wallet value is included as a capped signal."],
+  ["Supply", "Supply weighted", `$${SOURCE_SYMBOL} balance remains the main driver of every SOL drop.`],
+  ["Boost", "Robin Hood tilt", "Smaller holders receive a modest score boost."],
+  ["Balance", "Lower-balance wallets", "Wallets with lower SOL balances receive a modest score boost."],
   ["5×", "Hood Bonus", "One eligible wallet can receive the special bonus on a live drop."]
 ];
 
@@ -249,8 +248,8 @@ export function HoodBonusSection() {
       <div className="container">
         <div className="section-kicker">Hood Bonus</div>
         <div className="section-head split-head">
-          <h2>One bonus. Clear scoring.</h2>
-          <p>Rewards mix supply held, hold time, no-sell status, wallet value, and the 5x Hood Bonus.</p>
+          <h2>Supply weighted. Trench tilted.</h2>
+          <p>Rewards remain primarily supply-weighted, with a Robin Hood boost that slightly favors smaller holders and lower-balance wallets.</p>
         </div>
         <div className="multiplier-grid">
           {hoodModelCards.map(([value, title, copy]) => (
@@ -271,18 +270,18 @@ export function HoodBonusSection() {
               <strong>$HOOD held</strong>
             </div>
             <div>
-              <span>Signals</span>
-              <strong>Hold time + no sells</strong>
+              <span>Boost</span>
+              <strong>Smaller holders</strong>
             </div>
             <div>
-              <span>Value</span>
-              <strong>Wallet value + 5x bonus</strong>
+              <span>Balance</span>
+              <strong>Lower SOL balance</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>The score does not reverse-skew toward smaller wallets. Holding more $HOOD still matters most.</p>
+          <p>Holding more $HOOD still matters most. The Robin Hood boost only nudges the score toward the trenches.</p>
           <div className="max-row">
             <span>Bonus max</span>
             <b>5×</b>
@@ -290,7 +289,7 @@ export function HoodBonusSection() {
         </div>
       </div>
       <div className="container rank-strip" aria-label="Reward model">
-        {["Hold $HOOD", "Stay eligible", "Do not sell", "Build wallet value", "5x bonus"].map((rank) => (
+        {["Hold $HOOD", "Creator fees stay SOL", "Scan holders", "Apply Hood boost", "5x bonus"].map((rank) => (
           <span key={rank}>{rank}</span>
         ))}
       </div>
@@ -307,7 +306,7 @@ export function PermanentEligibility() {
           <h2>Stay in the forest.</h2>
         </div>
         <div className="eligibility-flow">
-          {[`1M+ $${SOURCE_SYMBOL}`, "Stay Eligible", "Every 5 Minutes", "Rewards Buy", "Hood Weight", "Automatic Airdrop"].map((item, index) => (
+          {[`1M+ $${SOURCE_SYMBOL}`, "Stay Eligible", "Every 5 Minutes", "SOL Pool", "Hood Score", "Automatic Airdrop"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -326,15 +325,15 @@ export function RewardExplanation() {
         <div className="section-kicker">How rewards work</div>
         <div className="section-head split-head">
           <h2>Simple: hold HOOD, receive rewards.</h2>
-          <p>Your reward score is a mixture of supply held, hold time, whether the wallet has sold, and on-chain wallet value.</p>
+          <p>Creator fees stay in SOL. The backend scans eligible $HOOD holders and airdrops SOL directly.</p>
         </div>
         <div className="reward-flow">
           {[
             `Hold at least 1,000,000 $${SOURCE_SYMBOL}`,
-            `Creator fees buy ${REWARD_SYMBOL} every 5 minutes`,
+            "Creator fees remain SOL",
             "The backend scans eligible holder balances",
-            "Hold time, no-sell status, and wallet value strengthen the score",
-            `${REWARD_SYMBOL} is automatically distributed to eligible wallets`
+            "The Hood boost slightly favors smaller and lower-balance wallets",
+            `${REWARD_SYMBOL} is automatically airdropped to eligible wallets`
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
               <strong>{item}</strong>
@@ -344,7 +343,7 @@ export function RewardExplanation() {
         <div className="share-example">
           {[
             ["Holder A", "More $HOOD", "larger base score"],
-            ["Holder B", "Longer hold", "stronger score signal"],
+            ["Holder B", "Smaller holder", "modest Hood boost"],
             ["Holder C", "Hood Bonus", "can receive the 5x bonus"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
@@ -401,14 +400,14 @@ export function BullBoard() {
                 {rows.length ? (
                   rows.slice(0, 25).map((holder) => {
                     const lastReward = recentRewards.find((reward) => reward.wallet === holder.address);
-                    const recentEarned = holder.totalAnsemEarned ?? earnedByWallet.get(holder.address) ?? 0;
+                    const recentEarned = holder.totalRewardEarned ?? earnedByWallet.get(holder.address) ?? 0;
                     return (
                       <tr key={holder.address}>
                         <td>{compactAddress(holder.address)}</td>
                         <td>{formatNumber(holder.balance, 0)}</td>
                         <td>{holder.percentage}%</td>
                         <td>{recentEarned > 0 ? formatAmount(recentEarned, REWARD_SYMBOL) : "Awaiting holder totals"}</td>
-                        <td>{holder.lastFeedingAt ? formatDate(holder.lastFeedingAt) : lastReward ? formatDate(lastReward.time) : "Awaiting airdrop"}</td>
+                        <td>{holder.lastAirdropAt ? formatDate(holder.lastAirdropAt) : lastReward ? formatDate(lastReward.time) : "Awaiting airdrop"}</td>
                         <td>Eligible for 5x</td>
                       </tr>
                     );
@@ -548,7 +547,7 @@ export function AirdropHistory() {
               <thead>
                 <tr>
                   <th>Epoch</th>
-                  <th>{REWARD_SYMBOL} Purchased</th>
+                  <th>{REWARD_SYMBOL} Reward Pool</th>
                   <th>Recipients</th>
                   <th>Hood Weight</th>
                   <th>Total Distributed</th>

@@ -5,10 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://robinhood.fun"),
   title: "Robin Hood",
-  description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic reward distributions.",
+  description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic SOL airdrops.",
   openGraph: {
     title: "Robin Hood",
-    description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic reward distributions.",
+    description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic SOL airdrops.",
     url: "https://robinhood.fun",
     siteName: "Robin Hood",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Robin Hood",
-    description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic reward distributions.",
+    description: "Steal from the rich. Give to the trenches. Hold HOOD and receive automatic SOL airdrops.",
     images: ["/brand/robin-hood-hero.jpg"]
   },
   icons: {

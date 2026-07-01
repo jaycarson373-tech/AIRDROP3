@@ -30,6 +30,17 @@ function publicKeyEnv(name: string) {
   return new PublicKey(required(name));
 }
 
+function optionalPublicKeyEnv(name: string) {
+  const value = process.env[name];
+  return value ? new PublicKey(value) : null;
+}
+
+function rewardModeEnv() {
+  const value = (process.env.REWARD_MODE ?? "sol").toLowerCase();
+  if (value === "sol" || value === "token") return value;
+  throw new Error(`Invalid REWARD_MODE=${value}; expected sol or token`);
+}
+
 function optionalWallets(name: string) {
   const value = process.env[name];
   if (!value) return [];
@@ -49,11 +60,17 @@ function parseSecret(raw: string) {
 }
 
 let cachedTreasury: Keypair | null = null;
+const rewardMode = rewardModeEnv();
+const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
+if (rewardMode === "token" && !configuredRewardTokenMint) {
+  throw new Error("Missing required env REWARD_TOKEN_MINT when REWARD_MODE=token");
+}
 
 export const config = {
   heliusRpcUrl: required("HELIUS_RPC_URL"),
   sourceTokenMint: publicKeyEnv("SOURCE_TOKEN_MINT"),
-  rewardTokenMint: publicKeyEnv("REWARD_TOKEN_MINT"),
+  rewardMode,
+  rewardTokenMint: configuredRewardTokenMint ?? new PublicKey("So11111111111111111111111111111111111111112"),
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),
@@ -72,7 +89,7 @@ export const config = {
   minSolReserve: Math.max(0.2, numberEnv("MIN_SOL_RESERVE", 0.2)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
-  airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 4000))),
+  airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 9000))),
   swapSlippageBps: Math.max(1, intEnv("SWAP_SLIPPAGE_BPS", 300)),
   priorityFeeSol: numberEnv("PRIORITY_FEE_SOL", 0.000001),
   minRewardRawToAirdrop: BigInt(Math.max(0, intEnv("MIN_REWARD_RAW_TO_AIRDROP", 1)))
