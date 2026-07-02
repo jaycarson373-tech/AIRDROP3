@@ -14,6 +14,7 @@ import {
 const PROJECT_NAME = "HOOD Strategy";
 const DEFAULT_CA = "8u3oshsLdVmkLnGi4WuPUZVYLLzHccXFajHKQYNzpump";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/HOODSTR_";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
 
 function Navbar() {
@@ -39,6 +40,9 @@ function Navbar() {
           {CONTRACT_ADDRESS ? (
             <CopyCaButton address={CONTRACT_ADDRESS} label={shortAddress(CONTRACT_ADDRESS)} />
           ) : null}
+          <a className="cta secondary nav-x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open HOOD Strategy on X">
+            X
+          </a>
           <a className="cta secondary" href="/dashboard">
             View Airdrops
           </a>
@@ -131,7 +135,7 @@ export default function Page() {
             <a href="#hood-bonus">Reward Model</a>
             <a href="#hood-board">Board</a>
             <a href="#airdrops">Airdrops</a>
-            <a href={process.env.NEXT_PUBLIC_X_URL ?? "https://x.com"} target="_blank" rel="noreferrer">
+            <a href={X_URL} target="_blank" rel="noreferrer">
               X
             </a>
           </div>
