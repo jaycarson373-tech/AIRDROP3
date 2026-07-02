@@ -12,10 +12,15 @@ import {
 } from "./home-strategy-data";
 
 const PROJECT_NAME = "HOOD Strategy";
-const DEFAULT_CA = "8u3oshsLdVmkLnGi4WuPUZVYLLzHccXFajHKQYNzpump";
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
+const DEFAULT_CA = "HzrETRY4Dr2wFZLedzXbshdD4yLiwB7HhKE48F4Kpump";
+const BUY_URL =
+  process.env.NEXT_PUBLIC_BUY_URL ??
+  "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=HzrETRY4Dr2wFZLedzXbshdD4yLiwB7HhKE48F4Kpump";
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/HOODSTR_";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOODSTR";
+const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100,000";
 
 function Navbar() {
   return (
@@ -73,11 +78,11 @@ export default function Page() {
                 The Robinhood meta, rebuilt for the trenches.
               </p>
               <p className="hero-lead">
-                Robinhood is bringing memecoins to retail. HOOD Strategy turns that narrative into an airdrop engine for eligible $HOOD holders.
+                Robinhood is bringing memecoins to retail. HOOD Strategy turns that narrative into an airdrop engine for eligible {SOURCE_LABEL} holders.
               </p>
               <div className="hero-actions">
-                <a className="cta" href="#strategy">
-                  View Strategy <ArrowRight size={18} />
+                <a className="cta" href={BUY_URL} target="_blank" rel="noreferrer">
+                  Buy {SOURCE_LABEL} <ArrowRight size={18} />
                 </a>
                 <a className="cta secondary" href="#airdrops">
                   View Rewards
@@ -102,10 +107,10 @@ export default function Page() {
             <div className="section-kicker">FAQ</div>
             <h2>Strategy notes.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body="Hold at least 250,000 $HOOD and stay above that threshold." />
+              <FaqItem title="How do I qualify?" body={`Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL} and stay above that threshold.`} />
               <FaqItem title="How often are rewards sent?" body="Creator fees fund rewards every epoch when live conditions are met." />
-              <FaqItem title="How does the boost work?" body="Rewards are mostly supply-weighted, with capped boosts for smaller $HOOD holders and lower SOL-balance wallets." />
-              <FaqItem title="Does supply still matter?" body="Yes. The $HOOD balance is the base weight, so larger holders can still earn more." />
+              <FaqItem title="How does the boost work?" body={`Rewards are mostly supply-weighted, with capped boosts for smaller ${SOURCE_LABEL} holders and lower SOL-balance wallets.`} />
+              <FaqItem title="Does supply still matter?" body={`Yes. The ${SOURCE_LABEL} balance is the base weight, so larger holders can still earn more.`} />
               <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
           </div>
@@ -115,7 +120,7 @@ export default function Page() {
           <div className="final-bull-art" aria-hidden="true" />
           <div className="container final-bull-copy">
             <h2>RETAIL META. PUBLIC STRATEGY. LIVE REWARDS.</h2>
-            <p>Hold $HOOD.</p>
+            <p>Hold {SOURCE_LABEL}.</p>
             <p>Track the engine.</p>
             <strong>Let the strategy run.</strong>
           </div>
@@ -177,7 +182,7 @@ function StrategySection() {
           <h2>MARKET NARRATIVE MEETS REWARD INFRASTRUCTURE.</h2>
           <div className="lore-copy">
             <p>HOOD Strategy combines the Robinhood memecoin narrative, HOOD stock momentum, and automated reward distribution into one clean holder system.</p>
-            <p>Creator fees fund rewards. Eligible $HOOD holders are scored every epoch.</p>
+            <p>Creator fees fund rewards. Eligible {SOURCE_LABEL} holders are scored every epoch.</p>
             <p>Supply weighting dominates, while capped boost tiers slightly favor smaller holders and lower SOL-balance wallets.</p>
             <p>No claiming. No wallet connection. Just a public strategy dashboard backed by live reward data.</p>
           </div>

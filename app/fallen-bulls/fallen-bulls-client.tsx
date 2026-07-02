@@ -20,6 +20,9 @@ type HoldersResponse = {
 };
 
 const emptyResponse: HoldersResponse = { fallenBulls: [] };
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOODSTR";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -91,7 +94,7 @@ export function FallenBullsClient() {
             <div className="section-kicker">Ineligibility ledger</div>
             <div className="section-head split-head">
               <h1 className="dashboard-title">Ineligible Wallets</h1>
-              <p>Wallets that lost eligibility by selling or falling below the 250,000 HOOD requirement.</p>
+              <p>Wallets that lost eligibility by selling or falling below the {ELIGIBILITY_LABEL} {SOURCE_SYMBOL} requirement.</p>
             </div>
 
             <div className="history-card bull-board-card">
@@ -114,7 +117,7 @@ export function FallenBullsClient() {
                         <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "fallen"}`}>
                           <td>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
-                          <td>{formatNumber(wallet.totalRewardEarned)} SOL</td>
+                          <td>{formatNumber(wallet.totalRewardEarned)} {REWARD_SYMBOL}</td>
                           <td>Ineligible</td>
                           <td>{wallet.currentStreak ?? 0} epochs</td>
                           <td>{formatDate(wallet.lastAirdropAt)}</td>

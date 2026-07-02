@@ -5,10 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://hoodstrategy.fun"),
   title: "HOOD Strategy",
-  description: "The Robinhood meta, rebuilt for the trenches. Hold HOOD and track live reward distributions.",
+  description: "The Robinhood meta, rebuilt for the trenches. Hold HOODSTR and track live HOODx reward distributions.",
   openGraph: {
     title: "HOOD Strategy",
-    description: "The Robinhood meta, rebuilt for the trenches. Hold HOOD and track live reward distributions.",
+    description: "The Robinhood meta, rebuilt for the trenches. Hold HOODSTR and track live HOODx reward distributions.",
     url: "https://hoodstrategy.fun",
     siteName: "HOOD Strategy",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "HOOD Strategy",
-    description: "The Robinhood meta, rebuilt for the trenches. Hold HOOD and track live reward distributions.",
+    description: "The Robinhood meta, rebuilt for the trenches. Hold HOODSTR and track live HOODx reward distributions.",
     images: ["/brand/hood-strategy-logo.png"]
   },
   icons: {

@@ -81,8 +81,10 @@ const emptyStats: StatsResponse = {
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "SOL";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOODSTR";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -252,10 +254,10 @@ function MetricCard({
 }
 
 const hoodModelCards = [
-  ["250K-500K", "1.35x", "Holder boost for eligible smaller wallets."],
-  ["500K-1M", "1.20x", "Moderate holder boost above the minimum."],
-  ["1M-3M", "1.10x", "Light holder boost while supply still dominates."],
-  ["3M+", "1.00x", "Base holder weight for larger wallets."]
+  [`${ELIGIBILITY_LABEL}-500K ${SOURCE_LABEL}`, "1.35x", "Holder boost for eligible smaller wallets."],
+  [`500K-1M ${SOURCE_LABEL}`, "1.20x", "Moderate holder boost above the minimum."],
+  [`1M-3M ${SOURCE_LABEL}`, "1.10x", "Light holder boost while supply still dominates."],
+  [`3M+ ${SOURCE_LABEL}`, "1.00x", "Base holder weight for larger wallets."]
 ];
 
 const solBoostCards = [
@@ -272,7 +274,7 @@ export function HoodBonusSection() {
         <div className="section-kicker">Boost model</div>
         <div className="section-head split-head">
           <h2>Mostly supply weighted. Slightly trench tilted.</h2>
-          <p>Rewards are mostly based on how much $HOOD a wallet holds. The boost only helps balance the game slightly, with capped tiers for smaller holders and lower SOL balances.</p>
+          <p>Rewards are mostly based on how much {SOURCE_LABEL} a wallet holds. The boost only helps balance the game slightly, with capped tiers for smaller holders and lower SOL balances.</p>
         </div>
         <div className="multiplier-grid">
           {hoodModelCards.map(([value, title, copy]) => (
@@ -295,7 +297,7 @@ export function HoodBonusSection() {
           <div className="streak-readout">
             <div>
               <span>Base</span>
-              <strong>$HOOD held</strong>
+              <strong>{SOURCE_LABEL} held</strong>
             </div>
             <div>
               <span>Boost</span>
@@ -309,7 +311,7 @@ export function HoodBonusSection() {
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>Final weight = $HOOD balance x holder boost x SOL balance boost. Bigger $HOOD balances still win more, but smaller and lower-balance wallets get a modest capped edge.</p>
+          <p>Final weight = {SOURCE_LABEL} balance x holder boost x SOL balance boost. Bigger {SOURCE_LABEL} balances still win more, but smaller and lower-balance wallets get a modest capped edge.</p>
           <div className="max-row">
             <span>Max combined boost</span>
             <b>1.82×</b>
@@ -331,10 +333,10 @@ export function PermanentEligibility() {
       <div className="container warning-layout">
         <div>
           <div className="section-kicker">Eligibility rules</div>
-          <h2>Hold 250K+ $HOOD.</h2>
+          <h2>Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}.</h2>
         </div>
         <div className="eligibility-flow">
-          {[`250K+ $${SOURCE_SYMBOL}`, "Creator Fees", "Every Epoch", "Boost Score", "On-chain Tracking"].map((item, index) => (
+          {[`${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`, "Creator Fees", "Every Epoch", "Boost Score", "On-chain Tracking"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -353,11 +355,11 @@ export function RewardExplanation() {
           <div className="section-kicker">How rewards work</div>
         <div className="section-head split-head">
           <h2>Creator fees fund rewards.</h2>
-          <p>HOOD Strategy turns creator fees into a live reward engine for eligible $HOOD holders.</p>
+          <p>HOOD Strategy turns creator fees into a live reward engine for eligible {SOURCE_LABEL} holders.</p>
         </div>
         <div className="reward-flow">
           {[
-            `Hold at least 250,000 $${SOURCE_SYMBOL}`,
+            `Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL}`,
             "Creator fees fund rewards",
             "Rewards distribute every epoch",
             "Smaller holders and lower SOL wallets receive a modest boost",
@@ -370,7 +372,7 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Core", "$HOOD held", "base weight"],
+            ["Core", `${SOURCE_LABEL} held`, "base weight"],
             ["Tilt", "Holder tier", "capped boost"],
             ["Balance", "SOL tier", "capped boost"]
           ].map(([holder, multiplier, copy]) => (
@@ -417,7 +419,7 @@ export function BullBoard() {
               <thead>
                 <tr>
                   <th>Wallet</th>
-                  <th>$HOOD Held</th>
+                  <th>{SOURCE_LABEL} Held</th>
                   <th>SOL Balance Tier</th>
                   <th>Holder Boost</th>
                   <th>SOL Boost</th>

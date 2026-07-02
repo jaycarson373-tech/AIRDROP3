@@ -138,9 +138,11 @@ function holdTimeLabel(streakEpochs: number | null | undefined) {
 }
 
 function reasonLabel(reason: string | null | undefined) {
-  if (reason === "balance_decreased") return "Sold HOOD";
-  if (reason === "dropped_below_threshold") return "Dropped below 250K";
-  if (reason === "dropped_below_threshold_or_sold") return "Sold or dropped below 250K";
+  const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOODSTR";
+  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
+  if (reason === "balance_decreased") return `Sold ${sourceSymbol}`;
+  if (reason === "dropped_below_threshold") return `Dropped below ${eligibilityLabel}`;
+  if (reason === "dropped_below_threshold_or_sold") return `Sold or dropped below ${eligibilityLabel}`;
   return "Permanently ineligible";
 }
 

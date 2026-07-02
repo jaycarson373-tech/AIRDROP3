@@ -36,8 +36,20 @@ function optionalPublicKeyEnv(name: string) {
 }
 
 function rewardModeEnv() {
-  const value = (process.env.REWARD_MODE ?? "sol").toLowerCase();
+  const rawValue = process.env.REWARD_MODE ?? "sol";
+  const value = rawValue.toLowerCase();
   if (value === "sol" || value === "token") return value;
+  if (process.env.REWARD_TOKEN_MINT) {
+    try {
+      new PublicKey(rawValue);
+      console.warn(
+        `Invalid REWARD_MODE=${rawValue}; it looks like a mint. Continuing with REWARD_MODE=token because REWARD_TOKEN_MINT is set.`
+      );
+      return "token";
+    } catch {
+      // Fall through to the explicit config error below.
+    }
+  }
   throw new Error(`Invalid REWARD_MODE=${value}; expected sol or token`);
 }
 
@@ -80,7 +92,7 @@ export const config = {
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
 
   epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 5)),
-  eligibilityMin: numberEnv("ELIGIBILITY_MIN", 250_000),
+  eligibilityMin: numberEnv("ELIGIBILITY_MIN", 100_000),
   maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 75)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 5),
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
