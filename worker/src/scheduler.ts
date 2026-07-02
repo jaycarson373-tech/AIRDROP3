@@ -2,12 +2,13 @@ import { runEpoch } from "./epoch.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
 
-console.log(`HOOD Strategy worker started. Schedule: every ${config.epochMinutes} minutes.`);
+console.log(`Bull Strategy worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
+console.log(`Strategy split: ${config.ansemBuyBps} bps to ANSEM buy path, remainder reserved for SOL long strategy after reserves.`);
 
 async function loop() {
   await runEpoch();

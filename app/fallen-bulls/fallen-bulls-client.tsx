@@ -20,9 +20,9 @@ type HoldersResponse = {
 };
 
 const emptyResponse: HoldersResponse = { fallenBulls: [] };
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOODSTR";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "250K";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -70,13 +70,13 @@ export function FallenBullsClient() {
   }, []);
 
   return (
-    <div className="page">
+    <div className="page bull-strategy-page">
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt="HOOD Strategy logo" />
+            <img className="brand-logo" src="/brand/black-bull-logo.png" alt="Bull Strategy logo" />
             <span>
-              HOOD Strategy
+              Bull Strategy
               <small>Ineligible Wallets</small>
             </span>
           </Link>

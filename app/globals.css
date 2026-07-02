@@ -151,7 +151,7 @@ h3 {
   z-index: -4;
   pointer-events: none;
   background:
-    url("/brand/robin-hood-logo.jpg") 92% 14% / 360px auto no-repeat,
+    url("/brand/black-bull-logo.png") 92% 14% / 360px auto no-repeat,
     var(--black);
   opacity: 0.12;
   filter: grayscale(1);
@@ -351,7 +351,7 @@ h3 {
 }
 
 .hero-mountains {
-  background-image: url("/brand/robin-hood-hero.jpg");
+  background-image: url("/brand/backgrounds/pump-street-3.png");
   background-position: center 42%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -1616,7 +1616,7 @@ td a,
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22) 56%, rgba(0, 0, 0, 0.82)),
     linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.86)),
-    url("/brand/robin-hood-logo.jpg") 72% center / min(64vw, 760px) auto no-repeat;
+    url("/brand/black-bull-logo.png") 72% center / min(64vw, 760px) auto no-repeat;
   filter: saturate(0.88) contrast(1.1);
   transform: translate3d(0, calc(var(--scroll-y) * -0.018), 0);
 }
@@ -2188,7 +2188,7 @@ td a,
   .final-bull-art {
     background:
       linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.9)),
-      url("/brand/robin-hood-logo.jpg") center 16% / min(108vw, 620px) auto no-repeat;
+      url("/brand/black-bull-logo.png") center 16% / min(108vw, 620px) auto no-repeat;
   }
 
   .activity-row,
@@ -2201,7 +2201,7 @@ td a,
   }
 }
 
-/* HOOD Strategy fintech rebrand */
+/* Legacy launch layout retained as fallback; active site uses Bull Strategy overrides below. */
 :root {
   --black: #020403;
   --charcoal: #06100a;
@@ -2345,7 +2345,7 @@ td a,
   background:
     linear-gradient(135deg, transparent 0 48%, rgba(231, 255, 0, 0.2) 48% 48.25%, transparent 48.25%),
     linear-gradient(160deg, transparent 0 62%, rgba(0, 200, 5, 0.22) 62% 62.3%, transparent 62.3%),
-    url("/brand/hood-strategy-logo.png") right 7vw center / min(42vw, 520px) auto no-repeat;
+    url("/brand/black-bull-logo.png") right 7vw center / min(42vw, 520px) auto no-repeat;
   opacity: 0.92;
   transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0);
 }
@@ -2533,7 +2533,7 @@ td a,
 .final-bull-art {
   background:
     radial-gradient(circle at 76% 44%, rgba(231, 255, 0, 0.18), transparent 24%),
-    url("/brand/hood-strategy-logo.png") 78% center / min(48vw, 640px) auto no-repeat;
+    url("/brand/black-bull-logo.png") 78% center / min(48vw, 640px) auto no-repeat;
   filter: none;
 }
 
@@ -2575,13 +2575,366 @@ td a,
   .hood-hero .hero-mountains {
     background:
       radial-gradient(circle at 50% 24%, rgba(231, 255, 0, 0.18), transparent 32%),
-      url("/brand/hood-strategy-logo.png") center 12% / min(86vw, 420px) auto no-repeat;
+      url("/brand/black-bull-logo.png") center 12% / min(86vw, 420px) auto no-repeat;
     opacity: 0.42;
   }
 
   .dashboard-grid,
   .multiplier-grid,
   .black-bull-timeline {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bull Strategy institutional rebrand */
+.bull-strategy-page {
+  --bull-black: #030303;
+  --bull-charcoal: #10100f;
+  --bull-panel: rgba(14, 13, 11, 0.9);
+  --bull-gold: #d7b56d;
+  --bull-gold-soft: rgba(215, 181, 109, 0.18);
+  --bull-ivory: #f5efe2;
+  --bull-muted: rgba(245, 239, 226, 0.68);
+  --bull-green: #42f59d;
+  --bull-purple: #9a72ff;
+  color: var(--bull-ivory);
+  background:
+    radial-gradient(circle at 82% 8%, rgba(154, 114, 255, 0.12), transparent 26%),
+    radial-gradient(circle at 16% 18%, rgba(215, 181, 109, 0.12), transparent 28%),
+    #030303;
+}
+
+.bull-strategy-page .nav {
+  border-bottom: 1px solid rgba(215, 181, 109, 0.22);
+  background: rgba(3, 3, 3, 0.82);
+  backdrop-filter: blur(18px);
+}
+
+.bull-strategy-page .brand {
+  color: var(--bull-ivory);
+  letter-spacing: 0.08em;
+}
+
+.bull-strategy-page .brand-logo,
+.bull-strategy-page .loader-mascot img {
+  border: 1px solid rgba(215, 181, 109, 0.38);
+  background: #050505;
+  box-shadow: 0 0 32px rgba(215, 181, 109, 0.14);
+}
+
+.bull-strategy-page .brand small,
+.bull-strategy-page .nav-links a,
+.bull-strategy-page p,
+.bull-strategy-page td {
+  color: var(--bull-muted);
+}
+
+.bull-strategy-page h1,
+.bull-strategy-page h2,
+.bull-strategy-page h3,
+.bull-strategy-page .footer-brand strong {
+  color: var(--bull-ivory);
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.04em;
+}
+
+.bull-strategy-page .section-kicker,
+.bull-strategy-page th {
+  color: var(--bull-gold);
+  letter-spacing: 0.14em;
+}
+
+.bull-hero {
+  min-height: 100svh;
+  padding: 148px 0 72px;
+  background: #030303;
+}
+
+.bull-hero::after {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 28vh;
+  content: "";
+  background: linear-gradient(180deg, transparent, #030303 84%);
+}
+
+.bull-hero .hero-wall-street {
+  background:
+    linear-gradient(90deg, rgba(3, 3, 3, 0.98) 0%, rgba(3, 3, 3, 0.76) 38%, rgba(3, 3, 3, 0.34) 70%, rgba(3, 3, 3, 0.88) 100%),
+    radial-gradient(circle at 76% 42%, rgba(215, 181, 109, 0.2), transparent 30%),
+    url("/brand/backgrounds/pump-street-3.png") center / cover no-repeat;
+  opacity: 0.82;
+  transform: translate3d(0, calc(var(--scroll-y) * 0.018), 0) scale(1.04);
+}
+
+.bull-market-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.28;
+  background:
+    linear-gradient(rgba(215, 181, 109, 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(215, 181, 109, 0.055) 1px, transparent 1px),
+    linear-gradient(135deg, transparent 0 48%, rgba(66, 245, 157, 0.22) 48% 48.18%, transparent 48.18%),
+    linear-gradient(160deg, transparent 0 62%, rgba(154, 114, 255, 0.18) 62% 62.18%, transparent 62.18%);
+  background-size: 82px 82px, 82px 82px, 100% 100%, 100% 100%;
+}
+
+.bull-hero .hero-shade {
+  background:
+    radial-gradient(circle at 74% 46%, rgba(215, 181, 109, 0.18), transparent 24%),
+    linear-gradient(90deg, rgba(3, 3, 3, 0.97), rgba(3, 3, 3, 0.7) 48%, rgba(3, 3, 3, 0.34) 76%, rgba(3, 3, 3, 0.86)),
+    linear-gradient(180deg, rgba(3, 3, 3, 0.1), rgba(3, 3, 3, 0.9));
+}
+
+.bull-strategy-page .hero-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.bull-strategy-page h1 {
+  max-width: 900px;
+  font-size: clamp(4.4rem, 10vw, 10.8rem);
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.bull-strategy-page .hero-subtitle {
+  color: var(--bull-gold);
+}
+
+.bull-strategy-page .hero-lead {
+  max-width: 760px;
+  color: rgba(245, 239, 226, 0.82);
+}
+
+.bull-strategy-page .cta {
+  border: 1px solid rgba(215, 181, 109, 0.64);
+  color: #090807;
+  background: linear-gradient(180deg, #f0d99a, #bd9348);
+  box-shadow: 0 18px 42px rgba(215, 181, 109, 0.18);
+}
+
+.bull-strategy-page .cta.secondary,
+.bull-strategy-page .cta.ghost {
+  color: var(--bull-ivory);
+  background: rgba(8, 8, 7, 0.74);
+}
+
+.hero-terminal-stack {
+  display: grid;
+  gap: 18px;
+}
+
+.hero-bull-window {
+  display: grid;
+  grid-template-columns: 128px 1fr;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  border: 1px solid rgba(215, 181, 109, 0.28);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(215, 181, 109, 0.1), rgba(154, 114, 255, 0.08)),
+    rgba(5, 5, 5, 0.78);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+}
+
+.hero-bull-window img {
+  width: 128px;
+  height: 128px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.hero-bull-window span {
+  display: block;
+  color: var(--bull-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.hero-bull-window strong {
+  color: var(--bull-gold);
+  font-size: clamp(2.4rem, 4vw, 4.2rem);
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0;
+}
+
+.bull-strategy-page .hero-countdown,
+.bull-strategy-page .metric-card,
+.bull-strategy-page .history-card,
+.bull-strategy-page .black-bull-card,
+.bull-strategy-page .reward-flow-card,
+.bull-strategy-page .share-card,
+.bull-strategy-page .eligibility-card,
+.bull-strategy-page .lookup-card,
+.bull-strategy-page .faq-item,
+.bull-strategy-page .card,
+.bull-strategy-page .stat {
+  border: 1px solid rgba(215, 181, 109, 0.2);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(245, 239, 226, 0.045), rgba(245, 239, 226, 0.01)),
+    rgba(11, 10, 9, 0.88);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+}
+
+.bull-strategy-page .section {
+  background:
+    linear-gradient(180deg, rgba(3, 3, 3, 0.96), rgba(10, 9, 8, 0.98)),
+    radial-gradient(circle at 88% 18%, rgba(215, 181, 109, 0.12), transparent 26%);
+}
+
+.bull-strategy-page .section::before {
+  opacity: 0.2;
+  background-image:
+    linear-gradient(rgba(215, 181, 109, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(215, 181, 109, 0.04) 1px, transparent 1px);
+}
+
+.bull-strategy-page .metric-card strong,
+.bull-strategy-page .hero-countdown strong,
+.bull-strategy-page .hero-total-distributed b,
+.bull-strategy-page .share-card strong,
+.bull-strategy-page .live-stat strong {
+  color: var(--bull-gold);
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0;
+}
+
+.bull-engine-card .black-bull-portrait,
+.bull-thesis-section .black-bull-portrait {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(215, 181, 109, 0.18), transparent 36%),
+    #050505;
+}
+
+.bull-engine-card .black-bull-portrait img {
+  filter: contrast(1.08) saturate(0.92);
+}
+
+.bull-engine-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.bull-engine-strip span {
+  display: grid;
+  gap: 8px;
+  min-height: 118px;
+  align-content: center;
+}
+
+.bull-engine-strip svg {
+  color: var(--bull-green);
+}
+
+.bull-engine-strip b {
+  color: var(--bull-gold);
+  font-size: 1.6rem;
+}
+
+.strategy-status-card {
+  display: grid;
+  gap: 0;
+}
+
+.strategy-status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(215, 181, 109, 0.12);
+}
+
+.strategy-status-row:last-child {
+  border-bottom: 0;
+}
+
+.strategy-status-row span {
+  color: var(--bull-muted);
+}
+
+.strategy-status-row strong {
+  color: var(--bull-ivory);
+  text-align: right;
+}
+
+.bull-strategy-page .bull-signal-list span,
+.bull-strategy-page .rank-strip span,
+.bull-strategy-page .boost-strip span {
+  border-color: rgba(215, 181, 109, 0.24);
+  color: var(--bull-ivory);
+  background: rgba(215, 181, 109, 0.055);
+}
+
+.bull-strategy-page td a,
+.bull-strategy-page .details-button,
+.bull-strategy-page .final-bull-copy strong {
+  color: var(--bull-green);
+}
+
+.bull-closing-section .final-bull-art {
+  background:
+    linear-gradient(90deg, rgba(3, 3, 3, 0.98), rgba(3, 3, 3, 0.56), rgba(3, 3, 3, 0.96)),
+    url("/brand/backgrounds/pump-street-1.png") center / cover no-repeat;
+  filter: saturate(0.82) contrast(1.08);
+}
+
+.bull-strategy-page .footer {
+  border-top-color: rgba(215, 181, 109, 0.22);
+  background: #030303;
+}
+
+.bull-strategy-page .loader-text {
+  color: var(--bull-gold);
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.08em;
+}
+
+.bull-strategy-page .loader-line span {
+  background: var(--bull-gold);
+}
+
+@media (max-width: 1080px) {
+  .hero-terminal-stack {
+    max-width: 720px;
+  }
+
+  .bull-engine-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .bull-hero {
+    padding: 116px 0 42px;
+  }
+
+  .bull-strategy-page h1 {
+    font-size: clamp(3.4rem, 17vw, 5.6rem);
+  }
+
+  .bull-hero .hero-wall-street {
+    background:
+      linear-gradient(180deg, rgba(3, 3, 3, 0.42), rgba(3, 3, 3, 0.94)),
+      url("/brand/backgrounds/pump-street-3.png") center / cover no-repeat;
+    opacity: 0.52;
+  }
+
+  .hero-bull-window {
+    grid-template-columns: 84px 1fr;
+  }
+
+  .hero-bull-window img {
+    width: 84px;
+    height: 84px;
+  }
+
+  .bull-engine-strip {
     grid-template-columns: 1fr;
   }
 }

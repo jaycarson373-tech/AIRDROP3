@@ -1,59 +1,71 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, BarChart3, Flame, ShieldCheck, TrendingUp } from "lucide-react";
 import { CopyCaButton } from "./copy-ca-button";
 import {
   BullBoard,
+  BuybackBurnSection,
   HeroCountdown,
-  HoodBonusSection,
   HolderLookup,
+  LiveMarketDashboard,
   LiveProtocolDashboard,
   PermanentEligibility,
   RecentAirdrops,
-  RewardExplanation
+  RewardExplanation,
+  SolLongStrategy
 } from "./home-strategy-data";
 
-const PROJECT_NAME = "HOOD Strategy";
-const DEFAULT_CA = "HzrETRY4Dr2wFZLedzXbshdD4yLiwB7HhKE48F4Kpump";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Bull Strategy";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
 const BUY_URL =
   process.env.NEXT_PUBLIC_BUY_URL ??
-  "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=HzrETRY4Dr2wFZLedzXbshdD4yLiwB7HhKE48F4Kpump";
+  (CONTRACT_ADDRESS
+    ? `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${CONTRACT_ADDRESS}`
+    : "https://jup.ag/");
 const DEX_URL =
   process.env.NEXT_PUBLIC_DEX_URL ??
-  "https://dexscreener.com/solana/9al6xgpyzfdsz25ejht9yukmvjc7fynwt83bc5y1ltff";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/HOODSTR_";
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOODSTR";
+  (CONTRACT_ADDRESS ? `https://dexscreener.com/solana/${CONTRACT_ADDRESS}` : "");
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100,000";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "250K";
+const engineSteps = [
+  { value: "50%", label: "ANSEM AIRDROPS", Icon: BarChart3 },
+  { value: "50%", label: "SOL LONG RESERVE", Icon: TrendingUp },
+  { value: "PROFIT", label: "BUYBACKS", Icon: Flame },
+  { value: "BURN", label: "SUPPLY REDUCTION", Icon: ShieldCheck }
+];
 
 function Navbar() {
   return (
     <header className="nav">
       <div className="container nav-inner">
-        <a className="brand" href="/">
-          <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+        <a className="brand bull-brand" href="/">
+          <img className="brand-logo" src="/brand/black-bull-logo.png" alt={`${PROJECT_NAME} logo`} />
           <span>
-            HOOD Strategy
-            <small>Market Rewards</small>
+            Bull Strategy
+            <small>{SOURCE_SYMBOL} market engine</small>
           </span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="#dashboard">Live Data</a>
+          <a href="#dashboard">Dashboard</a>
           <a href="#strategy">Strategy</a>
-          <a href="#how">Rewards</a>
-          <a href="#hood-bonus">Boost Model</a>
-          <a href="#hood-board">Board</a>
+          <a href="#markets">Markets</a>
           <a href="#airdrops">Airdrops</a>
+          <a href="#long">SOL Long</a>
+          <a href="#burns">Burns</a>
         </nav>
         <div className="nav-actions">
-          {CONTRACT_ADDRESS ? (
-            <CopyCaButton address={CONTRACT_ADDRESS} label={shortAddress(CONTRACT_ADDRESS)} />
+          {CONTRACT_ADDRESS ? <CopyCaButton address={CONTRACT_ADDRESS} label={shortAddress(CONTRACT_ADDRESS)} /> : null}
+          {DEX_URL ? (
+            <a className="cta secondary nav-x-button" href={DEX_URL} target="_blank" rel="noreferrer" aria-label={`Open ${SOURCE_SYMBOL} chart on DexScreener`}>
+              DEX
+            </a>
           ) : null}
-          <a className="cta secondary nav-x-button" href={DEX_URL} target="_blank" rel="noreferrer" aria-label="Open HOODSTR chart on DexScreener">
-            DEX
-          </a>
-          <a className="cta secondary nav-x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open HOOD Strategy on X">
-            X
-          </a>
+          {X_URL ? (
+            <a className="cta secondary nav-x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open Bull Strategy on X">
+              X
+            </a>
+          ) : null}
           <a className="cta secondary" href="/dashboard">
             View Airdrops
           </a>
@@ -65,47 +77,60 @@ function Navbar() {
 
 export default function Page() {
   return (
-    <div className="page hood-strategy-page">
+    <div className="page bull-strategy-page">
       <Navbar />
 
       <main>
-        <section className="hero hood-hero" id="top">
-          <div className="hero-art hero-mountains" aria-hidden="true" />
+        <section className="hero bull-hero" id="top">
+          <div className="hero-art hero-wall-street" aria-hidden="true" />
+          <div className="bull-market-grid" aria-hidden="true" />
           <div className="hero-shade" aria-hidden="true" />
 
           <div className="container hero-inner">
             <div className="hero-copy-stack">
-              <div className="section-kicker">Public market reward strategy</div>
+              <div className="section-kicker">Automated bull-market engine</div>
               <h1>
-                <span>HOOD</span>
-                <span>Strategy</span>
+                <span>BULL</span>
+                <span>STRATEGY</span>
               </h1>
-              <p className="hero-subtitle">
-                The Robinhood meta, rebuilt for the trenches.
-              </p>
+              <p className="hero-subtitle">Long SOL. Accumulate ANSEM. Burn {SOURCE_LABEL}.</p>
               <p className="hero-lead">
-                Robinhood is bringing memecoins to retail. HOOD Strategy turns that narrative into an airdrop engine for eligible {SOURCE_LABEL} holders.
+                Bull Strategy splits creator fees into two engines: 50% buys and airdrops ${REWARD_SYMBOL} to eligible holders, while 50% funds a scaled SOL perpetual long. Realized profits from the long buy back and burn {SOURCE_LABEL}.
               </p>
               <div className="hero-actions">
                 <a className="cta" href={BUY_URL} target="_blank" rel="noreferrer">
                   Buy {SOURCE_LABEL} <ArrowRight size={18} />
                 </a>
                 <a className="cta secondary" href="#airdrops">
-                  View Rewards
+                  View Airdrops
+                </a>
+                <a className="cta ghost" href="#burns">
+                  View Burns
                 </a>
               </div>
             </div>
-            <HeroCountdown />
+            <div className="hero-terminal-stack">
+              <div className="hero-bull-window">
+                <img src="/brand/black-bull.png" alt="" />
+                <div>
+                  <span>Strategy split</span>
+                  <strong>50 / 50</strong>
+                </div>
+              </div>
+              <HeroCountdown />
+            </div>
           </div>
         </section>
 
         <LiveProtocolDashboard />
         <StrategySection />
         <RewardExplanation />
-        <HoodBonusSection />
+        <LiveMarketDashboard />
         <PermanentEligibility />
         <BullBoard />
         <RecentAirdrops />
+        <SolLongStrategy />
+        <BuybackBurnSection />
         <HolderLookup />
 
         <section className="section faq-section" id="faq">
@@ -113,22 +138,22 @@ export default function Page() {
             <div className="section-kicker">FAQ</div>
             <h2>Strategy notes.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body={`Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL} and stay above that threshold.`} />
-              <FaqItem title="How often are rewards sent?" body="Creator fees fund rewards every epoch when live conditions are met." />
-              <FaqItem title="How does the boost work?" body={`Rewards are mostly supply-weighted, with capped boosts for smaller ${SOURCE_LABEL} holders and lower SOL-balance wallets.`} />
-              <FaqItem title="Does supply still matter?" body={`Yes. The ${SOURCE_LABEL} balance is the base weight, so larger holders can still earn more.`} />
-              <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
+              <FaqItem title="How do I qualify?" body={`Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL}. The live backend can override the threshold through envs.`} />
+              <FaqItem title="What gets airdropped?" body={`The ANSEM side buys ${REWARD_SYMBOL} and sends settled airdrops directly to eligible ${SOURCE_SYMBOL} holders.`} />
+              <FaqItem title="What happens to the other 50%?" body="It is reserved for the SOL long strategy side. Realized SOL long profits are the only funds intended for buyback and burn." />
+              <FaqItem title="Does the worker risk the whole wallet?" body="No. The worker keeps the permanent SOL reserve and transaction buffer before calculating usable strategy funds." />
+              <FaqItem title="Is there claiming?" body="No wallet connection is required to receive airdrops. The backend handles settled transfers automatically." />
             </div>
           </div>
         </section>
 
-        <section className="section final-bull-section">
+        <section className="section final-bull-section bull-closing-section">
           <div className="final-bull-art" aria-hidden="true" />
           <div className="container final-bull-copy">
-            <h2>RETAIL META. PUBLIC STRATEGY. LIVE REWARDS.</h2>
-            <p>Hold {SOURCE_LABEL}.</p>
-            <p>Track the engine.</p>
-            <strong>Let the strategy run.</strong>
+            <h2>FEES FUEL THE THESIS.</h2>
+            <p>Long SOL.</p>
+            <p>Accumulate ANSEM.</p>
+            <strong>Burn {SOURCE_SYMBOL}.</strong>
           </div>
         </section>
       </main>
@@ -136,22 +161,27 @@ export default function Page() {
       <footer className="footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
-            <strong>HOOD Strategy</strong>
+            <img className="brand-logo" src="/brand/black-bull-logo.png" alt={`${PROJECT_NAME} logo`} />
+            <strong>Bull Strategy</strong>
           </div>
-          <p>The Robinhood meta, rebuilt for the trenches.</p>
+          <p>50% ANSEM airdrops. 50% SOL long reserve. Realized profits reduce supply.</p>
           <div className="footer-links">
-            <a href="#dashboard">Live Data</a>
+            <a href="#dashboard">Dashboard</a>
             <a href="#strategy">Strategy</a>
-            <a href="#hood-bonus">Boost Model</a>
-            <a href="#hood-board">Board</a>
+            <a href="#markets">Markets</a>
             <a href="#airdrops">Airdrops</a>
-            <a href={DEX_URL} target="_blank" rel="noreferrer">
-              DEX
-            </a>
-            <a href={X_URL} target="_blank" rel="noreferrer">
-              X
-            </a>
+            <a href="#long">SOL Long</a>
+            <a href="#burns">Burns</a>
+            {DEX_URL ? (
+              <a href={DEX_URL} target="_blank" rel="noreferrer">
+                DEX
+              </a>
+            ) : null}
+            {X_URL ? (
+              <a href={X_URL} target="_blank" rel="noreferrer">
+                X
+              </a>
+            ) : null}
           </div>
           {CONTRACT_ADDRESS ? (
             <div className="footer-ca">
@@ -167,39 +197,43 @@ export default function Page() {
 
 function StrategySection() {
   return (
-    <section className="section strategy-thesis-section" id="strategy">
-      <div className="black-bull-glow" aria-hidden="true" />
+    <section className="section strategy-thesis-section bull-thesis-section" id="strategy">
+      <div className="bull-strategy-glow" aria-hidden="true" />
       <div className="container black-bull-grid">
-        <aside className="black-bull-card">
+        <aside className="black-bull-card bull-engine-card">
           <div className="black-bull-portrait">
-            <img src="/brand/hood-strategy-logo.png" alt="HOOD Strategy mark" />
+            <img src="/brand/black-bull-logo.png" alt="Bull Strategy mark" />
           </div>
           <div className="black-bull-card-head">
-            <span>Strategy stack</span>
-            <strong>HOOD Strategy</strong>
+            <span>Two-engine strategy</span>
+            <strong>Bull Strategy</strong>
           </div>
           <div className="bull-signal-list">
-            <span>Airdrop tech</span>
-            <span>Retail meta</span>
-            <span>HOOD stock thesis</span>
-            <span>Trenches redistribution</span>
+            <span>50% ANSEM accumulation</span>
+            <span>50% SOL long reserve</span>
+            <span>Eligible {SOURCE_SYMBOL} holders</span>
+            <span>Realized profit burns</span>
           </div>
         </aside>
 
         <div className="black-bull-copy">
-          <div className="section-kicker">The strategy</div>
-          <h2>MARKET NARRATIVE MEETS REWARD INFRASTRUCTURE.</h2>
+          <div className="section-kicker">The bull strategy</div>
+          <h2>LONG SOL. ACCUMULATE ANSEM. REDUCE SUPPLY.</h2>
           <div className="lore-copy">
-            <p>HOOD Strategy combines the Robinhood memecoin narrative, HOOD stock momentum, and automated reward distribution into one clean holder system.</p>
-            <p>Creator fees fund rewards. Eligible {SOURCE_LABEL} holders are scored every epoch.</p>
-            <p>Supply weighting dominates, while capped boost tiers slightly favor smaller holders and lower SOL-balance wallets.</p>
-            <p>No claiming. No wallet connection. Just a public strategy dashboard backed by live reward data.</p>
+            <p>Ansem has been bullish on SOL and ANSEM. Bull Strategy turns that thesis into an automated on-chain engine.</p>
+            <p>Every live epoch, usable creator fees are split into two sides after reserves are protected.</p>
+            <p>Half buys {REWARD_SYMBOL} for eligible {SOURCE_LABEL} holders. Half stays allocated to the SOL long strategy side.</p>
+            <p>Only realized SOL long profits are intended for buyback and burn. No fake burn numbers are shown before live integration.</p>
           </div>
         </div>
       </div>
-      <div className="container black-bull-timeline" aria-label="HOOD Strategy reward model">
-        {["Creator fees", "Reward pool", "Holder scan", "Boost model", "Airdrop ledger"].map((item) => (
-          <span key={item}>{item}</span>
+      <div className="container black-bull-timeline bull-engine-strip" aria-label="Bull Strategy engines">
+        {engineSteps.map(({ value, label, Icon }) => (
+          <span key={label}>
+            <Icon size={18} />
+            <b>{value}</b>
+            {label}
+          </span>
         ))}
       </div>
     </section>

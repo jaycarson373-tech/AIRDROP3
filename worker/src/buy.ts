@@ -10,6 +10,8 @@ export type BuyResult = {
   baseSpentLamports: bigint;
   rewardReceivedRaw: bigint;
   rewardReceivedUi: number;
+  usableLamports: bigint;
+  solLongReserveLamports: bigint;
   txSig: string | null;
 };
 
@@ -53,14 +55,18 @@ export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
   const defaultReserveLamports = await postBuyReserveLamports();
   const reserveLamports =
     explicitReserveLamports === undefined ? defaultReserveLamports : maxBigInt(explicitReserveLamports, defaultReserveLamports);
-  const bpsAmount = (balance * BigInt(config.swapBalanceBps)) / 10_000n;
-  const reserveAmount = balance > reserveLamports ? balance - reserveLamports : 0n;
-  const amount = bpsAmount < reserveAmount ? bpsAmount : reserveAmount;
+  const usableLamports = balance > reserveLamports ? balance - reserveLamports : 0n;
+  const bpsAmount = (usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
+  const ansemBudget = (usableLamports * BigInt(config.ansemBuyBps)) / 10_000n;
+  const amount = bpsAmount < ansemBudget ? bpsAmount : ansemBudget;
+  const solLongReserveLamports = usableLamports > amount ? usableLamports - amount : 0n;
 
   return {
     balance,
     amount: amount > 0n ? amount : 0n,
-    reserveLamports
+    reserveLamports,
+    usableLamports,
+    solLongReserveLamports
   };
 }
 
@@ -95,29 +101,32 @@ async function jupiterSwap(baseAmount: bigint, treasuryPublicKey: string) {
 export async function buyReward(epochId: string, explicitReserveLamports?: bigint): Promise<BuyResult> {
   if (config.rewardMode === "sol") {
     console.log(`[${epochId}] REWARD_MODE=sol, buy path disabled`);
-    return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null };
+    return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, usableLamports: 0n, solLongReserveLamports: 0n, txSig: null };
   }
 
   const treasury = treasuryKeypair();
-  const { amount, balance, reserveLamports } = await treasurySwapAmount(explicitReserveLamports);
+  const { amount, balance, reserveLamports, usableLamports, solLongReserveLamports } = await treasurySwapAmount(explicitReserveLamports);
   const decimals = await rewardDecimals();
 
   if (amount <= 0n) {
     console.log(
-      `[${epochId}] insufficient treasury after reserve, skipping buy: balance=${balance}, reserve=${reserveLamports}`
+      `[${epochId}] insufficient treasury after reserve/split, skipping ANSEM buy: balance=${balance}, reserve=${reserveLamports}, usable=${usableLamports}, ansemBuyBps=${config.ansemBuyBps}`
     );
-    return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, txSig: null };
+    return { baseSpentLamports: 0n, rewardReceivedRaw: 0n, rewardReceivedUi: 0, usableLamports, solLongReserveLamports, txSig: null };
   }
 
   const { quote, swap } = await jupiterSwap(amount, treasury.publicKey.toBase58());
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}strategy split: usable=${usableLamports}, ANSEM buy=${amount} lamports (${config.ansemBuyBps} bps cap), SOL long reserve=${solLongReserveLamports} lamports, protected reserve=${reserveLamports}`
+  );
+  console.log(
     `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`
   );
 
   if (!config.buyEnabled) {
-    return { baseSpentLamports: amount, rewardReceivedRaw, rewardReceivedUi, txSig: null };
+    return { baseSpentLamports: amount, rewardReceivedRaw, rewardReceivedUi, usableLamports, solLongReserveLamports, txSig: null };
   }
 
   const tx = VersionedTransaction.deserialize(Buffer.from(swap.swapTransaction, "base64"));
@@ -130,5 +139,5 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
 
   const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
   await connection.confirmTransaction(txSig, "confirmed");
-  return { baseSpentLamports: amount, rewardReceivedRaw, rewardReceivedUi, txSig };
+  return { baseSpentLamports: amount, rewardReceivedRaw, rewardReceivedUi, usableLamports, solLongReserveLamports, txSig };
 }

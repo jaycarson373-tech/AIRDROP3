@@ -175,9 +175,6 @@ function toNumber(value: unknown) {
 }
 
 function holderBoostBps(balance: number) {
-  if (balance < 500_000) return 13500;
-  if (balance < 1_000_000) return 12000;
-  if (balance < 3_000_000) return 11000;
   return 10000;
 }
 
@@ -292,7 +289,7 @@ async function liveEligibleHolderCount() {
   const mint = sourceTokenMint();
   if (!mint) return null;
 
-  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 100_000));
+  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 250_000));
   const maxHolderPct = numberEnv("MAX_HOLDER_PCT", 5);
   const endpoint = rpcUrl();
   const cacheKey = `${endpoint}:${mint.toBase58()}:${eligibilityMin}:${maxHolderPct}`;
@@ -482,6 +479,7 @@ export async function GET() {
         duration: durationLabel(row?.started_at ?? null, row?.completed_at ?? payoutSummary?.latestTime ?? null),
         claimedSol: toNumber(claim?.amount_claimed),
         rewardBought: toNumber(row?.reward_bought),
+        eligibleCount: toNumber(row?.eligible_count),
         normalRewardsSent: payoutSummary?.normalRewardAmount ?? 0,
         distributedPump: payoutSummary?.rewardAmount ?? 0,
         goldenWinnerWallet: goldenPayout?.wallet ?? null,

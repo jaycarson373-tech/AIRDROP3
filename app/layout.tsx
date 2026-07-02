@@ -3,29 +3,29 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hoodstrategy.fun"),
-  title: "HOOD Strategy",
-  description: "The Robinhood meta, rebuilt for the trenches. Hold HOODSTR and track live HOODx reward distributions.",
+  metadataBase: new URL("https://bullstrategy.fun"),
+  title: "Bull Strategy",
+  description: "Long SOL. Accumulate ANSEM. Burn BULLSTRAT. Track the live Bull Strategy airdrop engine.",
   openGraph: {
-    title: "HOOD Strategy",
-    description: "The Robinhood meta, rebuilt for the trenches. Hold HOODSTR and track live HOODx reward distributions.",
-    url: "https://hoodstrategy.fun",
-    siteName: "HOOD Strategy",
+    title: "Bull Strategy",
+    description: "Long SOL. Accumulate ANSEM. Burn BULLSTRAT. Track the live Bull Strategy airdrop engine.",
+    url: "https://bullstrategy.fun",
+    siteName: "Bull Strategy",
     images: [
       {
-        url: "/brand/hood-strategy-logo.png",
+        url: "/brand/black-bull-logo.png",
         width: 1200,
         height: 1200,
-        alt: "HOOD Strategy"
+        alt: "Bull Strategy"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "HOOD Strategy",
-    description: "The Robinhood meta, rebuilt for the trenches. Hold HOODSTR and track live HOODx reward distributions.",
-    images: ["/brand/hood-strategy-logo.png"]
+    title: "Bull Strategy",
+    description: "Long SOL. Accumulate ANSEM. Burn BULLSTRAT. Track the live Bull Strategy airdrop engine.",
+    images: ["/brand/black-bull-logo.png"]
   },
   icons: {
     icon: [

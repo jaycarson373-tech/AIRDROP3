@@ -76,6 +76,8 @@ export async function runEpoch(date = new Date()) {
       baseSpentLamports: 0n,
       rewardReceivedRaw: 0n,
       rewardReceivedUi: 0,
+      usableLamports: 0n,
+      solLongReserveLamports: 0n,
       txSig: null as string | null
     };
 
@@ -99,6 +101,8 @@ export async function runEpoch(date = new Date()) {
         baseSpentLamports: 0n,
         rewardReceivedRaw: rewardPoolRaw,
         rewardReceivedUi: lamportsToSol(rewardPoolRaw),
+        usableLamports: rewardPoolRaw,
+        solLongReserveLamports: 0n,
         txSig: null
       };
       await recordBuy(epochId, "0", rewardPoolRaw.toString(), buy.rewardReceivedUi.toString(), null);
@@ -113,7 +117,7 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] insufficient usable SOL after 0.30 reserve and 0.05 buffer, skipped epoch`);
+      console.log(`[${epochId}] insufficient reward balance after reserve/split, skipped epoch`);
       return;
     }
     const goldenPool = await computeGoldenRewardPool(epochId, holders, rewardPoolRaw);

@@ -7,8 +7,10 @@ type Round = {
   status: string;
   startedAt: string;
   duration: string;
+  claimedSol?: number;
   rewardBought: number;
   distributedPump: number;
+  eligibleCount?: number;
   txSig: string | null;
 };
 
@@ -53,18 +55,12 @@ type HoldersResponse = {
     permanentlyIneligible: boolean;
     ineligibleReason: string | null;
   }>;
-  fallenBulls?: Array<{
-    address: string;
-    balance: number;
-    currentMultiplier: string | null;
-    currentMultiplierBps: number | null;
-    currentStreak: number | null;
-    totalRewardEarned: number;
-    lastAirdropAt: string | null;
-    ineligibleReason: string;
-    ineligibleAt: string | null;
-    lastSeenAt: string | null;
-  }>;
+};
+
+type MarketPrice = {
+  symbol: string;
+  priceUsd: number | null;
+  change24h: number | null;
 };
 
 const emptyStats: StatsResponse = {
@@ -81,10 +77,13 @@ const emptyStats: StatsResponse = {
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOODSTR";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
+const SOURCE_MINT = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
+const REWARD_MINT = process.env.NEXT_PUBLIC_ANSEM_TOKEN_MINT ?? process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? "9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump";
+const SOL_MINT = process.env.NEXT_PUBLIC_SOL_MINT ?? "So11111111111111111111111111111111111111112";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "250K";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -112,14 +111,20 @@ function formatCount(value: number) {
   return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
 }
 
-function formatAmount(value: number, symbol: string, maximumFractionDigits = 2) {
+function formatAmount(value: number, symbol: string, maximumFractionDigits = 4) {
   if (!Number.isFinite(value) || value <= 0) return "Awaiting live distribution";
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
 }
 
-function formatMultiplier(value: number | null | undefined) {
-  if (!Number.isFinite(value ?? NaN) || !value) return "Awaiting live state";
-  return `${value.toFixed(2)}x`;
+function formatCurrency(value: number | null) {
+  if (!Number.isFinite(value ?? NaN) || value === null) return "Awaiting market pair";
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits: value < 1 ? 6 : 2 })}`;
+}
+
+function formatPercent(value: number | null) {
+  if (!Number.isFinite(value ?? NaN) || value === null) return "Awaiting";
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${value.toFixed(2)}%`;
 }
 
 function formatDate(value: string) {
@@ -179,23 +184,22 @@ export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
-  const totalEpochs = stats ? formatCount(stats.totalEpochs) : "Loading";
   const totalDistributed =
     stats && stats.totalRewardAirdropped > 0
       ? `${stats.totalRewardAirdropped.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${REWARD_SYMBOL}`
-      : "Awaiting first drop";
+      : "Awaiting first airdrop";
 
   return (
     <div className="hero-countdown" aria-live="polite">
-      <span>Next Distribution</span>
+      <span>Next ANSEM Airdrop</span>
       <strong>{countdown}</strong>
       <div className="hero-total-distributed">
-        <span>Total Rewards Distributed</span>
+        <span>Total {REWARD_SYMBOL} Airdropped</span>
         <b>{totalDistributed}</b>
       </div>
       <div className="hero-total-distributed">
         <span>Total Epochs</span>
-        <b>{totalEpochs}</b>
+        <b>{stats ? formatCount(stats.totalEpochs) : "Loading"}</b>
       </div>
     </div>
   );
@@ -204,40 +208,36 @@ export function HeroCountdown() {
 export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
-  const todaysAirdrops = countToday(rounds);
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const latestRound = rounds[0];
+  const claimedToday = sumRounds(rounds, "claimedSol");
 
   return (
     <section className="section live-section airdrop-section" id="dashboard">
       <div className="container">
-        <div className="section-kicker">Live dashboard</div>
+        <div className="section-kicker">Live strategy dashboard</div>
         <div className="section-head split-head">
-          <h2>Strategy dashboard.</h2>
-          <p>Live values come from the existing reward backend. Total distributions, holder count, reward pool, and transactions update from Supabase.</p>
+          <h2>Two engines. One bull thesis.</h2>
+          <p>Live airdrop values come from Supabase. SOL long, PnL, buyback, and burn fields stay marked as awaiting live strategy integration until real transactions exist.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label="Total Rewards Distributed" value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
-          <MetricCard label="Total Epochs" value={stats ? formatCount(stats.totalEpochs) : "Loading"} />
+          <MetricCard label={`Total ${REWARD_SYMBOL} Airdropped`} value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
+          <MetricCard label="SOL Long Allocation" value="Awaiting long integration" muted />
+          <MetricCard label="Current SOL PnL" value="Awaiting perp data" muted />
+          <MetricCard label={`${SOURCE_LABEL} Burned`} value="Awaiting burn tx" muted />
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
-          <MetricCard label="Current Reward Pool" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
-          <MetricCard label="Next Distribution" value={countdown} />
-          <MetricCard label="Average Boost" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
-          <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
+          <MetricCard label="Next Epoch" value={countdown} />
+          <MetricCard label="Total Epochs" value={stats ? formatCount(stats.totalEpochs) : "Loading"} />
+          <MetricCard label="Creator Fees Seen" value={claimedToday > 0 ? `${formatNumber(claimedToday, 4)} SOL recent` : "Awaiting live claims"} />
         </div>
       </div>
     </section>
   );
 }
 
-function countToday(rounds: Round[]) {
-  const today = new Date().toDateString();
-  return rounds.filter((round) => new Date(round.startedAt).toDateString() === today).length;
-}
-
-function sumRounds(rounds: Round[], key: "rewardBought" | "distributedPump") {
-  return rounds.reduce((sum, round) => sum + (Number.isFinite(round[key]) ? round[key] : 0), 0);
+function sumRounds(rounds: Round[], key: "rewardBought" | "distributedPump" | "claimedSol") {
+  return rounds.reduce((sum, round) => sum + (Number.isFinite(round[key] ?? NaN) ? Number(round[key]) : 0), 0);
 }
 
 function MetricCard({
@@ -259,78 +259,121 @@ function MetricCard({
   );
 }
 
-const hoodModelCards = [
-  [`${ELIGIBILITY_LABEL}-500K ${SOURCE_LABEL}`, "1.35x", "Holder boost for eligible smaller wallets."],
-  [`500K-1M ${SOURCE_LABEL}`, "1.20x", "Moderate holder boost above the minimum."],
-  [`1M-3M ${SOURCE_LABEL}`, "1.10x", "Light holder boost while supply still dominates."],
-  [`3M+ ${SOURCE_LABEL}`, "1.00x", "Base holder weight for larger wallets."]
-];
-
-const solBoostCards = [
-  ["<1 SOL", "1.35x"],
-  ["1-5 SOL", "1.20x"],
-  ["5-20 SOL", "1.10x"],
-  ["20+ SOL", "1.00x"]
-];
-
-export function HoodBonusSection() {
+export function RewardExplanation() {
   return (
-    <section className="section conviction-section" id="hood-bonus">
+    <section className="section reward-explainer-section bull-flow-section" id="how">
       <div className="container">
-        <div className="section-kicker">Boost model</div>
+        <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Mostly supply weighted. Slightly trench tilted.</h2>
-          <p>Rewards are mostly based on how much {SOURCE_LABEL} a wallet holds. The boost only helps balance the game slightly, with capped tiers for smaller holders and lower SOL balances.</p>
+          <h2>Fees split into ANSEM and SOL.</h2>
+          <p>The ANSEM side runs the proven airdrop path. The SOL long side is tracked separately so burns only come from realized strategy profit.</p>
         </div>
-        <div className="multiplier-grid">
-          {hoodModelCards.map(([value, title, copy]) => (
-            <article className="multiplier-card" key={title}>
-              <span>{value}</span>
-              <h3>{title}</h3>
-              <p>{copy}</p>
-              <strong>{title}</strong>
+        <div className="reward-flow">
+          {[
+            `Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL}`,
+            "Creator fees enter the strategy",
+            "50% buys ANSEM for holder airdrops",
+            "50% funds the SOL long reserve",
+            `Realized profits buy back and burn ${SOURCE_LABEL}`
+          ].map((item) => (
+            <article className="reward-flow-card" key={item}>
+              <strong>{item}</strong>
             </article>
           ))}
         </div>
-        <div className="rank-strip boost-strip" aria-label="SOL balance boost model">
-          {solBoostCards.map(([tier, boost]) => (
-            <span key={tier}>{tier}: {boost}</span>
+        <div className="share-example bull-split-example">
+          {[
+            ["ANSEM Engine", "50%", "Buy and airdrop ANSEM to eligible holders."],
+            ["SOL Engine", "50%", "Reserve for scaled SOL perpetual long strategy."],
+            ["Burn Engine", "Profit only", `Realized profits buy back and burn ${SOURCE_SYMBOL}.`]
+          ].map(([holder, multiplier, copy]) => (
+            <article className="share-card" key={holder}>
+              <span>{holder}</span>
+              <strong>{multiplier}</strong>
+              <p>{copy}</p>
+            </article>
           ))}
         </div>
-        <div className="conviction-card streak-card">
-          <span>Transparent reward weight</span>
-          <h3>Final Weight</h3>
-          <div className="streak-readout">
-            <div>
-              <span>Base</span>
-              <strong>{SOURCE_LABEL} held</strong>
-            </div>
-            <div>
-              <span>Boost</span>
-              <strong>Holder tier</strong>
-            </div>
-            <div>
-              <span>Balance</span>
-              <strong>SOL tier</strong>
-            </div>
-          </div>
-          <div className="conviction-progress" aria-hidden="true">
-            <i />
-          </div>
-          <p>Final weight = {SOURCE_LABEL} balance x holder boost x SOL balance boost. Bigger {SOURCE_LABEL} balances still win more, but smaller and lower-balance wallets get a modest capped edge.</p>
-          <div className="max-row">
-            <span>Max combined boost</span>
-            <b>1.82×</b>
-          </div>
-        </div>
-      </div>
-      <div className="container rank-strip" aria-label="Reward model">
-        {["Supply weighting dominates", "Boosts are capped", "No infinite multipliers", "Every epoch recalculates"].map((rank) => (
-          <span key={rank}>{rank}</span>
-        ))}
       </div>
     </section>
   );
+}
+
+export function LiveMarketDashboard() {
+  const prices = useMarketPrices();
+
+  return (
+    <section className="section market-dashboard-section" id="markets">
+      <div className="container">
+        <div className="section-kicker">Live market dashboard</div>
+        <div className="section-head split-head">
+          <h2>Market tape.</h2>
+          <p>Prices load from DexScreener when live pairs are available. Missing pairs are labeled instead of guessed.</p>
+        </div>
+        <div className="lux-grid dashboard-grid">
+          {prices.map((price) => (
+            <MetricCard
+              key={price.symbol}
+              label={`${price.symbol} Price`}
+              value={`${formatCurrency(price.priceUsd)} / ${formatPercent(price.change24h)} 24h`}
+            />
+          ))}
+          <MetricCard label="Current SOL Long Entry" value="Awaiting position data" muted />
+          <MetricCard label="Unrealized PnL" value="Awaiting perp data" muted />
+          <MetricCard label="Realized PnL" value="Awaiting close tx" muted />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function useMarketPrices() {
+  const [prices, setPrices] = useState<MarketPrice[]>([
+    { symbol: "SOL", priceUsd: null, change24h: null },
+    { symbol: REWARD_SYMBOL, priceUsd: null, change24h: null },
+    { symbol: SOURCE_SYMBOL, priceUsd: null, change24h: null }
+  ]);
+
+  useEffect(() => {
+    let active = true;
+    const tokens = [
+      ["SOL", SOL_MINT],
+      [REWARD_SYMBOL, REWARD_MINT],
+      [SOURCE_SYMBOL, SOURCE_MINT]
+    ].filter(([, mint]) => Boolean(mint));
+
+    const load = async () => {
+      const next = await Promise.all(
+        tokens.map(async ([symbol, mint]) => {
+          try {
+            const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`, { cache: "no-store" });
+            if (!response.ok) throw new Error("price fetch failed");
+            const data = (await response.json()) as {
+              pairs?: Array<{ priceUsd?: string; priceChange?: { h24?: number } }>;
+            };
+            const pair = data.pairs?.find((entry) => Number(entry.priceUsd) > 0) ?? data.pairs?.[0];
+            return {
+              symbol,
+              priceUsd: pair?.priceUsd ? Number(pair.priceUsd) : null,
+              change24h: Number.isFinite(pair?.priceChange?.h24) ? pair?.priceChange?.h24 ?? null : null
+            };
+          } catch {
+            return { symbol, priceUsd: null, change24h: null };
+          }
+        })
+      );
+      if (active) setPrices(next);
+    };
+
+    load();
+    const timer = window.setInterval(load, 30_000);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
+  }, []);
+
+  return prices;
 }
 
 export function PermanentEligibility() {
@@ -338,54 +381,15 @@ export function PermanentEligibility() {
     <section className="section eligibility-section" id="eligibility">
       <div className="container warning-layout">
         <div>
-          <div className="section-kicker">Eligibility rules</div>
+          <div className="section-kicker">Eligibility</div>
           <h2>Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}.</h2>
+          <p className="lead">Eligibility is scanned every epoch. The configured environment value is the source of truth for live launches.</p>
         </div>
         <div className="eligibility-flow">
-          {[`${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`, "Creator Fees", "Every Epoch", "Boost Score", "On-chain Tracking"].map((item, index) => (
+          {[`${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`, "Holder Snapshot", "ANSEM Airdrop", "Proof TX", "Live Ledger"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function RewardExplanation() {
-  return (
-    <section className="section reward-explainer-section" id="how">
-      <div className="container">
-          <div className="section-kicker">How rewards work</div>
-        <div className="section-head split-head">
-          <h2>Creator fees fund rewards.</h2>
-          <p>HOOD Strategy turns creator fees into a live reward engine for eligible {SOURCE_LABEL} holders.</p>
-        </div>
-        <div className="reward-flow">
-          {[
-            `Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL}`,
-            "Creator fees fund rewards",
-            "Rewards distribute every epoch",
-            "Smaller holders and lower SOL wallets receive a modest boost",
-            "Everything is tracked on-chain"
-          ].map((item) => (
-            <article className="reward-flow-card" key={item}>
-              <strong>{item}</strong>
-            </article>
-          ))}
-        </div>
-        <div className="share-example">
-          {[
-            ["Core", `${SOURCE_LABEL} held`, "base weight"],
-            ["Tilt", "Holder tier", "capped boost"],
-            ["Balance", "SOL tier", "capped boost"]
-          ].map(([holder, multiplier, copy]) => (
-            <article className="share-card" key={holder}>
-              <span>{holder}</span>
-              <strong>{multiplier}</strong>
-              <p>{copy}</p>
             </article>
           ))}
         </div>
@@ -409,12 +413,12 @@ export function BullBoard() {
   const rows = holders?.topHolders ?? [];
 
   return (
-    <section className="section bull-board-section" id="hood-board">
+    <section className="section bull-board-section" id="bull-board">
       <div className="container">
-        <div className="section-kicker">Strategy board</div>
+        <div className="section-kicker">Holder board</div>
         <div className="section-head split-head">
-          <h2>STRATEGY BOARD</h2>
-          <p>Clean holder table showing balance, boost tiers, final weight, earned rewards, and latest reward activity.</p>
+          <h2>BULL BOARD</h2>
+          <p>Top eligible holders by live backend state, showing {SOURCE_LABEL} held, strategy weight, total {REWARD_SYMBOL} earned, and last settled airdrop.</p>
           <a className="cta secondary" href="/fallen-bulls">
             Ineligible Wallets
           </a>
@@ -426,10 +430,8 @@ export function BullBoard() {
                 <tr>
                   <th>Wallet</th>
                   <th>{SOURCE_LABEL} Held</th>
-                  <th>SOL Balance Tier</th>
-                  <th>Holder Boost</th>
-                  <th>SOL Boost</th>
-                  <th>Final Weight</th>
+                  <th>Supply Share</th>
+                  <th>Strategy Weight</th>
                   <th>Total {REWARD_SYMBOL} Earned</th>
                   <th>Last Airdrop</th>
                 </tr>
@@ -443,10 +445,8 @@ export function BullBoard() {
                       <tr key={holder.address}>
                         <td>{compactAddress(holder.address)}</td>
                         <td>{formatNumber(holder.balance, 0)}</td>
-                        <td>{holder.solBalanceTier}</td>
-                        <td>{holder.holderBoost}</td>
-                        <td>{holder.solBoost}</td>
-                        <td>{holder.finalWeight ? formatNumber(holder.finalWeight, 0) : "Scored live"}</td>
+                        <td>{holder.percentage}%</td>
+                        <td>{holder.finalWeight ? formatNumber(holder.finalWeight, 0) : "Live balance weight"}</td>
                         <td>{recentEarned > 0 ? formatAmount(recentEarned, REWARD_SYMBOL) : "Awaiting holder totals"}</td>
                         <td>{holder.lastAirdropAt ? formatDate(holder.lastAirdropAt) : lastReward ? formatDate(lastReward.time) : "Awaiting airdrop"}</td>
                       </tr>
@@ -454,7 +454,7 @@ export function BullBoard() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={8}>Awaiting Strategy Board.</td>
+                    <td colSpan={6}>Awaiting Bull Board.</td>
                   </tr>
                 )}
               </tbody>
@@ -468,23 +468,63 @@ export function BullBoard() {
 
 export function RecentAirdrops() {
   const { stats } = useProtocolData();
+  const rounds = stats?.roundHistory ?? [];
   const rewards = stats?.recentRewards ?? [];
 
   return (
     <section className="section recent-airdrops-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker">Reward history</div>
+        <div className="section-kicker">ANSEM airdrops</div>
         <div className="section-head split-head">
           <h2>Tracked on-chain.</h2>
-          <p>Settled reward transfers from the live backend. Failed or skipped attempts are not counted.</p>
+          <p>Settled ANSEM transfers from the live backend. Failed or skipped attempts are not counted.</p>
         </div>
-        <div className="history-card">
+        <div className="history-card bull-history-card">
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Epoch</th>
+                  <th>ANSEM Bought</th>
+                  <th>Eligible Holders</th>
+                  <th>Amount Distributed</th>
+                  <th>TX Link</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rounds.length ? (
+                  rounds.slice(0, 12).map((round) => (
+                    <tr key={`${round.epoch}-${round.startedAt}`}>
+                      <td>#{round.epoch}</td>
+                      <td>{formatAmount(round.rewardBought, REWARD_SYMBOL)}</td>
+                      <td>{round.eligibleCount ? formatCount(round.eligibleCount) : statusLabel(round.status)}</td>
+                      <td>{formatAmount(round.distributedPump, REWARD_SYMBOL)}</td>
+                      <td>
+                        {round.txSig ? (
+                          <a href={`https://solscan.io/tx/${round.txSig}`} target="_blank" rel="noreferrer">
+                            Solscan
+                          </a>
+                        ) : (
+                          "Awaiting tx"
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5}>Awaiting settled ANSEM airdrops.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="history-card compact-rewards-card">
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>Wallet</th>
-                  <th>Reward Type</th>
                   <th>{REWARD_SYMBOL} Received</th>
                   <th>Time</th>
                   <th>TX Link</th>
@@ -492,10 +532,9 @@ export function RecentAirdrops() {
               </thead>
               <tbody>
                 {rewards.length ? (
-                  rewards.slice(0, 50).map((reward) => (
+                  rewards.slice(0, 20).map((reward) => (
                     <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
                       <td>{compactAddress(reward.wallet)}</td>
-                      <td>{reward.goldenMultiplier > 1 ? `${reward.goldenMultiplier.toFixed(2)}x Strategy Bonus` : "Base"}</td>
                       <td>{formatAmount(reward.rewardAmount, REWARD_SYMBOL)}</td>
                       <td>{formatDate(reward.time)}</td>
                       <td>
@@ -511,12 +550,61 @@ export function RecentAirdrops() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5}>Awaiting settled reward airdrops.</td>
+                    <td colSpan={4}>Awaiting settled holder transfers.</td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function SolLongStrategy() {
+  return (
+    <section className="section sol-long-section" id="long">
+      <div className="container split-section">
+        <div>
+          <div className="section-kicker">SOL long strategy</div>
+          <h2>Scaled exposure, separate from airdrops.</h2>
+          <p className="lead">The worker now protects the SOL reserve and caps the ANSEM buy side at the configured split. The SOL-long executor and PnL feed should write real position data before this panel shows numbers.</p>
+        </div>
+        <div className="history-card strategy-status-card">
+          {[
+            ["Total Allocated", "Awaiting strategy wallet integration"],
+            ["Average Entry", "Awaiting position data"],
+            ["Current SOL Price", "Loaded in market dashboard"],
+            ["Unrealized PnL", "Awaiting perp data"],
+            ["Realized PnL", "Awaiting close tx"],
+            ["Last Position Update", "Awaiting live integration"]
+          ].map(([label, value]) => (
+            <div className="strategy-status-row" key={label}>
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function BuybackBurnSection() {
+  return (
+    <section className="section buyback-burn-section" id="burns">
+      <div className="container">
+        <div className="section-kicker">Buyback & burn</div>
+        <div className="section-head split-head">
+          <h2>Profits reduce supply.</h2>
+          <p>Buybacks and burns are only displayed when realized SOL-long profit transactions exist. No placeholders are counted as burned supply.</p>
+        </div>
+        <div className="lux-grid dashboard-grid">
+          <MetricCard label="Profit Realized" value="Awaiting close tx" muted />
+          <MetricCard label={`${SOURCE_LABEL} Bought`} value="Awaiting buyback tx" muted />
+          <MetricCard label={`${SOURCE_LABEL} Burned`} value="Awaiting burn tx" muted />
+          <MetricCard label="Total Burned" value="Awaiting burn ledger" muted />
         </div>
       </div>
     </section>
@@ -537,92 +625,26 @@ export function HolderLookup() {
       <div className="container split-section">
         <div>
           <div className="section-kicker">Holder lookup</div>
-          <h2>Check your place in the Hood.</h2>
-          <p className="lead">
-            Wallet-level status uses the live holder-state tracker after the first tracked epoch.
-          </p>
+          <h2>Check your strategy status.</h2>
+          <p className="lead">Wallet-level status uses the live holder-state tracker after the first tracked epoch.</p>
         </div>
         <form className="lookup-card" onSubmit={handleSubmit}>
           <label htmlFor="wallet">Wallet address</label>
           <div className="lookup-row">
-            <input
-              id="wallet"
-              value={wallet}
-              onChange={(event) => setWallet(event.target.value)}
-              placeholder="Paste wallet address"
-            />
+            <input id="wallet" value={wallet} onChange={(event) => setWallet(event.target.value)} placeholder="Paste wallet address" />
             <button type="submit">Lookup</button>
           </div>
           <div className="lookup-result">
             {submitted ? (
               <>
                 <strong>{compactAddress(wallet)}</strong>
-                <span>Awaiting live backend integration for wallet-level Hood status.</span>
+                <span>Awaiting live backend integration for wallet-level strategy status.</span>
               </>
             ) : (
               <span>Enter a wallet to check eligibility once lookup integration is live.</span>
             )}
           </div>
         </form>
-      </div>
-    </section>
-  );
-}
-
-export function AirdropHistory() {
-  const { stats } = useProtocolData();
-  const rounds = stats?.roundHistory ?? [];
-
-  return (
-    <section className="section history-section" id="airdrops-history">
-      <div className="container">
-        <div className="section-kicker">Airdrop history</div>
-        <div className="section-head split-head">
-          <h2>{REWARD_SYMBOL} Distributions</h2>
-          <p>Settled airdrops only. Failed or skipped worker attempts are not counted.</p>
-        </div>
-        <div className="history-card">
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Epoch</th>
-                  <th>{REWARD_SYMBOL} Reward Pool</th>
-                  <th>Recipients</th>
-                  <th>Hood Weight</th>
-                  <th>Total Distributed</th>
-                  <th>Transaction</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rounds.length ? (
-                  rounds.map((round) => (
-                    <tr key={`${round.epoch}-${round.startedAt}`}>
-                      <td>#{round.epoch}</td>
-                      <td>{formatAmount(round.rewardBought, REWARD_SYMBOL)}</td>
-                      <td>{round.distributedPump > 0 ? "Settled" : statusLabel(round.status)}</td>
-                      <td>Hood Score</td>
-                      <td>{formatAmount(round.distributedPump, REWARD_SYMBOL)}</td>
-                      <td>
-                        {round.txSig ? (
-                          <a href={`https://solscan.io/tx/${round.txSig}`} target="_blank" rel="noreferrer">
-                            Solscan
-                          </a>
-                        ) : (
-                          "Awaiting tx"
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={6}>Awaiting settled reward airdrops.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
     </section>
   );
