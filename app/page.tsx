@@ -16,6 +16,9 @@ const DEFAULT_CA = "HzrETRY4Dr2wFZLedzXbshdD4yLiwB7HhKE48F4Kpump";
 const BUY_URL =
   process.env.NEXT_PUBLIC_BUY_URL ??
   "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=HzrETRY4Dr2wFZLedzXbshdD4yLiwB7HhKE48F4Kpump";
+const DEX_URL =
+  process.env.NEXT_PUBLIC_DEX_URL ??
+  "https://dexscreener.com/solana/9al6xgpyzfdsz25ejht9yukmvjc7fynwt83bc5y1ltff";
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/HOODSTR_";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOODSTR";
@@ -45,6 +48,9 @@ function Navbar() {
           {CONTRACT_ADDRESS ? (
             <CopyCaButton address={CONTRACT_ADDRESS} label={shortAddress(CONTRACT_ADDRESS)} />
           ) : null}
+          <a className="cta secondary nav-x-button" href={DEX_URL} target="_blank" rel="noreferrer" aria-label="Open HOODSTR chart on DexScreener">
+            DEX
+          </a>
           <a className="cta secondary nav-x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open HOOD Strategy on X">
             X
           </a>
@@ -140,6 +146,9 @@ export default function Page() {
             <a href="#hood-bonus">Boost Model</a>
             <a href="#hood-board">Board</a>
             <a href="#airdrops">Airdrops</a>
+            <a href={DEX_URL} target="_blank" rel="noreferrer">
+              DEX
+            </a>
             <a href={X_URL} target="_blank" rel="noreferrer">
               X
             </a>
