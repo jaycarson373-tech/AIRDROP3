@@ -179,6 +179,7 @@ export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
+  const totalEpochs = stats ? formatCount(stats.totalEpochs) : "Loading";
   const totalDistributed =
     stats && stats.totalRewardAirdropped > 0
       ? `${stats.totalRewardAirdropped.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${REWARD_SYMBOL}`
@@ -191,6 +192,10 @@ export function HeroCountdown() {
       <div className="hero-total-distributed">
         <span>Total Rewards Distributed</span>
         <b>{totalDistributed}</b>
+      </div>
+      <div className="hero-total-distributed">
+        <span>Total Epochs</span>
+        <b>{totalEpochs}</b>
       </div>
     </div>
   );
@@ -214,6 +219,7 @@ export function LiveProtocolDashboard() {
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="Total Rewards Distributed" value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
+          <MetricCard label="Total Epochs" value={stats ? formatCount(stats.totalEpochs) : "Loading"} />
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
           <MetricCard label="Current Reward Pool" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
           <MetricCard label="Next Distribution" value={countdown} />
