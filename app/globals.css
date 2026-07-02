@@ -2463,6 +2463,7 @@ td a,
   color: var(--gold);
 }
 
+.boost-strip span,
 .rank-strip span {
   border-radius: 999px;
   border-color: rgba(231, 255, 0, 0.24);

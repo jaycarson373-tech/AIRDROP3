@@ -18,18 +18,25 @@ Every epoch:
 3. Snapshot `$HOOD` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, holders above `MAX_HOLDER_PCT`, and wallets that permanently lost eligibility.
 5. Select up to `MAX_WALLETS_PER_EPOCH` deterministic-random eligible holders for the epoch.
-6. Score selected holders by `$HOOD` held.
+6. Score selected holders primarily by `$HOOD` held, with capped boosts for smaller holders and lower-SOL-balance wallets.
 7. Airdrop native SOL directly to selected wallets.
 8. Pick one selected recipient as the separate 5x Strategy Bonus winner when balance allows.
 9. Store epochs, snapshots, claims, bonus fields, SOL reward pools, and payouts in Supabase for the dashboard.
 
 ## HOOD Strategy Weighting
 
-Reward weight is simple:
+Reward weight stays simple and starts from `$HOOD` held:
 
-- Wallets must hold at least 250,000 `$HOOD`.
-- `$HOOD` balance is the reward weight.
-- Reward share is proportional to eligible `$HOOD` held.
+- `$HOOD` balance is the foundation of the score.
+- 250K-500K HOOD receives a 1.35x holder boost.
+- 500K-1M HOOD receives a 1.20x holder boost.
+- 1M-3M HOOD receives a 1.10x holder boost.
+- 3M+ HOOD receives a 1.00x holder boost.
+- Wallets with less than 1 SOL receive a 1.35x SOL boost.
+- Wallets with 1-5 SOL receive a 1.20x SOL boost.
+- Wallets with 5-20 SOL receive a 1.10x SOL boost.
+- Wallets with 20+ SOL receive a 1.00x SOL boost.
+- The boost is capped, so supply held still dominates.
 - One selected recipient can receive the separate 5x Strategy Bonus.
 
 Every epoch is 5 minutes. Default eligibility is 250,000 `$HOOD`. Selling any amount of `$HOOD`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.

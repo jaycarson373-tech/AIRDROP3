@@ -32,7 +32,7 @@ function Navbar() {
           <a href="#dashboard">Live Data</a>
           <a href="#strategy">Strategy</a>
           <a href="#how">Rewards</a>
-          <a href="#hood-bonus">Reward Model</a>
+          <a href="#hood-bonus">Boost Model</a>
           <a href="#hood-board">Board</a>
           <a href="#airdrops">Airdrops</a>
         </nav>
@@ -104,8 +104,8 @@ export default function Page() {
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body="Hold at least 250,000 $HOOD and stay above that threshold." />
               <FaqItem title="How often are rewards sent?" body="Creator fees fund rewards every epoch when live conditions are met." />
-              <FaqItem title="How are rewards weighted?" body="Eligible wallets are weighted by the amount of $HOOD they hold. The minimum is 250,000 $HOOD." />
-              <FaqItem title="Does supply matter?" body="Yes. More $HOOD held means a larger share of each distribution." />
+              <FaqItem title="How does the boost work?" body="Rewards are mostly supply-weighted, with capped boosts for smaller $HOOD holders and lower SOL-balance wallets." />
+              <FaqItem title="Does supply still matter?" body="Yes. The $HOOD balance is the base weight, so larger holders can still earn more." />
               <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function Page() {
           <div className="footer-links">
             <a href="#dashboard">Live Data</a>
             <a href="#strategy">Strategy</a>
-            <a href="#hood-bonus">Reward Model</a>
+            <a href="#hood-bonus">Boost Model</a>
             <a href="#hood-board">Board</a>
             <a href="#airdrops">Airdrops</a>
             <a href={X_URL} target="_blank" rel="noreferrer">
@@ -178,13 +178,13 @@ function StrategySection() {
           <div className="lore-copy">
             <p>HOOD Strategy combines the Robinhood memecoin narrative, HOOD stock momentum, and automated reward distribution into one clean holder system.</p>
             <p>Creator fees fund rewards. Eligible $HOOD holders are scored every epoch.</p>
-            <p>Reward weight is based only on eligible $HOOD held. The more $HOOD a wallet holds, the larger its share.</p>
+            <p>Supply weighting dominates, while capped boost tiers slightly favor smaller holders and lower SOL-balance wallets.</p>
             <p>No claiming. No wallet connection. Just a public strategy dashboard backed by live reward data.</p>
           </div>
         </div>
       </div>
       <div className="container black-bull-timeline" aria-label="HOOD Strategy reward model">
-        {["Creator fees", "Reward pool", "250K+ holder scan", "$HOOD weight", "Airdrop ledger"].map((item) => (
+        {["Creator fees", "Reward pool", "Holder scan", "Boost model", "Airdrop ledger"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>
