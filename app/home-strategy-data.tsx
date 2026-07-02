@@ -44,9 +44,6 @@ type HoldersResponse = {
     currentMultiplierBps: number | null;
     currentHoldTime: string | null;
     currentStreak: number | null;
-    holderBoost: string;
-    solBalanceTier: string;
-    solBoost: string;
     finalWeight: number | null;
     totalRewardEarned: number;
     lastAirdropAt: string | null;
@@ -113,11 +110,6 @@ function formatCount(value: number) {
 function formatAmount(value: number, symbol: string, maximumFractionDigits = 2) {
   if (!Number.isFinite(value) || value <= 0) return "Awaiting live distribution";
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
-}
-
-function formatMultiplier(value: number | null | undefined) {
-  if (!Number.isFinite(value ?? NaN) || !value) return "Awaiting live state";
-  return `${value.toFixed(2)}x`;
 }
 
 function formatDate(value: string) {
@@ -215,7 +207,7 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
           <MetricCard label="Current Reward Pool" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
           <MetricCard label="Next Distribution" value={countdown} />
-          <MetricCard label="Average Boost" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
+          <MetricCard label="Reward Weight" value="$HOOD held" muted />
           <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
         </div>
       </div>
@@ -252,27 +244,20 @@ function MetricCard({
 }
 
 const hoodModelCards = [
-  ["250K-500K", "1.35x", "Holder boost for eligible smaller wallets."],
-  ["500K-1M", "1.20x", "Moderate holder boost above the minimum."],
-  ["1M-3M", "1.10x", "Light holder boost while supply still dominates."],
-  ["3M+", "1.00x", "Base holder weight for larger wallets."]
-];
-
-const solBoostCards = [
-  ["<1 SOL", "1.35x"],
-  ["1-5 SOL", "1.20x"],
-  ["5-20 SOL", "1.10x"],
-  ["20+ SOL", "1.00x"]
+  ["250K+", "Eligible", "Wallets must hold at least 250,000 $HOOD."],
+  ["$HOOD held", "Weight", "Reward share is based on the amount of $HOOD held."],
+  ["Every epoch", "Snapshot", "Balances are rescanned before each distribution."],
+  ["5x", "Strategy Bonus", "One selected wallet can still receive the separate bonus."]
 ];
 
 export function HoodBonusSection() {
   return (
     <section className="section conviction-section" id="hood-bonus">
       <div className="container">
-        <div className="section-kicker">Boost model</div>
+        <div className="section-kicker">Reward model</div>
         <div className="section-head split-head">
-          <h2>Mostly supply weighted. Slightly trench tilted.</h2>
-          <p>Rewards are mostly based on how much $HOOD a wallet holds. The boost only helps balance the game slightly, with capped tiers for smaller holders and lower SOL balances.</p>
+          <h2>Simple: hold more $HOOD, earn a larger share.</h2>
+          <p>Eligible wallets hold at least 250,000 $HOOD. Reward weight is based only on the amount of $HOOD held.</p>
         </div>
         <div className="multiplier-grid">
           {hoodModelCards.map(([value, title, copy]) => (
@@ -280,44 +265,39 @@ export function HoodBonusSection() {
               <span>{value}</span>
               <h3>{title}</h3>
               <p>{copy}</p>
-              <strong>{title}</strong>
+              <strong>{value}</strong>
             </article>
-          ))}
-        </div>
-        <div className="rank-strip boost-strip" aria-label="SOL balance boost model">
-          {solBoostCards.map(([tier, boost]) => (
-            <span key={tier}>{tier}: {boost}</span>
           ))}
         </div>
         <div className="conviction-card streak-card">
           <span>Transparent reward weight</span>
-          <h3>Final Weight</h3>
+          <h3>Reward Weight</h3>
           <div className="streak-readout">
             <div>
               <span>Base</span>
               <strong>$HOOD held</strong>
             </div>
             <div>
-              <span>Boost</span>
-              <strong>Holder tier</strong>
+              <span>Minimum</span>
+              <strong>250K+ HOOD</strong>
             </div>
             <div>
-              <span>Balance</span>
-              <strong>SOL tier</strong>
+              <span>Bonus</span>
+              <strong>5x winner</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>Final weight = $HOOD balance x holder boost x SOL balance boost. Bigger $HOOD balances still win more, but smaller and lower-balance wallets get a modest capped edge.</p>
+          <p>Reward weight equals the wallet's eligible $HOOD balance. The only extra mechanic is the separate 5x Strategy Bonus winner.</p>
           <div className="max-row">
-            <span>Max combined boost</span>
-            <b>1.82×</b>
+            <span>Weight formula</span>
+            <b>$HOOD held</b>
           </div>
         </div>
       </div>
       <div className="container rank-strip" aria-label="Reward model">
-        {["Supply weighting dominates", "Boosts are capped", "No infinite multipliers", "Every epoch recalculates"].map((rank) => (
+        {["250K+ eligible", "$HOOD held decides weight", "Every epoch recalculates", "5x bonus remains"].map((rank) => (
           <span key={rank}>{rank}</span>
         ))}
       </div>
@@ -334,7 +314,7 @@ export function PermanentEligibility() {
           <h2>Hold 250K+ $HOOD.</h2>
         </div>
         <div className="eligibility-flow">
-          {[`250K+ $${SOURCE_SYMBOL}`, "Creator Fees", "Every Epoch", "Boost Score", "On-chain Tracking"].map((item, index) => (
+          {[`250K+ $${SOURCE_SYMBOL}`, "Creator Fees", "Every Epoch", "$HOOD Weight", "On-chain Tracking"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -360,7 +340,7 @@ export function RewardExplanation() {
             `Hold at least 250,000 $${SOURCE_SYMBOL}`,
             "Creator fees fund rewards",
             "Rewards distribute every epoch",
-            "Smaller holders and lower SOL wallets receive a modest boost",
+            "Reward share is based on $HOOD held",
             "Everything is tracked on-chain"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
@@ -371,8 +351,8 @@ export function RewardExplanation() {
         <div className="share-example">
           {[
             ["Core", "$HOOD held", "base weight"],
-            ["Tilt", "Holder tier", "capped boost"],
-            ["Balance", "SOL tier", "capped boost"]
+            ["Minimum", "250K+", "eligible threshold"],
+            ["Bonus", "5x", "one selected wallet"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
               <span>{holder}</span>
@@ -406,7 +386,7 @@ export function BullBoard() {
         <div className="section-kicker">Strategy board</div>
         <div className="section-head split-head">
           <h2>STRATEGY BOARD</h2>
-          <p>Clean holder table showing balance, boost tiers, final weight, earned rewards, and latest reward activity.</p>
+          <p>Clean holder table showing wallet, $HOOD held, supply share, earned rewards, and latest reward activity.</p>
           <a className="cta secondary" href="/fallen-bulls">
             Ineligible Wallets
           </a>
@@ -418,10 +398,7 @@ export function BullBoard() {
                 <tr>
                   <th>Wallet</th>
                   <th>$HOOD Held</th>
-                  <th>SOL Balance Tier</th>
-                  <th>Holder Boost</th>
-                  <th>SOL Boost</th>
-                  <th>Final Weight</th>
+                  <th>Supply Share</th>
                   <th>Total {REWARD_SYMBOL} Earned</th>
                   <th>Last Airdrop</th>
                 </tr>
@@ -435,10 +412,7 @@ export function BullBoard() {
                       <tr key={holder.address}>
                         <td>{compactAddress(holder.address)}</td>
                         <td>{formatNumber(holder.balance, 0)}</td>
-                        <td>{holder.solBalanceTier}</td>
-                        <td>{holder.holderBoost}</td>
-                        <td>{holder.solBoost}</td>
-                        <td>{holder.finalWeight ? formatNumber(holder.finalWeight, 0) : "Scored live"}</td>
+                        <td>{holder.percentage}%</td>
                         <td>{recentEarned > 0 ? formatAmount(recentEarned, REWARD_SYMBOL) : "Awaiting holder totals"}</td>
                         <td>{holder.lastAirdropAt ? formatDate(holder.lastAirdropAt) : lastReward ? formatDate(lastReward.time) : "Awaiting airdrop"}</td>
                       </tr>
@@ -446,7 +420,7 @@ export function BullBoard() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={8}>Awaiting Strategy Board.</td>
+                    <td colSpan={5}>Awaiting Strategy Board.</td>
                   </tr>
                 )}
               </tbody>
