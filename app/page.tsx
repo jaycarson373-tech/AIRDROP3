@@ -15,15 +15,8 @@ import {
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Bull Strategy";
 const DEFAULT_CA = "YLkZ3NSYF1Xyj4eEzhg4PDjda1wJkr3zYXuNCpCpump";
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
-const BUY_URL =
-  process.env.NEXT_PUBLIC_BUY_URL ??
-  (CONTRACT_ADDRESS
-    ? `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${CONTRACT_ADDRESS}`
-    : "https://jup.ag/");
-const DEX_URL =
-  process.env.NEXT_PUBLIC_DEX_URL ??
-  (CONTRACT_ADDRESS ? `https://dexscreener.com/solana/${CONTRACT_ADDRESS}` : "");
+const CONTRACT_ADDRESS = DEFAULT_CA;
+const BUY_URL = `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${CONTRACT_ADDRESS}`;
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
@@ -57,11 +50,6 @@ function Navbar() {
         </nav>
         <div className="nav-actions">
           {CONTRACT_ADDRESS ? <CopyCaButton address={CONTRACT_ADDRESS} label={shortAddress(CONTRACT_ADDRESS)} /> : null}
-          {DEX_URL ? (
-            <a className="cta secondary nav-x-button" href={DEX_URL} target="_blank" rel="noreferrer" aria-label={`Open ${SOURCE_SYMBOL} chart on DexScreener`}>
-              DEX
-            </a>
-          ) : null}
           {X_URL ? (
             <a className="cta secondary nav-x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open Bull Strategy on X">
               X
@@ -173,11 +161,6 @@ export default function Page() {
             <a href="#airdrops">Airdrops</a>
             <a href="#long">SOL Long</a>
             <a href="#burns">Burns</a>
-            {DEX_URL ? (
-              <a href={DEX_URL} target="_blank" rel="noreferrer">
-                DEX
-              </a>
-            ) : null}
             {X_URL ? (
               <a href={X_URL} target="_blank" rel="noreferrer">
                 X

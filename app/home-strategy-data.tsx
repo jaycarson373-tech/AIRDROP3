@@ -308,7 +308,7 @@ export function LiveMarketDashboard() {
         <div className="section-kicker">Live market dashboard</div>
         <div className="section-head split-head">
           <h2>Market tape.</h2>
-          <p>Prices load from DexScreener when live pairs are available. Missing pairs are labeled instead of guessed.</p>
+          <p>Prices load from live market pairs when available. Missing pairs are labeled instead of guessed.</p>
         </div>
         <div className="lux-grid dashboard-grid">
           {prices.map((price) => (
