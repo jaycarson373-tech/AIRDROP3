@@ -17,7 +17,7 @@ const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Bull Strategy";
 const DEFAULT_CA = "YLkZ3NSYF1Xyj4eEzhg4PDjda1wJkr3zYXuNCpCpump";
 const CONTRACT_ADDRESS = DEFAULT_CA;
 const BUY_URL = `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${CONTRACT_ADDRESS}`;
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/BULLSTRAT_";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
