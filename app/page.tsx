@@ -3,7 +3,10 @@ import { HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExp
 import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ANSEMFIFICATION";
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
+const DEFAULT_CONTRACT_ADDRESS = "2pAXiMcCVUum9zEC4FySjvMLPoaNbAec51s3wT3Spump";
+const DEFAULT_BUY_URL = `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${DEFAULT_CONTRACT_ADDRESS}`;
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CONTRACT_ADDRESS;
+const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? DEFAULT_BUY_URL;
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/ANSEMFY";
 const COMMUNITY_URL = process.env.NEXT_PUBLIC_COMMUNITY_URL ?? X_URL;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
@@ -32,6 +35,9 @@ function Navbar() {
         </nav>
         <div className="nav-actions">
           {CONTRACT_ADDRESS ? <CopyCaButton address={CONTRACT_ADDRESS} label={`CA ${shortAddress(CONTRACT_ADDRESS)}`} /> : null}
+          <a className="cta secondary nav-buy-button" href={BUY_URL} target="_blank" rel="noreferrer">
+            Buy
+          </a>
           <a className="cta secondary nav-x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open ANSEMFY on X">
             X
           </a>
