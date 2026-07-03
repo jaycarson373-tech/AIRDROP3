@@ -92,16 +92,41 @@ export async function recordBuy(
   baseSpentLamports: string,
   rewardReceivedRaw: string,
   rewardReceived: string,
-  txSig: string | null
+  txSig: string | null,
+  metadata?: {
+    pfpRewardLamports?: string;
+    pfpRewardTxSig?: string | null;
+  }
 ) {
-  const result = await supabase.from("buys").upsert({
+  const row = {
     epoch_id: epochId,
     base_spent_lamports: baseSpentLamports,
     reward_received_raw: rewardReceivedRaw,
     reward_received: rewardReceived,
-    tx_sig: txSig
-  });
+    tx_sig: txSig,
+    ...(metadata?.pfpRewardLamports !== undefined ? { pfp_reward_lamports: metadata.pfpRewardLamports } : {}),
+    ...(metadata?.pfpRewardTxSig !== undefined ? { pfp_reward_tx_sig: metadata.pfpRewardTxSig } : {})
+  };
+  const result = await supabase.from("buys").upsert(row);
   assertNoError(result, "record buy");
+}
+
+export async function getBuy(epochId: string) {
+  const result = await supabase.from("buys").select("*").eq("epoch_id", epochId).maybeSingle();
+  return assertNoError(result, "get buy");
+}
+
+export async function recordPfpReward(epochId: string, pfpRewardLamports: string, pfpRewardTxSig: string | null) {
+  const result = await supabase.from("buys").upsert({
+    epoch_id: epochId,
+    base_spent_lamports: "0",
+    reward_received_raw: "0",
+    reward_received: "0",
+    tx_sig: null,
+    pfp_reward_lamports: pfpRewardLamports,
+    pfp_reward_tx_sig: pfpRewardTxSig
+  });
+  assertNoError(result, "record PFP reward");
 }
 
 function payoutMetadataFields(metadata: PayoutMetadata | undefined, rewardAmountRaw: string, rewardAmount: string) {

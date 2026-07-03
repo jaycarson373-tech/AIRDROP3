@@ -9,6 +9,9 @@ console.log(
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
 console.log(`ANSEM accumulation: ${config.ansemBuyBps} bps of usable creator fees goes to the ANSEM airdrop path after reserves.`);
+console.log(
+  `PFP reward split: ${config.pfpRewardWallet ? `${config.pfpRewardBps} bps to ${config.pfpRewardWallet.toBase58()}` : "disabled; set PFP_REWARD_WALLET_PUBLIC_KEY to enable"}`
+);
 
 async function loop() {
   await runEpoch();

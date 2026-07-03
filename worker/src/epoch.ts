@@ -76,6 +76,8 @@ export async function runEpoch(date = new Date()) {
       rewardReceivedUi: 0,
       usableLamports: 0n,
       solLongReserveLamports: 0n,
+      pfpRewardLamports: 0n,
+      pfpRewardTxSig: null as string | null,
       txSig: null as string | null
     };
 
@@ -86,7 +88,11 @@ export async function runEpoch(date = new Date()) {
         buy.baseSpentLamports.toString(),
         buy.rewardReceivedRaw.toString(),
         buy.rewardReceivedUi.toString(),
-        buy.txSig
+        buy.txSig,
+        {
+          pfpRewardLamports: buy.pfpRewardLamports.toString(),
+          pfpRewardTxSig: buy.pfpRewardTxSig
+        }
       );
     } else {
       console.log(`[${epochId}] REWARD_MODE=sol, skipping buy; creator fees remain SOL for direct airdrop`);
@@ -101,6 +107,8 @@ export async function runEpoch(date = new Date()) {
         rewardReceivedUi: lamportsToSol(rewardPoolRaw),
         usableLamports: rewardPoolRaw,
         solLongReserveLamports: 0n,
+        pfpRewardLamports: 0n,
+        pfpRewardTxSig: null,
         txSig: null
       };
       await recordBuy(epochId, "0", rewardPoolRaw.toString(), buy.rewardReceivedUi.toString(), null);

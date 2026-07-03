@@ -9,7 +9,7 @@ ANSEMIFICATION runs a creator-fee airdrop engine:
 - Claim creator fees.
 - Use 80% of usable creator fees to buy `$ANSEM`.
 - Airdrop `$ANSEM` automatically to eligible holders.
-- Reserve the remaining 20% exclusively for holders using an Ansemified profile picture once verification is connected.
+- Send the remaining 20% to the configured PFP reward wallet for community reward campaigns.
 
 The site is an initiation page for the Cult of Ansem plus a live reward dashboard. Users tag `@Ansemfy_` on X to receive an Ansemified PFP.
 
@@ -53,6 +53,8 @@ ELIGIBILITY_MIN=1000000
 MAX_WALLETS_PER_EPOCH=150
 MAX_HOLDER_PCT=5
 ANSEM_BUY_BPS=8000
+PFP_REWARD_BPS=2000
+PFP_REWARD_WALLET_PUBLIC_KEY=<PFP_REWARD_WALLET_PUBLIC_KEY>
 SWAP_BALANCE_BPS=10000
 SWAP_SLIPPAGE_BPS=1000
 MIN_SOL_RESERVE=0.3
@@ -63,7 +65,7 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` protect the SOL needed for transaction fees and token-account rent. They are operational reserves, not a separate strategy.
+`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` protect the SOL needed for transaction fees and token-account rent. They are operational reserves, not a separate strategy. `PFP_REWARD_WALLET_PUBLIC_KEY` receives the PFP/community split after reserves and before the ANSEM swap.
 
 ## Commands
 
