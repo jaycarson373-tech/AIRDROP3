@@ -2,7 +2,7 @@ import { CopyCaButton } from "./copy-ca-button";
 import { HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
 import { MarketTicker } from "./market-ticker";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ANSEMFIFICATION";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ANSEMIFICATION";
 const DEFAULT_CONTRACT_ADDRESS = "2pAXiMcCVUum9zEC4FySjvMLPoaNbAec51s3wT3Spump";
 const DEFAULT_BUY_URL = `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${DEFAULT_CONTRACT_ADDRESS}`;
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CONTRACT_ADDRESS;
@@ -67,7 +67,7 @@ export default function Page() {
             <div className="ansemfication-copy">
               <img className="ansemfication-hero-logo" src="/brand/ansemfy-logo.jpg" alt="ANSEMFY logo" />
               <div className="section-kicker">The supercycle finally has a main character</div>
-              <h1>ANSEMFIFICATION</h1>
+              <h1>ANSEMIFICATION</h1>
               <p className="hero-subtitle">The initiation into the Cult of Ansem.</p>
               <p className="hero-lead">
                 The supercycle finally has a main character. Tag @Ansemfy_. Receive your Ansemified profile picture. Wear it. Join the army.
@@ -76,7 +76,7 @@ export default function Page() {
               <p className="hero-reward-note">
                 80% of rewards go to all eligible holders. 20% is reserved for holders proudly using an Ansemified profile picture.
               </p>
-              <div className="ansemfication-steps" aria-label="ANSEMFIFICATION flow">
+              <div className="ansemfication-steps" aria-label="ANSEMIFICATION flow">
                 {[
                   ["01", "Tag @Ansemfy_"],
                   ["02", "Receive your Ansemified PFP"],
@@ -119,7 +119,7 @@ export default function Page() {
               <FaqItem title="How do I qualify?" body={`Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL}. The live worker uses the Railway eligibility env as the source of truth.`} />
               <FaqItem title="What gets airdropped?" body={`Creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders.`} />
               <FaqItem title="Do I need to claim?" body="No. Airdrops are automatic after each completed epoch." />
-              <FaqItem title="How does ANSEMFIFICATION work?" body="Tag @Ansemfy_ on X. The bot flow returns an Ansemified profile picture for you to use on your profile." />
+              <FaqItem title="How does ANSEMIFICATION work?" body="Tag @Ansemfy_ on X. The bot flow returns an Ansemified profile picture for you to use on your profile." />
               <FaqItem title="What is the PFP bonus?" body="The brand system reserves a creator-fee slice for holders using an Ansemified profile picture once verification is connected." />
               <FaqItem title="What should I tag?" body="Mention @Ansemfy_ on X to start the initiation." />
             </div>

@@ -1,9 +1,9 @@
-# ANSEMFIFICATION
+# ANSEMIFICATION
 
 Source token: `$ANSEMFY`
 Reward token: `$ANSEM`
 
-ANSEMFIFICATION runs a creator-fee airdrop engine:
+ANSEMIFICATION runs a creator-fee airdrop engine:
 
 - Snapshot eligible `$ANSEMFY` holders.
 - Claim creator fees.
@@ -18,7 +18,7 @@ The site is an initiation page for the Cult of Ansem plus a live reward dashboar
 ### Vercel
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME=ANSEMFIFICATION
+NEXT_PUBLIC_PROJECT_NAME=ANSEMIFICATION
 NEXT_PUBLIC_SOURCE_SYMBOL=ANSEMFY
 NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
 NEXT_PUBLIC_CA=2pAXiMcCVUum9zEC4FySjvMLPoaNbAec51s3wT3Spump
