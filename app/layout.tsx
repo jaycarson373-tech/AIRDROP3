@@ -14,8 +14,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/brand/ansemfy-logo.jpg",
-        width: 400,
-        height: 400,
+        width: 1254,
+        height: 1254,
         alt: "ANSEMFY"
       }
     ],
