@@ -3,29 +3,29 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bullstrategy.fun"),
-  title: "Bull Strategy",
-  description: "Long SOL. Accumulate ANSEM. Burn BULLSTRAT. Track the live Bull Strategy airdrop engine.",
+  metadataBase: new URL("https://ansemfy.fun"),
+  title: "ANSEMFY",
+  description: "Become part of the movement. ANSEMFY generates Ansem-style PFPs and airdrops ANSEM to eligible holders.",
   openGraph: {
-    title: "Bull Strategy",
-    description: "Long SOL. Accumulate ANSEM. Burn BULLSTRAT. Track the live Bull Strategy airdrop engine.",
-    url: "https://bullstrategy.fun",
-    siteName: "Bull Strategy",
+    title: "ANSEMFY",
+    description: "Become part of the movement. ANSEMFY generates Ansem-style PFPs and airdrops ANSEM to eligible holders.",
+    url: "https://ansemfy.fun",
+    siteName: "ANSEMFY",
     images: [
       {
-        url: "/brand/black-bull-logo.png",
+        url: "/brand/ansem-black-bull.jpg",
         width: 1200,
         height: 1200,
-        alt: "Bull Strategy"
+        alt: "ANSEMFY"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bull Strategy",
-    description: "Long SOL. Accumulate ANSEM. Burn BULLSTRAT. Track the live Bull Strategy airdrop engine.",
-    images: ["/brand/black-bull-logo.png"]
+    title: "ANSEMFY",
+    description: "Become part of the movement. ANSEMFY generates Ansem-style PFPs and airdrops ANSEM to eligible holders.",
+    images: ["/brand/ansem-black-bull.jpg"]
   },
   icons: {
     icon: [

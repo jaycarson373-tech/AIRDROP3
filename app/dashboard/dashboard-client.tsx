@@ -85,8 +85,8 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = "Bull Strategy";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
+const PROJECT_NAME = "ANSEMFY";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
@@ -271,14 +271,14 @@ export function DashboardClient() {
   }, [nextDropMs, now]);
 
   return (
-    <div className="page bull-strategy-page">
+    <div className="page ansemfy-page">
       <ParallaxBackground />
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/black-bull-logo.png" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/ansem-black-bull.jpg" alt={`${PROJECT_NAME} logo`} />
             <span>
-              Bull Strategy
+              ANSEMFY
               <small>ANSEM Airdrops</small>
             </span>
           </Link>
@@ -375,7 +375,7 @@ export function DashboardClient() {
                             <td>{round.duration}</td>
                             <td className="right mono">
                               {round.claimedSol ? (
-                                <AnimatedValue value={round.claimedSol} maximumFractionDigits={4} suffix=" SOL" />
+                                <AnimatedValue value={round.claimedSol} maximumFractionDigits={4} />
                               ) : (
                                 "–"
                               )}

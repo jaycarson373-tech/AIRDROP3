@@ -119,7 +119,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}strategy split: usable=${usableLamports}, ANSEM buy=${amount} lamports (${config.ansemBuyBps} bps cap), SOL long reserve=${solLongReserveLamports} lamports, protected reserve=${reserveLamports}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}ANSEM accumulation: usable=${usableLamports}, ANSEM buy=${amount} lamports (${config.ansemBuyBps} bps cap), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
   );
   console.log(
     `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`

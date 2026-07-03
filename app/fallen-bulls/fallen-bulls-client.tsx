@@ -20,7 +20,7 @@ type HoldersResponse = {
 };
 
 const emptyResponse: HoldersResponse = { fallenBulls: [] };
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
 
@@ -70,13 +70,13 @@ export function FallenBullsClient() {
   }, []);
 
   return (
-    <div className="page bull-strategy-page">
+    <div className="page ansemfy-page">
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/black-bull-logo.png" alt="Bull Strategy logo" />
+            <img className="brand-logo" src="/brand/ansem-black-bull.jpg" alt="ANSEMFY logo" />
             <span>
-              Bull Strategy
+              ANSEMFY
               <small>Ineligible Wallets</small>
             </span>
           </Link>

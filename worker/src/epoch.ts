@@ -11,7 +11,6 @@ import {
 } from "./airdrop.js";
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
 import { applyHolderState } from "./holder-state.js";
-import { forwardSolLongReserve } from "./sol-long.js";
 import { currentEpochId } from "./time.js";
 import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
@@ -153,11 +152,6 @@ export async function runEpoch(date = new Date()) {
       golden_capped: golden.capped,
       golden_snapshot_hash: golden.snapshotHash
     });
-    try {
-      await forwardSolLongReserve(epochId, buy.solLongReserveLamports);
-    } catch (longError) {
-      console.error(`[${epochId}] SOL long reserve forward failed`, longError);
-    }
     console.log(
       `[${epochId}] summary: eligible=${eligibleHolders.length}, recipients=${airdrop.settledCount}/${allocations.length}, bought=${buy.rewardReceivedUi}, distributed=${distributed}, golden=${golden.wallet ?? "none"}`
     );

@@ -83,7 +83,6 @@ export const config = {
   sourceTokenMint: publicKeyEnv("SOURCE_TOKEN_MINT"),
   rewardMode,
   rewardTokenMint: configuredRewardTokenMint ?? new PublicKey("So11111111111111111111111111111111111111112"),
-  solLongWallet: optionalPublicKeyEnv("SOL_LONG_WALLET"),
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),
@@ -99,11 +98,11 @@ export const config = {
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
   swapBalanceBps: Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 9000))),
-  ansemBuyBps: Math.min(10_000, Math.max(1, intEnv("ANSEM_BUY_BPS", 5000))),
+  ansemBuyBps: Math.min(10_000, Math.max(1, intEnv("ANSEM_BUY_BPS", 10000))),
   minSolReserve: Math.max(0.3, numberEnv("MIN_SOL_RESERVE", 0.3)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
-  airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 9000))),
+  airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 10000))),
   swapSlippageBps: Math.max(1, intEnv("SWAP_SLIPPAGE_BPS", 300)),
   priorityFeeSol: numberEnv("PRIORITY_FEE_SOL", 0.000001),
   minRewardRawToAirdrop: BigInt(Math.max(0, intEnv("MIN_REWARD_RAW_TO_AIRDROP", 1)))

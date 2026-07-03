@@ -29,7 +29,7 @@ export function AppPolish() {
   }, []);
 
   useEffect(() => {
-    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .multiplier-card, .reset-warning-card, .reward-flow-card, .share-card, .path-card, .black-bull-card, .eligibility-card, .philosophy-card, .conviction-card, .warning-card, .lookup-card, .faq-item";
+    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .multiplier-card, .reset-warning-card, .reward-flow-card, .share-card, .path-card, .black-bull-card, .eligibility-card, .philosophy-card, .conviction-card, .warning-card, .lookup-card, .faq-item, .ansemfy-generated-card, .ansemfy-generator-card";
     const elements = new Set<Element>();
     const observer = new IntersectionObserver(
       (entries) => {
@@ -67,9 +67,9 @@ export function AppPolish() {
   return (
     <div className={`loading-screen${leaving ? " is-leaving" : ""}`}>
       <div className="loader-mascot">
-        <img src="/brand/black-bull-logo.png" alt="" />
+        <img src="/brand/ansem-black-bull.jpg" alt="" />
       </div>
-      <div className="loader-text">Bull Strategy</div>
+      <div className="loader-text">ANSEMFY</div>
       <div className="loader-line" aria-hidden="true">
         <span />
       </div>
