@@ -83,6 +83,7 @@ export const config = {
   sourceTokenMint: publicKeyEnv("SOURCE_TOKEN_MINT"),
   rewardMode,
   rewardTokenMint: configuredRewardTokenMint ?? new PublicKey("So11111111111111111111111111111111111111112"),
+  solLongWallet: optionalPublicKeyEnv("SOL_LONG_WALLET"),
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),

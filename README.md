@@ -120,6 +120,7 @@ HELIUS_RPC_URL=<HELIUS_RPC_URL>
 SOURCE_TOKEN_MINT=YLkZ3NSYF1Xyj4eEzhg4PDjda1wJkr3zYXuNCpCpump
 REWARD_TOKEN_MINT=9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
+SOL_LONG_WALLET=<OPTIONAL_SOL_LONG_STRATEGY_WALLET>
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 ```
@@ -153,7 +154,7 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-`MIN_SOL_RESERVE=0.3` keeps at least 0.30 SOL untouched. `AIRDROP_SOL_RESERVE=0.05` preserves the post-airdrop transaction/rent buffer. `ANSEM_BUY_BPS=5000` caps the ANSEM buy side at 50% of usable SOL after reserves. The remainder stays reserved for the SOL long strategy side. `AIRDROP_REWARD_BPS=10000` distributes the available ANSEM reward balance each epoch after payout reserve checks.
+`MIN_SOL_RESERVE=0.3` keeps at least 0.30 SOL untouched. `AIRDROP_SOL_RESERVE=0.05` preserves the post-airdrop transaction/rent buffer. `ANSEM_BUY_BPS=5000` caps the ANSEM buy side at 50% of usable SOL after reserves. If `SOL_LONG_WALLET` is set, the remaining SOL long allocation is forwarded there after a successful airdrop while still protecting reserves. If `SOL_LONG_WALLET` is unset, the remainder stays in the treasury. `AIRDROP_REWARD_BPS=10000` distributes the available ANSEM reward balance each epoch after payout reserve checks.
 
 ## Commands
 
