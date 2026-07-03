@@ -91,7 +91,7 @@ function holdTimeLabel(streakEpochs: number | null | undefined) {
 
 function reasonLabel(reason: string | null | undefined) {
   const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
-  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "250K";
+  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
   if (reason === "balance_decreased") return `Sold ${sourceSymbol}`;
   if (reason === "dropped_below_threshold") return `Dropped below ${eligibilityLabel}`;
   if (reason === "dropped_below_threshold_or_sold") return `Sold or dropped below ${eligibilityLabel}`;

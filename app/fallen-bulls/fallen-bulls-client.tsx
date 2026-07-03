@@ -22,7 +22,7 @@ type HoldersResponse = {
 const emptyResponse: HoldersResponse = { fallenBulls: [] };
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "250K";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;

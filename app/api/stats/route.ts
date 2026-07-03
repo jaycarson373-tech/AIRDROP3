@@ -289,7 +289,7 @@ async function liveEligibleHolderCount() {
   const mint = sourceTokenMint();
   if (!mint) return null;
 
-  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 250_000));
+  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 500_000));
   const maxHolderPct = numberEnv("MAX_HOLDER_PCT", 5);
   const endpoint = rpcUrl();
   const cacheKey = `${endpoint}:${mint.toBase58()}:${eligibilityMin}:${maxHolderPct}`;

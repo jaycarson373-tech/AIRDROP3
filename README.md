@@ -29,7 +29,7 @@ Every epoch:
 
 The live airdrop weight is based on `$BULLSTRAT` held. Larger eligible holders receive a larger base share. The old lower-SOL-balance / smaller-holder tilt is not used for Bull Strategy.
 
-Default eligibility is `250000` `$BULLSTRAT`. The dashboard label should be `250K`, but the live worker uses `ELIGIBILITY_MIN` as the source of truth.
+Default eligibility is `500000` `$BULLSTRAT`. The dashboard label should be `500K`, but the live worker uses `ELIGIBILITY_MIN` as the source of truth.
 
 ## Supabase
 
@@ -94,7 +94,7 @@ NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=<BULLSTRAT_MINT>
 NEXT_PUBLIC_REWARD_TOKEN_MINT=9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump
 NEXT_PUBLIC_ANSEM_TOKEN_MINT=9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump
-NEXT_PUBLIC_ELIGIBILITY_LABEL=250K
+NEXT_PUBLIC_ELIGIBILITY_LABEL=500K
 NEXT_PUBLIC_X_URL=<PROJECT_X_URL>
 NEXT_PUBLIC_BUY_URL=https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=<BULLSTRAT_MINT>
 NEXT_PUBLIC_DEX_URL=<DEXSCREENER_PAIR_OR_TOKEN_URL>
@@ -140,7 +140,7 @@ Strategy settings:
 
 ```bash
 EPOCH_MINUTES=5
-ELIGIBILITY_MIN=250000
+ELIGIBILITY_MIN=500000
 MAX_WALLETS_PER_EPOCH=150
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=

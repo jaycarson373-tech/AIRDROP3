@@ -27,7 +27,7 @@ const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLSTRAT";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "250K";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
 const engineSteps = [
   { value: "50%", label: "ANSEM AIRDROPS", Icon: BarChart3 },
   { value: "50%", label: "SOL LONG RESERVE", Icon: TrendingUp },
@@ -111,7 +111,7 @@ export default function Page() {
             </div>
             <div className="hero-terminal-stack">
               <div className="hero-bull-window">
-                <img src="/brand/black-bull.png" alt="" />
+                <img src="/brand/black-bull-logo.png" alt="" />
                 <div>
                   <span>Strategy split</span>
                   <strong>50 / 50</strong>

@@ -83,7 +83,7 @@ const SOURCE_MINT = process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
 const REWARD_MINT = process.env.NEXT_PUBLIC_ANSEM_TOKEN_MINT ?? process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? "9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump";
 const SOL_MINT = process.env.NEXT_PUBLIC_SOL_MINT ?? "So11111111111111111111111111111111111111112";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "250K";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
