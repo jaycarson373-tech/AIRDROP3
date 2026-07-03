@@ -81,6 +81,11 @@ function formatAmount(value: number, symbol: string, maximumFractionDigits = 4) 
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
 }
 
+function formatTotalAmount(value: number, symbol: string, maximumFractionDigits = 4) {
+  if (!Number.isFinite(value) || value < 0) return "Loading";
+  return `${value.toLocaleString(undefined, { maximumFractionDigits })} ${symbol}`;
+}
+
 function formatDate(value: string) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? "Awaiting" : date.toLocaleString();
@@ -137,7 +142,7 @@ export function HeroCountdown() {
     <div className="hero-countdown ansemfy-countdown ansemfication-stats" aria-live="polite">
       <div className="ansemfication-stat primary">
         <span>Total {REWARD_SYMBOL} Airdropped</span>
-        <strong>{stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"}</strong>
+        <strong>{stats ? formatTotalAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"}</strong>
       </div>
       <div className="ansemfication-stat">
         <span>Eligible Holders</span>
@@ -149,7 +154,7 @@ export function HeroCountdown() {
       </div>
       <div className="ansemfication-stat">
         <span>Latest Distribution</span>
-        <strong>{stats ? formatAmount(latestDistribution, REWARD_SYMBOL, 4) : "Loading"}</strong>
+        <strong>{stats ? (latestDistribution > 0 ? formatAmount(latestDistribution, REWARD_SYMBOL, 4) : "Awaiting") : "Loading"}</strong>
       </div>
     </div>
   );

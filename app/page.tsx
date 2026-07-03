@@ -4,7 +4,7 @@ import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ANSEMFIFICATION";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/Ansemfy_";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/ANSEMFY";
 const COMMUNITY_URL = process.env.NEXT_PUBLIC_COMMUNITY_URL ?? X_URL;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
@@ -31,7 +31,7 @@ function Navbar() {
           <a href="#faq">FAQ</a>
         </nav>
         <div className="nav-actions">
-          {CONTRACT_ADDRESS ? <CopyCaButton address={CONTRACT_ADDRESS} label={shortAddress(CONTRACT_ADDRESS)} /> : null}
+          {CONTRACT_ADDRESS ? <CopyCaButton address={CONTRACT_ADDRESS} label={`CA ${shortAddress(CONTRACT_ADDRESS)}`} /> : null}
           <a className="cta secondary nav-x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open ANSEMFY on X">
             X
           </a>

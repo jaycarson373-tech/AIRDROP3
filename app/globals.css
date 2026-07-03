@@ -3339,7 +3339,7 @@ td a,
     linear-gradient(180deg, rgba(2, 2, 4, 0.2), rgba(2, 2, 4, 0.82)),
     url("/brand/ansemfy-banner.jpg") center top / 1280px auto repeat;
   filter: blur(18px) saturate(1.08) contrast(1.05);
-  opacity: 0.13;
+  opacity: 0.5;
   transform: scale(1.08);
   animation: ansemfyArmyDrift 38s ease-in-out infinite alternate;
 }
@@ -3413,7 +3413,7 @@ td a,
   background:
     linear-gradient(90deg, rgba(2, 2, 4, 0.9), rgba(2, 2, 4, 0.5), rgba(2, 2, 4, 0.72)),
     url("/brand/ansemfy-banner.jpg") center top / cover no-repeat;
-  opacity: 0.15;
+  opacity: 0.5;
   filter: blur(18px) saturate(1.08);
   transform: scale(1.04);
   animation: ansemfyArmyDrift 32s ease-in-out infinite alternate;
@@ -3421,7 +3421,7 @@ td a,
 
 .ansemfication-hero {
   min-height: 100svh;
-  padding: 142px 0 84px;
+  padding: 168px 0 84px;
   overflow: hidden;
 }
 
@@ -3429,13 +3429,14 @@ td a,
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
-  gap: clamp(36px, 6vw, 88px);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 470px);
+  gap: clamp(28px, 4vw, 56px);
   align-items: center;
 }
 
 .ansemfication-copy {
   display: grid;
+  min-width: 0;
   justify-items: start;
   gap: 22px;
   max-width: 920px;
@@ -3451,8 +3452,9 @@ td a,
 }
 
 .ansemfication-hero h1 {
-  max-width: 980px;
-  font-size: clamp(4rem, 8.4vw, 10rem);
+  max-width: 100%;
+  font-size: clamp(3.5rem, 6.2vw, 7.4rem);
+  overflow-wrap: anywhere;
 }
 
 .hero-reward-note,
@@ -3519,6 +3521,8 @@ td a,
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   padding: 18px;
+  max-width: 470px;
+  justify-self: end;
 }
 
 .ansemfication-stat {
@@ -3547,8 +3551,13 @@ td a,
 
 .ansemfication-stat strong {
   color: #fff;
-  font-size: clamp(1.5rem, 3vw, 3.4rem);
+  font-size: clamp(1.35rem, 2vw, 2.45rem);
   line-height: 0.96;
+  overflow-wrap: anywhere;
+}
+
+.ansemfication-stat.primary strong {
+  font-size: clamp(1.8rem, 2.8vw, 3.25rem);
 }
 
 .ansemfy-hero-steps {
@@ -3724,7 +3733,7 @@ td a,
 
 @media (max-width: 720px) {
   .ansemfication-hero {
-    padding: 116px 0 48px;
+    padding: 150px 0 48px;
   }
 
   .ansemfication-steps,
@@ -3743,11 +3752,11 @@ td a,
 
   .ansemfy-page::before {
     background-size: 1040px auto;
-    opacity: 0.07;
+    opacity: 0.5;
   }
 
   .ansemfy-page h1 {
-    font-size: clamp(3.7rem, 17vw, 6rem);
+    font-size: clamp(3.1rem, 15vw, 5.1rem);
   }
 
 }
@@ -3849,7 +3858,7 @@ td a,
   top: 0;
   right: 0;
   left: 0;
-  z-index: 80;
+  z-index: 90;
   min-height: var(--market-ticker-height);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background:
@@ -3857,6 +3866,11 @@ td a,
     rgba(2, 2, 4, 0.96);
   color: #fff;
   backdrop-filter: blur(18px);
+}
+
+.has-market-ticker .nav {
+  top: var(--market-ticker-height);
+  z-index: 80;
 }
 
 .market-ticker-inner {
@@ -3992,5 +4006,25 @@ td a,
 
   .ticker-pill strong {
     font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .ansemfication-hero-logo {
+    width: 88px;
+  }
+
+  .ansemfication-stat {
+    min-height: 104px;
+    padding: 18px;
+  }
+
+  .ansemfication-stat.primary {
+    min-height: 118px;
+  }
+
+  .ansemfication-stat strong,
+  .ansemfication-stat.primary strong {
+    font-size: clamp(1.35rem, 8vw, 2.1rem);
   }
 }
