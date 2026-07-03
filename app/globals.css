@@ -3339,7 +3339,7 @@ td a,
     linear-gradient(180deg, rgba(2, 2, 4, 0.2), rgba(2, 2, 4, 0.82)),
     url("/brand/ansemfy-banner.jpg") center top / 1280px auto repeat;
   filter: blur(18px) saturate(1.08) contrast(1.05);
-  opacity: 0.5;
+  opacity: 0.4;
   transform: scale(1.08);
   animation: ansemfyArmyDrift 38s ease-in-out infinite alternate;
 }
@@ -3413,7 +3413,7 @@ td a,
   background:
     linear-gradient(90deg, rgba(2, 2, 4, 0.9), rgba(2, 2, 4, 0.5), rgba(2, 2, 4, 0.72)),
     url("/brand/ansemfy-banner.jpg") center top / cover no-repeat;
-  opacity: 0.5;
+  opacity: 0.4;
   filter: blur(18px) saturate(1.08);
   transform: scale(1.04);
   animation: ansemfyArmyDrift 32s ease-in-out infinite alternate;
@@ -3752,7 +3752,7 @@ td a,
 
   .ansemfy-page::before {
     background-size: 1040px auto;
-    opacity: 0.5;
+    opacity: 0.4;
   }
 
   .ansemfy-page h1 {
