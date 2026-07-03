@@ -8,8 +8,6 @@ type SnapshotRow = {
 type HolderStateRow = {
   wallet: string;
   source_balance: string | number | null;
-  current_streak_epochs: number | null;
-  current_multiplier_bps: number | null;
   eligible_since: string | null;
   permanently_ineligible: boolean | null;
   ineligible_reason: string | null;
@@ -77,21 +75,9 @@ async function getSettledPayouts(config: { url: string; key: string }) {
   return rows;
 }
 
-function multiplierLabel(bps: number | null | undefined) {
-  return `${((bps ?? 10000) / 10000).toFixed(2)}x`;
-}
-
-function holdTimeLabel(streakEpochs: number | null | undefined) {
-  const minutes = Math.max(0, Number(streakEpochs ?? 0) * 5);
-  if (minutes < 60) return `${minutes} min`;
-  const hours = Math.floor(minutes / 60);
-  const remaining = minutes % 60;
-  return remaining ? `${hours}h ${remaining}m` : `${hours}h`;
-}
-
 function reasonLabel(reason: string | null | undefined) {
   const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
-  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
+  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
   if (reason === "balance_decreased") return `Sold ${sourceSymbol}`;
   if (reason === "dropped_below_threshold") return `Dropped below ${eligibilityLabel}`;
   if (reason === "dropped_below_threshold_or_sold") return `Sold or dropped below ${eligibilityLabel}`;
@@ -104,7 +90,7 @@ export async function GET() {
 
   try {
     const holderStates = await getJsonOrNull<HolderStateRow[]>(
-      `${config.url}/rest/v1/holder_states?select=wallet,source_balance,current_streak_epochs,current_multiplier_bps,eligible_since,permanently_ineligible,ineligible_reason,ineligible_at,last_seen_at&limit=10000`,
+      `${config.url}/rest/v1/holder_states?select=wallet,source_balance,eligible_since,permanently_ineligible,ineligible_reason,ineligible_at,last_seen_at&limit=10000`,
       config.key
     );
     const activeStates = (holderStates ?? []).filter((row) => !row.permanently_ineligible);
@@ -131,16 +117,6 @@ export async function GET() {
           address: row.wallet,
           balance,
           percentage: totalSupply > 0 ? ((balance / totalSupply) * 100).toFixed(2) : "0.00",
-          currentMultiplier: multiplierLabel(row.current_multiplier_bps),
-          currentMultiplierBps: row.current_multiplier_bps ?? 10000,
-          currentHoldTime: holdTimeLabel(row.current_streak_epochs),
-          currentStreak: row.current_streak_epochs ?? 0,
-          holderBoost: "1.00x",
-          holderBoostBps: 10000,
-          solBalance: null as number | null,
-          solBalanceTier: "Not used",
-          solBoost: "Not used",
-          solBoostBps: null as number | null,
           finalWeight: balance,
           totalRewardEarned: payout?.total ?? 0,
           lastAirdropAt: payout?.lastRewardAt ?? null,
@@ -168,9 +144,6 @@ export async function GET() {
           return {
             address: row.wallet,
             balance: toNumber(row.source_balance),
-            currentMultiplier: multiplierLabel(row.current_multiplier_bps),
-            currentMultiplierBps: row.current_multiplier_bps ?? 10000,
-            currentStreak: row.current_streak_epochs ?? 0,
             totalRewardEarned: payout?.total ?? 0,
             lastAirdropAt: payout?.lastRewardAt ?? null,
             ineligibleReason: reasonLabel(row.ineligible_reason),
@@ -197,30 +170,20 @@ export async function GET() {
     );
 
     const totalSupply = snapshots.reduce((sum, row) => sum + toNumber(row.source_balance), 0);
-      const topHolders = snapshots.map((row) => {
+    const topHolders = snapshots.map((row) => {
         const balance = toNumber(row.source_balance);
         return {
           rank: 0,
           address: row.wallet,
           balance,
           percentage: totalSupply > 0 ? ((balance / totalSupply) * 100).toFixed(2) : "0.00",
-        currentMultiplier: null,
-        currentMultiplierBps: null,
-          currentHoldTime: null,
-          currentStreak: null,
-          holderBoost: "1.00x",
-          holderBoostBps: 10000,
-          solBalance: null,
-          solBalanceTier: "Not used",
-          solBoost: "Not used",
-          solBoostBps: null,
           finalWeight: balance,
           totalRewardEarned: payoutsByWallet.get(row.wallet)?.total ?? 0,
           lastAirdropAt: payoutsByWallet.get(row.wallet)?.lastRewardAt ?? null,
-        permanentlyIneligible: false,
-        ineligibleReason: null
-      };
-    })
+          permanentlyIneligible: false,
+          ineligibleReason: null
+        };
+      })
       .sort((a, b) => b.totalRewardEarned - a.totalRewardEarned || b.balance - a.balance)
       .map((row, index) => ({ ...row, rank: index + 1 }));
 

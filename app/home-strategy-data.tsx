@@ -48,7 +48,7 @@ const REFRESH_MS = 12_000;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {

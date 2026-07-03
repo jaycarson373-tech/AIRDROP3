@@ -7,7 +7,7 @@ const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/Ansemfy_";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
 
 function Navbar() {
   return (

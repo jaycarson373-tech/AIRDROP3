@@ -12,9 +12,6 @@ export type Holder = {
   rawBalance: bigint;
   uiBalance: number;
   holderPct: number;
-  multiplierBps?: number;
-  streakEpochs?: number;
-  eligibleSince?: string | null;
 };
 
 async function tokenProgramForMint(mint: PublicKey) {

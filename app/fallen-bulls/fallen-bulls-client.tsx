@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 type FallenBull = {
   address: string;
   balance: number;
-  currentMultiplier: string | null;
-  currentStreak: number | null;
   totalRewardEarned: number;
   lastAirdropAt: string | null;
   ineligibleReason: string;
@@ -22,7 +20,7 @@ type HoldersResponse = {
 const emptyResponse: HoldersResponse = { fallenBulls: [] };
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -106,7 +104,6 @@ export function FallenBullsClient() {
                       <th>Reason</th>
                       <th>Total Rewards Earned</th>
                       <th>Status</th>
-                      <th>Final Streak</th>
                       <th>Last Airdrop</th>
                       <th>Removed At</th>
                     </tr>
@@ -119,14 +116,13 @@ export function FallenBullsClient() {
                           <td>{wallet.ineligibleReason}</td>
                           <td>{formatNumber(wallet.totalRewardEarned)} {REWARD_SYMBOL}</td>
                           <td>Ineligible</td>
-                          <td>{wallet.currentStreak ?? 0} epochs</td>
                           <td>{formatDate(wallet.lastAirdropAt)}</td>
                           <td>{formatDate(wallet.ineligibleAt ?? wallet.lastSeenAt)}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={7}>No ineligible wallets recorded yet.</td>
+                        <td colSpan={6}>No ineligible wallets recorded yet.</td>
                       </tr>
                     )}
                   </tbody>

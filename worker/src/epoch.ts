@@ -3,9 +3,7 @@ import { buyReward } from "./buy.js";
 import { config } from "./config.js";
 import {
   airdropRewards,
-  applyGoldenAirdrop,
   computeAllocations,
-  computeGoldenRewardPool,
   estimatePayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
@@ -120,8 +118,7 @@ export async function runEpoch(date = new Date()) {
       console.log(`[${epochId}] insufficient reward balance after reserve/split, skipped epoch`);
       return;
     }
-    const goldenPool = await computeGoldenRewardPool(epochId, holders, rewardPoolRaw);
-    const allocations = await computeAllocations(holders, goldenPool.rewardPoolRaw);
+    const allocations = await computeAllocations(holders, rewardPoolRaw);
     if (!allocations.length) {
       await completeEpoch(epochId, {
         eligible_count: eligibleHolders.length,
@@ -133,7 +130,6 @@ export async function runEpoch(date = new Date()) {
       return;
     }
 
-    const golden = await applyGoldenAirdrop(epochId, holders, allocations, rewardPoolRaw, goldenPool.snapshotHash);
     const airdrop = await airdropRewards(epochId, allocations);
     if (airdrop.stoppedForReserve && airdrop.settledCount === 0) {
       throw new Error("Airdrop stopped before sending any payouts: treasury SOL below airdrop reserve");
@@ -142,18 +138,10 @@ export async function runEpoch(date = new Date()) {
     await completeEpoch(epochId, {
       eligible_count: eligibleHolders.length,
       reward_bought: buy.rewardReceivedUi.toString(),
-      reward_distributed: distributed.toString(),
-      golden_winner_wallet: golden.wallet,
-      golden_base_reward: golden.baseRewardUi.toString(),
-      golden_base_reward_raw: golden.baseRewardRaw.toString(),
-      golden_bonus_reward: golden.bonusRewardUi.toString(),
-      golden_bonus_reward_raw: golden.bonusRewardRaw.toString(),
-      golden_multiplier: golden.multiplier,
-      golden_capped: golden.capped,
-      golden_snapshot_hash: golden.snapshotHash
+      reward_distributed: distributed.toString()
     });
     console.log(
-      `[${epochId}] summary: eligible=${eligibleHolders.length}, recipients=${airdrop.settledCount}/${allocations.length}, bought=${buy.rewardReceivedUi}, distributed=${distributed}, golden=${golden.wallet ?? "none"}`
+      `[${epochId}] summary: eligible=${eligibleHolders.length}, recipients=${airdrop.settledCount}/${allocations.length}, bought=${buy.rewardReceivedUi}, distributed=${distributed}`
     );
   } catch (error) {
     await failEpoch(epochId, error).catch((dbError) => {

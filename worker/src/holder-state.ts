@@ -126,7 +126,6 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       }
 
       const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
-      const multiplierBps = 10_000;
       const eligibleSince = existing?.eligible_since ?? now;
       const nextHighest = highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance;
 
@@ -140,18 +139,13 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
         last_epoch_id: epochId,
         updated_at: now,
         current_streak_epochs: nextStreak,
-        current_multiplier_bps: multiplierBps,
+        current_multiplier_bps: 10_000,
         permanently_ineligible: false,
         ineligible_reason: null,
         ineligible_at: null
       });
 
-      eligible.push({
-        ...holder,
-        multiplierBps,
-        streakEpochs: nextStreak,
-        eligibleSince
-      });
+      eligible.push(holder);
     }
 
     await upsertHolderStates(updates);
@@ -163,8 +157,8 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
     return eligible;
   } catch (error) {
     if (isMissingHolderStateTable(error)) {
-      console.warn(`[${epochId}] holder_states table missing; multiplier/permanent-ineligibility tracking is disabled`);
-      return eligibleHolders.map((holder) => ({ ...holder, multiplierBps: 10_000, streakEpochs: 1, eligibleSince: null }));
+      console.warn(`[${epochId}] holder_states table missing; permanent-ineligibility tracking is disabled`);
+      return eligibleHolders;
     }
     throw error;
   }
