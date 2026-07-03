@@ -1,4 +1,3 @@
-import { CopyCaButton } from "./copy-ca-button";
 import { HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
 import { MarketTicker } from "./market-ticker";
 
@@ -15,17 +14,10 @@ const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
 const avatarTiles = Array.from({ length: 32 }, (_, index) => index + 1);
 
-function Navbar() {
+function SideNav() {
   return (
-    <header className="nav ansemfy-nav">
-      <div className="container nav-inner">
-        <a className="brand ansemfy-brand" href="/">
-          <img className="brand-logo" src="/brand/ansemfy-logo.jpg" alt={`${PROJECT_NAME} logo`} />
-          <span>
-            ANSEMFY
-            <small>Join the army</small>
-          </span>
-        </a>
+    <aside className="nav ansemfy-nav" aria-label="Section navigation">
+      <div className="nav-inner">
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#initiation">Initiation</a>
           <a href="#how">How it Works</a>
@@ -33,28 +25,22 @@ function Navbar() {
           <a href="#airdrops">Airdrops</a>
           <a href="#faq">FAQ</a>
         </nav>
-        <div className="nav-actions">
-          {CONTRACT_ADDRESS ? <CopyCaButton address={CONTRACT_ADDRESS} label={`CA ${shortAddress(CONTRACT_ADDRESS)}`} /> : null}
-          <a className="cta secondary nav-buy-button" href={BUY_URL} target="_blank" rel="noreferrer">
-            Buy
-          </a>
-          <a className="cta secondary nav-x-button" href={X_URL} target="_blank" rel="noreferrer" aria-label="Open ANSEMFY on X">
-            X
-          </a>
-          <a className="cta secondary" href="/dashboard">
-            View Airdrops
-          </a>
-        </div>
       </div>
-    </header>
+    </aside>
   );
 }
 
 export default function Page() {
   return (
     <div className="page ansemfy-page has-market-ticker">
-      <MarketTicker />
-      <Navbar />
+      <MarketTicker
+        logoSrc="/brand/ansemfy-logo.jpg"
+        projectName={PROJECT_NAME}
+        contractAddress={CONTRACT_ADDRESS}
+        buyUrl={BUY_URL}
+        xUrl={X_URL}
+      />
+      <SideNav />
 
       <main>
         <section className="hero ansemfy-hero ansemfication-hero" id="initiation">
@@ -230,8 +216,4 @@ function FaqItem({ title, body }: { title: string; body: string }) {
       <p>{body}</p>
     </article>
   );
-}
-
-function shortAddress(address: string) {
-  return `${address.slice(0, 4)}...${address.slice(-4)}`;
 }

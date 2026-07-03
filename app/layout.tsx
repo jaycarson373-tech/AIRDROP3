@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Viewport } from "next";
 import { AppPolish } from "./app-polish";
 import "./globals.css";
 
@@ -36,6 +37,10 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-touch-icon.png"
   }
+};
+
+export const viewport: Viewport = {
+  themeColor: "#000000"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

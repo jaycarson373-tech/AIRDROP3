@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { CopyCaButton } from "./copy-ca-button";
 
 type TokenMarket = {
   priceUsd: number | null;
@@ -19,6 +20,14 @@ type MarketResponse = {
 type StatsResponse = {
   totalRewardAirdropped: number;
   nextDropTime: string;
+};
+
+type MarketTickerProps = {
+  logoSrc: string;
+  projectName: string;
+  contractAddress: string;
+  buyUrl: string;
+  xUrl: string;
 };
 
 const REFRESH_MS = 30_000;
@@ -69,6 +78,12 @@ function formatCountdown(ms: number) {
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
+function shortAddress(address: string) {
+  if (!address) return "";
+  if (address.length <= 14) return address;
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+}
+
 function MarketPill({ market }: { market: TokenMarket }) {
   const content = (
     <>
@@ -88,7 +103,7 @@ function MarketPill({ market }: { market: TokenMarket }) {
   return <div className="ticker-pill ticker-price-pill">{content}</div>;
 }
 
-export function MarketTicker() {
+export function MarketTicker({ logoSrc, projectName, contractAddress, buyUrl, xUrl }: MarketTickerProps) {
   const [market, setMarket] = useState<MarketResponse>(emptyMarket);
   const [stats, setStats] = useState<StatsResponse>(emptyStats);
   const [now, setNow] = useState(() => Date.now());
@@ -128,11 +143,15 @@ export function MarketTicker() {
   return (
     <div className="market-ticker" aria-label="Live market ticker">
       <div className="container market-ticker-inner">
-        <div className="ticker-status">
-          <span />
-          Live
-        </div>
+        <a className="ticker-brand" href="/" aria-label={`${projectName} home`}>
+          <img src={logoSrc} alt="" />
+          <strong>ANSEMFY</strong>
+        </a>
         <div className="ticker-track">
+          <div className="ticker-status">
+            <span />
+            Live
+          </div>
           <MarketPill market={market.ansem} />
           <MarketPill market={market.ansemfy} />
           <div className="ticker-pill">
@@ -147,6 +166,15 @@ export function MarketTicker() {
             <span>Next Epoch</span>
             <strong>{countdown}</strong>
           </div>
+        </div>
+        <div className="ticker-actions" aria-label="Project links">
+          {contractAddress ? <CopyCaButton address={contractAddress} label={shortAddress(contractAddress)} /> : null}
+          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label="Open ANSEMFY on X">
+            X
+          </a>
+          <a className="ticker-action ticker-buy" href={buyUrl} target="_blank" rel="noreferrer">
+            Buy
+          </a>
         </div>
       </div>
     </div>
