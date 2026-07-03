@@ -2,7 +2,7 @@ import { HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExp
 import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ANSEMIFICATION";
-const DEFAULT_CONTRACT_ADDRESS = "2pAXiMcCVUum9zEC4FySjvMLPoaNbAec51s3wT3Spump";
+const DEFAULT_CONTRACT_ADDRESS = "8Z12Faqh6vhekfFLiRHsaVGTMVDjumC5W1Qa5E3Tpump";
 const DEFAULT_BUY_URL = `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${DEFAULT_CONTRACT_ADDRESS}`;
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CONTRACT_ADDRESS;
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? DEFAULT_BUY_URL;
