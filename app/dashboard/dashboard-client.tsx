@@ -276,7 +276,7 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/ansem-black-bull.jpg" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/ansemfy-logo.jpg" alt={`${PROJECT_NAME} logo`} />
             <span>
               ANSEMFY
               <small>ANSEM Airdrops</small>

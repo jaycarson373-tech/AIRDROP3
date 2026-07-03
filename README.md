@@ -3,12 +3,13 @@
 Source token: `$ANSEMFY`
 Reward token: `$ANSEM`
 
-ANSEMFY runs a simple creator-fee airdrop engine:
+ANSEMFY runs a creator-fee airdrop engine:
 
 - Snapshot eligible `$ANSEMFY` holders.
 - Claim creator fees.
-- Use usable creator fees to buy `$ANSEM`.
+- Use 80% of usable creator fees to buy `$ANSEM`.
 - Airdrop `$ANSEM` automatically to eligible holders.
+- Reserve the remaining 20% for the Ansemified PFP bonus path once verification is connected.
 - Expose a placeholder `/api/ansemfy` endpoint for the future AI profile-picture generator.
 
 The site is a premium AI tool + reward dashboard. No wallet interaction is required for airdrops.
@@ -50,7 +51,7 @@ EPOCH_MINUTES=5
 ELIGIBILITY_MIN=500000
 MAX_WALLETS_PER_EPOCH=150
 MAX_HOLDER_PCT=5
-ANSEM_BUY_BPS=10000
+ANSEM_BUY_BPS=8000
 SWAP_BALANCE_BPS=10000
 SWAP_SLIPPAGE_BPS=1000
 MIN_SOL_RESERVE=0.3

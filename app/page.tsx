@@ -1,7 +1,7 @@
-import { ArrowRight, Bot, Sparkles, UploadCloud } from "lucide-react";
+import { Bot, UploadCloud } from "lucide-react";
 import { AnsemfyGenerator } from "./ansemfy-generator";
 import { CopyCaButton } from "./copy-ca-button";
-import { HeroCountdown, LatestGeneratedProfiles, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
+import { LatestGeneratedProfiles, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ANSEMFY";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
@@ -19,10 +19,10 @@ function Navbar() {
     <header className="nav ansemfy-nav">
       <div className="container nav-inner">
         <a className="brand ansemfy-brand" href="/">
-          <img className="brand-logo" src="/brand/ansem-black-bull.jpg" alt={`${PROJECT_NAME} logo`} />
+          <img className="brand-logo" src="/brand/ansemfy-logo.jpg" alt={`${PROJECT_NAME} logo`} />
           <span>
             ANSEMFY
-            <small>{SOURCE_SYMBOL} movement engine</small>
+            <small>Join the army</small>
           </span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
@@ -52,44 +52,7 @@ export default function Page() {
       <Navbar />
 
       <main>
-        <section className="hero ansemfy-hero" id="top">
-          <div className="ansemfy-aurora" aria-hidden="true" />
-          <div className="ansemfy-grid" aria-hidden="true" />
-          <div className="hero-shade" aria-hidden="true" />
-
-          <div className="container hero-inner ansemfy-hero-inner">
-            <div className="hero-copy-stack">
-              <div className="section-kicker">The trenches made Ansem</div>
-              <h1>
-                <span>ANSEMFY</span>
-              </h1>
-              <p className="hero-subtitle">Become part of the movement.</p>
-              <p className="hero-lead">
-                Creator fees automatically accumulate and airdrop ${REWARD_SYMBOL} to eligible holders while ANSEMFY lets anyone generate an Ansem-style profile picture in seconds.
-              </p>
-              <div className="hero-actions">
-                <a className="cta" href="#generator">
-                  Ansemfy Your PFP <Sparkles size={18} />
-                </a>
-                <a className="cta secondary" href="#airdrops">
-                  View Airdrops <ArrowRight size={18} />
-                </a>
-              </div>
-            </div>
-            <div className="ansemfy-hero-panel">
-              <div className="ansemfy-mascot-card">
-                <img src="/brand/ansem-black-bull.jpg" alt="ANSEMFY black bull mascot" />
-                <div>
-                  <span>Community utility</span>
-                  <strong>PFP + Airdrops</strong>
-                </div>
-              </div>
-              <HeroCountdown />
-            </div>
-          </div>
-        </section>
-
-        <AnsemfyGenerator />
+        <AnsemfyGenerator hero />
         <RewardExplanation />
         <LatestGeneratedProfiles />
         <LiveAnsemAirdrops />
@@ -104,6 +67,7 @@ export default function Page() {
               <FaqItem title="What gets airdropped?" body={`Creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders.`} />
               <FaqItem title="Do I need to claim?" body="No. Airdrops are automatic after each completed epoch." />
               <FaqItem title="How does ANSEMFY work?" body="Upload a profile picture or paste an X username. The placeholder UI is live now; the image edit endpoint is ready to be wired to the future AI backend." />
+              <FaqItem title="What is the PFP bonus?" body="The brand system reserves a creator-fee slice for holders using an Ansemified profile picture once verification is connected." />
               <FaqItem title="What should I tag?" body="Post your generated PFP on X and tag @Ansemfy_." />
             </div>
           </div>
@@ -124,10 +88,10 @@ export default function Page() {
       <footer className="footer ansemfy-footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img className="brand-logo" src="/brand/ansem-black-bull.jpg" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/ansemfy-logo.jpg" alt={`${PROJECT_NAME} logo`} />
             <strong>ANSEMFY</strong>
           </div>
-          <p>100% ANSEM accumulation. Automatic airdrops. AI-powered community identity.</p>
+          <p>The trenches made Ansem. Now Ansem builds the trenches.</p>
           <div className="footer-links">
             <a href="#generator">Generator</a>
             <a href="#how">How it Works</a>

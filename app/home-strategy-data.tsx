@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Bot, ImagePlus, Send } from "lucide-react";
 
 type Round = {
   epoch: number;
@@ -152,7 +151,7 @@ export function HeroCountdown() {
 export function RewardExplanation() {
   const steps = [
     ["Hold ANSEMFY", `${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`],
-    ["Creator fees buy ANSEM", "100% accumulation"],
+    ["Creator fees buy ANSEM", "Airdrops every epoch"],
     ["Automatic airdrops", "No claiming"],
     ["Generate your PFP", "Ansemfy in seconds"],
     ["Join the movement", "Post and tag @Ansemfy_"]
@@ -163,8 +162,20 @@ export function RewardExplanation() {
       <div className="container">
         <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Creator fees become community rewards.</h2>
-          <p>Simple by design: every epoch routes creator fees toward ANSEM accumulation and eligible-holder airdrops.</p>
+          <h2>The token powers the army.</h2>
+          <p>Hold ANSEMFY for automatic ANSEM airdrops. Use the generator to become visible inside the movement.</p>
+        </div>
+        <div className="ansemfy-split-cards" aria-label="Creator fee split">
+          <article className="ansemfy-split-card primary">
+            <span>80%</span>
+            <strong>ANSEM airdrops</strong>
+            <p>Creator fees buy and airdrop {REWARD_SYMBOL} to eligible holders.</p>
+          </article>
+          <article className="ansemfy-split-card">
+            <span>20%</span>
+            <strong>PFP bonus reserve</strong>
+            <p>Reserved for holders using an Ansemified profile picture once verification is connected.</p>
+          </article>
         </div>
         <div className="reward-flow ansemfy-flow">
           {steps.map(([title, body], index) => (
@@ -177,9 +188,9 @@ export function RewardExplanation() {
         </div>
         <div className="share-example ansemfy-principles">
           {[
-            ["100%", "Creator fees buy ANSEM."],
+            ["Army", "The generator is the front door."],
             ["Auto", "Airdrops settle directly to eligible holders."],
-            ["PFP", "The generator turns holders into the movement."]
+            ["PFP", "Your profile becomes the signal."]
           ].map(([title, body]) => (
             <article className="share-card" key={title}>
               <strong>{title}</strong>
@@ -193,32 +204,28 @@ export function RewardExplanation() {
 }
 
 export function LatestGeneratedProfiles() {
-  const cards = useMemo(
-    () => [
-      { Icon: ImagePlus, title: "Upload PFP", body: "Live gallery connects after generated outputs are stored." },
-      { Icon: Bot, title: "AI edit", body: "Future /api/ansemfy output appears here." },
-      { Icon: Send, title: "Post on X", body: "Tag @Ansemfy_ to join the feed." }
-    ],
-    []
-  );
+  const cards = useMemo(() => Array.from({ length: 30 }, (_, index) => index), []);
 
   return (
     <section className="section ansemfy-gallery-section" id="gallery">
       <div className="container">
-        <div className="section-kicker">Latest generated PFPs</div>
+        <div className="section-kicker">Latest Ansemfied</div>
         <div className="section-head split-head">
-          <h2>Profiles become signals.</h2>
-          <p>Generated profile cards will populate from the live ANSEMFY output feed once storage is connected.</p>
+          <h2>An army of profiles.</h2>
+          <p>The live generated wall connects to storage next. The visual system is ready for every new Ansemified PFP.</p>
         </div>
-        <div className="ansemfy-gallery-grid">
-          {cards.map(({ Icon, title, body }) => (
-            <article className="ansemfy-generated-card" key={title}>
-              <div className="ansemfy-generated-preview">
-                <Icon size={32} />
-              </div>
-              <strong>{title}</strong>
-              <p>{body}</p>
-            </article>
+        <div className="ansemfy-avatar-wall" aria-label="Ansemified profile wall">
+          {[0, 1].map((row) => (
+            <div className="ansemfy-avatar-track" key={row}>
+              {cards.map((item) => (
+                <img
+                  className={`ansemfy-avatar-tile variant-${item % 10}`}
+                  src="/brand/ansemfy-pfp-example.jpg"
+                  alt=""
+                  key={`${row}-${item}`}
+                />
+              ))}
+            </div>
           ))}
         </div>
       </div>
@@ -239,8 +246,8 @@ export function LiveAnsemAirdrops() {
       <div className="container">
         <div className="section-kicker">Live ANSEM airdrops</div>
         <div className="section-head split-head">
-          <h2>Rewards without claiming.</h2>
-          <p>Live values come from Supabase and only settled backend records are shown.</p>
+          <h2>The movement feeds itself.</h2>
+          <p>Creator fees buy ANSEM. Settled airdrops and transaction proof come straight from Supabase.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label={`Total ${REWARD_SYMBOL} Distributed`} value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
@@ -280,10 +287,10 @@ export function RecentAirdrops() {
   return (
     <section className="section recent-airdrops-section ansemfy-history-section">
       <div className="container">
-        <div className="section-kicker">Proof feed</div>
+        <div className="section-kicker">Airdrop proof</div>
         <div className="section-head split-head">
-          <h2>Latest settled airdrops.</h2>
-          <p>Failed and skipped epochs are not counted as distributed rewards.</p>
+          <h2>Receipts, not promises.</h2>
+          <p>Only settled backend records are counted as distributed rewards.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -299,7 +306,7 @@ export function RecentAirdrops() {
               </thead>
               <tbody>
                 {rounds.length ? (
-                  rounds.slice(0, 12).map((round) => (
+                  rounds.slice(0, 8).map((round) => (
                     <tr key={`${round.epoch}-${round.startedAt}`}>
                       <td>#{round.epoch}</td>
                       <td>{formatAmount(round.rewardBought, REWARD_SYMBOL)}</td>
@@ -339,7 +346,7 @@ export function RecentAirdrops() {
               </thead>
               <tbody>
                 {rewards.length ? (
-                  rewards.slice(0, 20).map((reward) => (
+                  rewards.slice(0, 12).map((reward) => (
                     <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
                       <td>{compactAddress(reward.wallet)}</td>
                       <td>{formatAmount(reward.rewardAmount, REWARD_SYMBOL)}</td>

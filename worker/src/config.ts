@@ -98,7 +98,7 @@ export const config = {
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
   swapBalanceBps: Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 9000))),
-  ansemBuyBps: Math.min(10_000, Math.max(1, intEnv("ANSEM_BUY_BPS", 10000))),
+  ansemBuyBps: Math.min(10_000, Math.max(1, intEnv("ANSEM_BUY_BPS", 8000))),
   minSolReserve: Math.max(0.3, numberEnv("MIN_SOL_RESERVE", 0.3)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),

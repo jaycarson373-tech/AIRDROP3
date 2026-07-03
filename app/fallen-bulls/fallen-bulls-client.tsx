@@ -74,7 +74,7 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/ansem-black-bull.jpg" alt="ANSEMFY logo" />
+            <img className="brand-logo" src="/brand/ansemfy-logo.jpg" alt="ANSEMFY logo" />
             <span>
               ANSEMFY
               <small>Ineligible Wallets</small>
