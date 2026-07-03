@@ -5,10 +5,12 @@ import { MarketTicker } from "./market-ticker";
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ANSEMFIFICATION";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/Ansemfy_";
+const COMMUNITY_URL = process.env.NEXT_PUBLIC_COMMUNITY_URL ?? X_URL;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
+const avatarTiles = Array.from({ length: 32 }, (_, index) => index + 1);
 
 function Navbar() {
   return (
@@ -58,17 +60,21 @@ export default function Page() {
           <div className="container ansemfication-hero-inner">
             <div className="ansemfication-copy">
               <img className="ansemfication-hero-logo" src="/brand/ansemfy-logo.jpg" alt="ANSEMFY logo" />
-              <div className="section-kicker">The trenches made Ansem</div>
+              <div className="section-kicker">The supercycle finally has a main character</div>
               <h1>ANSEMFIFICATION</h1>
               <p className="hero-subtitle">The initiation into the Cult of Ansem.</p>
               <p className="hero-lead">
-                Tag @Ansemfy_ on X. Receive your Ansemified profile picture. Upload it. Join the army.
+                The supercycle finally has a main character. Tag @Ansemfy_. Receive your Ansemified profile picture. Wear it. Join the army.
+                Hold {SOURCE_LABEL} to earn automated {`$${REWARD_SYMBOL}`} airdrops.
+              </p>
+              <p className="hero-reward-note">
+                80% of rewards go to all eligible holders. 20% is reserved for holders proudly using an Ansemified profile picture.
               </p>
               <div className="ansemfication-steps" aria-label="ANSEMFIFICATION flow">
                 {[
                   ["01", "Tag @Ansemfy_"],
                   ["02", "Receive your Ansemified PFP"],
-                  ["03", "Become the cult"]
+                  ["03", "Wear it. Join the army."]
                 ].map(([number, label]) => (
                   <article className="ansemfication-step" key={label}>
                     <span>{number}</span>
@@ -78,17 +84,22 @@ export default function Page() {
               </div>
               <div className="hero-actions">
                 <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
-                  Tag @Ansemfy_
+                  Become Ansem
                 </a>
-                <a className="cta secondary" href="#airdrops">
-                  View Airdrops
+                <a className="cta secondary" href={COMMUNITY_URL} target="_blank" rel="noreferrer">
+                  Join Community
                 </a>
               </div>
+              <p className="hero-community-note">
+                The 20% bonus pool is community driven. Post your Ansemified PFP. Raid with the community. Participate. When community reward campaigns happen, eligible wallet addresses are collected from participants for the bonus pool.
+              </p>
             </div>
 
             <HeroCountdown />
           </div>
         </section>
+        <WhyAnsem />
+        <LatestAnsemifiedProfiles />
         <RewardExplanation />
         <HowItWorks />
         <LiveAnsemAirdrops />
@@ -145,6 +156,64 @@ export default function Page() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function WhyAnsem() {
+  const moments = [
+    ["Solana", "Called Solana before it became mainstream."],
+    ["WIF", "Helped drive one of the strongest WIF communities."],
+    ["Culture", "Built one of crypto's largest cult followings."],
+    ["Trenches", "Continues pushing builders, creators and the trenches forward."]
+  ];
+
+  return (
+    <section className="section why-ansem-section" id="why-ansem">
+      <div className="container">
+        <div className="section-kicker">Why Ansem?</div>
+        <div className="section-head split-head">
+          <h2>Conviction became culture.</h2>
+          <p>
+            The trenches needed someone willing to take conviction trades publicly. Ansem became one of the defining voices of this cycle by backing ideas before they became obvious.
+          </p>
+        </div>
+        <div className="why-ansem-timeline">
+          {moments.map(([title, body]) => (
+            <article className="why-ansem-card" key={title}>
+              <span>{title}</span>
+              <p>{body}</p>
+            </article>
+          ))}
+        </div>
+        <div className="why-ansem-tribute">Ansemification is our tribute to that movement.</div>
+      </div>
+    </section>
+  );
+}
+
+function LatestAnsemifiedProfiles() {
+  return (
+    <section className="section latest-ansemified-section">
+      <div className="container">
+        <div className="section-kicker">Latest Ansemified Profiles</div>
+        <div className="section-head split-head">
+          <h2>The army is forming.</h2>
+          <p>Every profile becomes another signal that the trenches are moving together.</p>
+        </div>
+        <div className="ansemfy-avatar-wall" aria-hidden="true">
+          <div className="ansemfy-avatar-track">
+            {[...avatarTiles, ...avatarTiles].map((tile, index) => (
+              <span className={`ansemfy-avatar-tile variant-${(tile % 9) + 1} avatar-pos-${(tile % 16) + 1}`} key={`row-a-${tile}-${index}`} />
+            ))}
+          </div>
+          <div className="ansemfy-avatar-track">
+            {[...avatarTiles.slice().reverse(), ...avatarTiles.slice().reverse()].map((tile, index) => (
+              <span className={`ansemfy-avatar-tile variant-${(tile % 9) + 1} avatar-pos-${(tile % 16) + 1}`} key={`row-b-${tile}-${index}`} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

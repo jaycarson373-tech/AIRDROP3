@@ -21,7 +21,7 @@ type StatsResponse = {
   nextDropTime: string;
 };
 
-const REFRESH_MS = 20_000;
+const REFRESH_MS = 30_000;
 const emptyMarket: MarketResponse = {
   ansem: { priceUsd: null, change24h: null, url: null, symbol: "ANSEM" },
   ansemfy: { priceUsd: null, change24h: null, url: null, symbol: "ANSEMFY" },
@@ -54,12 +54,6 @@ function formatPrice(value: number | null) {
   return `$${value.toLocaleString(undefined, { maximumSignificantDigits: 4 })}`;
 }
 
-function formatChange(value: number | null) {
-  if (!Number.isFinite(value) || value === null) return "–";
-  const sign = value > 0 ? "+" : "";
-  return `${sign}${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`;
-}
-
 function formatCompact(value: number, maximumFractionDigits = 2) {
   if (!Number.isFinite(value) || value <= 0) return "0";
   return Intl.NumberFormat(undefined, {
@@ -75,17 +69,11 @@ function formatCountdown(ms: number) {
   return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
-function changeClass(value: number | null) {
-  if (!Number.isFinite(value) || value === null || value === 0) return "";
-  return value > 0 ? "positive" : "negative";
-}
-
 function MarketPill({ market }: { market: TokenMarket }) {
   const content = (
     <>
       <span>{market.symbol}</span>
       <strong>{formatPrice(market.priceUsd)}</strong>
-      <em className={changeClass(market.change24h)}>{formatChange(market.change24h)}</em>
     </>
   );
 
@@ -148,15 +136,15 @@ export function MarketTicker() {
           <MarketPill market={market.ansem} />
           <MarketPill market={market.ansemfy} />
           <div className="ticker-pill">
-            <span>Total ANSEM Airdropped</span>
+            <span>Total ANSEM Distributed</span>
             <strong>{formatCompact(stats.totalRewardAirdropped, 3)}</strong>
           </div>
           <div className="ticker-pill">
-            <span>Ansemified Profiles</span>
+            <span>Total Ansemified</span>
             <strong>{formatCompact(market.totalAnsemifiedProfiles, 0)}</strong>
           </div>
           <div className="ticker-pill ticker-countdown">
-            <span>Next Airdrop</span>
+            <span>Next Epoch</span>
             <strong>{countdown}</strong>
           </div>
         </div>

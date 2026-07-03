@@ -3335,13 +3335,13 @@ td a,
 
 .ansemfy-page::before {
   background:
-    linear-gradient(90deg, rgba(2, 2, 4, 0.92), rgba(2, 2, 4, 0.42), rgba(2, 2, 4, 0.92)),
-    linear-gradient(180deg, rgba(2, 2, 4, 0.28), rgba(2, 2, 4, 0.86)),
+    linear-gradient(90deg, rgba(2, 2, 4, 0.88), rgba(2, 2, 4, 0.34), rgba(2, 2, 4, 0.88)),
+    linear-gradient(180deg, rgba(2, 2, 4, 0.2), rgba(2, 2, 4, 0.82)),
     url("/brand/ansemfy-banner.jpg") center top / 1280px auto repeat;
-  filter: blur(14px) saturate(1.05) contrast(1.04);
-  opacity: 0.08;
+  filter: blur(18px) saturate(1.08) contrast(1.05);
+  opacity: 0.13;
   transform: scale(1.08);
-  animation: ansemfyArmyDrift 28s ease-in-out infinite alternate;
+  animation: ansemfyArmyDrift 38s ease-in-out infinite alternate;
 }
 
 .ansemfy-page::after {
@@ -3411,11 +3411,12 @@ td a,
   inset: -8vh -6vw;
   z-index: 0;
   background:
-    linear-gradient(90deg, rgba(2, 2, 4, 0.96), rgba(2, 2, 4, 0.58), rgba(2, 2, 4, 0.78)),
+    linear-gradient(90deg, rgba(2, 2, 4, 0.9), rgba(2, 2, 4, 0.5), rgba(2, 2, 4, 0.72)),
     url("/brand/ansemfy-banner.jpg") center top / cover no-repeat;
-  opacity: 0.08;
-  filter: blur(12px) saturate(1.05);
+  opacity: 0.15;
+  filter: blur(18px) saturate(1.08);
   transform: scale(1.04);
+  animation: ansemfyArmyDrift 32s ease-in-out infinite alternate;
 }
 
 .ansemfication-hero {
@@ -3452,6 +3453,26 @@ td a,
 .ansemfication-hero h1 {
   max-width: 980px;
   font-size: clamp(4rem, 8.4vw, 10rem);
+}
+
+.hero-reward-note,
+.hero-community-note {
+  max-width: 780px;
+  margin: 0;
+  color: rgba(247, 247, 251, 0.68);
+  line-height: 1.6;
+}
+
+.hero-reward-note {
+  border-left: 2px solid rgba(255, 189, 121, 0.52);
+  padding-left: 16px;
+  font-weight: 760;
+}
+
+.hero-community-note {
+  max-width: 720px;
+  color: rgba(247, 247, 251, 0.54);
+  font-size: 0.95rem;
 }
 
 .ansemfication-steps {
@@ -3626,9 +3647,28 @@ td a,
   aspect-ratio: 1;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 24px;
-  object-fit: cover;
+  background-image: url("/brand/ansemfy-banner.jpg");
+  background-size: 980px auto;
+  background-position: center;
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
 }
+
+.avatar-pos-1 { background-position: 4% 6%; }
+.avatar-pos-2 { background-position: 12% 24%; }
+.avatar-pos-3 { background-position: 20% 42%; }
+.avatar-pos-4 { background-position: 28% 10%; }
+.avatar-pos-5 { background-position: 36% 32%; }
+.avatar-pos-6 { background-position: 44% 50%; }
+.avatar-pos-7 { background-position: 52% 16%; }
+.avatar-pos-8 { background-position: 60% 38%; }
+.avatar-pos-9 { background-position: 68% 8%; }
+.avatar-pos-10 { background-position: 76% 26%; }
+.avatar-pos-11 { background-position: 84% 48%; }
+.avatar-pos-12 { background-position: 92% 14%; }
+.avatar-pos-13 { background-position: 8% 62%; }
+.avatar-pos-14 { background-position: 33% 72%; }
+.avatar-pos-15 { background-position: 58% 66%; }
+.avatar-pos-16 { background-position: 88% 70%; }
 
 .ansemfy-avatar-tile.variant-1,
 .ansemfy-avatar-tile.variant-6 {
@@ -3710,6 +3750,92 @@ td a,
     font-size: clamp(3.7rem, 17vw, 6rem);
   }
 
+}
+
+.why-ansem-section,
+.latest-ansemified-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.why-ansem-section::after {
+  content: "";
+  position: absolute;
+  inset: auto -10vw 4vh -10vw;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 189, 121, 0.46), transparent);
+  opacity: 0.8;
+}
+
+.why-ansem-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 34px;
+}
+
+.why-ansem-card {
+  position: relative;
+  display: grid;
+  min-height: 210px;
+  align-content: space-between;
+  gap: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 180, 94, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.035)),
+    rgba(8, 7, 10, 0.72);
+  padding: clamp(22px, 3vw, 32px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 28px 80px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(20px);
+}
+
+.why-ansem-card::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #ffbd79;
+  box-shadow: 0 0 30px rgba(255, 189, 121, 0.56);
+}
+
+.why-ansem-card span {
+  color: #fff;
+  font-size: clamp(1.25rem, 2vw, 2rem);
+  font-weight: 900;
+}
+
+.why-ansem-card p {
+  margin: 0;
+  color: rgba(247, 247, 251, 0.68);
+}
+
+.why-ansem-tribute {
+  margin-top: 18px;
+  border: 1px solid rgba(255, 189, 121, 0.18);
+  border-radius: 999px;
+  color: rgba(255, 235, 210, 0.86);
+  background: rgba(255, 180, 94, 0.07);
+  padding: 14px 18px;
+  text-align: center;
+  font-weight: 850;
+}
+
+@media (max-width: 1080px) {
+  .why-ansem-timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .why-ansem-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-community-note {
+    font-size: 0.9rem;
+  }
 }
 
 /* Live market ticker */
