@@ -11,7 +11,7 @@ ANSEMIFICATION runs a creator-fee airdrop engine:
 - Airdrop `$ANSEM` automatically to eligible holders.
 - Send the remaining 20% to the configured PFP reward wallet for community reward campaigns.
 
-The site is an initiation page for the Cult of Ansem plus a live reward dashboard. Users tag `@Ansemfy_` on X to receive an Ansemified PFP.
+The site is an initiation page for the Cult of Ansem plus a live reward dashboard. Users tag `@Ansemfy` on X to receive an Ansemified PFP.
 
 ## Environment
 
