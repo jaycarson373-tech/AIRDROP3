@@ -1,5 +1,6 @@
 import { CopyCaButton } from "./copy-ca-button";
 import { HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
+import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "ANSEMFIFICATION";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
@@ -43,7 +44,8 @@ function Navbar() {
 
 export default function Page() {
   return (
-    <div className="page ansemfy-page">
+    <div className="page ansemfy-page has-market-ticker">
+      <MarketTicker />
       <Navbar />
 
       <main>
