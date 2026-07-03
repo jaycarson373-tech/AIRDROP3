@@ -96,9 +96,6 @@ async function sendPfpReward(epochId: string, amount: bigint, existingTxSig?: st
 
   if (!config.buyEnabled) return { pfpRewardLamports: amount, pfpRewardTxSig: null };
 
-  // Prove the DB has the PFP reward columns before money moves.
-  await recordPfpReward(epochId, "0", null);
-
   const treasury = treasuryKeypair();
   const tx = new Transaction().add(
     SystemProgram.transfer({

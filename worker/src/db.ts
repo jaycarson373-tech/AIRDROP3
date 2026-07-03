@@ -17,6 +17,10 @@ function assertNoError<T>(result: { data: T; error: unknown }, label: string): T
   return result.data;
 }
 
+function warnNonFatal(label: string, error: unknown) {
+  console.warn(`${label}: ${JSON.stringify(error)}`);
+}
+
 export async function getEpoch(epochId: string) {
   const result = await supabase.from("epochs").select("*").eq("epoch_id", epochId).maybeSingle();
   return assertNoError(result, "get epoch");
@@ -108,6 +112,18 @@ export async function recordBuy(
     ...(metadata?.pfpRewardTxSig !== undefined ? { pfp_reward_tx_sig: metadata.pfpRewardTxSig } : {})
   };
   const result = await supabase.from("buys").upsert(row);
+  if (result.error && metadata) {
+    warnNonFatal("record buy with PFP metadata failed; retrying without PFP metadata", result.error);
+    const fallback = await supabase.from("buys").upsert({
+      epoch_id: epochId,
+      base_spent_lamports: baseSpentLamports,
+      reward_received_raw: rewardReceivedRaw,
+      reward_received: rewardReceived,
+      tx_sig: txSig
+    });
+    assertNoError(fallback, "record buy fallback");
+    return;
+  }
   assertNoError(result, "record buy");
 }
 
@@ -126,7 +142,9 @@ export async function recordPfpReward(epochId: string, pfpRewardLamports: string
     pfp_reward_lamports: pfpRewardLamports,
     pfp_reward_tx_sig: pfpRewardTxSig
   });
-  assertNoError(result, "record PFP reward");
+  if (result.error) {
+    warnNonFatal("record PFP reward failed; continuing epoch", result.error);
+  }
 }
 
 function payoutMetadataFields(metadata: PayoutMetadata | undefined, rewardAmountRaw: string, rewardAmount: string) {

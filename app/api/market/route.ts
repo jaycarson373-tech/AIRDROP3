@@ -23,11 +23,15 @@ type DexPair = {
   liquidity?: {
     usd?: number;
   } | null;
+  marketCap?: number | null;
+  fdv?: number | null;
 };
 
 type TokenMarket = {
   priceUsd: number | null;
   change24h: number | null;
+  marketCapUsd: number | null;
+  fdvUsd: number | null;
   url: string | null;
   symbol: string;
 };
@@ -93,10 +97,14 @@ function pickPair(pairs: DexPair[], mint: string) {
 function marketFromPair(pair: DexPair | null, symbol: string): TokenMarket {
   const priceUsd = Number(pair?.priceUsd ?? NaN);
   const change24h = Number(pair?.priceChange?.h24 ?? NaN);
+  const marketCapUsd = Number(pair?.marketCap ?? NaN);
+  const fdvUsd = Number(pair?.fdv ?? NaN);
 
   return {
     priceUsd: Number.isFinite(priceUsd) ? priceUsd : null,
     change24h: Number.isFinite(change24h) ? change24h : null,
+    marketCapUsd: Number.isFinite(marketCapUsd) ? marketCapUsd : null,
+    fdvUsd: Number.isFinite(fdvUsd) ? fdvUsd : null,
     url: pair?.url ?? null,
     symbol
   };

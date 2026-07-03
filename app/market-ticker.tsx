@@ -6,6 +6,8 @@ import { CopyCaButton } from "./copy-ca-button";
 type TokenMarket = {
   priceUsd: number | null;
   change24h: number | null;
+  marketCapUsd: number | null;
+  fdvUsd: number | null;
   url: string | null;
   symbol: string;
 };
@@ -32,8 +34,8 @@ type MarketTickerProps = {
 
 const REFRESH_MS = 30_000;
 const emptyMarket: MarketResponse = {
-  ansem: { priceUsd: null, change24h: null, url: null, symbol: "ANSEM" },
-  ansemfy: { priceUsd: null, change24h: null, url: null, symbol: "ANSEMFY" },
+  ansem: { priceUsd: null, change24h: null, marketCapUsd: null, fdvUsd: null, url: null, symbol: "ANSEM" },
+  ansemfy: { priceUsd: null, change24h: null, marketCapUsd: null, fdvUsd: null, url: null, symbol: "ANSEMFY" },
   totalAnsemifiedProfiles: 0,
   updatedAt: new Date().toISOString()
 };
@@ -69,6 +71,11 @@ function formatCompact(value: number, maximumFractionDigits = 2) {
     notation: value >= 1_000_000 ? "compact" : "standard",
     maximumFractionDigits
   }).format(value);
+}
+
+function formatMoney(value: number | null) {
+  if (!Number.isFinite(value) || value === null || value <= 0) return "Loading";
+  return `$${formatCompact(value, value >= 1_000_000 ? 2 : 0)}`;
 }
 
 function formatCountdown(ms: number) {
@@ -154,6 +161,10 @@ export function MarketTicker({ logoSrc, projectName, contractAddress, buyUrl, xU
           </div>
           <MarketPill market={market.ansem} />
           <MarketPill market={market.ansemfy} />
+          <div className="ticker-pill ticker-market-cap">
+            <span>Market Cap</span>
+            <strong>{formatMoney(market.ansemfy.marketCapUsd ?? market.ansemfy.fdvUsd)}</strong>
+          </div>
           <div className="ticker-pill">
             <span>Total ANSEM Distributed</span>
             <strong>{formatCompact(stats.totalRewardAirdropped, 3)}</strong>

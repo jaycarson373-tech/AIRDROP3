@@ -82,9 +82,6 @@ export default function Page() {
                   Join Community
                 </a>
               </div>
-              <p className="hero-community-note">
-                The 20% bonus pool is community driven. Post your Ansemified PFP. Raid with the community. Participate. When community reward campaigns happen, eligible wallet addresses are collected from participants for the bonus pool.
-              </p>
             </div>
 
             <HeroCountdown />
