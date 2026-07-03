@@ -182,12 +182,15 @@ export function useProtocolData() {
 
 export function HeroCountdown() {
   const { stats, now } = useProtocolData();
+  const prices = useMarketPrices();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const totalDistributed =
     stats && stats.totalRewardAirdropped > 0
       ? `${stats.totalRewardAirdropped.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${REWARD_SYMBOL}`
       : "Awaiting first airdrop";
+  const solPrice = prices.find((price) => price.symbol === "SOL");
+  const rewardPrice = prices.find((price) => price.symbol === REWARD_SYMBOL);
 
   return (
     <div className="hero-countdown" aria-live="polite">
@@ -201,17 +204,30 @@ export function HeroCountdown() {
         <span>Total Epochs</span>
         <b>{stats ? formatCount(stats.totalEpochs) : "Loading"}</b>
       </div>
+      <div className="hero-price-grid" aria-label="Live market prices">
+        <span>
+          <i>SOL Price</i>
+          <b>{formatCurrency(solPrice?.priceUsd ?? null)}</b>
+        </span>
+        <span>
+          <i>{REWARD_SYMBOL} Price</i>
+          <b>{formatCurrency(rewardPrice?.priceUsd ?? null)}</b>
+        </span>
+      </div>
     </div>
   );
 }
 
 export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
+  const prices = useMarketPrices();
   const rounds = stats?.roundHistory ?? [];
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const latestRound = rounds[0];
   const claimedToday = sumRounds(rounds, "claimedSol");
+  const solPrice = prices.find((price) => price.symbol === "SOL");
+  const rewardPrice = prices.find((price) => price.symbol === REWARD_SYMBOL);
 
   return (
     <section className="section live-section airdrop-section" id="dashboard">
@@ -230,6 +246,8 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Next Epoch" value={countdown} />
           <MetricCard label="Total Epochs" value={stats ? formatCount(stats.totalEpochs) : "Loading"} />
           <MetricCard label="Creator Fees Seen" value={claimedToday > 0 ? `${formatNumber(claimedToday, 4)} SOL recent` : "Awaiting live claims"} />
+          <MetricCard label="SOL Price" value={formatCurrency(solPrice?.priceUsd ?? null)} />
+          <MetricCard label={`${REWARD_SYMBOL} Price`} value={formatCurrency(rewardPrice?.priceUsd ?? null)} />
         </div>
       </div>
     </section>
