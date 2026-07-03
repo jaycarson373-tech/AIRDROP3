@@ -63,6 +63,15 @@ type MarketPrice = {
   change24h: number | null;
 };
 
+type MarketPair = {
+  priceUsd?: string;
+  priceChange?: { h24?: number };
+  liquidity?: { usd?: number };
+  volume?: { h24?: number };
+  baseToken?: { address?: string; symbol?: string };
+  quoteToken?: { address?: string; symbol?: string };
+};
+
 const emptyStats: StatsResponse = {
   currentEpoch: 0,
   totalEpochs: 0,
@@ -118,13 +127,60 @@ function formatAmount(value: number, symbol: string, maximumFractionDigits = 4) 
 
 function formatCurrency(value: number | null) {
   if (!Number.isFinite(value ?? NaN) || value === null) return "Awaiting market pair";
-  return `$${value.toLocaleString(undefined, { maximumFractionDigits: value < 1 ? 6 : 2 })}`;
+  const maximumFractionDigits = value >= 10 ? 0 : value >= 1 ? 2 : 6;
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits })}`;
 }
 
 function formatPercent(value: number | null) {
   if (!Number.isFinite(value ?? NaN) || value === null) return "Awaiting";
   const sign = value > 0 ? "+" : "";
   return `${sign}${value.toFixed(2)}%`;
+}
+
+function normalizeSymbol(value?: string) {
+  return (value ?? "").toUpperCase();
+}
+
+function selectBestMarketPair(pairs: MarketPair[] | undefined, symbol: string, mint: string) {
+  const targetSymbol = normalizeSymbol(symbol);
+  const mintLower = mint.toLowerCase();
+  const stableSymbols = new Set(["USDC", "USDC.S", "USDT", "USDH", "USDS", "PYUSD"]);
+  const solSymbols = new Set(["SOL", "WSOL"]);
+
+  const scored = (pairs ?? [])
+    .map((pair) => {
+      const price = Number(pair.priceUsd);
+      if (!Number.isFinite(price) || price <= 0) return { pair, score: -1 };
+
+      const baseSymbol = normalizeSymbol(pair.baseToken?.symbol);
+      const quoteSymbol = normalizeSymbol(pair.quoteToken?.symbol);
+      const baseAddress = pair.baseToken?.address?.toLowerCase();
+      const quoteAddress = pair.quoteToken?.address?.toLowerCase();
+      const addressMatch = baseAddress === mintLower || quoteAddress === mintLower;
+      const symbolMatch =
+        baseSymbol === targetSymbol ||
+        quoteSymbol === targetSymbol ||
+        (targetSymbol === "SOL" && (solSymbols.has(baseSymbol) || solSymbols.has(quoteSymbol)));
+      const stableMatch = stableSymbols.has(baseSymbol) || stableSymbols.has(quoteSymbol);
+
+      if (targetSymbol === "SOL" && !symbolMatch) return { pair, score: -1 };
+      if (targetSymbol !== "SOL" && !symbolMatch && !addressMatch) return { pair, score: -1 };
+
+      const liquidity = pair.liquidity?.usd ?? 0;
+      const volume = pair.volume?.h24 ?? 0;
+      const score =
+        liquidity +
+        volume * 0.02 +
+        (stableMatch ? 1_000_000_000 : 0) +
+        (addressMatch ? 10_000_000 : 0) +
+        (symbolMatch ? 5_000_000 : 0);
+
+      return { pair, score };
+    })
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  return scored[0]?.pair ?? pairs?.find((entry) => Number(entry.priceUsd) > 0) ?? null;
 }
 
 function formatDate(value: string) {
@@ -367,9 +423,9 @@ function useMarketPrices() {
             const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`, { cache: "no-store" });
             if (!response.ok) throw new Error("price fetch failed");
             const data = (await response.json()) as {
-              pairs?: Array<{ priceUsd?: string; priceChange?: { h24?: number } }>;
+              pairs?: MarketPair[];
             };
-            const pair = data.pairs?.find((entry) => Number(entry.priceUsd) > 0) ?? data.pairs?.[0];
+            const pair = selectBestMarketPair(data.pairs, symbol, mint);
             return {
               symbol,
               priceUsd: pair?.priceUsd ? Number(pair.priceUsd) : null,

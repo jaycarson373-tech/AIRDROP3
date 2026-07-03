@@ -480,6 +480,44 @@ h3 {
   text-transform: uppercase;
 }
 
+.hero-price-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  border-top: 1px solid rgba(202, 164, 106, 0.22);
+  padding-top: 18px;
+}
+
+.hero-price-grid span {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  border: 1px solid rgba(202, 164, 106, 0.24);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.26);
+  padding: 14px 16px;
+}
+
+.hero-price-grid i {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.hero-price-grid b {
+  overflow-wrap: anywhere;
+  color: var(--ivory);
+  font-family: Cinzel, Georgia, serif;
+  font-size: clamp(1.25rem, 2.3vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
 .section {
   position: relative;
   isolation: isolate;
@@ -2113,6 +2151,10 @@ td a,
 
   .hero-countdown strong {
     font-size: 3.1rem;
+  }
+
+  .hero-price-grid {
+    grid-template-columns: 1fr;
   }
 
   .section {
