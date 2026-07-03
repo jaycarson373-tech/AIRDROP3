@@ -14,7 +14,8 @@ import {
 } from "./home-strategy-data";
 
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Bull Strategy";
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
+const DEFAULT_CA = "YLkZ3NSYF1Xyj4eEzhg4PDjda1wJkr3zYXuNCpCpump";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
 const BUY_URL =
   process.env.NEXT_PUBLIC_BUY_URL ??
   (CONTRACT_ADDRESS
