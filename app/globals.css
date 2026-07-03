@@ -3102,10 +3102,10 @@ td a,
   background:
     radial-gradient(circle at 68% 26%, rgba(138, 92, 255, 0.28), transparent 28%),
     radial-gradient(circle at 35% 72%, rgba(255, 255, 255, 0.08), transparent 32%),
-    linear-gradient(180deg, rgba(2, 2, 4, 0.3), #020204),
+    linear-gradient(180deg, rgba(2, 2, 4, 0.08), rgba(2, 2, 4, 0.58)),
     url("/brand/ansemfy-banner.jpg") right 12% center / min(46vw, 620px) auto no-repeat;
   filter: saturate(0.9) contrast(1.05);
-  opacity: 0.86;
+  opacity: 0.74;
 }
 
 .ansemfy-grid {
@@ -3121,8 +3121,8 @@ td a,
 .ansemfy-hero .hero-shade {
   z-index: 1;
   background:
-    linear-gradient(90deg, rgba(2, 2, 4, 0.94), rgba(2, 2, 4, 0.62) 54%, rgba(2, 2, 4, 0.78)),
-    linear-gradient(180deg, transparent, #020204 92%);
+    linear-gradient(90deg, rgba(2, 2, 4, 0.72), rgba(2, 2, 4, 0.34) 54%, rgba(2, 2, 4, 0.54)),
+    linear-gradient(180deg, transparent, rgba(2, 2, 4, 0.82) 92%);
 }
 
 .ansemfy-hero-inner {
@@ -3335,11 +3335,11 @@ td a,
 
 .ansemfy-page::before {
   background:
-    linear-gradient(90deg, rgba(2, 2, 4, 0.88), rgba(2, 2, 4, 0.34), rgba(2, 2, 4, 0.88)),
-    linear-gradient(180deg, rgba(2, 2, 4, 0.2), rgba(2, 2, 4, 0.82)),
+    linear-gradient(90deg, rgba(2, 2, 4, 0.5), rgba(2, 2, 4, 0.06), rgba(2, 2, 4, 0.5)),
+    linear-gradient(180deg, rgba(2, 2, 4, 0.05), rgba(2, 2, 4, 0.54)),
     url("/brand/ansemfy-banner.jpg") center top / 1280px auto repeat;
-  filter: blur(18px) saturate(1.08) contrast(1.05);
-  opacity: 0.4;
+  filter: blur(14px) saturate(1.18) contrast(1.08);
+  opacity: 0.38;
   transform: scale(1.08);
   animation: ansemfyArmyDrift 38s ease-in-out infinite alternate;
 }
@@ -3349,7 +3349,7 @@ td a,
     radial-gradient(circle at 18% 18%, rgba(255, 180, 94, 0.18), transparent 28%),
     radial-gradient(circle at 82% 20%, rgba(127, 92, 255, 0.2), transparent 30%),
     radial-gradient(circle at 50% 88%, rgba(255, 255, 255, 0.08), transparent 36%);
-  opacity: 0.9;
+  opacity: 0.52;
 }
 
 .ansemfy-page .nav,
@@ -3362,9 +3362,9 @@ td a,
 .ansemfy-page .section,
 .ansemfy-hero {
   background:
-    radial-gradient(circle at 16% 8%, rgba(255, 180, 94, 0.08), transparent 30%),
-    radial-gradient(circle at 82% 8%, rgba(127, 92, 255, 0.1), transparent 32%),
-    rgba(2, 2, 4, 0.72);
+    radial-gradient(circle at 16% 8%, rgba(255, 180, 94, 0.07), transparent 30%),
+    radial-gradient(circle at 82% 8%, rgba(127, 92, 255, 0.08), transparent 32%),
+    rgba(2, 2, 4, 0.38);
 }
 
 .ansemfy-nav {
@@ -3411,10 +3411,10 @@ td a,
   inset: -8vh -6vw;
   z-index: 0;
   background:
-    linear-gradient(90deg, rgba(2, 2, 4, 0.9), rgba(2, 2, 4, 0.5), rgba(2, 2, 4, 0.72)),
-    url("/brand/ansemfy-banner.jpg") center top / cover no-repeat;
-  opacity: 0.4;
-  filter: blur(18px) saturate(1.08);
+    linear-gradient(90deg, rgba(2, 2, 4, 0.56), rgba(2, 2, 4, 0.12), rgba(2, 2, 4, 0.44)),
+    url("/brand/ansemfy-banner.jpg") center top / cover repeat;
+  opacity: 0.35;
+  filter: blur(12px) saturate(1.16);
   transform: scale(1.04);
   animation: ansemfyArmyDrift 32s ease-in-out infinite alternate;
 }
@@ -3429,8 +3429,9 @@ td a,
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 470px);
-  gap: clamp(28px, 4vw, 56px);
+  grid-template-columns: minmax(0, 780px) minmax(320px, 470px);
+  justify-content: space-between;
+  gap: clamp(32px, 5vw, 88px);
   align-items: center;
 }
 
@@ -3439,7 +3440,7 @@ td a,
   min-width: 0;
   justify-items: start;
   gap: 22px;
-  max-width: 920px;
+  max-width: 780px;
 }
 
 .ansemfication-hero-logo {
@@ -3454,14 +3455,14 @@ td a,
 
 .ansemfication-hero h1 {
   max-width: 100%;
-  font-size: clamp(3.2rem, 5.2vw, 6.2rem);
+  font-size: clamp(3.1rem, 4.5vw, 5.4rem);
   overflow-wrap: normal;
   word-break: keep-all;
 }
 
 .hero-reward-note,
 .hero-community-note {
-  max-width: 780px;
+  max-width: 760px;
   margin: 0;
   color: rgba(247, 247, 251, 0.68);
   line-height: 1.6;
@@ -4055,9 +4056,9 @@ td a,
 .ansemfy-page .ansemfy-nav {
   position: fixed;
   top: calc(var(--market-ticker-height) + 20px);
-  right: auto;
+  right: 18px;
   bottom: auto;
-  left: 18px;
+  left: auto;
   z-index: 70;
   width: 188px;
   border: 1px solid rgba(255, 255, 255, 0.12);
