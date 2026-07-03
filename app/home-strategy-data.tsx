@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Round = {
   epoch: number;
@@ -131,30 +131,62 @@ export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
+  const latestDistribution = stats?.lastRewardAirdropped ?? stats?.recentRewards?.[0]?.rewardAmount ?? 0;
 
   return (
-    <div className="hero-countdown ansemfy-countdown" aria-live="polite">
-      <span>Next ANSEM Airdrop</span>
-      <strong>{countdown}</strong>
-      <div className="hero-total-distributed">
+    <div className="hero-countdown ansemfy-countdown ansemfication-stats" aria-live="polite">
+      <div className="ansemfication-stat primary">
         <span>Total {REWARD_SYMBOL} Airdropped</span>
-        <b>{stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"}</b>
+        <strong>{stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"}</strong>
       </div>
-      <div className="hero-total-distributed">
+      <div className="ansemfication-stat">
         <span>Eligible Holders</span>
-        <b>{stats ? formatCount(stats.latestEligibleHolders) : "Loading"}</b>
+        <strong>{stats ? formatCount(stats.latestEligibleHolders) : "Loading"}</strong>
+      </div>
+      <div className="ansemfication-stat">
+        <span>Next Epoch</span>
+        <strong>{countdown}</strong>
+      </div>
+      <div className="ansemfication-stat">
+        <span>Latest Distribution</span>
+        <strong>{stats ? formatAmount(latestDistribution, REWARD_SYMBOL, 4) : "Loading"}</strong>
       </div>
     </div>
   );
 }
 
 export function RewardExplanation() {
+  return (
+    <section className="section ansemfy-how-section" id="rewards">
+      <div className="container">
+        <div className="section-kicker">Why it matters</div>
+        <div className="section-head split-head">
+          <h2>The cult has two reward paths.</h2>
+          <p>ANSEMFY rewards holders and gives extra weight to the wallets visibly wearing the Ansemified identity.</p>
+        </div>
+        <div className="ansemfy-split-cards" aria-label="Creator fee split">
+          <article className="ansemfy-split-card primary">
+            <span>80%</span>
+            <strong>$ANSEM holder rewards</strong>
+            <p>Creator fees buy and airdrop {REWARD_SYMBOL} to eligible holders.</p>
+          </article>
+          <article className="ansemfy-split-card">
+            <span>20%</span>
+            <strong>Ansemified holder rewards</strong>
+            <p>Reserved exclusively for holders using an Ansemified profile picture once verification is connected.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function HowItWorks() {
   const steps = [
-    ["Hold ANSEMFY", `${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`],
-    ["Creator fees buy ANSEM", "Airdrops every epoch"],
-    ["Automatic airdrops", "No claiming"],
-    ["Generate your PFP", "Ansemfy in seconds"],
-    ["Join the movement", "Post and tag @Ansemfy_"]
+    ["Tag @Ansemfy_", "Start the initiation on X."],
+    ["Receive your Ansemified PFP", "The account replies with your new profile image."],
+    ["Upload it", "Wear the face publicly."],
+    ["Join the army", "Become part of the visible cult of Ansem."]
   ];
 
   return (
@@ -162,20 +194,8 @@ export function RewardExplanation() {
       <div className="container">
         <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>The token powers the army.</h2>
-          <p>Hold ANSEMFY for automatic ANSEM airdrops. Use the generator to become visible inside the movement.</p>
-        </div>
-        <div className="ansemfy-split-cards" aria-label="Creator fee split">
-          <article className="ansemfy-split-card primary">
-            <span>80%</span>
-            <strong>ANSEM airdrops</strong>
-            <p>Creator fees buy and airdrop {REWARD_SYMBOL} to eligible holders.</p>
-          </article>
-          <article className="ansemfy-split-card">
-            <span>20%</span>
-            <strong>PFP bonus reserve</strong>
-            <p>Reserved for holders using an Ansemified profile picture once verification is connected.</p>
-          </article>
+          <h2>Tag. Receive. Become.</h2>
+          <p>No upload form. No dashboard ritual. The initiation happens on X.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
           {steps.map(([title, body], index) => (
@@ -188,7 +208,7 @@ export function RewardExplanation() {
         </div>
         <div className="share-example ansemfy-principles">
           {[
-            ["Army", "The generator is the front door."],
+            ["Cult", "Identity comes first."],
             ["Auto", "Airdrops settle directly to eligible holders."],
             ["PFP", "Your profile becomes the signal."]
           ].map(([title, body]) => (
@@ -196,36 +216,6 @@ export function RewardExplanation() {
               <strong>{title}</strong>
               <p>{body}</p>
             </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function LatestGeneratedProfiles() {
-  const cards = useMemo(() => Array.from({ length: 30 }, (_, index) => index), []);
-
-  return (
-    <section className="section ansemfy-gallery-section" id="gallery">
-      <div className="container">
-        <div className="section-kicker">Latest Ansemfied</div>
-        <div className="section-head split-head">
-          <h2>An army of profiles.</h2>
-          <p>The live generated wall connects to storage next. The visual system is ready for every new Ansemified PFP.</p>
-        </div>
-        <div className="ansemfy-avatar-wall" aria-label="Ansemified profile wall">
-          {[0, 1].map((row) => (
-            <div className="ansemfy-avatar-track" key={row}>
-              {cards.map((item) => (
-                <img
-                  className={`ansemfy-avatar-tile variant-${item % 10}`}
-                  src="/brand/ansemfy-pfp-example.jpg"
-                  alt=""
-                  key={`${row}-${item}`}
-                />
-              ))}
-            </div>
           ))}
         </div>
       </div>

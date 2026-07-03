@@ -4,11 +4,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ansemfy.fun"),
-  title: "ANSEMFY",
-  description: "Become Ansem. Join the army. ANSEMFY generates Ansem-style PFPs and airdrops ANSEM to eligible holders.",
+  title: "ANSEMFIFICATION",
+  description: "The initiation into the Cult of Ansem. Tag @Ansemfy_ on X, receive your Ansemified PFP, and join the army.",
   openGraph: {
-    title: "ANSEMFY",
-    description: "Become Ansem. Join the army. ANSEMFY generates Ansem-style PFPs and airdrops ANSEM to eligible holders.",
+    title: "ANSEMFIFICATION",
+    description: "The initiation into the Cult of Ansem. Tag @Ansemfy_ on X, receive your Ansemified PFP, and join the army.",
     url: "https://ansemfy.fun",
     siteName: "ANSEMFY",
     images: [
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ANSEMFY",
-    description: "Become Ansem. Join the army. ANSEMFY generates Ansem-style PFPs and airdrops ANSEM to eligible holders.",
+    title: "ANSEMFIFICATION",
+    description: "The initiation into the Cult of Ansem. Tag @Ansemfy_ on X, receive your Ansemified PFP, and join the army.",
     images: ["/brand/ansemfy-logo.jpg"]
   },
   icons: {

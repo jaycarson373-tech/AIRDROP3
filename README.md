@@ -1,25 +1,24 @@
-# ANSEMFY
+# ANSEMFIFICATION
 
 Source token: `$ANSEMFY`
 Reward token: `$ANSEM`
 
-ANSEMFY runs a creator-fee airdrop engine:
+ANSEMFIFICATION runs a creator-fee airdrop engine:
 
 - Snapshot eligible `$ANSEMFY` holders.
 - Claim creator fees.
 - Use 80% of usable creator fees to buy `$ANSEM`.
 - Airdrop `$ANSEM` automatically to eligible holders.
-- Reserve the remaining 20% for the Ansemified PFP bonus path once verification is connected.
-- Expose a placeholder `/api/ansemfy` endpoint for the future AI profile-picture generator.
+- Reserve the remaining 20% exclusively for holders using an Ansemified profile picture once verification is connected.
 
-The site is a premium AI tool + reward dashboard. No wallet interaction is required for airdrops.
+The site is an initiation page for the Cult of Ansem plus a live reward dashboard. Users tag `@Ansemfy_` on X to receive an Ansemified PFP.
 
 ## Environment
 
 ### Vercel
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME=ANSEMFY
+NEXT_PUBLIC_PROJECT_NAME=ANSEMFIFICATION
 NEXT_PUBLIC_SOURCE_SYMBOL=ANSEMFY
 NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
 NEXT_PUBLIC_CA=<ANSEMFY_TOKEN_MINT>

@@ -29,7 +29,7 @@ export function AppPolish() {
   }, []);
 
   useEffect(() => {
-    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .multiplier-card, .reset-warning-card, .reward-flow-card, .share-card, .path-card, .black-bull-card, .eligibility-card, .philosophy-card, .conviction-card, .warning-card, .lookup-card, .faq-item, .ansemfy-generated-card, .ansemfy-generator-card";
+    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .multiplier-card, .reset-warning-card, .reward-flow-card, .share-card, .path-card, .black-bull-card, .eligibility-card, .philosophy-card, .conviction-card, .warning-card, .lookup-card, .faq-item";
     const elements = new Set<Element>();
     const observer = new IntersectionObserver(
       (entries) => {
