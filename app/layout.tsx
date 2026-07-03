@@ -6,10 +6,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://ansemfy.fun"),
   title: "ANSEMIFICATION",
-  description: "The initiation into the Cult of Ansem. Tag @Ansemfy_ on X, receive your Ansemified PFP, and join the army.",
+  description: "The initiation into the Cult of Ansem. Tag @Ansemfy on X, receive your Ansemified PFP, and join the army.",
   openGraph: {
     title: "ANSEMIFICATION",
-    description: "The initiation into the Cult of Ansem. Tag @Ansemfy_ on X, receive your Ansemified PFP, and join the army.",
+    description: "The initiation into the Cult of Ansem. Tag @Ansemfy on X, receive your Ansemified PFP, and join the army.",
     url: "https://ansemfy.fun",
     siteName: "ANSEMFY",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "ANSEMIFICATION",
-    description: "The initiation into the Cult of Ansem. Tag @Ansemfy_ on X, receive your Ansemified PFP, and join the army.",
+    description: "The initiation into the Cult of Ansem. Tag @Ansemfy on X, receive your Ansemified PFP, and join the army.",
     images: ["/brand/ansemfy-logo.jpg"]
   },
   icons: {

@@ -56,7 +56,7 @@ export default function Page() {
               <h1>ANSEMIFICATION</h1>
               <p className="hero-subtitle">The initiation into the Cult of Ansem.</p>
               <p className="hero-lead">
-                The supercycle finally has a main character. Tag @Ansemfy_. Receive your Ansemified profile picture. Wear it. Join the army.
+                The supercycle finally has a main character. Tag @Ansemfy. Receive your Ansemified profile picture. Wear it. Join the army.
                 Hold {SOURCE_LABEL} to earn automated {`$${REWARD_SYMBOL}`} airdrops.
               </p>
               <p className="hero-reward-note">
@@ -64,7 +64,7 @@ export default function Page() {
               </p>
               <div className="ansemfication-steps" aria-label="ANSEMIFICATION flow">
                 {[
-                  ["01", "Tag @Ansemfy_"],
+                  ["01", "Tag @Ansemfy"],
                   ["02", "Receive your Ansemified PFP"],
                   ["03", "Wear it. Join the army."]
                 ].map(([number, label]) => (
@@ -105,9 +105,9 @@ export default function Page() {
               <FaqItem title="How do I qualify?" body={`Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL}. The live worker uses the Railway eligibility env as the source of truth.`} />
               <FaqItem title="What gets airdropped?" body={`Creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders.`} />
               <FaqItem title="Do I need to claim?" body="No. Airdrops are automatic after each completed epoch." />
-              <FaqItem title="How does ANSEMIFICATION work?" body="Tag @Ansemfy_ on X. The bot flow returns an Ansemified profile picture for you to use on your profile." />
+              <FaqItem title="How does ANSEMIFICATION work?" body="Tag @Ansemfy on X. The bot flow returns an Ansemified profile picture for you to use on your profile." />
               <FaqItem title="What is the PFP bonus?" body="The brand system reserves a creator-fee slice for holders using an Ansemified profile picture once verification is connected." />
-              <FaqItem title="What should I tag?" body="Mention @Ansemfy_ on X to start the initiation." />
+              <FaqItem title="What should I tag?" body="Mention @Ansemfy on X to start the initiation." />
             </div>
           </div>
         </section>

@@ -188,7 +188,7 @@ export function RewardExplanation() {
 
 export function HowItWorks() {
   const steps = [
-    ["Tag @Ansemfy_", "Start the initiation on X."],
+    ["Tag @Ansemfy", "Start the initiation on X."],
     ["Receive your Ansemified PFP", "The account replies with your new profile image."],
     ["Upload it", "Wear the face publicly."],
     ["Join the army", "Become part of the visible cult of Ansem."]
