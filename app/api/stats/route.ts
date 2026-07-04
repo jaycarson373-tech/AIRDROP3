@@ -161,7 +161,8 @@ function sourceTokenMint() {
 
 function epochNumber(epochId: string, fallback: number) {
   const timestamp = Date.parse(epochId);
-  return Number.isFinite(timestamp) ? Math.floor(timestamp / 300000) : fallback;
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
+  return Number.isFinite(timestamp) ? Math.floor(timestamp / epochMs) : fallback;
 }
 
 function rowTime(row: Pick<EpochRow, "epoch_id" | "started_at">) {
@@ -173,8 +174,8 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function nextDropTime() {
-  const fiveMinutes = 300000;
-  return new Date(Math.ceil(Date.now() / fiveMinutes) * fiveMinutes).toISOString();
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
+  return new Date(Math.ceil(Date.now() / epochMs) * epochMs).toISOString();
 }
 
 async function tokenProgramForMint(connection: Connection, mint: PublicKey) {
@@ -252,7 +253,7 @@ async function liveEligibleHolderCount() {
   const mint = sourceTokenMint();
   if (!mint) return null;
 
-  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 1_000_000));
+  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 500_000));
   const maxHolderPct = numberEnv("MAX_HOLDER_PCT", 5);
   const endpoint = rpcUrl();
   const cacheKey = `${endpoint}:${mint.toBase58()}:${eligibilityMin}:${maxHolderPct}`;

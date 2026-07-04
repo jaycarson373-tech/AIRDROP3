@@ -4,33 +4,33 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bullterminal.fun"),
-  title: "Bull Terminal",
-  description: "Bloomberg for the trenches. Track every Ansem thesis, live market data, AI research, and automated ANSEM holder rewards.",
+  metadataBase: new URL("https://bullify.fun"),
+  title: "Bullify",
+  description: "Bullification for the Black Bull Army. Tag @Bullify_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
   openGraph: {
-    title: "Bull Terminal",
-    description: "Bloomberg for the trenches. Track every Ansem thesis, live market data, AI research, and automated ANSEM holder rewards.",
-    url: "https://bullterminal.fun",
-    siteName: "Bull Terminal",
+    title: "Bullify",
+    description: "Bullification for the Black Bull Army. Tag @Bullify_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
+    url: "https://bullify.fun",
+    siteName: "Bullify",
     images: [
       {
-        url: "/brand/bull-terminal-logo.svg",
-        width: 512,
-        height: 512,
-        alt: "Bull Terminal"
+        url: "/brand/bullify-logo.png",
+        width: 1254,
+        height: 1254,
+        alt: "Bullify"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bull Terminal",
-    description: "Bloomberg for the trenches. Track every Ansem thesis, live market data, AI research, and automated ANSEM holder rewards.",
-    images: ["/brand/bull-terminal-logo.svg"]
+    title: "Bullify",
+    description: "Bullification for the Black Bull Army. Tag @Bullify_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
+    images: ["/brand/bullify-logo.png"]
   },
   icons: {
     icon: [
-      { url: "/brand/bull-terminal-logo.svg", type: "image/svg+xml" },
+      { url: "/brand/bullify-logo.png", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },

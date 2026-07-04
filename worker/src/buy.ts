@@ -1,10 +1,11 @@
-import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, SystemProgram, Transaction, VersionedTransaction } from "@solana/web3.js";
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
 
 const SWAP_EXECUTION_CUSHION_LAMPORTS = 3_000_000n;
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
+const PFP_TRANSFER_FEE_CUSHION_LAMPORTS = 10_000n;
 
 export type BuyResult = {
   baseSpentLamports: bigint;
@@ -46,7 +47,9 @@ async function postBuyReserveLamports() {
   const airdropReserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
   const maxBatchCount = BigInt(Math.ceil(config.maxWalletsPerEpoch / config.airdropBatchSize));
   const transferFeeCushionLamports = maxBatchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
-  const payoutReserveLamports = airdropReserveLamports + transferFeeCushionLamports + SWAP_EXECUTION_CUSHION_LAMPORTS;
+  const pfpTransferCushionLamports = config.pfpRewardWallet ? PFP_TRANSFER_FEE_CUSHION_LAMPORTS : 0n;
+  const payoutReserveLamports =
+    airdropReserveLamports + transferFeeCushionLamports + SWAP_EXECUTION_CUSHION_LAMPORTS + pfpTransferCushionLamports;
 
   return minReserveLamports + payoutReserveLamports;
 }
@@ -59,13 +62,17 @@ export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
     explicitReserveLamports === undefined ? defaultReserveLamports : maxBigInt(explicitReserveLamports, defaultReserveLamports);
   const usableLamports = balance > reserveLamports ? balance - reserveLamports : 0n;
   const splitBudgetLamports = (usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
-  const amount = (splitBudgetLamports * BigInt(config.ansemBuyBps)) / 10_000n;
-  const solLongReserveLamports = usableLamports > amount ? usableLamports - amount : 0n;
+  const pfpBps = config.pfpRewardWallet ? config.pfpRewardBps : 0;
+  const allocationDivisor = BigInt(Math.max(10_000, config.ansemBuyBps + pfpBps));
+  const amount = (splitBudgetLamports * BigInt(config.ansemBuyBps)) / allocationDivisor;
+  const pfpRewardLamports = (splitBudgetLamports * BigInt(pfpBps)) / allocationDivisor;
+  const allocatedLamports = amount + pfpRewardLamports;
+  const solLongReserveLamports = usableLamports > allocatedLamports ? usableLamports - allocatedLamports : 0n;
 
   return {
     balance,
     amount: amount > 0n ? amount : 0n,
-    pfpRewardLamports: 0n,
+    pfpRewardLamports: pfpRewardLamports > 0n ? pfpRewardLamports : 0n,
     reserveLamports,
     usableLamports,
     solLongReserveLamports
@@ -98,6 +105,31 @@ async function jupiterSwap(baseAmount: bigint, treasuryPublicKey: string) {
   });
   if (!swapResponse.ok) throw new Error(`Jupiter swap build failed: ${await swapResponse.text()}`);
   return { quote, swap: (await swapResponse.json()) as { swapTransaction: string } };
+}
+
+async function sendPfpReward(epochId: string, amountLamports: bigint) {
+  if (!config.pfpRewardWallet || amountLamports <= 0n) return null;
+  const treasury = treasuryKeypair();
+  console.log(
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Bullified PFP bonus reserve: ${amountLamports.toString()} lamports to ${config.pfpRewardWallet.toBase58()}`
+  );
+  if (!config.buyEnabled) return null;
+
+  try {
+    const tx = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: treasury.publicKey,
+        toPubkey: config.pfpRewardWallet,
+        lamports: Number(amountLamports)
+      })
+    );
+    const signature = await connection.sendTransaction(tx, [treasury], { maxRetries: 3, skipPreflight: false });
+    await connection.confirmTransaction(signature, "confirmed");
+    return signature;
+  } catch (error) {
+    console.warn(`[${epochId}] Bullified PFP bonus transfer failed; continuing ANSEM airdrop`, error);
+    return null;
+  }
 }
 
 export async function buyReward(epochId: string, explicitReserveLamports?: bigint): Promise<BuyResult> {
@@ -140,7 +172,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}ANSEM accumulation: usable=${usableLamports}, ANSEM buy=${amount} lamports (${config.ansemBuyBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Bullify split: usable=${usableLamports}, ANSEM buy=${amount} lamports (${config.ansemBuyBps} bps), PFP reserve=${pfpRewardLamports} lamports (${config.pfpRewardWallet ? config.pfpRewardBps : 0} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
   );
   console.log(
     `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`
@@ -169,6 +201,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
 
   const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
   await connection.confirmTransaction(txSig, "confirmed");
+  const pfpRewardTxSig = await sendPfpReward(epochId, pfpRewardLamports);
   return {
     baseSpentLamports: amount,
     rewardReceivedRaw,
@@ -176,7 +209,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
     usableLamports,
     solLongReserveLamports,
     pfpRewardLamports,
-    pfpRewardTxSig: null,
+    pfpRewardTxSig,
     txSig
   };
 }

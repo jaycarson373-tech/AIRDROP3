@@ -18,9 +18,9 @@ type HoldersResponse = {
 };
 
 const emptyResponse: HoldersResponse = { fallenBulls: [] };
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLTERM";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -72,9 +72,9 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/bull-terminal-logo.svg" alt="Bull Terminal logo" />
+            <img className="brand-logo" src="/brand/bullify-logo.png" alt="Bullify logo" />
             <span>
-              Bull Terminal
+              Bullify
               <small>Ineligible Wallets</small>
             </span>
           </Link>
@@ -92,7 +92,7 @@ export function FallenBullsClient() {
             <div className="section-kicker">Ineligibility ledger</div>
             <div className="section-head split-head">
               <h1 className="dashboard-title">Ineligible Wallets</h1>
-              <p>Wallets that lost eligibility by selling or falling below the {ELIGIBILITY_LABEL} {SOURCE_SYMBOL} requirement.</p>
+              <p>Wallets that became ineligible for an epoch by selling or falling below the {ELIGIBILITY_LABEL} {SOURCE_SYMBOL} requirement.</p>
             </div>
 
             <div className="history-card bull-board-card">

@@ -1,27 +1,27 @@
 import { HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
 import { MarketTicker } from "./market-ticker";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Bull Terminal";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Bullify";
 const DEFAULT_CONTRACT_ADDRESS = "8Z12Faqh6vhekfFLiRHsaVGTMVDjumC5W1Qa5E3Tpump";
 const DEFAULT_BUY_URL = `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${DEFAULT_CONTRACT_ADDRESS}`;
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CONTRACT_ADDRESS;
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? DEFAULT_BUY_URL;
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/BULLTERM";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLTERM";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/Bullify_";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
-const LOGO_SRC = "/brand/bull-terminal-logo.svg";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
+const LOGO_SRC = "/brand/bullify-logo.png";
 
 function SideNav() {
   return (
     <aside className="nav ansemfy-nav" aria-label="Section navigation">
       <div className="nav-inner">
         <nav className="nav-links" aria-label="Main navigation">
-          <a href="#terminal">Terminal</a>
-          <a href="#watchlist">Watchlist</a>
-          <a href="#research">Research</a>
+          <a href="#initiation">Initiation</a>
+          <a href="#how">How it Works</a>
           <a href="#rewards">Rewards</a>
+          <a href="#army">Army</a>
           <a href="#airdrops">Airdrops</a>
           <a href="#faq">FAQ</a>
         </nav>
@@ -43,7 +43,7 @@ export default function Page() {
       <SideNav />
 
       <main>
-        <section className="hero ansemfy-hero ansemfication-hero terminal-hero" id="terminal">
+        <section className="hero ansemfy-hero ansemfication-hero bullify-hero" id="initiation">
           <div className="ansemfy-army-bg" aria-hidden="true" />
           <div className="ansemfy-aurora" aria-hidden="true" />
           <div className="ansemfy-grid" aria-hidden="true" />
@@ -51,21 +51,22 @@ export default function Page() {
 
           <div className="container ansemfication-hero-inner">
             <div className="ansemfication-copy">
-              <img className="ansemfication-hero-logo terminal-hero-logo" src={LOGO_SRC} alt="Bull Terminal logo" />
-              <div className="section-kicker">Bloomberg for the trenches</div>
-              <h1>Bull Terminal</h1>
-              <p className="hero-subtitle">Everything Ansem is bullish on.</p>
+              <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Bullify logo" />
+              <div className="section-kicker">Bulls only</div>
+              <h1>BULLIFICATION</h1>
+              <p className="hero-subtitle">The initiation into the Black Bull Army.</p>
               <p className="hero-lead">
-                Live market dashboard. AI research. Community conviction. Automated {`$${REWARD_SYMBOL}`} rewards for eligible {SOURCE_LABEL} holders.
+                Tag @Bullify_ on X. Receive your Bullified PFP. Upload it. Join the army. Earn {`$${REWARD_SYMBOL}`}.
               </p>
               <p className="hero-reward-note">
-                100% of creator fees automatically buy and distribute {`$${REWARD_SYMBOL}`}. One terminal, every thesis, clean holder rewards.
+                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. Half of creator fees buy and airdrop {`$${REWARD_SYMBOL}`} every 10 minutes.
+                Half is reserved for verified Black Bull Army members using their Bullified PFP.
               </p>
-              <div className="ansemfication-steps" aria-label="Bull Terminal flow">
+              <div className="ansemfication-steps" aria-label="Bullification flow">
                 {[
-                  ["01", "Track Ansem theses"],
-                  ["02", "Watch live catalysts"],
-                  ["03", "Earn ANSEM rewards"]
+                  ["01", "Tag @Bullify_"],
+                  ["02", "Receive Bullified PFP"],
+                  ["03", "Join the army"]
                 ].map(([number, label]) => (
                   <article className="ansemfication-step" key={label}>
                     <span>{number}</span>
@@ -74,11 +75,11 @@ export default function Page() {
                 ))}
               </div>
               <div className="hero-actions">
-                <a className="cta" href="#watchlist">
-                  Open Terminal
+                <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
+                  Become Bullified
                 </a>
-                <a className="cta secondary" href={BUY_URL} target="_blank" rel="noreferrer">
-                  Buy {SOURCE_LABEL}
+                <a className="cta secondary" href="#airdrops">
+                  View Airdrops
                 </a>
               </div>
             </div>
@@ -86,35 +87,33 @@ export default function Page() {
             <HeroCountdown />
           </div>
         </section>
-        <TerminalDashboard />
-        <AiResearch />
-        <ThesisTimeline />
-        <RewardExplanation />
         <HowItWorks />
+        <RewardExplanation />
+        <BlackBullArmy />
         <LiveAnsemAirdrops />
         <RecentAirdrops />
 
         <section className="section faq-section ansemfy-faq" id="faq">
           <div className="container">
             <div className="section-kicker">FAQ</div>
-            <h2>Terminal mechanics.</h2>
+            <h2>Bullification mechanics.</h2>
             <div className="faq-grid">
               <FaqItem title="How do I qualify?" body={`Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL}. The live worker uses the Railway eligibility env as the source of truth.`} />
-              <FaqItem title="What gets airdropped?" body={`100% of creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders.`} />
-              <FaqItem title="Do I need to claim?" body="No. Airdrops are automatic after each completed epoch." />
-              <FaqItem title="What is Bull Terminal?" body="A daily dashboard for Ansem-aligned theses: prices, catalysts, AI summaries, sentiment, and reward proof." />
-              <FaqItem title="Are rewards split anywhere else?" body="No. The reward path is clean: creator fees buy ANSEM and distribute it to eligible holders." />
-              <FaqItem title="What comes next?" body="Editable watchlists, pinned assets, community suggestions, wallet login, alerts, and deeper AI research." />
+              <FaqItem title="What gets airdropped?" body={`50% of creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders every 10 minutes.`} />
+              <FaqItem title="What is the Bullified bonus pool?" body="The other 50% is reserved for verified members using their Bullified PFP. Manual fulfillment is supported while the X bot is being connected." />
+              <FaqItem title="Do I need to claim?" body="No. Holder airdrops are automatic after each completed epoch." />
+              <FaqItem title="What happens if I sell?" body={`A wallet that sells any amount of ${SOURCE_LABEL} during the epoch is ineligible for that epoch. Bulls only.`} />
+              <FaqItem title="How do I become Bullified?" body="Tag or reply to @Bullify_ on X. The bot flow is prepared for automated replies, and manual fulfillment can run until the bot is live." />
             </div>
           </div>
         </section>
 
         <section className="section ansemfy-closing-section">
           <div className="container ansemfy-closing-copy">
-            <h2>Stop chasing. Start tracking.</h2>
-            <p>One terminal. Every thesis. Conviction over noise.</p>
-            <a className="cta" href="#watchlist">
-              Open Terminal
+            <h2>Join the Black Bull Army.</h2>
+            <p>Tag. Transform. Hold. Earn. Bulls only.</p>
+            <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
+              Become Bullified
             </a>
           </div>
         </section>
@@ -124,14 +123,14 @@ export default function Page() {
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src={LOGO_SRC} alt={`${PROJECT_NAME} logo`} />
-            <strong>Bull Terminal</strong>
+            <strong>Bullify</strong>
           </div>
-          <p>Bloomberg for the trenches. 100% creator-fee ANSEM rewards.</p>
+          <p>Bullification for the Black Bull Army. 50/50 ANSEM holder rewards and Bullified PFP bonus pool.</p>
           <div className="footer-links">
-            <a href="#terminal">Terminal</a>
-            <a href="#watchlist">Watchlist</a>
-            <a href="#research">Research</a>
+            <a href="#initiation">Initiation</a>
+            <a href="#how">How it Works</a>
             <a href="#rewards">Rewards</a>
+            <a href="#army">Army</a>
             <a href="#airdrops">Airdrops</a>
             <a href={X_URL} target="_blank" rel="noreferrer">
               X
@@ -149,104 +148,25 @@ export default function Page() {
   );
 }
 
-function TerminalDashboard() {
-  const assets = [
-    ["SOL", "Solana ecosystem", "Live", "Syncing", "Core thesis"],
-    ["ANSEM", "Reward asset", "Live", "Syncing", "Distribution rail"],
-    ["BTC", "Macro anchor", "Live", "Syncing", "Risk barometer"],
-    ["ETH", "Liquidity hub", "Live", "Syncing", "Institutional beta"],
-    ["HYPE", "Perp venue", "Live", "Syncing", "High conviction"],
-    ["WIF", "Solana culture", "Live", "Syncing", "Liquidity signal"],
-    ["BONK", "Solana beta", "Live", "Syncing", "Community pulse"],
-    ["SPX", "Narrative asset", "Live", "Syncing", "Narrative strength"]
-  ];
-
+function BlackBullArmy() {
   return (
-    <section className="section terminal-dashboard-section" id="watchlist">
+    <section className="section bullify-army-section" id="army">
       <div className="container">
-        <div className="section-kicker">Ansem watchlist</div>
+        <div className="section-kicker">Black Bull Army</div>
         <div className="section-head split-head">
-          <h2>One terminal. Every thesis.</h2>
-          <p>Track the assets, catalysts, sentiment, and conviction signals the trenches are watching.</p>
+          <h2>The army grows every epoch.</h2>
+          <p>As holders become Bullified, their profile pictures will be added here. No fake avatars.</p>
         </div>
-        <div className="terminal-asset-grid">
-          {assets.map(([symbol, thesis, price, change, note]) => (
-            <article className="terminal-asset-card" key={symbol}>
-              <div className="asset-card-top">
-                <span>{symbol}</span>
-                <strong>Calibrating</strong>
-              </div>
-              <p>{thesis}</p>
-              <div className="asset-card-metrics">
-                <div><span>Price</span><strong>{price}</strong></div>
-                <div><span>24H</span><strong>{change}</strong></div>
-                <div><span>7D</span><strong>Syncing</strong></div>
-              </div>
-              <div className="asset-card-footer">
-                <span>Bull Score</span>
-                <em>{note}</em>
-              </div>
+        <div className="bullify-army-grid" aria-label="Bullified profile placeholders">
+          {Array.from({ length: 24 }, (_, index) => (
+            <article className="bullify-army-card" key={index}>
+              <span>🐂</span>
             </article>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-function AiResearch() {
-  const cards = [
-    ["AI summaries", "Short thesis notes, recent catalysts, risks, and opportunities for every tracked asset."],
-    ["Community sentiment", "Watch what the trenches are rotating into before the timeline gets loud."],
-    ["Bull Score", "Momentum, volume, narrative strength, AI rating, and community conviction in one simple score."],
-    ["Editable watchlists", "Pinned assets, filters, biggest movers, most bullish, and recently added assets."]
-  ];
-
-  return (
-    <section className="section terminal-research-section" id="research">
-      <div className="container">
-        <div className="section-kicker">AI research</div>
-        <div className="section-head split-head">
-          <h2>Conviction over noise.</h2>
-          <p>Stop doom scrolling CT. Open one dashboard and know what the bulls know.</p>
-        </div>
-        <div className="terminal-feature-grid">
-          {cards.map(([title, body]) => (
-            <article className="terminal-feature-card" key={title}>
-              <strong>{title}</strong>
-              <p>{body}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ThesisTimeline() {
-  const items = [
-    ["SOL", "Current thesis", "Ecosystem strength, builder activity, and retail attention remain the center of the terminal."],
-    ["ANSEM", "Reward rail", "Creator fees route back into ANSEM accumulation and direct holder distributions."],
-    ["HYPE", "Market structure", "A tracked venue for perp volume, liquidity, and high-conviction rotations."],
-    ["WIF", "Community beta", "Community velocity and Solana liquidity remain watchlist inputs."]
-  ];
-
-  return (
-    <section className="section terminal-timeline-section">
-      <div className="container">
-        <div className="section-kicker">Thesis timeline</div>
-        <div className="section-head split-head">
-          <h2>Track the rotation.</h2>
-          <p>Chronological thesis notes, performance context, catalysts, and AI summaries.</p>
-        </div>
-        <div className="terminal-timeline">
-          {items.map(([asset, title, body]) => (
-            <article className="terminal-timeline-card" key={asset}>
-              <span>{asset}</span>
-              <strong>{title}</strong>
-              <p>{body}</p>
-            </article>
-          ))}
+        <div className="bullify-army-empty">
+          <strong>The Black Bull Army is assembling.</strong>
+          <p>Tag @Bullify_ and upload your Bullified profile picture to be added when verification is connected.</p>
         </div>
       </div>
     </section>

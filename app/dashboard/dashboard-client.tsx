@@ -63,9 +63,9 @@ const emptyStats: StatsResponse = {
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
-const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = "Bull Terminal";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLTERM";
+const EPOCH_MS = 10 * 60 * 1000;
+const PROJECT_NAME = "Bullify";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
@@ -254,9 +254,9 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/bull-terminal-logo.svg" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/bullify-logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
-              Bull Terminal
+              Bullify
               <small>ANSEM Airdrops</small>
             </span>
           </Link>

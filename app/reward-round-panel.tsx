@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-const EPOCH_MS = 5 * 60 * 1000;
+const EPOCH_MS = 10 * 60 * 1000;
 const DISTRIBUTION_WINDOW_MS = 60 * 1000;
 const FIRST_AIRDROP_AT_ENV = process.env.NEXT_PUBLIC_FIRST_AIRDROP_AT;
 const FIRST_AIRDROP_AT = FIRST_AIRDROP_AT_ENV

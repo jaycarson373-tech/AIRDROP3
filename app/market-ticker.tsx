@@ -34,7 +34,7 @@ type MarketTickerProps = {
 const REFRESH_MS = 30_000;
 const emptyMarket: MarketResponse = {
   ansem: { priceUsd: null, change24h: null, marketCapUsd: null, fdvUsd: null, url: null, symbol: "ANSEM" },
-  source: { priceUsd: null, change24h: null, marketCapUsd: null, fdvUsd: null, url: null, symbol: "BULLTERM" },
+  source: { priceUsd: null, change24h: null, marketCapUsd: null, fdvUsd: null, url: null, symbol: "BULLIFY" },
   updatedAt: new Date().toISOString()
 };
 const emptyStats: StatsResponse = {
@@ -187,7 +187,7 @@ export function MarketTicker({ logoSrc, projectName, contractAddress, buyUrl, xU
         </div>
         <div className="ticker-actions" aria-label="Project links">
           {contractAddress ? <CopyCaButton address={contractAddress} label={shortAddress(contractAddress)} /> : null}
-          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label="Open Bull Terminal on X">
+          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label="Open Bullify on X">
             X
           </a>
           <a className="ticker-action ticker-buy" href={buyUrl} target="_blank" rel="noreferrer">

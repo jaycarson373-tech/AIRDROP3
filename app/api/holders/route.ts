@@ -76,12 +76,12 @@ async function getSettledPayouts(config: { url: string; key: string }) {
 }
 
 function reasonLabel(reason: string | null | undefined) {
-  const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLTERM";
-  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
+  const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
+  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
   if (reason === "balance_decreased") return `Sold ${sourceSymbol}`;
   if (reason === "dropped_below_threshold") return `Dropped below ${eligibilityLabel}`;
   if (reason === "dropped_below_threshold_or_sold") return `Sold or dropped below ${eligibilityLabel}`;
-  return "Permanently ineligible";
+  return "Epoch ineligible";
 }
 
 export async function GET() {
@@ -93,8 +93,8 @@ export async function GET() {
       `${config.url}/rest/v1/holder_states?select=wallet,source_balance,eligible_since,permanently_ineligible,ineligible_reason,ineligible_at,last_seen_at&limit=10000`,
       config.key
     );
-    const activeStates = (holderStates ?? []).filter((row) => !row.permanently_ineligible);
-    const fallenStates = (holderStates ?? []).filter((row) => row.permanently_ineligible);
+    const activeStates = (holderStates ?? []).filter((row) => !row.permanently_ineligible && !row.ineligible_reason);
+    const fallenStates = (holderStates ?? []).filter((row) => row.permanently_ineligible || row.ineligible_reason);
     const payoutRows = await getSettledPayouts(config).catch((error) => {
       console.warn("optional payout totals query failed", error);
       return [] as PayoutRow[];

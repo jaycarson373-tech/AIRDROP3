@@ -127,7 +127,7 @@ export async function GET() {
     ansem: marketFromPair(pickPair(pairs, ansem), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM"),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLTERM"
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY"
     ),
     updatedAt: new Date().toISOString()
   };

@@ -45,10 +45,10 @@ const emptyStats: StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLTERM";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -136,7 +136,7 @@ export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
-  const latestDistribution = stats?.lastRewardAirdropped ?? stats?.recentRewards?.[0]?.rewardAmount ?? 0;
+  const latestDistributionTx = stats?.recentRewards?.find((reward) => reward.txSig)?.txSig ?? null;
 
   return (
     <div className="hero-countdown ansemfy-countdown ansemfication-stats" aria-live="polite">
@@ -145,16 +145,20 @@ export function HeroCountdown() {
         <strong>{stats ? formatTotalAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"}</strong>
       </div>
       <div className="ansemfication-stat">
-        <span>Eligible Holders</span>
+        <span>Eligible Bulls</span>
         <strong>{stats ? formatCount(stats.latestEligibleHolders) : "Loading"}</strong>
+      </div>
+      <div className="ansemfication-stat">
+        <span>Bullified Profiles</span>
+        <strong>Assembling</strong>
       </div>
       <div className="ansemfication-stat">
         <span>Next Epoch</span>
         <strong>{countdown}</strong>
       </div>
       <div className="ansemfication-stat">
-        <span>Latest Distribution</span>
-        <strong>{stats ? (latestDistribution > 0 ? formatAmount(latestDistribution, REWARD_SYMBOL, 4) : "Awaiting") : "Loading"}</strong>
+        <span>Latest Distribution TX</span>
+        <strong>{stats ? (latestDistributionTx ? compactAddress(latestDistributionTx) : "Awaiting") : "Loading"}</strong>
       </div>
     </div>
   );
@@ -166,19 +170,19 @@ export function RewardExplanation() {
       <div className="container">
         <div className="section-kicker">Rewards</div>
         <div className="section-head split-head">
-          <h2>100% creator fees buy ANSEM.</h2>
-          <p>Clean reward routing. Creator fees accumulate, buy {REWARD_SYMBOL}, and distribute directly to eligible {SOURCE_LABEL} holders.</p>
+          <h2>50/50 rewards for the Black Bull Army.</h2>
+          <p>Creator fees split between automatic {REWARD_SYMBOL} airdrops and the verified Bullified PFP bonus pool.</p>
         </div>
         <div className="ansemfy-split-cards terminal-reward-route" aria-label="Creator fee route">
           <article className="ansemfy-split-card primary">
-            <span>100%</span>
-            <strong>$ANSEM holder rewards</strong>
-            <p>Every usable creator-fee lamport after operational reserves is routed toward buying and airdropping {REWARD_SYMBOL}.</p>
+            <span>50%</span>
+            <strong>$ANSEM Holder Airdrops</strong>
+            <p>Half of usable creator fees buy and airdrop {REWARD_SYMBOL} to eligible {SOURCE_LABEL} holders every 10 minutes.</p>
           </article>
           <article className="ansemfy-split-card">
-            <span>Direct</span>
-            <strong>No side routes</strong>
-            <p>No community wallet split. No separate treasury strategy. Rewards stay focused on eligible holders.</p>
+            <span>50%</span>
+            <strong>Bullified PFP Bonus Pool</strong>
+            <p>Half is reserved for verified members of the Black Bull Army using their Bullified PFP.</p>
           </article>
         </div>
       </div>
@@ -188,10 +192,11 @@ export function RewardExplanation() {
 
 export function HowItWorks() {
   const steps = [
-    ["Creator fees accrue", "Fees are claimed by the worker every epoch."],
-    ["Buy ANSEM", "Usable creator fees route into the ANSEM accumulation path."],
-    ["Snapshot holders", `Eligible ${SOURCE_LABEL} holders are selected from live on-chain balances.`],
-    ["Airdrop automatically", `${REWARD_SYMBOL} is sent directly to selected wallets.`]
+    ["Tag @Bullify_", "Reply or mention the bot on X."],
+    ["Receive your Bullified PFP", "Black bull horns, darker energy, original identity preserved."],
+    ["Upload it on X", "Wear the Black Bull signal publicly."],
+    [`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`, "Stay eligible for the current epoch."],
+    [`Earn ${REWARD_SYMBOL}`, "Automatic holder airdrops run every 10 minutes."]
   ];
 
   return (
@@ -199,8 +204,8 @@ export function HowItWorks() {
       <div className="container">
         <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Claim. Buy. Snapshot. Distribute.</h2>
-          <p>The reward engine runs automatically every epoch with on-chain holder checks.</p>
+          <h2>Tag. Bullify. Hold. Earn.</h2>
+          <p>No upload box on the site. The initiation happens on X through @Bullify_.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
           {steps.map(([title, body], index) => (
@@ -213,8 +218,8 @@ export function HowItWorks() {
         </div>
         <div className="share-example ansemfy-principles">
           {[
-            ["Terminal", "One dashboard for the thesis stack."],
-            ["Auto", "Airdrops settle directly to eligible holders."],
+            ["Bulls only", `Selling during an epoch makes that wallet ineligible for that epoch.`],
+            ["Auto", "Holder airdrops settle directly to eligible wallets."],
             ["Proof", "Only settled payouts count in the public totals."]
           ].map(([title, body]) => (
             <article className="share-card" key={title}>
@@ -242,7 +247,7 @@ export function LiveAnsemAirdrops() {
         <div className="section-kicker">Live rewards</div>
         <div className="section-head split-head">
           <h2>ANSEM distribution proof.</h2>
-          <p>Creator fees buy ANSEM. Settled airdrops and transaction proof come straight from Supabase.</p>
+          <p>50% of creator fees buy ANSEM. Settled airdrops and transaction proof come straight from Supabase.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label={`Total ${REWARD_SYMBOL} Distributed`} value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
