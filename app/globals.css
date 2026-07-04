@@ -5408,3 +5408,94 @@ td a,
     grid-column: auto;
   }
 }
+
+/* Bullify final launch hero fix: prevent stats from covering the headline. */
+.bullify-hero .ansemfication-hero-inner {
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: start;
+  gap: clamp(28px, 4vw, 50px);
+}
+
+.bullify-hero .ansemfication-copy {
+  max-width: min(100%, 1060px) !important;
+}
+
+.bullify-hero h1,
+.ansemfy-page .bullify-hero h1 {
+  max-width: 100%;
+  font-size: clamp(3.2rem, 5.15vw, 6.65rem);
+}
+
+.bullify-hero .hero-subtitle,
+.bullify-hero .hero-lead,
+.bullify-hero .hero-reward-note {
+  max-width: 900px;
+}
+
+.bullify-hero .hero-countdown {
+  justify-self: stretch !important;
+  max-width: min(100%, 1120px) !important;
+  width: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: clamp(8px, 1.8vw, 18px);
+}
+
+.bullify-hero .ansemfication-stat.primary {
+  grid-column: span 2;
+}
+
+.bullify-signal-card {
+  grid-template-columns: clamp(96px, 8vw, 128px) 1fr !important;
+  width: min(100%, 640px) !important;
+  min-height: clamp(124px, 10vw, 154px);
+  padding: clamp(14px, 2vw, 20px) !important;
+}
+
+.bullify-signal-card .bullify-hero-logo {
+  width: clamp(96px, 8vw, 128px) !important;
+  height: clamp(96px, 8vw, 128px);
+  border-radius: 22px;
+  object-fit: cover;
+}
+
+.bullify-signal-card span,
+.bullify-signal-card strong {
+  color: #32ff48 !important;
+}
+
+.bullify-signal-card span {
+  font-size: clamp(0.86rem, 1vw, 1.02rem);
+  opacity: 0.92;
+  text-shadow: 0 0 18px rgba(50, 255, 72, 0.32);
+}
+
+.bullify-signal-card strong {
+  font-size: clamp(1.25rem, 2vw, 2.1rem) !important;
+  line-height: 1.05;
+}
+
+@media (max-width: 900px) {
+  .bullify-hero .hero-countdown {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .bullify-hero .hero-countdown {
+    grid-template-columns: 1fr;
+  }
+
+  .bullify-hero .ansemfication-stat.primary {
+    grid-column: auto;
+  }
+
+  .bullify-signal-card {
+    grid-template-columns: 82px 1fr !important;
+    min-height: 108px;
+  }
+
+  .bullify-signal-card .bullify-hero-logo {
+    width: 82px !important;
+    height: 82px;
+  }
+}
