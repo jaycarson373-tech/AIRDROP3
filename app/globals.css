@@ -5129,3 +5129,114 @@ td a,
     grid-column: auto;
   }
 }
+
+/* Bullify background graphics pass */
+.ansemfy-page::before {
+  background:
+    url("/brand/bullify-bg-global.jpg") center / cover no-repeat;
+  opacity: 0.65;
+  filter: saturate(1.08) contrast(1.08);
+  transform: scale(1.06);
+  animation: bullifyBackgroundDrift 42s ease-in-out infinite alternate;
+}
+
+.ansemfy-page::after {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(50, 255, 72, 0.18), transparent 32%),
+    linear-gradient(90deg, rgba(1, 3, 2, 0.78), rgba(1, 3, 2, 0.36) 48%, rgba(1, 3, 2, 0.82)),
+    linear-gradient(180deg, rgba(1, 3, 2, 0.32), rgba(1, 3, 2, 0.88));
+  opacity: 0.82;
+}
+
+.bullify-hero .ansemfy-aurora {
+  background:
+    linear-gradient(90deg, rgba(1, 3, 2, 0.68), rgba(1, 3, 2, 0.18) 50%, rgba(1, 3, 2, 0.62)),
+    linear-gradient(180deg, rgba(1, 3, 2, 0.2), rgba(1, 3, 2, 0.88) 95%),
+    url("/brand/bullify-bg-hero.jpg") center / cover no-repeat;
+  opacity: 0.65;
+  filter: saturate(1.14) contrast(1.08);
+  transform: scale(1.03);
+}
+
+.bullify-hero .hero-shade {
+  background:
+    radial-gradient(circle at 58% 42%, rgba(50, 255, 72, 0.08), transparent 36%),
+    linear-gradient(90deg, rgba(1, 3, 2, 0.88), rgba(1, 10, 4, 0.58) 52%, rgba(1, 3, 2, 0.86)),
+    linear-gradient(180deg, rgba(1, 3, 2, 0.18), rgba(1, 3, 2, 0.9) 94%);
+}
+
+.ansemfy-page .section::before {
+  background-image:
+    linear-gradient(180deg, rgba(1, 3, 2, 0.52), rgba(1, 3, 2, 0.88)),
+    var(--section-art, url("/brand/bullify-bg-section-1.jpg")),
+    linear-gradient(rgba(50, 255, 72, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(50, 255, 72, 0.025) 1px, transparent 1px);
+  opacity: 0.65;
+  filter: saturate(1.08) contrast(1.08);
+}
+
+.ansemfy-how-section {
+  --section-art: url("/brand/bullify-bg-section-1.jpg");
+  --section-art-position: center;
+}
+
+.bullify-army-section {
+  --section-art: url("/brand/bullify-bg-section-2.jpg");
+  --section-art-position: center;
+}
+
+.bullify-fallen-section,
+.ansemfy-faq {
+  --section-art: url("/brand/bullify-bg-section-3.jpg");
+  --section-art-position: center;
+}
+
+.ansemfy-airdrop-section {
+  --section-art: url("/brand/bullify-bg-section-4.jpg");
+  --section-art-position: center;
+}
+
+.recent-airdrops-section,
+.ansemfy-closing-section {
+  --section-art: url("/brand/bullify-bg-global.jpg");
+  --section-art-position: center;
+}
+
+.dashboard {
+  position: relative;
+  isolation: isolate;
+}
+
+.dashboard::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  content: "";
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(1, 3, 2, 0.5), rgba(1, 3, 2, 0.9)),
+    url("/brand/bullify-bg-section-2.jpg") center / cover no-repeat;
+  opacity: 0.65;
+  filter: saturate(1.08) contrast(1.08);
+}
+
+.dashboard > .container,
+.dashboard > * {
+  position: relative;
+  z-index: 1;
+}
+
+.fallen-bulls-page::before {
+  background:
+    linear-gradient(180deg, rgba(1, 3, 2, 0.5), rgba(1, 3, 2, 0.9)),
+    url("/brand/bullify-bg-section-3.jpg") center / cover no-repeat;
+}
+
+@keyframes bullifyBackgroundDrift {
+  from {
+    transform: scale(1.06) translate3d(-1%, -1%, 0);
+  }
+  to {
+    transform: scale(1.1) translate3d(1.2%, 1%, 0);
+  }
+}
