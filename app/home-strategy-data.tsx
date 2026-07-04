@@ -290,11 +290,11 @@ export function HallOfBulls() {
         <div className="hall-bulls-stats" aria-label="Hall of Bulls SOL totals">
           <article>
             <span>Total SOL Airdropped</span>
-            <strong>{stats ? formatSol(stats.totalPfpRewardSol) : "Loading"}</strong>
+            <strong>{stats ? formatSol(stats.totalPfpRewardSol) : "0 SOL"}</strong>
           </article>
           <article>
             <span>PFP Reward Wallet Balance</span>
-            <strong>{stats ? formatSol(stats.pfpRewardWalletBalanceSol) : "Loading"}</strong>
+            <strong>{stats ? formatSol(stats.pfpRewardWalletBalanceSol) : "0 SOL"}</strong>
           </article>
         </div>
 
@@ -390,9 +390,9 @@ export function LiveAnsemAirdrops() {
           <p>Settled distributions, latest transfers and transaction proof come straight from Supabase.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label={`Total ${REWARD_SYMBOL} Distributed`} value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
+          <MetricCard label={`Total ${REWARD_SYMBOL} Distributed`} value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : `0 ${REWARD_SYMBOL}`} strong />
           <MetricCard label="Eligible Holders" value={hasSettledDistribution && stats ? formatCount(stats.latestEligibleHolders) : "0"} />
-          <MetricCard label="Next Epoch" value={countdown} />
+          <MetricCard label="Next Epoch" value={countdown === "Loading" ? "0" : countdown} />
           <MetricCard label="Current Epoch" value={hasSettledDistribution && stats ? formatCount(stats.currentEpoch) : "0"} />
           <MetricCard label={`${REWARD_SYMBOL} Bought Last Epoch`} value={hasSettledDistribution && latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : `0 ${REWARD_SYMBOL}`} />
           <MetricCard label="Latest TX" value={hasSettledDistribution && latestTx ? compactAddress(latestTx) : "0"} />
