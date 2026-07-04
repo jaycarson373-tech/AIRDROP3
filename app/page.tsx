@@ -91,6 +91,7 @@ export default function Page() {
         </section>
         <HowItWorks />
         <RewardExplanation />
+        <FlipPending />
         <HallOfBulls />
         <FallenBulls />
         <LiveAnsemAirdrops />
@@ -141,6 +142,44 @@ export default function Page() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function FlipPending() {
+  return (
+    <section className="section bullify-flip-section" id="flip">
+      <div className="container bullify-flip-layout">
+        <div className="bullify-flip-copy">
+          <div className="section-kicker">Flip Pending</div>
+          <h2>FLIP PENDING</h2>
+          <p>
+            Pump.fun proved the market wants airdrops. ANSEM proved the trenches still follow conviction. Bullify combines both.
+          </p>
+          <strong>The flip is pending. Bulls only.</strong>
+        </div>
+        <div className="bullify-flip-card" aria-label="Flip Pending narrative metrics">
+          <div className="bullify-flip-chart" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="bullify-flip-metrics">
+            <article>
+              <span>PUMP.FUN Market Cap</span>
+              <strong>$580M</strong>
+            </article>
+            <article>
+              <span>ANSEM Market Cap</span>
+              <strong>$350M</strong>
+            </article>
+            <article className="status">
+              <span>Status</span>
+              <strong>Flip Pending</strong>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
