@@ -9,6 +9,7 @@ Bullify turns profile pictures into Black Bull avatars and rewards the strongest
 
 - Snapshot eligible `$BULLIFY` holders.
 - Claim creator fees.
+- Run epochs every `10` minutes.
 - Split usable creator fees after operational reserves:
   - `50%` buys `$ANSEM` for automatic holder airdrops.
   - `50%` is reserved for verified Bullified PFP holders.
@@ -17,8 +18,8 @@ Bullify turns profile pictures into Black Bull avatars and rewards the strongest
 Eligibility:
 
 - Hold `500K+` `$BULLIFY`.
-- Selling any amount during an epoch makes that wallet ineligible for that epoch.
-- No permanent-ban copy or behavior is required for this version.
+- No selling ever.
+- Once a connected wallet sells any `$BULLIFY`, it loses eligibility for both 10-minute `$ANSEM` drops and Bullified PFP bonus drops.
 
 ## Vercel Environment
 
@@ -32,7 +33,7 @@ NEXT_PUBLIC_SOURCE_TOKEN_MINT=<BULLIFY_TOKEN_MINT>
 NEXT_PUBLIC_REWARD_TOKEN_MINT=9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump
 NEXT_PUBLIC_ANSEM_TOKEN_MINT=9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump
 NEXT_PUBLIC_ELIGIBILITY_LABEL=500K
-NEXT_PUBLIC_X_URL=https://x.com/Bullify_
+NEXT_PUBLIC_X_URL=https://x.com/Bullification_
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
 SUPABASE_URL=<SUPABASE_URL>
@@ -69,11 +70,11 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` protect SOL needed for swap fees, payout fees, and token-account rent.
+`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` protect SOL needed for fee claims, swaps to `$ANSEM`, payout fees, and token-account rent.
 
 ## Bullify Bot Prep
 
-Railway bot responsibilities for `@Bullify_`:
+Railway bot responsibilities for `@Bullification_`:
 
 - Monitor mentions/replies.
 - Fetch the user's profile picture.

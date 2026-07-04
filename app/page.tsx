@@ -1,34 +1,13 @@
 import { HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
 import { MarketTicker } from "./market-ticker";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Bullify";
-const DEFAULT_CONTRACT_ADDRESS = "8Z12Faqh6vhekfFLiRHsaVGTMVDjumC5W1Qa5E3Tpump";
-const DEFAULT_BUY_URL = `https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=${DEFAULT_CONTRACT_ADDRESS}`;
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CONTRACT_ADDRESS;
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? DEFAULT_BUY_URL;
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/Bullify_";
+const PROJECT_NAME = "Bullify";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/Bullification_";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
 const LOGO_SRC = "/brand/bullify-logo.png";
-
-function SideNav() {
-  return (
-    <aside className="nav ansemfy-nav" aria-label="Section navigation">
-      <div className="nav-inner">
-        <nav className="nav-links" aria-label="Main navigation">
-          <a href="#initiation">Initiation</a>
-          <a href="#how">How it Works</a>
-          <a href="#rewards">Rewards</a>
-          <a href="#army">Army</a>
-          <a href="#airdrops">Airdrops</a>
-          <a href="#faq">FAQ</a>
-        </nav>
-      </div>
-    </aside>
-  );
-}
 
 export default function Page() {
   return (
@@ -36,11 +15,8 @@ export default function Page() {
       <MarketTicker
         logoSrc={LOGO_SRC}
         projectName={PROJECT_NAME}
-        contractAddress={CONTRACT_ADDRESS}
-        buyUrl={BUY_URL}
         xUrl={X_URL}
       />
-      <SideNav />
 
       <main>
         <section className="hero ansemfy-hero ansemfication-hero bullify-hero" id="initiation">
@@ -58,15 +34,21 @@ export default function Page() {
                   <strong>Bullification live</strong>
                 </div>
               </div>
+              <div className="bullify-history-punch" aria-label="Bullify thesis">
+                <span>History was made.</span>
+                <span>Ansem airdropped 10M+.</span>
+                <span>Black Bull ran to 350M.</span>
+                <span>Bullification is the next chapter.</span>
+              </div>
               <div className="section-kicker">Bulls only protocol</div>
               <h1>BULLIFICATION</h1>
               <p className="hero-subtitle">The initiation into the Black Bull Army.</p>
               <p className="hero-lead">
-                Tag @Bullify_ on X. Receive your Bullified PFP. Upload it. Join the army. Earn {`$${REWARD_SYMBOL}`}.
+                Tag @Bullification_ on X. Receive your Bullified PFP. Upload it. Join the army. Earn {`$${REWARD_SYMBOL}`}.
               </p>
               <p className="hero-reward-note">
-                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. Half of creator fees buy and airdrop {`$${REWARD_SYMBOL}`} every 10 minutes.
-                Half is reserved for verified Black Bull Army members using their Bullified PFP.
+                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. No selling ever. Once a connected wallet sells, it loses eligibility for both
+                10-minute {`$${REWARD_SYMBOL}`} drops and Bullified PFP bonus drops.
               </p>
               <div className="bullify-brief-grid" aria-label="Bullify reward structure">
                 <article>
@@ -84,7 +66,7 @@ export default function Page() {
               </div>
               <div className="ansemfication-steps" aria-label="Bullification flow">
                 {[
-                  ["01", "Tag @Bullify_"],
+                  ["01", "Tag @Bullification_"],
                   ["02", "Receive Bullified PFP"],
                   ["03", "Join the army"]
                 ].map(([number, label]) => (
@@ -110,6 +92,7 @@ export default function Page() {
         <HowItWorks />
         <RewardExplanation />
         <BlackBullArmy />
+        <FallenBulls />
         <LiveAnsemAirdrops />
         <RecentAirdrops />
 
@@ -118,12 +101,12 @@ export default function Page() {
             <div className="section-kicker">FAQ</div>
             <h2>Bullification mechanics.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body={`Hold at least ${ELIGIBILITY_LABEL} ${SOURCE_LABEL}. The live worker uses the Railway eligibility env as the source of truth.`} />
+              <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}. No selling ever.`} />
               <FaqItem title="What gets airdropped?" body={`50% of creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders every 10 minutes.`} />
               <FaqItem title="What is the Bullified bonus pool?" body="The other 50% is reserved for verified members using their Bullified PFP. Manual fulfillment is supported while the X bot is being connected." />
               <FaqItem title="Do I need to claim?" body="No. Holder airdrops are automatic after each completed epoch." />
-              <FaqItem title="What happens if I sell?" body={`A wallet that sells any amount of ${SOURCE_LABEL} during the epoch is ineligible for that epoch. Bulls only.`} />
-              <FaqItem title="How do I become Bullified?" body="Tag or reply to @Bullify_ on X. The bot flow is prepared for automated replies, and manual fulfillment can run until the bot is live." />
+              <FaqItem title="What happens if I sell?" body={`Once a connected wallet sells any ${SOURCE_LABEL}, it loses eligibility for both 10-minute ${REWARD_SYMBOL} drops and Bullified PFP bonus drops.`} />
+              <FaqItem title="How do I become Bullified?" body="Tag or reply to @Bullification_ on X. The bot flow is prepared for automated replies, and manual fulfillment can run until the bot is live." />
             </div>
           </div>
         </section>
@@ -148,20 +131,13 @@ export default function Page() {
           <p>Bullification for the Black Bull Army. 50/50 ANSEM holder rewards and Bullified PFP bonus pool.</p>
           <div className="footer-links">
             <a href="#initiation">Initiation</a>
-            <a href="#how">How it Works</a>
             <a href="#rewards">Rewards</a>
             <a href="#army">Army</a>
-            <a href="#airdrops">Airdrops</a>
+            <a href="#airdrops">Proof</a>
             <a href={X_URL} target="_blank" rel="noreferrer">
               X
             </a>
           </div>
-          {CONTRACT_ADDRESS ? (
-            <div className="footer-ca">
-              <span>CA:</span>
-              <span>{CONTRACT_ADDRESS}</span>
-            </div>
-          ) : null}
         </div>
       </footer>
     </div>
@@ -172,21 +148,43 @@ function BlackBullArmy() {
   return (
     <section className="section bullify-army-section" id="army">
       <div className="container">
-        <div className="section-kicker">Black Bull Army</div>
+        <div className="section-kicker">Black Bull Army Leaderboard</div>
         <div className="section-head split-head">
-          <h2>The army grows every epoch.</h2>
-          <p>As holders become Bullified, their profile pictures will be added here. No fake avatars.</p>
+          <h2>Verified bulls only.</h2>
+          <p>PFPs and X handles appear here only after verification. No fake avatars, no fake holders.</p>
         </div>
-        <div className="bullify-army-grid" aria-label="Bullified profile placeholders">
-          {Array.from({ length: 24 }, (_, index) => (
-            <article className="bullify-army-card" key={index}>
-              <span>🐂</span>
-            </article>
-          ))}
+        <div className="bullify-leaderboard" aria-label="Black Bull Army Leaderboard">
+          <div className="bullify-leaderboard-head">
+            <span>PFP</span>
+            <span>X Handle</span>
+            <span>Total ANSEM Airdropped</span>
+            <span>Days Holding</span>
+            <span>Days Since PFP Changed</span>
+            <span>Status</span>
+          </div>
+          <div className="bullify-leaderboard-empty">
+            <span className="bullify-empty-pfp" aria-hidden="true" />
+            <strong>Awaiting verified Black Bull Army members.</strong>
+            <p>Verified Bullified PFP holders will appear here after live approval is connected.</p>
+          </div>
         </div>
-        <div className="bullify-army-empty">
-          <strong>The Black Bull Army is assembling.</strong>
-          <p>Tag @Bullify_ and upload your Bullified profile picture to be added when verification is connected.</p>
+      </div>
+    </section>
+  );
+}
+
+function FallenBulls() {
+  return (
+    <section className="section bullify-fallen-section" id="fallen">
+      <div className="container">
+        <div className="section-kicker">Fallen Bulls</div>
+        <div className="section-head split-head">
+          <h2>Once a bull sells, they fall.</h2>
+          <p>No 10-minute drops. No Bullified PFP bonus pool.</p>
+        </div>
+        <div className="bullify-fallen-empty">
+          <strong>No fallen bulls yet.</strong>
+          <p>Wallets that sell after connecting will appear here when Supabase records the fall.</p>
         </div>
       </div>
     </section>

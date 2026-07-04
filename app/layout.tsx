@@ -6,10 +6,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://bullify.fun"),
   title: "Bullify",
-  description: "Bullification for the Black Bull Army. Tag @Bullify_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
+  description: "Bullification for the Black Bull Army. Tag @Bullification_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
   openGraph: {
     title: "Bullify",
-    description: "Bullification for the Black Bull Army. Tag @Bullify_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
+    description: "Bullification for the Black Bull Army. Tag @Bullification_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
     url: "https://bullify.fun",
     siteName: "Bullify",
     images: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Bullify",
-    description: "Bullification for the Black Bull Army. Tag @Bullify_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
+    description: "Bullification for the Black Bull Army. Tag @Bullification_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
     images: ["/brand/bullify-logo.png"]
   },
   icons: {

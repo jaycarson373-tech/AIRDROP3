@@ -81,7 +81,7 @@ function reasonLabel(reason: string | null | undefined) {
   if (reason === "balance_decreased") return `Sold ${sourceSymbol}`;
   if (reason === "dropped_below_threshold") return `Dropped below ${eligibilityLabel}`;
   if (reason === "dropped_below_threshold_or_sold") return `Sold or dropped below ${eligibilityLabel}`;
-  return "Epoch ineligible";
+  return "Fallen bull";
 }
 
 export async function GET() {

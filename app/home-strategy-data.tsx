@@ -33,6 +33,21 @@ type StatsResponse = {
   recentRewards: Reward[];
 };
 
+type TokenMarket = {
+  priceUsd: number | null;
+  change24h: number | null;
+  marketCapUsd: number | null;
+  fdvUsd: number | null;
+  url: string | null;
+  symbol: string;
+};
+
+type MarketResponse = {
+  ansem: TokenMarket;
+  source: TokenMarket;
+  updatedAt: string;
+};
+
 const emptyStats: StatsResponse = {
   currentEpoch: 0,
   totalEpochs: 0,
@@ -49,6 +64,26 @@ const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
+
+const emptyMarket: MarketResponse = {
+  ansem: {
+    priceUsd: null,
+    change24h: null,
+    marketCapUsd: null,
+    fdvUsd: null,
+    url: null,
+    symbol: "ANSEM"
+  },
+  source: {
+    priceUsd: null,
+    change24h: null,
+    marketCapUsd: null,
+    fdvUsd: null,
+    url: null,
+    symbol: SOURCE_SYMBOL
+  },
+  updatedAt: new Date(0).toISOString()
+};
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -86,6 +121,23 @@ function formatTotalAmount(value: number, symbol: string, maximumFractionDigits 
   return `${value.toLocaleString(undefined, { maximumFractionDigits })} ${symbol}`;
 }
 
+function formatPrice(value: number | null) {
+  if (!Number.isFinite(value) || value === null || value <= 0) return "Loading";
+  const maximumFractionDigits = value < 0.01 ? 6 : value < 1 ? 4 : 2;
+  return `$${value.toLocaleString(undefined, {
+    maximumFractionDigits,
+    minimumFractionDigits: value >= 1 ? 2 : 0
+  })}`;
+}
+
+function formatMoney(value: number | null) {
+  if (!Number.isFinite(value) || value === null || value <= 0) return "Loading";
+  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+}
+
 function formatDate(value: string) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? "Awaiting" : date.toLocaleString();
@@ -106,14 +158,21 @@ function statusLabel(status: string) {
 
 function useProtocolData() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
+  const [market, setMarket] = useState<MarketResponse | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     let active = true;
 
     const load = async () => {
-      const nextStats = await getJson<StatsResponse>("/api/stats", emptyStats);
-      if (active) setStats(nextStats);
+      const [nextStats, nextMarket] = await Promise.all([
+        getJson<StatsResponse>("/api/stats", emptyStats),
+        getJson<MarketResponse>("/api/market", emptyMarket)
+      ]);
+      if (active) {
+        setStats(nextStats);
+        setMarket(nextMarket);
+      }
     };
 
     load();
@@ -129,24 +188,38 @@ function useProtocolData() {
     return () => window.clearInterval(timer);
   }, []);
 
-  return { stats, now };
+  return { stats, market, now };
 }
 
 export function HeroCountdown() {
-  const { stats, now } = useProtocolData();
+  const { stats, market, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const latestDistributionTx = stats?.recentRewards?.find((reward) => reward.txSig)?.txSig ?? null;
+  const eligibleBulls = stats?.roundHistory?.length ? stats.latestEligibleHolders : 0;
+  const sourceMarketCap = market?.source.marketCapUsd ?? market?.source.fdvUsd ?? null;
 
   return (
     <div className="hero-countdown ansemfy-countdown ansemfication-stats" aria-live="polite">
+      <div className="ansemfication-stat">
+        <span>{REWARD_SYMBOL} Price</span>
+        <strong>{market ? formatPrice(market.ansem.priceUsd) : "Loading"}</strong>
+      </div>
+      <div className="ansemfication-stat">
+        <span>{SOURCE_SYMBOL} Price</span>
+        <strong>{market ? formatPrice(market.source.priceUsd) : "Loading"}</strong>
+      </div>
+      <div className="ansemfication-stat">
+        <span>{SOURCE_SYMBOL} Market Cap</span>
+        <strong>{market ? formatMoney(sourceMarketCap) : "Loading"}</strong>
+      </div>
       <div className="ansemfication-stat primary">
         <span>Total {REWARD_SYMBOL} Airdropped</span>
         <strong>{stats ? formatTotalAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"}</strong>
       </div>
       <div className="ansemfication-stat">
         <span>Eligible Bulls</span>
-        <strong>{stats ? formatCount(stats.latestEligibleHolders) : "Loading"}</strong>
+        <strong>{stats ? formatCount(eligibleBulls) : "Loading"}</strong>
       </div>
       <div className="ansemfication-stat">
         <span>Bullified Profiles</span>
@@ -171,18 +244,21 @@ export function RewardExplanation() {
         <div className="section-kicker">Rewards</div>
         <div className="section-head split-head">
           <h2>50/50 rewards for the Black Bull Army.</h2>
-          <p>Creator fees split between automatic {REWARD_SYMBOL} airdrops and the verified Bullified PFP bonus pool.</p>
+          <p>
+            50% of creator fees buy {REWARD_SYMBOL} and airdrop to eligible {ELIGIBILITY_LABEL}+ holders every 10 minutes.
+            50% is reserved for verified Bullified PFP holders.
+          </p>
         </div>
         <div className="ansemfy-split-cards terminal-reward-route" aria-label="Creator fee route">
           <article className="ansemfy-split-card primary">
             <span>50%</span>
             <strong>$ANSEM Holder Airdrops</strong>
-            <p>Half of usable creator fees buy and airdrop {REWARD_SYMBOL} to eligible {SOURCE_LABEL} holders every 10 minutes.</p>
+            <p>50% of creator fees buy {REWARD_SYMBOL} and airdrop to eligible {ELIGIBILITY_LABEL}+ {SOURCE_LABEL} holders every 10 minutes.</p>
           </article>
           <article className="ansemfy-split-card">
             <span>50%</span>
             <strong>Bullified PFP Bonus Pool</strong>
-            <p>Half is reserved for verified members of the Black Bull Army using their Bullified PFP.</p>
+            <p>50% of creator fees are reserved for verified members of the Black Bull Army using their Bullified PFP.</p>
           </article>
         </div>
       </div>
@@ -192,10 +268,10 @@ export function RewardExplanation() {
 
 export function HowItWorks() {
   const steps = [
-    ["Tag @Bullify_", "Reply or mention the bot on X."],
+    ["Tag @Bullification_", "Reply or mention the bot on X."],
     ["Receive your Bullified PFP", "Black bull horns, darker energy, original identity preserved."],
     ["Upload it on X", "Wear the Black Bull signal publicly."],
-    [`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`, "Stay eligible for the current epoch."],
+    [`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`, "No selling ever."],
     [`Earn ${REWARD_SYMBOL}`, "Automatic holder airdrops run every 10 minutes."]
   ];
 
@@ -205,7 +281,7 @@ export function HowItWorks() {
         <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
           <h2>Tag. Bullify. Hold. Earn.</h2>
-          <p>No upload box on the site. The initiation happens on X through @Bullify_.</p>
+          <p>No upload box on the site. The initiation happens on X through @Bullification_.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
           {steps.map(([title, body], index) => (
@@ -218,7 +294,7 @@ export function HowItWorks() {
         </div>
         <div className="share-example ansemfy-principles">
           {[
-            ["Bulls only", `Selling during an epoch makes that wallet ineligible for that epoch.`],
+            ["Bulls only", `Once a connected wallet sells, it loses eligibility for both holder drops and PFP bonus drops.`],
             ["Auto", "Holder airdrops settle directly to eligible wallets."],
             ["Proof", "Only settled payouts count in the public totals."]
           ].map(([title, body]) => (
