@@ -2,7 +2,7 @@ import { HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExp
 import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = "Bullify";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/Bullification_";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/i/communities/2028470502415835347";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";

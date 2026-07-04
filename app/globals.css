@@ -4943,3 +4943,72 @@ td a,
     grid-column: auto;
   }
 }
+
+/* Bullify launch preview/header final override */
+.ansemfy-page.has-market-ticker {
+  --market-ticker-height: 76px;
+}
+
+.market-ticker-minimal .market-ticker-inner {
+  min-height: var(--market-ticker-height);
+}
+
+.market-ticker-minimal .ticker-brand {
+  gap: 14px;
+}
+
+.market-ticker-minimal .ticker-brand img {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  border-color: rgba(50, 255, 72, 0.42);
+  box-shadow:
+    0 0 0 1px rgba(50, 255, 72, 0.2),
+    0 0 40px rgba(50, 255, 72, 0.32);
+}
+
+.market-ticker-minimal .ticker-brand strong,
+.ansemfy-page .loader-text {
+  color: #32ff48;
+  font-family: Orbitron, Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(1.05rem, 1.45vw, 1.34rem);
+  font-weight: 950;
+  letter-spacing: 0.18em;
+  text-shadow: 0 0 22px rgba(50, 255, 72, 0.44);
+}
+
+.ansemfy-page .loader-mascot {
+  width: 172px;
+  height: 172px;
+  border-radius: 34px;
+  border-color: rgba(50, 255, 72, 0.38);
+  background: #020402;
+  box-shadow:
+    0 0 0 1px rgba(50, 255, 72, 0.18),
+    0 0 58px rgba(50, 255, 72, 0.28);
+}
+
+.ansemfy-page .loader-mascot img {
+  border-radius: 32px;
+}
+
+@media (max-width: 720px) {
+  .ansemfy-page.has-market-ticker {
+    --market-ticker-height: 64px;
+  }
+
+  .market-ticker-minimal .ticker-brand img {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .market-ticker-minimal .ticker-brand strong {
+    display: none;
+  }
+
+  .ansemfy-page .loader-mascot {
+    width: 136px;
+    height: 136px;
+  }
+}
