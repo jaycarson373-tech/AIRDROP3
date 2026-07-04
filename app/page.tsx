@@ -51,8 +51,14 @@ export default function Page() {
 
           <div className="container ansemfication-hero-inner">
             <div className="ansemfication-copy">
-              <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Bullify logo" />
-              <div className="section-kicker">Bulls only</div>
+              <div className="bullify-signal-card">
+                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Bullify logo" />
+                <div>
+                  <span>Black Bull Army</span>
+                  <strong>Bullification live</strong>
+                </div>
+              </div>
+              <div className="section-kicker">Bulls only protocol</div>
               <h1>BULLIFICATION</h1>
               <p className="hero-subtitle">The initiation into the Black Bull Army.</p>
               <p className="hero-lead">
@@ -62,6 +68,20 @@ export default function Page() {
                 Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. Half of creator fees buy and airdrop {`$${REWARD_SYMBOL}`} every 10 minutes.
                 Half is reserved for verified Black Bull Army members using their Bullified PFP.
               </p>
+              <div className="bullify-brief-grid" aria-label="Bullify reward structure">
+                <article>
+                  <span>Holder floor</span>
+                  <strong>{ELIGIBILITY_LABEL}+ {SOURCE_LABEL}</strong>
+                </article>
+                <article>
+                  <span>Epoch</span>
+                  <strong>10 minutes</strong>
+                </article>
+                <article>
+                  <span>Split</span>
+                  <strong>50 / 50</strong>
+                </article>
+              </div>
               <div className="ansemfication-steps" aria-label="Bullification flow">
                 {[
                   ["01", "Tag @Bullify_"],
