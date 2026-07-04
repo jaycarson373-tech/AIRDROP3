@@ -326,7 +326,8 @@ export function HowItWorks() {
   const steps = [
     ["Tag @Bullification_", "Reply or mention the bot on X."],
     ["Receive your Bullified PFP", "Black bull horns, darker energy, original identity preserved."],
-    ["Upload it on X", "Wear the Black Bull signal publicly."],
+    ["Change it to your PFP", "Wear the Black Bull signal publicly."],
+    ["Bull post", "Post on your timeline and in the X community."],
     [`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`, "No selling ever."],
     [`Earn ${REWARD_SYMBOL}`, "Automatic holder airdrops run every 10 minutes."]
   ];

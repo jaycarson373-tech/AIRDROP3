@@ -68,7 +68,7 @@ export default function Page() {
                 {[
                   ["01", "Tag @Bullification_"],
                   ["02", "Receive Bullified PFP"],
-                  ["03", "Join the army"]
+                  ["03", "Change PFP + bull post"]
                 ].map(([number, label]) => (
                   <article className="ansemfication-step" key={label}>
                     <span>{number}</span>
@@ -101,13 +101,14 @@ export default function Page() {
           <div className="container">
             <div className="section-kicker">FAQ</div>
             <h2>Bullification mechanics.</h2>
-            <div className="faq-grid">
+            <div className="faq-grid bullify-faq-grid">
               <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}. No selling ever.`} />
               <FaqItem title="What gets airdropped?" body={`50% of creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders every 10 minutes.`} />
               <FaqItem title="What is the Bullified bonus pool?" body="The other 50% is reserved for verified members using their Bullified PFP. Manual fulfillment is supported while the X bot is being connected." />
               <FaqItem title="Do I need to claim?" body="No. Holder airdrops are automatic after each completed epoch." />
               <FaqItem title="What happens if I sell?" body={`Once a connected wallet sells any ${SOURCE_LABEL}, it loses eligibility for both 10-minute ${REWARD_SYMBOL} drops and Bullified PFP bonus drops.`} />
-              <FaqItem title="How do I become Bullified?" body="Tag or reply to @Bullification_ on X. The bot flow is prepared for automated replies, and manual fulfillment can run until the bot is live." />
+              <FaqItem title="How do I become Bullified?" body="Tag or reply to @Bullification_ on X, change it to your PFP, then bull post on your timeline and in the X community." />
+              <FaqItem title="How are bonus winners paid?" body="We DM winners. Winners DM their wallet to receive the reward and be added to the Hall of Bulls leaderboard." />
             </div>
           </div>
         </section>

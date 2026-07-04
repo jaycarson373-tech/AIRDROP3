@@ -5499,3 +5499,34 @@ td a,
     height: 82px;
   }
 }
+
+/* Bullify FAQ launch layout: 3 cards on the first row, 4 on the second. */
+.ansemfy-faq .bullify-faq-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ansemfy-faq .bullify-faq-grid .faq-item {
+  grid-column: span 4;
+}
+
+.ansemfy-faq .bullify-faq-grid .faq-item:nth-child(n + 4) {
+  grid-column: span 3;
+}
+
+@media (max-width: 1100px) {
+  .ansemfy-faq .bullify-faq-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ansemfy-faq .bullify-faq-grid .faq-item,
+  .ansemfy-faq .bullify-faq-grid .faq-item:nth-child(n + 4) {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .ansemfy-faq .bullify-faq-grid {
+    grid-template-columns: 1fr;
+  }
+}
