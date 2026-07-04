@@ -1,12 +1,20 @@
 "use client";
 
+import { CopyCaButton } from "./copy-ca-button";
+
 type MarketTickerProps = {
   logoSrc: string;
   projectName: string;
   xUrl: string;
+  contractAddress?: string;
 };
 
-export function MarketTicker({ logoSrc, projectName, xUrl }: MarketTickerProps) {
+function compactAddress(address: string) {
+  if (address.length <= 12) return address;
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+}
+
+export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: MarketTickerProps) {
   const navItems = [
     ["Initiation", "#initiation"],
     ["Rewards", "#rewards"],
@@ -30,6 +38,7 @@ export function MarketTicker({ logoSrc, projectName, xUrl }: MarketTickerProps) 
           ))}
         </nav>
         <div className="ticker-actions" aria-label="Project links">
+          {contractAddress ? <CopyCaButton address={contractAddress} label={compactAddress(contractAddress)} /> : null}
           <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label="Open Bullify on X">
             X
           </a>

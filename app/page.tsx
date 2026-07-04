@@ -1,13 +1,20 @@
 import { HallOfBulls, HeroCountdown, HowItWorks, LatestBullifiedProfiles, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
+import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = "Bullify";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? "EtvM4ugrmpzpgYjbg2oxqNYKWgNDgh5c9TwbRz5mpump";
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/i/communities/2028470502415835347";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
 const LOGO_SRC = "/brand/bullify-logo.png";
+
+function compactAddress(address: string) {
+  if (address.length <= 12) return address;
+  return `${address.slice(0, 4)}...${address.slice(-4)}`;
+}
 
 export default function Page() {
   return (
@@ -16,6 +23,7 @@ export default function Page() {
         logoSrc={LOGO_SRC}
         projectName={PROJECT_NAME}
         xUrl={X_URL}
+        contractAddress={CONTRACT_ADDRESS}
       />
 
       <main>
@@ -86,6 +94,7 @@ export default function Page() {
                 <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
                   Become Bullified
                 </a>
+                <CopyCaButton address={CONTRACT_ADDRESS} label={compactAddress(CONTRACT_ADDRESS)} />
                 <a className="cta secondary" href="#airdrops">
                   View Airdrops
                 </a>
