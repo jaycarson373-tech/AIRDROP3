@@ -27,6 +27,8 @@ type StatsResponse = {
   totalEpochs: number;
   lastRewardAirdropped: number;
   totalRewardAirdropped: number;
+  totalPfpRewardSol: number;
+  pfpRewardWalletBalanceSol: number | null;
   latestEligibleHolders: number;
   nextDropTime: string;
   roundHistory: Round[];
@@ -53,6 +55,8 @@ const emptyStats: StatsResponse = {
   totalEpochs: 0,
   lastRewardAirdropped: 0,
   totalRewardAirdropped: 0,
+  totalPfpRewardSol: 0,
+  pfpRewardWalletBalanceSol: null,
   latestEligibleHolders: 0,
   nextDropTime: new Date().toISOString(),
   roundHistory: [],
@@ -136,6 +140,11 @@ function formatMoney(value: number | null) {
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
   if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
   return `$${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+}
+
+function formatSol(value: number | null | undefined) {
+  if (!Number.isFinite(value) || value === null || value === undefined || value < 0) return "Loading";
+  return `${value.toLocaleString(undefined, { maximumFractionDigits: 4 })} SOL`;
 }
 
 function formatDate(value: string) {
@@ -266,6 +275,53 @@ export function RewardExplanation() {
   );
 }
 
+export function HallOfBulls() {
+  const { stats } = useProtocolData();
+
+  return (
+    <section className="section bullify-army-section" id="army">
+      <div className="container">
+        <div className="section-kicker">Hall of Bulls</div>
+        <div className="section-head split-head">
+          <h2>Verified bulls only.</h2>
+          <p>
+            To enter the Hall, a wallet must stay eligible for the holder airdrop: {ELIGIBILITY_LABEL}+ {SOURCE_LABEL} and
+            no connected-wallet sells. PFP and X links appear only after verification.
+          </p>
+        </div>
+
+        <div className="hall-bulls-stats" aria-label="Hall of Bulls SOL totals">
+          <article>
+            <span>Total SOL Airdropped</span>
+            <strong>{stats ? formatSol(stats.totalPfpRewardSol) : "Loading"}</strong>
+          </article>
+          <article>
+            <span>PFP Reward Wallet Balance</span>
+            <strong>{stats ? formatSol(stats.pfpRewardWalletBalanceSol) : "Loading"}</strong>
+          </article>
+        </div>
+
+        <div className="bullify-leaderboard hall-bulls-leaderboard" aria-label="Hall of Bulls leaderboard">
+          <div className="bullify-leaderboard-head hall-bulls-head">
+            <span>PFP</span>
+            <span>X Link</span>
+            <span>Name</span>
+            <span>SOL Won</span>
+            <span>Days Holding</span>
+            <span>Days Since PFP Change</span>
+            <span>Status</span>
+          </div>
+          <div className="bullify-leaderboard-empty hall-bulls-empty">
+            <span className="bullify-empty-pfp" aria-hidden="true" />
+            <strong>Awaiting verified Hall of Bulls entries.</strong>
+            <p>No fake data. Verified Bullified PFP holders will appear here with their X link, SOL won, hold time, PFP age, and eligibility status.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function HowItWorks() {
   const steps = [
     ["Tag @Bullification_", "Reply or mention the bot on X."],
@@ -284,9 +340,8 @@ export function HowItWorks() {
           <p>No upload box on the site. The initiation happens on X through @Bullification_.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
-          {steps.map(([title, body], index) => (
+          {steps.map(([title, body]) => (
             <article className="reward-flow-card ansemfy-flow-card" key={title}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
               <strong>{title}</strong>
               <p>{body}</p>
             </article>

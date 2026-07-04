@@ -1,4 +1,4 @@
-import { HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
+import { HallOfBulls, HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
 import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = "Bullify";
@@ -91,7 +91,7 @@ export default function Page() {
         </section>
         <HowItWorks />
         <RewardExplanation />
-        <BlackBullArmy />
+        <HallOfBulls />
         <FallenBulls />
         <LiveAnsemAirdrops />
         <RecentAirdrops />
@@ -141,35 +141,6 @@ export default function Page() {
         </div>
       </footer>
     </div>
-  );
-}
-
-function BlackBullArmy() {
-  return (
-    <section className="section bullify-army-section" id="army">
-      <div className="container">
-        <div className="section-kicker">Black Bull Army Leaderboard</div>
-        <div className="section-head split-head">
-          <h2>Verified bulls only.</h2>
-          <p>PFPs and X handles appear here only after verification. No fake avatars, no fake holders.</p>
-        </div>
-        <div className="bullify-leaderboard" aria-label="Black Bull Army Leaderboard">
-          <div className="bullify-leaderboard-head">
-            <span>PFP</span>
-            <span>X Handle</span>
-            <span>Total ANSEM Airdropped</span>
-            <span>Days Holding</span>
-            <span>Days Since PFP Changed</span>
-            <span>Status</span>
-          </div>
-          <div className="bullify-leaderboard-empty">
-            <span className="bullify-empty-pfp" aria-hidden="true" />
-            <strong>Awaiting verified Black Bull Army members.</strong>
-            <p>Verified Bullified PFP holders will appear here after live approval is connected.</p>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
 
