@@ -239,7 +239,7 @@ export function HeroCountdown() {
         <strong>{countdown}</strong>
       </div>
       <div className="ansemfication-stat">
-        <span>Latest Distribution TX</span>
+        <span>Latest $ANSEM Distribution</span>
         <strong>{stats ? (latestDistributionTx ? compactAddress(latestDistributionTx) : "Awaiting") : "Loading"}</strong>
       </div>
     </div>
