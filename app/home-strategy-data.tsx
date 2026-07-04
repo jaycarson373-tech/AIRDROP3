@@ -126,7 +126,7 @@ function formatTotalAmount(value: number, symbol: string, maximumFractionDigits 
 }
 
 function formatPrice(value: number | null) {
-  if (!Number.isFinite(value) || value === null || value <= 0) return "Loading";
+  if (!Number.isFinite(value) || value === null || value <= 0) return "$0";
   const maximumFractionDigits = value < 0.01 ? 6 : value < 1 ? 4 : 2;
   return `$${value.toLocaleString(undefined, {
     maximumFractionDigits,
@@ -135,7 +135,7 @@ function formatPrice(value: number | null) {
 }
 
 function formatMoney(value: number | null) {
-  if (!Number.isFinite(value) || value === null || value <= 0) return "Loading";
+  if (!Number.isFinite(value) || value === null || value <= 0) return "$0";
   if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
   if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
@@ -212,23 +212,23 @@ export function HeroCountdown() {
     <div className="hero-countdown ansemfy-countdown ansemfication-stats" aria-live="polite">
       <div className="ansemfication-stat">
         <span>{REWARD_SYMBOL} Price</span>
-        <strong>{market ? formatPrice(market.ansem.priceUsd) : "Loading"}</strong>
+        <strong>{formatPrice(market?.ansem.priceUsd ?? null)}</strong>
       </div>
       <div className="ansemfication-stat">
         <span>{SOURCE_SYMBOL} Price</span>
-        <strong>{market ? formatPrice(market.source.priceUsd) : "Loading"}</strong>
+        <strong>{formatPrice(market?.source.priceUsd ?? null)}</strong>
       </div>
       <div className="ansemfication-stat">
         <span>{SOURCE_SYMBOL} Market Cap</span>
-        <strong>{market ? formatMoney(sourceMarketCap) : "Loading"}</strong>
+        <strong>{formatMoney(sourceMarketCap)}</strong>
       </div>
       <div className="ansemfication-stat primary">
         <span>Total {REWARD_SYMBOL} Airdropped</span>
-        <strong>{stats ? formatTotalAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"}</strong>
+        <strong>{stats ? formatTotalAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : `0 ${REWARD_SYMBOL}`}</strong>
       </div>
       <div className="ansemfication-stat">
         <span>Eligible Bulls</span>
-        <strong>{stats ? formatCount(eligibleBulls) : "Loading"}</strong>
+        <strong>{stats ? formatCount(eligibleBulls) : "0"}</strong>
       </div>
       <div className="ansemfication-stat">
         <span>Bullified Profiles</span>
@@ -236,11 +236,11 @@ export function HeroCountdown() {
       </div>
       <div className="ansemfication-stat">
         <span>Next Epoch</span>
-        <strong>{countdown}</strong>
+        <strong>{countdown === "Loading" ? "0" : countdown}</strong>
       </div>
       <div className="ansemfication-stat">
         <span>Latest $ANSEM Distribution</span>
-        <strong>{stats ? (latestDistributionTx ? compactAddress(latestDistributionTx) : "0") : "Loading"}</strong>
+        <strong>{stats ? (latestDistributionTx ? compactAddress(latestDistributionTx) : "0") : "0"}</strong>
       </div>
     </div>
   );

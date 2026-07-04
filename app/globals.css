@@ -4969,12 +4969,30 @@ td a,
 
 .market-ticker-minimal .ticker-brand strong,
 .ansemfy-page .loader-text {
-  color: #32ff48;
+  color: #32ff48 !important;
   font-family: Orbitron, Inter, ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(1.05rem, 1.45vw, 1.34rem);
   font-weight: 950;
   letter-spacing: 0.18em;
   text-shadow: 0 0 22px rgba(50, 255, 72, 0.44);
+}
+
+.bullify-history-punch {
+  align-items: stretch;
+}
+
+.bullify-history-punch span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-color: rgba(50, 255, 72, 0.22) !important;
+  color: #32ff48 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background:
+    linear-gradient(180deg, rgba(50, 255, 72, 0.08), rgba(0, 0, 0, 0.42)),
+    rgba(0, 0, 0, 0.44) !important;
+  box-shadow: inset 0 0 24px rgba(50, 255, 72, 0.04);
 }
 
 .ansemfy-page .loader-mascot {
@@ -5574,14 +5592,18 @@ td a,
 }
 
 @media (min-width: 1181px) {
+  .bullify-hero {
+    min-height: 1040px;
+  }
+
   .bullify-hero .ansemfication-hero-inner {
-    grid-template-columns: minmax(0, 0.92fr) minmax(390px, 540px) !important;
-    gap: clamp(34px, 4vw, 58px);
-    align-items: center;
+    position: relative;
+    display: block !important;
+    min-height: 860px;
   }
 
   .bullify-hero .ansemfication-copy {
-    max-width: 760px !important;
+    max-width: 770px !important;
   }
 
   .bullify-hero h1,
@@ -5597,31 +5619,63 @@ td a,
   }
 
   .bullify-hero .hero-countdown {
-    justify-self: end !important;
-    align-self: center;
-    max-width: 540px !important;
-    width: 100%;
+    position: absolute;
+    top: clamp(180px, 17vh, 235px);
+    right: clamp(0px, 2.4vw, 46px);
+    z-index: 8;
+    max-width: 430px !important;
+    width: min(430px, 32vw);
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 9px;
     padding: 14px;
+    border-color: rgba(50, 255, 72, 0.28);
+    background:
+      linear-gradient(180deg, rgba(4, 18, 8, 0.94), rgba(0, 0, 0, 0.92)),
+      rgba(0, 0, 0, 0.88);
+    box-shadow:
+      0 0 0 1px rgba(50, 255, 72, 0.08),
+      0 28px 80px rgba(0, 0, 0, 0.48),
+      inset 0 0 44px rgba(50, 255, 72, 0.05);
+  }
+
+  .bullify-hero .hero-countdown::before {
+    grid-column: 1 / -1;
+    content: "BULLIFY TERMINAL";
+    color: #32ff48;
+    font-family: Orbitron, Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 950;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.9;
   }
 
   .bullify-hero .ansemfication-stat {
-    min-height: 96px;
-    padding: 14px;
+    min-height: 78px;
+    border-color: rgba(50, 255, 72, 0.18);
+    padding: 12px;
+    background:
+      linear-gradient(180deg, rgba(50, 255, 72, 0.055), rgba(0, 0, 0, 0.34)),
+      rgba(0, 0, 0, 0.42);
   }
 
   .bullify-hero .ansemfication-stat.primary {
     grid-column: span 2;
-    min-height: 118px;
+    min-height: 92px;
   }
 
   .bullify-hero .ansemfication-stat strong {
-    font-size: clamp(1.55rem, 2vw, 2.25rem);
+    color: #f8fff7;
+    font-size: clamp(1.18rem, 1.5vw, 1.76rem);
   }
 
   .bullify-hero .ansemfication-stat.primary strong {
-    font-size: clamp(2rem, 3vw, 3.35rem);
+    font-size: clamp(1.65rem, 2.1vw, 2.55rem);
+  }
+
+  .bullify-hero .ansemfication-stat span {
+    color: rgba(50, 255, 72, 0.88);
+    font-size: 0.66rem;
   }
 }
 

@@ -36,22 +36,25 @@ export default function Page() {
                 </div>
               </div>
               <div className="bullify-history-punch" aria-label="Bullify thesis">
-                <span>History was made.</span>
-                <span>Ansem airdropped 10M+.</span>
-                <span>Black Bull ran to 350M.</span>
-                <span>Bullification is the next chapter.</span>
+                <span>10M+ ANSEM Airdropped</span>
+                <span>350M Peak Market Cap</span>
+                <span>10 Minute Epochs</span>
+                <span>Bulls Only</span>
               </div>
               <div className="section-kicker">Bulls only protocol</div>
               <h1>BULLIFICATION</h1>
               <p className="hero-subtitle">The initiation into the Black Bull Army.</p>
               <p className="hero-lead">
-                The trenches finally have their main character. Bullify turns conviction into identity. Reply to @Bullification_,
-                receive your Bullified PFP, wear the horns and join the Black Bull Army. 50% of creator fees buy and airdrop
-                {` $${REWARD_SYMBOL}`} every 10 minutes. 50% rewards verified Bullified PFP holders.
-              </p>
-              <p className="hero-reward-note">
-                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. No selling ever. Once a connected wallet sells, it loses eligibility for both
-                10-minute {`$${REWARD_SYMBOL}`} drops and Bullified PFP bonus drops.
+                Reply to @Bullification_. Receive your Bullified PFP. Wear the horns. Join the Black Bull Army.
+                <br />
+                <br />
+                50% of creator fees automatically buy and airdrop {`$${REWARD_SYMBOL}`} to eligible holders every 10 minutes.
+                <br />
+                <br />
+                The remaining 50% rewards verified Bullified PFP holders.
+                <br />
+                <br />
+                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. Sell during an epoch and you&apos;re out. Bulls only.
               </p>
               <div className="bullify-brief-grid" aria-label="Bullify reward structure">
                 <article>
