@@ -67,9 +67,9 @@ export function AppPolish() {
   return (
     <div className={`loading-screen${leaving ? " is-leaving" : ""}`}>
       <div className="loader-mascot">
-        <img src="/brand/ansemfy-logo.jpg" alt="" />
+        <img src="/brand/bull-terminal-logo.svg" alt="" />
       </div>
-      <div className="loader-text">ANSEMFY</div>
+      <div className="loader-text">BULL TERMINAL</div>
       <div className="loader-line" aria-hidden="true">
         <span />
       </div>

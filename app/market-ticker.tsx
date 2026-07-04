@@ -14,8 +14,7 @@ type TokenMarket = {
 
 type MarketResponse = {
   ansem: TokenMarket;
-  ansemfy: TokenMarket;
-  totalAnsemifiedProfiles: number;
+  source: TokenMarket;
   updatedAt: string;
 };
 
@@ -35,8 +34,7 @@ type MarketTickerProps = {
 const REFRESH_MS = 30_000;
 const emptyMarket: MarketResponse = {
   ansem: { priceUsd: null, change24h: null, marketCapUsd: null, fdvUsd: null, url: null, symbol: "ANSEM" },
-  ansemfy: { priceUsd: null, change24h: null, marketCapUsd: null, fdvUsd: null, url: null, symbol: "ANSEMFY" },
-  totalAnsemifiedProfiles: 0,
+  source: { priceUsd: null, change24h: null, marketCapUsd: null, fdvUsd: null, url: null, symbol: "BULLTERM" },
   updatedAt: new Date().toISOString()
 };
 const emptyStats: StatsResponse = {
@@ -110,6 +108,15 @@ function MarketPill({ market }: { market: TokenMarket }) {
   return <div className="ticker-pill ticker-price-pill">{content}</div>;
 }
 
+function PlaceholderMarketPill({ symbol }: { symbol: string }) {
+  return (
+    <div className="ticker-pill ticker-price-pill">
+      <span>{symbol}</span>
+      <strong>Loading</strong>
+    </div>
+  );
+}
+
 export function MarketTicker({ logoSrc, projectName, contractAddress, buyUrl, xUrl }: MarketTickerProps) {
   const [market, setMarket] = useState<MarketResponse>(emptyMarket);
   const [stats, setStats] = useState<StatsResponse>(emptyStats);
@@ -152,7 +159,7 @@ export function MarketTicker({ logoSrc, projectName, contractAddress, buyUrl, xU
       <div className="container market-ticker-inner">
         <a className="ticker-brand" href="/" aria-label={`${projectName} home`}>
           <img src={logoSrc} alt="" />
-          <strong>ANSEMFY</strong>
+          <strong>{projectName}</strong>
         </a>
         <div className="ticker-track">
           <div className="ticker-status">
@@ -160,18 +167,18 @@ export function MarketTicker({ logoSrc, projectName, contractAddress, buyUrl, xU
             Live
           </div>
           <MarketPill market={market.ansem} />
-          <MarketPill market={market.ansemfy} />
+          <PlaceholderMarketPill symbol="SOL" />
+          <PlaceholderMarketPill symbol="BTC" />
+          <PlaceholderMarketPill symbol="ETH" />
+          <PlaceholderMarketPill symbol="HYPE" />
+          <MarketPill market={market.source} />
           <div className="ticker-pill ticker-market-cap">
             <span>Market Cap</span>
-            <strong>{formatMoney(market.ansemfy.marketCapUsd ?? market.ansemfy.fdvUsd)}</strong>
+            <strong>{formatMoney(market.source.marketCapUsd ?? market.source.fdvUsd)}</strong>
           </div>
           <div className="ticker-pill">
             <span>Total ANSEM Distributed</span>
             <strong>{formatCompact(stats.totalRewardAirdropped, 3)}</strong>
-          </div>
-          <div className="ticker-pill">
-            <span>Total Ansemified</span>
-            <strong>{formatCompact(market.totalAnsemifiedProfiles, 0)}</strong>
           </div>
           <div className="ticker-pill ticker-countdown">
             <span>Next Epoch</span>
@@ -180,7 +187,7 @@ export function MarketTicker({ logoSrc, projectName, contractAddress, buyUrl, xU
         </div>
         <div className="ticker-actions" aria-label="Project links">
           {contractAddress ? <CopyCaButton address={contractAddress} label={shortAddress(contractAddress)} /> : null}
-          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label="Open ANSEMFY on X">
+          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label="Open Bull Terminal on X">
             X
           </a>
           <a className="ticker-action ticker-buy" href={buyUrl} target="_blank" rel="noreferrer">

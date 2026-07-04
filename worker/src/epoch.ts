@@ -88,11 +88,7 @@ export async function runEpoch(date = new Date()) {
         buy.baseSpentLamports.toString(),
         buy.rewardReceivedRaw.toString(),
         buy.rewardReceivedUi.toString(),
-        buy.txSig,
-        {
-          pfpRewardLamports: buy.pfpRewardLamports.toString(),
-          pfpRewardTxSig: buy.pfpRewardTxSig
-        }
+        buy.txSig
       );
     } else {
       console.log(`[${epochId}] REWARD_MODE=sol, skipping buy; creator fees remain SOL for direct airdrop`);

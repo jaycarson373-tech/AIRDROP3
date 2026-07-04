@@ -4,32 +4,33 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ansemfy.fun"),
-  title: "ANSEMIFICATION",
-  description: "The initiation into the Cult of Ansem. Tag @Ansemfy on X, receive your Ansemified PFP, and join the army.",
+  metadataBase: new URL("https://bullterminal.fun"),
+  title: "Bull Terminal",
+  description: "Bloomberg for the trenches. Track every Ansem thesis, live market data, AI research, and automated ANSEM holder rewards.",
   openGraph: {
-    title: "ANSEMIFICATION",
-    description: "The initiation into the Cult of Ansem. Tag @Ansemfy on X, receive your Ansemified PFP, and join the army.",
-    url: "https://ansemfy.fun",
-    siteName: "ANSEMFY",
+    title: "Bull Terminal",
+    description: "Bloomberg for the trenches. Track every Ansem thesis, live market data, AI research, and automated ANSEM holder rewards.",
+    url: "https://bullterminal.fun",
+    siteName: "Bull Terminal",
     images: [
       {
-        url: "/brand/ansemfy-logo.jpg",
-        width: 1254,
-        height: 1254,
-        alt: "ANSEMFY"
+        url: "/brand/bull-terminal-logo.svg",
+        width: 512,
+        height: 512,
+        alt: "Bull Terminal"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "ANSEMIFICATION",
-    description: "The initiation into the Cult of Ansem. Tag @Ansemfy on X, receive your Ansemified PFP, and join the army.",
-    images: ["/brand/ansemfy-logo.jpg"]
+    title: "Bull Terminal",
+    description: "Bloomberg for the trenches. Track every Ansem thesis, live market data, AI research, and automated ANSEM holder rewards.",
+    images: ["/brand/bull-terminal-logo.svg"]
   },
   icons: {
     icon: [
+      { url: "/brand/bull-terminal-logo.svg", type: "image/svg+xml" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },

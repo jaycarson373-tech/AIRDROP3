@@ -45,7 +45,7 @@ const emptyStats: StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLTERM";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
@@ -164,21 +164,21 @@ export function RewardExplanation() {
   return (
     <section className="section ansemfy-how-section" id="rewards">
       <div className="container">
-        <div className="section-kicker">Why it matters</div>
+        <div className="section-kicker">Rewards</div>
         <div className="section-head split-head">
-          <h2>The cult has two reward paths.</h2>
-          <p>ANSEMFY rewards holders and gives extra weight to the wallets visibly wearing the Ansemified identity.</p>
+          <h2>100% creator fees buy ANSEM.</h2>
+          <p>Clean reward routing. Creator fees accumulate, buy {REWARD_SYMBOL}, and distribute directly to eligible {SOURCE_LABEL} holders.</p>
         </div>
-        <div className="ansemfy-split-cards" aria-label="Creator fee split">
+        <div className="ansemfy-split-cards terminal-reward-route" aria-label="Creator fee route">
           <article className="ansemfy-split-card primary">
-            <span>80%</span>
+            <span>100%</span>
             <strong>$ANSEM holder rewards</strong>
-            <p>Creator fees buy and airdrop {REWARD_SYMBOL} to eligible holders.</p>
+            <p>Every usable creator-fee lamport after operational reserves is routed toward buying and airdropping {REWARD_SYMBOL}.</p>
           </article>
           <article className="ansemfy-split-card">
-            <span>20%</span>
-            <strong>Ansemified holder rewards</strong>
-            <p>Reserved exclusively for holders using an Ansemified profile picture once verification is connected.</p>
+            <span>Direct</span>
+            <strong>No side routes</strong>
+            <p>No community wallet split. No separate treasury strategy. Rewards stay focused on eligible holders.</p>
           </article>
         </div>
       </div>
@@ -188,10 +188,10 @@ export function RewardExplanation() {
 
 export function HowItWorks() {
   const steps = [
-    ["Tag @Ansemfy", "Start the initiation on X."],
-    ["Receive your Ansemified PFP", "The account replies with your new profile image."],
-    ["Upload it", "Wear the face publicly."],
-    ["Join the army", "Become part of the visible cult of Ansem."]
+    ["Creator fees accrue", "Fees are claimed by the worker every epoch."],
+    ["Buy ANSEM", "Usable creator fees route into the ANSEM accumulation path."],
+    ["Snapshot holders", `Eligible ${SOURCE_LABEL} holders are selected from live on-chain balances.`],
+    ["Airdrop automatically", `${REWARD_SYMBOL} is sent directly to selected wallets.`]
   ];
 
   return (
@@ -199,8 +199,8 @@ export function HowItWorks() {
       <div className="container">
         <div className="section-kicker">How it works</div>
         <div className="section-head split-head">
-          <h2>Tag. Receive. Become.</h2>
-          <p>No upload form. No dashboard ritual. The initiation happens on X.</p>
+          <h2>Claim. Buy. Snapshot. Distribute.</h2>
+          <p>The reward engine runs automatically every epoch with on-chain holder checks.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
           {steps.map(([title, body], index) => (
@@ -213,9 +213,9 @@ export function HowItWorks() {
         </div>
         <div className="share-example ansemfy-principles">
           {[
-            ["Cult", "Identity comes first."],
+            ["Terminal", "One dashboard for the thesis stack."],
             ["Auto", "Airdrops settle directly to eligible holders."],
-            ["PFP", "Your profile becomes the signal."]
+            ["Proof", "Only settled payouts count in the public totals."]
           ].map(([title, body]) => (
             <article className="share-card" key={title}>
               <strong>{title}</strong>
@@ -239,9 +239,9 @@ export function LiveAnsemAirdrops() {
   return (
     <section className="section ansemfy-airdrop-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker">Live ANSEM airdrops</div>
+        <div className="section-kicker">Live rewards</div>
         <div className="section-head split-head">
-          <h2>The movement feeds itself.</h2>
+          <h2>ANSEM distribution proof.</h2>
           <p>Creator fees buy ANSEM. Settled airdrops and transaction proof come straight from Supabase.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">

@@ -1,34 +1,32 @@
-# ANSEMIFICATION
+# Bull Terminal
 
-Source token: `$ANSEMFY`
+Source token: `$BULLTERM`
 Reward token: `$ANSEM`
 
-ANSEMIFICATION runs a creator-fee airdrop engine:
+Bull Terminal runs a creator-fee airdrop engine:
 
-- Snapshot eligible `$ANSEMFY` holders.
+- Snapshot eligible `$BULLTERM` holders.
 - Claim creator fees.
-- Use 80% of usable creator fees to buy `$ANSEM`.
+- Use 100% of usable creator fees to buy `$ANSEM` after operational reserves.
 - Airdrop `$ANSEM` automatically to eligible holders.
-- Send the remaining 20% to the configured PFP reward wallet for community reward campaigns.
 
-The site is an initiation page for the Cult of Ansem plus a live reward dashboard. Users tag `@Ansemfy` on X to receive an Ansemified PFP.
+No community wallet split. No separate treasury strategy.
 
 ## Environment
 
 ### Vercel
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME=ANSEMIFICATION
-NEXT_PUBLIC_SOURCE_SYMBOL=ANSEMFY
+NEXT_PUBLIC_PROJECT_NAME="Bull Terminal"
+NEXT_PUBLIC_SOURCE_SYMBOL=BULLTERM
 NEXT_PUBLIC_REWARD_SYMBOL=ANSEM
-NEXT_PUBLIC_CA=2pAXiMcCVUum9zEC4FySjvMLPoaNbAec51s3wT3Spump
-NEXT_PUBLIC_BUY_URL=https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=2pAXiMcCVUum9zEC4FySjvMLPoaNbAec51s3wT3Spump
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=2pAXiMcCVUum9zEC4FySjvMLPoaNbAec51s3wT3Spump
+NEXT_PUBLIC_CA=<BULLTERM_TOKEN_MINT>
+NEXT_PUBLIC_BUY_URL=https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=<BULLTERM_TOKEN_MINT>
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<BULLTERM_TOKEN_MINT>
 NEXT_PUBLIC_REWARD_TOKEN_MINT=9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump
 NEXT_PUBLIC_ANSEM_TOKEN_MINT=9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump
 NEXT_PUBLIC_ELIGIBILITY_LABEL=1M
-NEXT_PUBLIC_X_URL=https://x.com/ANSEMFY
-NEXT_PUBLIC_COMMUNITY_URL=https://x.com/i/communities/2029250283063394361
+NEXT_PUBLIC_X_URL=<BULL_TERMINAL_X_URL>
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
 SUPABASE_URL=<SUPABASE_URL>
@@ -40,7 +38,7 @@ SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 ```bash
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<ANSEMFY_TOKEN_MINT>
+SOURCE_TOKEN_MINT=<BULLTERM_TOKEN_MINT>
 REWARD_TOKEN_MINT=9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>
@@ -52,9 +50,7 @@ EPOCH_MINUTES=5
 ELIGIBILITY_MIN=1000000
 MAX_WALLETS_PER_EPOCH=150
 MAX_HOLDER_PCT=5
-ANSEM_BUY_BPS=8000
-PFP_REWARD_BPS=2000
-PFP_REWARD_WALLET_PUBLIC_KEY=<PFP_REWARD_WALLET_PUBLIC_KEY>
+ANSEM_BUY_BPS=10000
 SWAP_BALANCE_BPS=10000
 SWAP_SLIPPAGE_BPS=1000
 MIN_SOL_RESERVE=0.3
@@ -65,7 +61,7 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` protect the SOL needed for transaction fees and token-account rent. They are operational reserves, not a separate strategy. `PFP_REWARD_WALLET_PUBLIC_KEY` receives the PFP/community split after reserves and before the ANSEM swap.
+`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` protect the SOL needed for transaction fees and token-account rent. They are operational reserves.
 
 ## Commands
 

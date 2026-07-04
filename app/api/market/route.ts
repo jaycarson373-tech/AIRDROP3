@@ -38,8 +38,7 @@ type TokenMarket = {
 
 type MarketPayload = {
   ansem: TokenMarket;
-  ansemfy: TokenMarket;
-  totalAnsemifiedProfiles: number;
+  source: TokenMarket;
   updatedAt: string;
 };
 
@@ -65,15 +64,8 @@ function ansemMint() {
   );
 }
 
-function ansemfyMint() {
+function sourceMint() {
   return cleanAddress(env("SOURCE_TOKEN_MINT"));
-}
-
-function numberEnv(name: string, fallback: number) {
-  const value = env(name);
-  if (value === undefined || value === "") return fallback;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
 }
 
 function sameAddress(a: string | undefined, b: string) {
@@ -123,50 +115,20 @@ async function fetchDexPairs(mints: string[]) {
   return (await response.json()) as DexPair[];
 }
 
-async function ansemifiedProfileCount() {
-  const configured = numberEnv("TOTAL_ANSEMIFIED_PROFILES", 0);
-  const url = cleanAddress(env("SUPABASE_URL"));
-  const key =
-    cleanAddress(process.env.SUPABASE_SERVICE_ROLE) ??
-    cleanAddress(process.env.SUPABASE_SERVICE_ROLE_KEY) ??
-    cleanAddress(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
-  if (!url || !key) return configured;
-
-  try {
-    const response = await fetch(`${url.replace(/\/$/, "")}/rest/v1/ansemified_profiles?select=id`, {
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        Prefer: "count=exact",
-        Range: "0-0"
-      },
-      cache: "no-store"
-    });
-
-    if (!response.ok) return configured;
-    const count = Number(response.headers.get("content-range")?.split("/").pop());
-    return Number.isFinite(count) ? count : configured;
-  } catch {
-    return configured;
-  }
-}
-
 export async function GET() {
   if (cache && Date.now() < cache.expiresAt) {
     return NextResponse.json(cache.payload);
   }
 
   const ansem = ansemMint();
-  const ansemfy = ansemfyMint();
-  const pairs = await fetchDexPairs([ansem, ansemfy].filter(Boolean) as string[]);
+  const source = sourceMint();
+  const pairs = await fetchDexPairs([ansem, source].filter(Boolean) as string[]);
   const payload: MarketPayload = {
     ansem: marketFromPair(pickPair(pairs, ansem), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM"),
-    ansemfy: marketFromPair(
-      ansemfy ? pickPair(pairs, ansemfy) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "ANSEMFY"
+    source: marketFromPair(
+      source ? pickPair(pairs, source) : null,
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLTERM"
     ),
-    totalAnsemifiedProfiles: await ansemifiedProfileCount(),
     updatedAt: new Date().toISOString()
   };
 

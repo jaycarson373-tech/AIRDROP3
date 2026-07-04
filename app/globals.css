@@ -4160,3 +4160,252 @@ td a,
     font-size: clamp(1.35rem, 8vw, 2.1rem);
   }
 }
+
+/* Bull Terminal rebrand */
+.ansemfy-page {
+  --gold: #f5b84b;
+  --green: #1eff78;
+  --purple: #2df58f;
+  --warm: #f5b84b;
+  --panel: rgba(7, 12, 10, 0.74);
+  --panel-2: rgba(9, 16, 13, 0.82);
+  background:
+    radial-gradient(circle at 16% 0%, rgba(30, 255, 120, 0.12), transparent 30%),
+    radial-gradient(circle at 80% 8%, rgba(245, 184, 75, 0.1), transparent 28%),
+    #020403;
+}
+
+.ansemfy-page::before {
+  background:
+    linear-gradient(rgba(30, 255, 120, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 255, 120, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, rgba(30, 255, 120, 0.08), transparent 34%);
+  background-size: 42px 42px, 42px 42px, auto;
+  filter: none;
+  opacity: 0.7;
+  transform: none;
+  animation: none;
+}
+
+.ansemfy-page::after {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(30, 255, 120, 0.13), transparent 26%),
+    radial-gradient(circle at 82% 16%, rgba(245, 184, 75, 0.13), transparent 30%),
+    linear-gradient(180deg, transparent, rgba(2, 4, 3, 0.7));
+  opacity: 0.58;
+}
+
+.ansemfy-aurora {
+  background:
+    radial-gradient(circle at 72% 20%, rgba(30, 255, 120, 0.13), transparent 30%),
+    radial-gradient(circle at 30% 72%, rgba(245, 184, 75, 0.1), transparent 30%),
+    linear-gradient(180deg, rgba(2, 4, 3, 0.08), rgba(2, 4, 3, 0.68));
+}
+
+.ansemfy-grid {
+  opacity: 0.34;
+  background-image:
+    linear-gradient(rgba(30, 255, 120, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 255, 120, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.terminal-hero .hero-shade {
+  background:
+    linear-gradient(90deg, rgba(2, 4, 3, 0.78), rgba(2, 4, 3, 0.32) 55%, rgba(2, 4, 3, 0.62)),
+    linear-gradient(180deg, transparent, rgba(2, 4, 3, 0.88) 94%);
+}
+
+.terminal-hero-logo {
+  display: block;
+  border-radius: 22px;
+  background: #020403;
+  box-shadow: 0 0 0 1px rgba(30, 255, 120, 0.22), 0 26px 90px rgba(30, 255, 120, 0.12);
+}
+
+.ansemfy-page .section-kicker,
+.terminal-asset-card .asset-card-top strong,
+.terminal-timeline-card span {
+  color: var(--green);
+}
+
+.ansemfy-page h1 {
+  max-width: 880px;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(4.2rem, 9vw, 9.8rem);
+  letter-spacing: -0.04em;
+}
+
+.terminal-dashboard-section,
+.terminal-research-section,
+.terminal-timeline-section {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(30, 255, 120, 0.06), transparent 30%),
+    radial-gradient(circle at 84% 4%, rgba(245, 184, 75, 0.05), transparent 30%),
+    rgba(2, 4, 3, 0.46);
+}
+
+.terminal-asset-grid,
+.terminal-feature-grid,
+.terminal-timeline {
+  display: grid;
+  gap: 14px;
+}
+
+.terminal-asset-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.terminal-feature-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.terminal-timeline {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.terminal-asset-card,
+.terminal-feature-card,
+.terminal-timeline-card {
+  border: 1px solid rgba(30, 255, 120, 0.12);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
+    rgba(4, 9, 7, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 24px 80px rgba(0, 0, 0, 0.26);
+}
+
+.terminal-asset-card {
+  display: grid;
+  gap: 16px;
+  min-height: 242px;
+  padding: 18px;
+}
+
+.asset-card-top,
+.asset-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.asset-card-top span {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.asset-card-top strong,
+.asset-card-footer span,
+.asset-card-footer em {
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.terminal-asset-card p,
+.terminal-feature-card p,
+.terminal-timeline-card p {
+  margin: 0;
+  color: rgba(247, 247, 251, 0.62);
+  line-height: 1.55;
+}
+
+.asset-card-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.asset-card-metrics div {
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.asset-card-metrics span {
+  display: block;
+  color: rgba(247, 247, 251, 0.42);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.asset-card-metrics strong {
+  display: block;
+  margin-top: 5px;
+  color: rgba(247, 247, 251, 0.9);
+  font-size: 0.82rem;
+}
+
+.asset-card-footer {
+  color: rgba(245, 184, 75, 0.82);
+}
+
+.terminal-feature-card,
+.terminal-timeline-card {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 196px;
+  padding: 22px;
+}
+
+.terminal-feature-card strong,
+.terminal-timeline-card strong {
+  color: #fff;
+  font-size: 1.08rem;
+}
+
+.terminal-timeline-card {
+  border-color: rgba(245, 184, 75, 0.16);
+}
+
+.terminal-reward-route .ansemfy-split-card.primary {
+  grid-column: span 2;
+}
+
+.terminal-reward-route .ansemfy-split-card span {
+  color: var(--green);
+}
+
+.ticker-brand img,
+.ansemfy-page .brand-logo,
+.ansemfy-page .loader-mascot img {
+  border-radius: 10px;
+}
+
+.ticker-buy,
+.ansemfy-page .cta {
+  background: linear-gradient(135deg, #1eff78, #f5b84b);
+}
+
+.ticker-countdown strong {
+  color: var(--green);
+}
+
+@media (max-width: 1050px) {
+  .terminal-asset-grid,
+  .terminal-feature-grid,
+  .terminal-timeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .terminal-asset-grid,
+  .terminal-feature-grid,
+  .terminal-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .asset-card-metrics {
+    grid-template-columns: 1fr;
+  }
+}

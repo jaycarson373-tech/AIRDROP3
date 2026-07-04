@@ -98,9 +98,9 @@ export const config = {
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
   swapBalanceBps: Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 9000))),
-  ansemBuyBps: Math.min(10_000, Math.max(1, intEnv("ANSEM_BUY_BPS", 8000))),
-  pfpRewardWallet: optionalPublicKeyEnv("PFP_REWARD_WALLET_PUBLIC_KEY"),
-  pfpRewardBps: Math.min(10_000, Math.max(0, intEnv("PFP_REWARD_BPS", 2000))),
+  ansemBuyBps: Math.min(10_000, Math.max(1, intEnv("ANSEM_BUY_BPS", 10000))),
+  pfpRewardWallet: null,
+  pfpRewardBps: 0,
   minSolReserve: Math.max(0.3, numberEnv("MIN_SOL_RESERVE", 0.3)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
