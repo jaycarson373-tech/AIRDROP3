@@ -106,17 +106,17 @@ function compactAddress(address: string) {
 }
 
 function formatNumber(value: number, maximumFractionDigits = 2) {
-  if (!Number.isFinite(value) || value <= 0) return "Awaiting";
+  if (!Number.isFinite(value) || value <= 0) return "0";
   return value.toLocaleString(undefined, { maximumFractionDigits });
 }
 
 function formatCount(value: number) {
-  if (!Number.isFinite(value) || value < 0) return "Awaiting";
+  if (!Number.isFinite(value) || value < 0) return "0";
   return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
 }
 
 function formatAmount(value: number, symbol: string, maximumFractionDigits = 4) {
-  if (!Number.isFinite(value) || value <= 0) return "Awaiting live distribution";
+  if (!Number.isFinite(value) || value <= 0) return `0 ${symbol}`;
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
 }
 
@@ -232,7 +232,7 @@ export function HeroCountdown() {
       </div>
       <div className="ansemfication-stat">
         <span>Bullified Profiles</span>
-        <strong>Assembling</strong>
+        <strong>0</strong>
       </div>
       <div className="ansemfication-stat">
         <span>Next Epoch</span>
@@ -240,7 +240,7 @@ export function HeroCountdown() {
       </div>
       <div className="ansemfication-stat">
         <span>Latest $ANSEM Distribution</span>
-        <strong>{stats ? (latestDistributionTx ? compactAddress(latestDistributionTx) : "Awaiting") : "Loading"}</strong>
+        <strong>{stats ? (latestDistributionTx ? compactAddress(latestDistributionTx) : "0") : "Loading"}</strong>
       </div>
     </div>
   );
@@ -250,24 +250,21 @@ export function RewardExplanation() {
   return (
     <section className="section ansemfy-how-section" id="rewards">
       <div className="container">
-        <div className="section-kicker">Rewards</div>
+        <div className="section-kicker">50 / 50 Rewards</div>
         <div className="section-head split-head">
-          <h2>50/50 rewards for the Black Bull Army.</h2>
-          <p>
-            50% of creator fees buy {REWARD_SYMBOL} and airdrop to eligible {ELIGIBILITY_LABEL}+ holders every 10 minutes.
-            50% is reserved for verified Bullified PFP holders.
-          </p>
+          <h2>Half for holders. Half for the army.</h2>
+          <p>Simple split. No clutter.</p>
         </div>
         <div className="ansemfy-split-cards terminal-reward-route" aria-label="Creator fee route">
           <article className="ansemfy-split-card primary">
             <span>50%</span>
-            <strong>$ANSEM Holder Airdrops</strong>
-            <p>50% of creator fees buy {REWARD_SYMBOL} and airdrop to eligible {ELIGIBILITY_LABEL}+ {SOURCE_LABEL} holders every 10 minutes.</p>
+            <strong>$ANSEM Holder Rewards</strong>
+            <p>Creator fees buy and airdrop {REWARD_SYMBOL} to eligible {ELIGIBILITY_LABEL}+ holders every 10 minutes.</p>
           </article>
           <article className="ansemfy-split-card">
             <span>50%</span>
-            <strong>Bullified PFP Bonus Pool</strong>
-            <p>50% of creator fees are reserved for verified members of the Black Bull Army using their Bullified PFP.</p>
+            <strong>Bullified PFP Rewards</strong>
+            <p>Reserved for verified Bullified PFP holders in the Black Bull Army.</p>
           </article>
         </div>
       </div>
@@ -313,8 +310,8 @@ export function HallOfBulls() {
           </div>
           <div className="bullify-leaderboard-empty hall-bulls-empty">
             <span className="bullify-empty-pfp" aria-hidden="true" />
-            <strong>Awaiting verified Hall of Bulls entries.</strong>
-            <p>No fake data. Verified Bullified PFP holders will appear here with their X link, SOL won, hold time, PFP age, and eligibility status.</p>
+            <strong>The Black Bull Army is assembling.</strong>
+            <p>Tag @Bullification_, wear your Bullified PFP and become one of the first verified Bulls.</p>
           </div>
         </div>
       </div>
@@ -324,39 +321,26 @@ export function HallOfBulls() {
 
 export function HowItWorks() {
   const steps = [
-    ["Tag @Bullification_", "Reply or mention the bot on X."],
-    ["Receive your Bullified PFP", "Black bull horns, darker energy, original identity preserved."],
-    ["Change it to your PFP", "Wear the Black Bull signal publicly."],
-    ["Bull post", "Post on your timeline and in the X community."],
-    [`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`, "No selling ever."],
-    [`Earn ${REWARD_SYMBOL}`, "Automatic holder airdrops run every 10 minutes."]
+    ["①", "Reply to @Bullification_"],
+    ["②", "Receive your Bullified PFP"],
+    ["③", "Upload your Bullified PFP to X"],
+    ["④", `Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`],
+    ["⑤", `Earn ${REWARD_SYMBOL} every 10 minutes`]
   ];
 
   return (
     <section className="section ansemfy-how-section" id="how">
       <div className="container">
-        <div className="section-kicker">How it works</div>
+        <div className="section-kicker">How Bullification Works</div>
         <div className="section-head split-head">
-          <h2>Tag. Bullify. Hold. Earn.</h2>
-          <p>No upload box on the site. The initiation happens on X through @Bullification_.</p>
+          <h2>Reply. Wear the horns. Earn.</h2>
+          <p>Five steps. Bulls only.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
-          {steps.map(([title, body]) => (
+          {steps.map(([number, title]) => (
             <article className="reward-flow-card ansemfy-flow-card" key={title}>
+              <span>{number}</span>
               <strong>{title}</strong>
-              <p>{body}</p>
-            </article>
-          ))}
-        </div>
-        <div className="share-example ansemfy-principles">
-          {[
-            ["Bulls only", `Once a connected wallet sells, it loses eligibility for both holder drops and PFP bonus drops.`],
-            ["Auto", "Holder airdrops settle directly to eligible wallets."],
-            ["Proof", "Only settled payouts count in the public totals."]
-          ].map(([title, body]) => (
-            <article className="share-card" key={title}>
-              <strong>{title}</strong>
-              <p>{body}</p>
             </article>
           ))}
         </div>
@@ -365,10 +349,34 @@ export function HowItWorks() {
   );
 }
 
+export function LatestBullifiedProfiles() {
+  return (
+    <section className="section bullify-latest-section" id="latest">
+      <div className="container">
+        <div className="section-kicker">Latest Bullified</div>
+        <div className="section-head split-head">
+          <h2>Latest Bullified Profiles</h2>
+          <p>Verified Bullified PFPs will appear here as the Black Bull Army grows.</p>
+        </div>
+        <div className="bullify-profile-marquee" aria-label="Latest Bullified Profiles">
+          <div className="bullify-profile-track">
+            {Array.from({ length: 18 }).map((_, index) => (
+              <span className="bullify-profile-skeleton" key={`bullified-profile-${index}`} />
+            ))}
+          </div>
+        </div>
+        <p className="bullify-profile-empty">No verified Bullified profiles yet.</p>
+      </div>
+    </section>
+  );
+}
+
 export function LiveAnsemAirdrops() {
   const { stats, now } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
+  const rewards = stats?.recentRewards ?? [];
   const latestRound = rounds[0];
+  const hasSettledDistribution = Boolean(stats && stats.totalRewardAirdropped > 0);
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const latestTx = latestRound?.txSig ?? stats?.recentRewards?.find((reward) => reward.txSig)?.txSig ?? null;
@@ -376,18 +384,97 @@ export function LiveAnsemAirdrops() {
   return (
     <section className="section ansemfy-airdrop-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker">Live rewards</div>
+        <div className="section-kicker">Live ANSEM Airdrops</div>
         <div className="section-head split-head">
-          <h2>ANSEM distribution proof.</h2>
-          <p>50% of creator fees buy ANSEM. Settled airdrops and transaction proof come straight from Supabase.</p>
+          <h2>Live $ANSEM Airdrops</h2>
+          <p>Settled distributions, latest transfers and transaction proof come straight from Supabase.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label={`Total ${REWARD_SYMBOL} Distributed`} value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
-          <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
+          <MetricCard label="Eligible Holders" value={hasSettledDistribution && stats ? formatCount(stats.latestEligibleHolders) : "0"} />
           <MetricCard label="Next Epoch" value={countdown} />
-          <MetricCard label="Current Epoch" value={stats ? formatCount(stats.currentEpoch) : "Loading"} />
-          <MetricCard label={`${REWARD_SYMBOL} Bought Last Epoch`} value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live epoch"} />
-          <MetricCard label="Latest TX" value={latestTx ? compactAddress(latestTx) : "Awaiting tx"} />
+          <MetricCard label="Current Epoch" value={hasSettledDistribution && stats ? formatCount(stats.currentEpoch) : "0"} />
+          <MetricCard label={`${REWARD_SYMBOL} Bought Last Epoch`} value={hasSettledDistribution && latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : `0 ${REWARD_SYMBOL}`} />
+          <MetricCard label="Latest TX" value={hasSettledDistribution && latestTx ? compactAddress(latestTx) : "0"} />
+        </div>
+        <div className="history-card bullify-proof-card">
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Epoch</th>
+                  <th>{REWARD_SYMBOL} Bought</th>
+                  <th>Eligible Holders</th>
+                  <th>Distributed</th>
+                  <th>TX</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rounds.length ? (
+                  rounds.slice(0, 8).map((round) => (
+                    <tr key={`${round.epoch}-${round.startedAt}`}>
+                      <td>#{round.epoch}</td>
+                      <td>{formatAmount(round.rewardBought, REWARD_SYMBOL)}</td>
+                      <td>{round.eligibleCount ? formatCount(round.eligibleCount) : statusLabel(round.status)}</td>
+                      <td>{formatAmount(round.distributedPump, REWARD_SYMBOL)}</td>
+                      <td>
+                        {round.txSig ? (
+                          <a href={`https://solscan.io/tx/${round.txSig}`} target="_blank" rel="noreferrer">
+                            Solscan
+                          </a>
+                        ) : (
+                          "Awaiting tx"
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5}>Awaiting settled ANSEM airdrops.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="history-card bullify-proof-card compact-rewards-card">
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Wallet</th>
+                  <th>{REWARD_SYMBOL} Received</th>
+                  <th>Time</th>
+                  <th>TX</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rewards.length ? (
+                  rewards.slice(0, 12).map((reward) => (
+                    <tr key={`${reward.wallet}-${reward.time}-${reward.rewardAmount}`}>
+                      <td>{compactAddress(reward.wallet)}</td>
+                      <td>{formatAmount(reward.rewardAmount, REWARD_SYMBOL)}</td>
+                      <td>{formatDate(reward.time)}</td>
+                      <td>
+                        {reward.txSig ? (
+                          <a href={`https://solscan.io/tx/${reward.txSig}`} target="_blank" rel="noreferrer">
+                            Solscan
+                          </a>
+                        ) : (
+                          "Awaiting tx"
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4}>Awaiting settled holder transfers.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>

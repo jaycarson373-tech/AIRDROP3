@@ -112,7 +112,7 @@ export function FallenBullsClient() {
                     {fallenBulls.length ? (
                       fallenBulls.map((wallet) => (
                         <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "fallen"}`}>
-                          <td>{compactAddress(wallet.address)}</td>
+                          <td><span className="fallen-bull-icon" aria-hidden="true">🐂</span>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
                           <td>{formatNumber(wallet.totalRewardEarned)} {REWARD_SYMBOL}</td>
                           <td>Ineligible</td>

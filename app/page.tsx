@@ -1,4 +1,4 @@
-import { HallOfBulls, HeroCountdown, HowItWorks, LiveAnsemAirdrops, RecentAirdrops, RewardExplanation } from "./home-strategy-data";
+import { HallOfBulls, HeroCountdown, HowItWorks, LatestBullifiedProfiles, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
 import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = "Bullify";
@@ -30,6 +30,7 @@ export default function Page() {
               <div className="bullify-signal-card">
                 <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Bullify logo" />
                 <div>
+                  <em><span aria-hidden="true">●</span> Live</em>
                   <span>Black Bull Army</span>
                   <strong>Bullification live</strong>
                 </div>
@@ -44,7 +45,9 @@ export default function Page() {
               <h1>BULLIFICATION</h1>
               <p className="hero-subtitle">The initiation into the Black Bull Army.</p>
               <p className="hero-lead">
-                Tag @Bullification_ on X. Receive your Bullified PFP. Upload it. Join the army. Earn {`$${REWARD_SYMBOL}`}.
+                The trenches finally have their main character. Bullify turns conviction into identity. Reply to @Bullification_,
+                receive your Bullified PFP, wear the horns and join the Black Bull Army. 50% of creator fees buy and airdrop
+                {` $${REWARD_SYMBOL}`} every 10 minutes. 50% rewards verified Bullified PFP holders.
               </p>
               <p className="hero-reward-note">
                 Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. No selling ever. Once a connected wallet sells, it loses eligibility for both
@@ -91,11 +94,10 @@ export default function Page() {
         </section>
         <HowItWorks />
         <RewardExplanation />
-        <FlipPending />
         <HallOfBulls />
-        <FallenBulls />
+        <LatestBullifiedProfiles />
         <LiveAnsemAirdrops />
-        <RecentAirdrops />
+        <FallenBulls />
 
         <section className="section faq-section ansemfy-faq" id="faq">
           <div className="container">
@@ -113,15 +115,6 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="section ansemfy-closing-section">
-          <div className="container ansemfy-closing-copy">
-            <h2>Join the Black Bull Army.</h2>
-            <p>Tag. Transform. Hold. Earn. Bulls only.</p>
-            <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
-              Become Bullified
-            </a>
-          </div>
-        </section>
       </main>
 
       <footer className="footer ansemfy-footer">
@@ -143,44 +136,6 @@ export default function Page() {
         </div>
       </footer>
     </div>
-  );
-}
-
-function FlipPending() {
-  return (
-    <section className="section bullify-flip-section" id="flip">
-      <div className="container bullify-flip-layout">
-        <div className="bullify-flip-copy">
-          <div className="section-kicker">Flip Pending</div>
-          <h2>FLIP PENDING</h2>
-          <p>
-            Pump.fun proved the market wants airdrops. ANSEM proved the trenches still follow conviction. Bullify combines both.
-          </p>
-          <strong>The flip is pending. Bulls only.</strong>
-        </div>
-        <div className="bullify-flip-card" aria-label="Flip Pending narrative metrics">
-          <div className="bullify-flip-chart" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </div>
-          <div className="bullify-flip-metrics">
-            <article>
-              <span>PUMP.FUN Market Cap</span>
-              <strong>$580M</strong>
-            </article>
-            <article>
-              <span>ANSEM Market Cap</span>
-              <strong>$350M</strong>
-            </article>
-            <article className="status">
-              <span>Status</span>
-              <strong>Flip Pending</strong>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
 
