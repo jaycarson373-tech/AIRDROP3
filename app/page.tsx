@@ -2,14 +2,14 @@ import { HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAi
 import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
 
-const PROJECT_NAME = "Robin Hood";
+const PROJECT_NAME = "Cat in Hood";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? "EtvM4ugrmpzpgYjbg2oxqNYKWgNDgh5c9TwbRz5mpump";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/HOODSTR_";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/CatInHood";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
-const LOGO_SRC = "/brand/robin-hood-logo.svg";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
+const LOGO_SRC = "/brand/cat-in-hood-logo.png";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -18,7 +18,7 @@ function compactAddress(address: string) {
 
 export default function Page() {
   return (
-    <div className="page ansemfy-page robin-page has-market-ticker">
+    <div className="page ansemfy-page robin-page cat-hood-page has-market-ticker">
       <MarketTicker
         logoSrc={LOGO_SRC}
         projectName={PROJECT_NAME}
@@ -36,53 +36,53 @@ export default function Page() {
           <div className="container ansemfication-hero-inner">
             <div className="ansemfication-copy">
               <div className="bullify-signal-card">
-                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Robin Hood logo" />
+                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Cat in Hood logo" />
                 <div>
                   <em><span aria-hidden="true">●</span> Live</em>
-                  <span>Trench rewards</span>
-                  <strong>Robin Hood live</strong>
+                  <span>Hood rewards</span>
+                  <strong>Cat in Hood live</strong>
                 </div>
               </div>
-              <div className="bullify-history-punch" aria-label="Robin Hood thesis">
-                <span>Steal from the rich</span>
-                <span>Give to the trenches</span>
-                <span>Live reward epochs</span>
-                <span>Holders eat</span>
+              <div className="bullify-history-punch" aria-label="Cat in Hood thesis">
+                <span>HOODx Stock drops</span>
+                <span>Every 5 minutes</span>
+                <span>1M+ holders</span>
+                <span>5%+ wallets excluded</span>
               </div>
-              <div className="section-kicker">Trench reward protocol</div>
-              <h1>ROBIN HOOD</h1>
-              <p className="hero-subtitle">Steal from the rich. Give to the trenches.</p>
+              <div className="section-kicker">Hood reward protocol</div>
+              <h1>CAT IN HOOD</h1>
+              <p className="hero-subtitle">The hooded cat pays the holders.</p>
               <p className="hero-lead">
-                Robin Hood turns creator fees into live rewards for the holders still in the forest.
+                Cat in Hood turns creator fees into live HOODx Stock rewards.
                 <br />
                 <br />
-                Creator fees automatically buy and airdrop {`$${REWARD_SYMBOL}`} to eligible {SOURCE_LABEL} holders.
+                Every 5 minutes, creator fees automatically buy and airdrop {`$${REWARD_SYMBOL}`} to eligible {SOURCE_LABEL} holders.
                 <br />
                 <br />
-                The Hood Board tracks eligible wallets, proof, latest drops and every settled transaction.
+                Rewards are proportional to eligible holder balance, with 5%+ wallets excluded from the snapshot.
                 <br />
                 <br />
-                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. Stay eligible. Let the trenches eat.
+                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. Stay below the whale cap. Let the hood eat.
               </p>
-              <div className="bullify-brief-grid" aria-label="Robin Hood reward structure">
+              <div className="bullify-brief-grid" aria-label="Cat in Hood reward structure">
                 <article>
                   <span>Holder floor</span>
                   <strong>{ELIGIBILITY_LABEL}+ {SOURCE_LABEL}</strong>
                 </article>
                 <article>
                   <span>Epoch</span>
-                  <strong>Live drops</strong>
+                  <strong>5 minutes</strong>
                 </article>
                 <article>
-                  <span>Route</span>
-                  <strong>Rewards</strong>
+                  <span>Whale cap</span>
+                  <strong>5% max</strong>
                 </article>
               </div>
-              <div className="ansemfication-steps" aria-label="Robin Hood flow">
+              <div className="ansemfication-steps" aria-label="Cat in Hood flow">
                 {[
                   ["01", `Hold ${SOURCE_LABEL}`],
-                  ["02", "Fees buy rewards"],
-                  ["03", "Trenches receive drops"]
+                  ["02", `Fees buy ${REWARD_SYMBOL}`],
+                  ["03", "Holders receive drops"]
                 ].map(([number, label]) => (
                   <article className="ansemfication-step" key={label}>
                     <span>{number}</span>
@@ -114,13 +114,13 @@ export default function Page() {
         <section className="section faq-section ansemfy-faq" id="faq">
           <div className="container">
             <div className="section-kicker">FAQ</div>
-            <h2>Robin Hood mechanics.</h2>
+            <h2>Cat in Hood mechanics.</h2>
             <div className="faq-grid bullify-faq-grid">
               <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL} and remain eligible at the snapshot.`} />
-              <FaqItem title="What gets airdropped?" body={`Creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders after each completed epoch.`} />
+              <FaqItem title="What gets airdropped?" body={`Creator fees buy ${REWARD_SYMBOL} Stock. Settled transfers are sent directly to eligible holders every 5 minutes.`} />
               <FaqItem title="What is the Hood Board?" body="The Hood Board is the live proof layer for holders, drops, reward totals and transaction receipts." />
               <FaqItem title="Do I need to claim?" body="No. Holder airdrops are automatic after each completed epoch." />
-              <FaqItem title="Why Robin Hood?" body="Because the protocol routes reward energy back to the trenches instead of letting it disappear into the noise." />
+              <FaqItem title="Who is excluded?" body="Wallets holding more than 5% of supply are excluded from reward snapshots." />
               <FaqItem title="Where is proof?" body="Latest reward rounds, holder transfers and Solscan links appear in the live airdrop section." />
               <FaqItem title="What should holders watch?" body="Next epoch, eligible holders, total distributed and latest transaction proof." />
             </div>
@@ -133,9 +133,9 @@ export default function Page() {
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src={LOGO_SRC} alt={`${PROJECT_NAME} logo`} />
-            <strong>Robin Hood</strong>
+            <strong>Cat in Hood</strong>
           </div>
-          <p>Steal from the rich. Give to the trenches. Live holder rewards with proof on every drop.</p>
+          <p>Hooded cat energy. 5-minute HOODx Stock airdrops with proof on every drop.</p>
           <div className="footer-links">
             <a href="#initiation">Protocol</a>
             <a href="#rewards">Rewards</a>

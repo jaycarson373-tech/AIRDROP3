@@ -4,33 +4,33 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://robinhood.fun"),
-  title: "Robin Hood",
-  description: "Steal from the rich. Give to the trenches. Robin Hood routes creator-fee rewards back to eligible holders with live proof.",
+  metadataBase: new URL("https://catinhood.fun"),
+  title: "Cat in Hood",
+  description: "Cat in Hood routes creator-fee rewards into HOODx Stock airdrops for eligible holders every 5 minutes.",
   openGraph: {
-    title: "Robin Hood",
-    description: "Steal from the rich. Give to the trenches. Live reward drops for the holders still in the forest.",
-    url: "https://robinhood.fun",
-    siteName: "Robin Hood",
+    title: "Cat in Hood",
+    description: "Hold 1M+ and receive proportional HOODx Stock airdrops every 5 minutes.",
+    url: "https://catinhood.fun",
+    siteName: "Cat in Hood",
     images: [
       {
-        url: "/brand/robin-hood-logo.svg",
+        url: "/brand/cat-in-hood-logo.png",
         width: 512,
         height: 512,
-        alt: "Robin Hood"
+        alt: "Cat in Hood"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Robin Hood",
-    description: "Steal from the rich. Give to the trenches. Live reward drops for eligible holders.",
-    images: ["/brand/robin-hood-logo.svg"]
+    title: "Cat in Hood",
+    description: "5-minute proportional HOODx Stock airdrops for eligible Cat in Hood holders.",
+    images: ["/brand/cat-in-hood-logo.png"]
   },
   icons: {
     icon: [
-      { url: "/brand/robin-hood-logo.svg", type: "image/svg+xml" },
+      { url: "/brand/cat-in-hood-logo.png", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },

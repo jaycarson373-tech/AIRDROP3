@@ -5713,7 +5713,7 @@ td a,
   aspect-ratio: 1;
   content: "";
   pointer-events: none;
-  background: url("/brand/robin-hood-logo.svg") center / contain no-repeat;
+  background: url("/brand/cat-in-hood-logo.png") center / contain no-repeat;
   opacity: 0.05;
   filter: grayscale(1) contrast(1.3);
 }
@@ -5825,5 +5825,161 @@ td a,
 @media (max-width: 560px) {
   .ansemfy-flow {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Cat in Hood launch pass: remove old graphic worlds and keep the app black/lime. */
+.cat-hood-page {
+  --cat-green: #9cff00;
+  --cat-green-soft: rgba(156, 255, 0, 0.16);
+  --cat-green-mid: rgba(156, 255, 0, 0.32);
+  --cat-panel: rgba(4, 7, 4, 0.82);
+  --cat-ink: #f7fff0;
+  --cat-muted: rgba(247, 255, 240, 0.68);
+  color: var(--cat-ink);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(156, 255, 0, 0.12), transparent 36%),
+    radial-gradient(circle at 86% 18%, rgba(156, 255, 0, 0.08), transparent 34%),
+    linear-gradient(180deg, #020302 0%, #050805 54%, #020302 100%);
+}
+
+.cat-hood-page .ansemfy-army-bg,
+.cat-hood-page .ansemfy-aurora,
+.cat-hood-page .ansemfy-grid,
+.cat-hood-page .hero-shade,
+.cat-hood-page .hero-mountains,
+.cat-hood-page .hero-clouds,
+.cat-hood-page .hero-fog {
+  display: none !important;
+}
+
+.cat-hood-page .hero,
+.cat-hood-page .section,
+.cat-hood-page .footer {
+  background-image: none !important;
+}
+
+.cat-hood-page .hero {
+  min-height: auto;
+  padding: clamp(96px, 11vw, 150px) 0 clamp(64px, 8vw, 110px);
+  background:
+    radial-gradient(circle at 18% 18%, rgba(156, 255, 0, 0.12), transparent 32%),
+    linear-gradient(180deg, rgba(156, 255, 0, 0.04), rgba(0, 0, 0, 0) 58%);
+}
+
+.cat-hood-page .ansemfication-hero-inner,
+.cat-hood-page .bullify-hero .ansemfication-hero-inner {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.78fr);
+  gap: clamp(28px, 4vw, 72px);
+  align-items: center;
+  min-height: unset;
+}
+
+.cat-hood-page .ansemfication-copy {
+  max-width: 850px !important;
+}
+
+.cat-hood-page .bullify-signal-card,
+.cat-hood-page .hero-countdown,
+.cat-hood-page .metric-card,
+.cat-hood-page .history-card,
+.cat-hood-page .faq-item,
+.cat-hood-page .reward-flow-card,
+.cat-hood-page .ansemfy-split-card,
+.cat-hood-page .bullify-leaderboard,
+.cat-hood-page .bullify-fallen-empty,
+.cat-hood-page .hall-bulls-stats article {
+  border-color: rgba(156, 255, 0, 0.24) !important;
+  background:
+    linear-gradient(180deg, rgba(156, 255, 0, 0.055), rgba(255, 255, 255, 0.02)),
+    var(--cat-panel) !important;
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.42),
+    inset 0 0 34px rgba(156, 255, 0, 0.035) !important;
+}
+
+.cat-hood-page .bullify-signal-card {
+  max-width: 560px;
+}
+
+.cat-hood-page .bullify-signal-card em,
+.cat-hood-page .bullify-signal-card span,
+.cat-hood-page .bullify-history-punch span,
+.cat-hood-page .section-kicker,
+.cat-hood-page .ansemfication-step span,
+.cat-hood-page .ansemfication-stat span,
+.cat-hood-page .ticker-brand strong {
+  color: var(--cat-green) !important;
+}
+
+.cat-hood-page .bullify-hero-logo,
+.cat-hood-page .brand-logo,
+.cat-hood-page .ticker-brand img,
+.cat-hood-page .loader-mascot img {
+  border-radius: 18px;
+  box-shadow: 0 0 34px rgba(156, 255, 0, 0.22);
+}
+
+.cat-hood-page .bullify-hero h1,
+.cat-hood-page .ansemfy-page .bullify-hero h1 {
+  max-width: 100%;
+  color: #f7fff0;
+  text-shadow: 0 0 28px rgba(156, 255, 0, 0.11);
+}
+
+.cat-hood-page .hero-subtitle,
+.cat-hood-page .hero-lead,
+.cat-hood-page .footer,
+.cat-hood-page .section-head p {
+  color: var(--cat-muted) !important;
+}
+
+.cat-hood-page .cta,
+.cat-hood-page .market-ticker .copy-ca-button {
+  border-color: rgba(156, 255, 0, 0.34) !important;
+  color: #051006 !important;
+  background: linear-gradient(135deg, #9cff00, #cbff43) !important;
+  box-shadow: 0 18px 44px rgba(156, 255, 0, 0.2) !important;
+}
+
+.cat-hood-page .cta.secondary,
+.cat-hood-page .ticker-action {
+  color: var(--cat-ink) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.cat-hood-page .hero-countdown,
+.cat-hood-page.bullify-hero .hero-countdown {
+  position: static !important;
+  width: 100% !important;
+  max-width: 520px !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: clamp(14px, 2vw, 22px);
+  border: 1px solid rgba(156, 255, 0, 0.24);
+}
+
+.cat-hood-page .ansemfication-stat.primary {
+  grid-column: 1 / -1;
+}
+
+.cat-hood-page .ansemfication-stat strong {
+  color: var(--cat-ink) !important;
+}
+
+.cat-hood-page .ansemfy-flow .ansemfy-flow-card span,
+.cat-hood-page .bullify-profile-skeleton {
+  color: var(--cat-green) !important;
+  border-color: rgba(156, 255, 0, 0.22);
+}
+
+@media (max-width: 980px) {
+  .cat-hood-page .ansemfication-hero-inner,
+  .cat-hood-page .bullify-hero .ansemfication-hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .cat-hood-page .hero-countdown {
+    max-width: none !important;
   }
 }

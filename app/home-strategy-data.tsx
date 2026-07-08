@@ -64,10 +64,10 @@ const emptyStats: StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
 
 const emptyMarket: MarketResponse = {
   ansem: {
@@ -76,7 +76,7 @@ const emptyMarket: MarketResponse = {
     marketCapUsd: null,
     fdvUsd: null,
     url: null,
-    symbol: "ANSEM"
+    symbol: "HOODx"
   },
   source: {
     priceUsd: null,
@@ -239,7 +239,7 @@ export function HeroCountdown() {
         <strong>{countdown === "Loading" ? "0" : countdown}</strong>
       </div>
       <div className="ansemfication-stat">
-        <span>Latest $ANSEM Distribution</span>
+        <span>Latest {REWARD_SYMBOL} Distribution</span>
         <strong>{stats ? (latestDistributionTx ? compactAddress(latestDistributionTx) : "0") : "0"}</strong>
       </div>
     </div>
@@ -259,12 +259,12 @@ export function RewardExplanation() {
           <article className="ansemfy-split-card primary">
             <span>Live</span>
             <strong>{REWARD_SYMBOL} Holder Rewards</strong>
-            <p>Creator fees buy and airdrop {REWARD_SYMBOL} to eligible {ELIGIBILITY_LABEL}+ holders each reward epoch.</p>
+            <p>Creator fees buy and airdrop {REWARD_SYMBOL} Stock to eligible {ELIGIBILITY_LABEL}+ holders every 5 minutes.</p>
           </article>
           <article className="ansemfy-split-card">
             <span>Proof</span>
             <strong>The Hood Board</strong>
-            <p>Latest drops, eligible holders and transaction proof stay visible for the trenches.</p>
+            <p>Eligible wallets are balance-weighted and 5%+ wallets are excluded from the snapshot.</p>
           </article>
         </div>
       </div>
@@ -282,18 +282,18 @@ export function HallOfBulls() {
         <div className="section-head split-head">
           <h2>The holders still in the forest.</h2>
           <p>
-            The Hood Board is ready for verified wallets, reward totals, holder status and proof links as the protocol grows.
+            The Hood Board is ready for eligible wallets, reward totals, holder status and proof links as the protocol grows.
           </p>
         </div>
 
-        <div className="hall-bulls-stats" aria-label="Hall of Bulls SOL totals">
+        <div className="hall-bulls-stats" aria-label="Hood Board totals">
           <article>
-            <span>Total Bonus Sent</span>
-            <strong>{stats ? formatSol(stats.totalPfpRewardSol) : "0 SOL"}</strong>
+            <span>Total {REWARD_SYMBOL} Sent</span>
+            <strong>{stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : `0 ${REWARD_SYMBOL}`}</strong>
           </article>
           <article>
-            <span>Reward Wallet Balance</span>
-            <strong>{stats ? formatSol(stats.pfpRewardWalletBalanceSol) : "0 SOL"}</strong>
+            <span>Eligible Holders</span>
+            <strong>{stats ? formatCount(stats.latestEligibleHolders) : "0"}</strong>
           </article>
         </div>
 
@@ -330,10 +330,10 @@ export function HowItWorks() {
   return (
     <section className="section ansemfy-how-section" id="how">
       <div className="container">
-        <div className="section-kicker">How Robin Hood Works</div>
+        <div className="section-kicker">How Cat in Hood Works</div>
         <div className="section-head split-head">
-          <h2>Hold. Let fees route back. Watch proof settle.</h2>
-          <p>Five steps. Trenches first.</p>
+          <h2>Hold. Let fees buy HOODx. Watch proof settle.</h2>
+          <p>Every 5 minutes. Proportional to eligible balance.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
           {steps.map(([number, title]) => (
@@ -355,7 +355,7 @@ export function LatestHoodActivity() {
         <div className="section-kicker">Latest Hood Activity</div>
         <div className="section-head split-head">
           <h2>Latest trench signals</h2>
-          <p>Verified community and reward activity will appear here as the Hood grows.</p>
+          <p>Community and reward activity will appear here as the Hood grows.</p>
         </div>
         <div className="bullify-profile-marquee" aria-label="Latest Hood Activity">
           <div className="bullify-profile-track">
@@ -543,7 +543,7 @@ export function RecentAirdrops() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5}>Awaiting settled ANSEM airdrops.</td>
+                    <td colSpan={5}>Awaiting settled {REWARD_SYMBOL} airdrops.</td>
                   </tr>
                 )}
               </tbody>

@@ -2,17 +2,15 @@ import { runEpoch } from "./epoch.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
 
-console.log(`Robin Hood worker started. Schedule: every ${config.epochMinutes} minutes.`);
+console.log(`Cat in Hood worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
-console.log("Eligibility rule: 500K+ and never sold; fallen wallets are excluded from holder and PFP rewards.");
-console.log(`ANSEM accumulation: ${config.ansemBuyBps} bps of usable creator fees goes to the ANSEM airdrop path after reserves.`);
-console.log(
-  `Hood bonus pool: ${config.pfpRewardWallet ? `${config.pfpRewardBps} bps to ${config.pfpRewardWallet.toBase58()}` : "disabled; set PFP_REWARD_WALLET_PUBLIC_KEY to enable"}`
-);
+console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ source tokens; wallets above ${config.maxHolderPct}% are excluded.`);
+console.log(`Reward accumulation: ${config.ansemBuyBps} bps of usable creator fees goes to the reward-token airdrop path after reserves.`);
+console.log("Bonus split disabled: 100% of configured buy allocation stays on the reward-token airdrop path.");
 
 async function loop() {
   await runEpoch();

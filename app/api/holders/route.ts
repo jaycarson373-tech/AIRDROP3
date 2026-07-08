@@ -76,8 +76,8 @@ async function getSettledPayouts(config: { url: string; key: string }) {
 }
 
 function reasonLabel(reason: string | null | undefined) {
-  const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
+  const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT";
+  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
   if (reason === "balance_decreased") return `Sold ${sourceSymbol}`;
   if (reason === "dropped_below_threshold") return `Dropped below ${eligibilityLabel}`;
   if (reason === "dropped_below_threshold_or_sold") return `Sold or dropped below ${eligibilityLabel}`;
