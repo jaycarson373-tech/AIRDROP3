@@ -123,10 +123,10 @@ export async function GET() {
   const source = sourceMint();
   const pairs = await fetchDexPairs([reward, source].filter(Boolean) as string[]);
   const payload: MarketPayload = {
-    ansem: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx"),
+    ansem: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD"),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT"
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD"
     ),
     updatedAt: new Date().toISOString()
   };

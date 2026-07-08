@@ -24,7 +24,7 @@ export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: Ma
   ];
 
   return (
-    <div className="market-ticker market-ticker-minimal" aria-label="Cat in Hood header">
+    <div className="market-ticker market-ticker-minimal" aria-label={`${projectName} header`}>
       <div className="container market-ticker-inner">
         <a className="ticker-brand" href="/" aria-label={`${projectName} home`}>
           <img src={logoSrc} alt="" />
@@ -39,7 +39,7 @@ export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: Ma
         </nav>
         <div className="ticker-actions" aria-label="Project links">
           {contractAddress ? <CopyCaButton address={contractAddress} label={compactAddress(contractAddress)} /> : null}
-          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label="Open Cat in Hood on X">
+          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label={`Open ${projectName} on X`}>
             X
           </a>
         </div>

@@ -64,8 +64,8 @@ const emptyStats: StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
 
@@ -76,7 +76,7 @@ const emptyMarket: MarketResponse = {
     marketCapUsd: null,
     fdvUsd: null,
     url: null,
-    symbol: "HOODx"
+    symbol: "HOOD"
   },
   source: {
     priceUsd: null,
@@ -231,8 +231,8 @@ export function HeroCountdown() {
         <strong>{stats ? formatCount(eligibleHolders) : "0"}</strong>
       </div>
       <div className="ansemfication-stat">
-        <span>Hood Board</span>
-        <strong>0</strong>
+        <span>Verified Draws</span>
+        <strong>2</strong>
       </div>
       <div className="ansemfication-stat">
         <span>Next Epoch</span>
@@ -252,19 +252,19 @@ export function RewardExplanation() {
       <div className="container">
         <div className="section-kicker">Reward Route</div>
         <div className="section-head split-head">
-          <h2>Creator fees flow back to the trenches.</h2>
+          <h2>The split is simple: half automatic, half verified.</h2>
           <p>Clean, live, and provable.</p>
         </div>
         <div className="ansemfy-split-cards terminal-reward-route" aria-label="Creator fee route">
           <article className="ansemfy-split-card primary">
-            <span>Live</span>
-            <strong>{REWARD_SYMBOL} Holder Rewards</strong>
-            <p>Creator fees buy and airdrop {REWARD_SYMBOL} Stock to eligible {ELIGIBILITY_LABEL}+ holders every 5 minutes.</p>
+            <span>50%</span>
+            <strong>Automatic Holder Airdrops</strong>
+            <p>50% of usable rewards buys back {REWARD_SYMBOL} and airdrops it to eligible {ELIGIBILITY_LABEL}+ {SOURCE_LABEL} holders every 5 minutes.</p>
           </article>
           <article className="ansemfy-split-card">
-            <span>Proof</span>
-            <strong>The Hood Board</strong>
-            <p>Eligible wallets are balance-weighted and 5%+ wallets are excluded from the snapshot.</p>
+            <span>50%</span>
+            <strong>Verified Holder Draws</strong>
+            <p>50% is reserved for verified Hood memecoin holders, early movers and two live draws with 24-hour claim windows.</p>
           </article>
         </div>
       </div>
@@ -280,9 +280,9 @@ export function HallOfBulls() {
       <div className="container">
         <div className="section-kicker">The Hood Board</div>
         <div className="section-head split-head">
-          <h2>The holders still in the forest.</h2>
+          <h2>The holders still in the strategy.</h2>
           <p>
-            The Hood Board is ready for eligible wallets, reward totals, holder status and proof links as the protocol grows.
+            Eligible wallets, verified owners, reward totals and proof links will live here as the protocol grows.
           </p>
         </div>
 
@@ -294,6 +294,10 @@ export function HallOfBulls() {
           <article>
             <span>Eligible Holders</span>
             <strong>{stats ? formatCount(stats.latestEligibleHolders) : "0"}</strong>
+          </article>
+          <article>
+            <span>Verified Draws</span>
+            <strong>2</strong>
           </article>
         </div>
 
@@ -310,7 +314,7 @@ export function HallOfBulls() {
           <div className="bullify-leaderboard-empty hall-bulls-empty">
             <span className="bullify-empty-pfp" aria-hidden="true" />
             <strong>The Hood Board is warming up.</strong>
-            <p>Eligible wallets and verified reward totals will appear here after live epochs settle.</p>
+            <p>Eligible wallets, verified owners and reward totals will appear here after live epochs settle.</p>
           </div>
         </div>
       </div>
@@ -321,19 +325,19 @@ export function HallOfBulls() {
 export function HowItWorks() {
   const steps = [
     ["①", `Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`],
-    ["②", "Creator fees accrue"],
-    ["③", `Fees buy ${REWARD_SYMBOL}`],
-    ["④", "Snapshot eligible wallets"],
-    ["⑤", `Receive ${REWARD_SYMBOL} drops`]
+    ["②", "Stay active on X"],
+    ["③", `Fees buy back ${REWARD_SYMBOL}`],
+    ["④", "50% auto-drops to holders"],
+    ["⑤", "50% funds verified draws"]
   ];
 
   return (
     <section className="section ansemfy-how-section" id="how">
       <div className="container">
-        <div className="section-kicker">How Cat in Hood Works</div>
+        <div className="section-kicker">How Hood Strategy Works</div>
         <div className="section-head split-head">
-          <h2>Hold. Let fees buy HOODx. Watch proof settle.</h2>
-          <p>Every 5 minutes. Proportional to eligible balance.</p>
+          <h2>Hold HOOD. Verify ownership. Watch the drops settle.</h2>
+          <p>Automatic holder rewards plus live draws for verified early movers.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
           {steps.map(([number, title]) => (
@@ -362,10 +366,10 @@ export function CatPfpConveyor() {
         <div className="section-kicker">Hood PFPs</div>
         <div className="section-head split-head">
           <h2>Pick a cat. Wear the hood.</h2>
-          <p>Download a ready-to-use Cat in Hood PFP and join the timeline.</p>
+          <p>Download a ready-to-use Hood Strategy PFP and join the timeline.</p>
         </div>
       </div>
-      <div className="cat-pfp-conveyor" aria-label="Downloadable Cat in Hood PFP conveyor">
+      <div className="cat-pfp-conveyor" aria-label="Downloadable Hood Strategy PFP conveyor">
         <div className="cat-pfp-track">
           {loopedTiles.map((src, index) => {
             const fileNumber = (index % pfpTiles.length) + 1;
@@ -375,9 +379,9 @@ export function CatPfpConveyor() {
                 href={src}
                 download={`cat-in-hood-pfp-${String(fileNumber).padStart(2, "0")}.png`}
                 key={`${src}-${index}`}
-                title="Download this Cat in Hood PFP"
+                title="Download this Hood Strategy PFP"
               >
-                <img src={src} alt={`Cat in Hood PFP option ${fileNumber}`} loading="lazy" />
+                <img src={src} alt={`Hood Strategy PFP option ${fileNumber}`} loading="lazy" />
                 <span>Download</span>
               </a>
             );
@@ -392,10 +396,23 @@ export function LatestHoodActivity() {
   return (
     <section className="section bullify-latest-section" id="latest">
       <div className="container">
-        <div className="section-kicker">Latest Hood Activity</div>
+        <div className="section-kicker">Verified Holders</div>
         <div className="section-head split-head">
-          <h2>Latest trench signals</h2>
-          <p>Community and reward activity will appear here as the Hood grows.</p>
+          <h2>Proof before prizes.</h2>
+          <p>Verified holders can add an ETH wallet after proving ownership, then live draw winners claim through X within 24 hours.</p>
+        </div>
+        <div className="verified-holder-grid" aria-label="Verified holder flow">
+          {[
+            ["01", "Verify wallet ownership"],
+            ["02", "Add ETH wallet address"],
+            ["03", "Stay active on X"],
+            ["04", "Claim live draw wins"]
+          ].map(([number, label]) => (
+            <article key={label}>
+              <span>{number}</span>
+              <strong>{label}</strong>
+            </article>
+          ))}
         </div>
         <div className="bullify-profile-marquee" aria-label="Latest Hood Activity">
           <div className="bullify-profile-track">
@@ -426,7 +443,7 @@ export function LiveAnsemAirdrops() {
         <div className="section-kicker">Live Reward Drops</div>
         <div className="section-head split-head">
           <h2>Live {REWARD_SYMBOL} Airdrops</h2>
-          <p>Settled distributions, latest transfers and transaction proof come straight from Supabase.</p>
+          <p>Automatic holder transfers, verified draw claims and transaction proof come straight from the live reward records.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label={`Total ${REWARD_SYMBOL} Distributed`} value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : `0 ${REWARD_SYMBOL}`} strong />

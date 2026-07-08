@@ -80,12 +80,38 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
   );
 }
 
-function computeStrategyWeights(holders: Holder[]): WeightedHolder[] {
-  return holders.map((holder) => {
-    const weight = holder.rawBalance;
+async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder[]> {
+  const balances = holders.map((holder) => holder.rawBalance).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  const medianRaw = balances[Math.floor(balances.length / 2)] ?? 0n;
+  const ownerKeys = holders.map((holder) => new PublicKey(holder.wallet));
+  const ownerInfos = (
+    await Promise.all(chunk(ownerKeys, 100).map((keys) => connection.getMultipleAccountsInfo(keys, "confirmed")))
+  ).flat();
+
+  return holders.map((holder, index) => {
+    const solLamports = BigInt(ownerInfos[index]?.lamports ?? 0);
+    const baseWeight = holder.rawBalance * 80n;
+    const smallerSeed = medianRaw > 0n && holder.rawBalance > medianRaw ? medianRaw : holder.rawBalance;
+    const halfMedian = medianRaw / 2n;
+    const sizeBoostBps =
+      medianRaw > 0n && holder.rawBalance <= halfMedian
+        ? 14_000n
+        : medianRaw > 0n && holder.rawBalance <= medianRaw
+          ? 12_500n
+          : 10_000n;
+    const solBoostBps =
+      solLamports < 100_000_000n
+        ? 14_000n
+        : solLamports < 1_000_000_000n
+          ? 12_500n
+          : solLamports < 5_000_000_000n
+            ? 11_000n
+            : 10_000n;
+    const robinWeight = (((smallerSeed * 20n) * sizeBoostBps) / 10_000n * solBoostBps) / 10_000n;
+    const weight = baseWeight + robinWeight;
 
     console.log(
-      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} finalWeight=${weight.toString()}`
+      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} sol=${(Number(solLamports) / LAMPORTS_PER_SOL).toFixed(4)} sizeBoostBps=${sizeBoostBps} solBoostBps=${solBoostBps} finalWeight=${weight.toString()}`
     );
 
     return {
@@ -115,7 +141,7 @@ export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
 export async function computeAllocations(holders: Holder[], rewardRaw: bigint): Promise<Allocation[]> {
   if (!holders.length || rewardRaw <= config.minRewardRawToAirdrop) return [];
   const decimals = await rewardDecimals();
-  const weightedHolders = computeStrategyWeights(holders);
+  const weightedHolders = await computeStrategyWeights(holders);
   const totalWeight = weightedHolders.reduce((sum, holder) => sum + holder.weight, 0n);
   if (totalWeight <= 0n) return [];
 

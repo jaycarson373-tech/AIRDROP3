@@ -1,4 +1,4 @@
-import { LAMPORTS_PER_SOL, VersionedTransaction } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, SystemProgram, Transaction, VersionedTransaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
@@ -46,7 +46,7 @@ async function postBuyReserveLamports() {
   const airdropReserveLamports = BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
   const maxBatchCount = BigInt(Math.ceil(config.maxWalletsPerEpoch / config.airdropBatchSize));
   const transferFeeCushionLamports = maxBatchCount * AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS;
-  const pfpTransferCushionLamports = 0n;
+  const pfpTransferCushionLamports = config.pfpRewardWallet && config.pfpRewardBps > 0 ? 50_000n : 0n;
   const payoutReserveLamports =
     airdropReserveLamports + transferFeeCushionLamports + SWAP_EXECUTION_CUSHION_LAMPORTS + pfpTransferCushionLamports;
 
@@ -61,10 +61,10 @@ export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
     explicitReserveLamports === undefined ? defaultReserveLamports : maxBigInt(explicitReserveLamports, defaultReserveLamports);
   const usableLamports = balance > reserveLamports ? balance - reserveLamports : 0n;
   const splitBudgetLamports = (usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
-  const pfpBps = config.pfpRewardWallet ? config.pfpRewardBps : 0;
-  const allocationDivisor = BigInt(Math.max(10_000, config.ansemBuyBps + pfpBps));
-  const amount = (splitBudgetLamports * BigInt(config.ansemBuyBps)) / allocationDivisor;
-  const pfpRewardLamports = (splitBudgetLamports * BigInt(pfpBps)) / allocationDivisor;
+  const bagworkBps = config.pfpRewardWallet ? config.pfpRewardBps : 0;
+  const rewardBuyBps = config.pfpRewardWallet ? Math.max(0, Math.min(config.ansemBuyBps, 10_000 - bagworkBps)) : config.ansemBuyBps;
+  const amount = (splitBudgetLamports * BigInt(rewardBuyBps)) / 10_000n;
+  const pfpRewardLamports = (splitBudgetLamports * BigInt(bagworkBps)) / 10_000n;
   const allocatedLamports = amount + pfpRewardLamports;
   const solLongReserveLamports = usableLamports > allocatedLamports ? usableLamports - allocatedLamports : 0n;
 
@@ -74,7 +74,9 @@ export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
     pfpRewardLamports: pfpRewardLamports > 0n ? pfpRewardLamports : 0n,
     reserveLamports,
     usableLamports,
-    solLongReserveLamports
+    solLongReserveLamports,
+    rewardBuyBps,
+    bagworkBps
   };
 }
 
@@ -107,9 +109,23 @@ async function jupiterSwap(baseAmount: bigint, treasuryPublicKey: string) {
 }
 
 async function sendPfpReward(epochId: string, amountLamports: bigint) {
-  void epochId;
-  void amountLamports;
-  return null;
+  if (!config.pfpRewardWallet || amountLamports <= 0n) return null;
+  const treasury = treasuryKeypair();
+  console.log(
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}bagworking reward split: ${amountLamports.toString()} lamports to ${config.pfpRewardWallet.toBase58()}`
+  );
+  if (!config.buyEnabled) return null;
+  if (amountLamports > BigInt(Number.MAX_SAFE_INTEGER)) {
+    throw new Error("Bagworking reward is too large for a single transfer");
+  }
+  const tx = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: treasury.publicKey,
+      toPubkey: config.pfpRewardWallet,
+      lamports: Number(amountLamports)
+    })
+  );
+  return await sendAndConfirmTransaction(connection, tx, [treasury], { commitment: "confirmed", maxRetries: 3 });
 }
 
 export async function buyReward(epochId: string, explicitReserveLamports?: bigint): Promise<BuyResult> {
@@ -128,13 +144,13 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   }
 
   const treasury = treasuryKeypair();
-  const { amount, pfpRewardLamports, balance, reserveLamports, usableLamports, solLongReserveLamports } =
+  const { amount, pfpRewardLamports, balance, reserveLamports, usableLamports, solLongReserveLamports, rewardBuyBps, bagworkBps } =
     await treasurySwapAmount(explicitReserveLamports);
   const decimals = await rewardDecimals();
 
   if (amount <= 0n) {
     console.log(
-      `[${epochId}] insufficient treasury after reserve/split, skipping reward-token buy: balance=${balance}, reserve=${reserveLamports}, usable=${usableLamports}, buyBps=${config.ansemBuyBps}`
+      `[${epochId}] insufficient treasury after reserve/split, skipping HOOD buyback: balance=${balance}, reserve=${reserveLamports}, usable=${usableLamports}, buyBps=${rewardBuyBps}, bagworkBps=${bagworkBps}`
     );
     return {
       baseSpentLamports: 0n,
@@ -152,7 +168,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Cat in Hood buy: usable=${usableLamports}, reward buy=${amount} lamports (${config.ansemBuyBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Hood Strategy buyback: usable=${usableLamports}, automatic holders=${amount} lamports (${rewardBuyBps} bps), verified draws=${pfpRewardLamports} lamports (${bagworkBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
   );
   console.log(
     `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`

@@ -18,8 +18,8 @@ type HoldersResponse = {
 };
 
 const emptyResponse: HoldersResponse = { fallenBulls: [] };
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
 
 function compactAddress(address: string) {
@@ -72,9 +72,9 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/cat-in-hood-logo.png" alt="Cat in Hood logo" />
+            <img className="brand-logo" src="/brand/robin-hood-logo.svg" alt="Hood Strategy logo" />
             <span>
-              Cat in Hood
+              Hood Strategy
               <small>Ineligible Wallets</small>
             </span>
           </Link>

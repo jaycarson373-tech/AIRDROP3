@@ -1,15 +1,15 @@
-import { CatPfpConveyor, HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
+import { HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
 import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
 
-const PROJECT_NAME = "Cat in Hood";
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? "FJp7vevpWNU4swprwtpTd5LDTKrnmmy1qe9vitdpump";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/catinhood__";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT";
+const PROJECT_NAME = "Hood Strategy";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "soon";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/HOODSTR_";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
-const LOGO_SRC = "/brand/cat-in-hood-logo.png";
+const LOGO_SRC = "/brand/robin-hood-logo.svg";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -18,7 +18,7 @@ function compactAddress(address: string) {
 
 export default function Page() {
   return (
-    <div className="page ansemfy-page robin-page cat-hood-page has-market-ticker">
+    <div className="page ansemfy-page robin-page hood-page has-market-ticker">
       <MarketTicker
         logoSrc={LOGO_SRC}
         projectName={PROJECT_NAME}
@@ -36,35 +36,36 @@ export default function Page() {
           <div className="container ansemfication-hero-inner">
             <div className="ansemfication-copy">
               <div className="bullify-signal-card">
-                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Cat in Hood logo" />
+                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Hood Strategy logo" />
                 <div>
                   <em><span aria-hidden="true">●</span> Live</em>
-                  <span>Hood rewards</span>
-                  <strong>Cat in Hood live</strong>
+                  <span>Hood Strategy on Sol</span>
+                  <strong>HOOD rewards live</strong>
                 </div>
               </div>
-              <div className="bullify-history-punch" aria-label="Cat in Hood thesis">
-                <span>HOODx Stock drops</span>
+              <div className="bullify-history-punch" aria-label="Hood Strategy thesis">
+                <span>Hood stock rewards</span>
+                <span>Verified holder draws</span>
                 <span>Every 5 minutes</span>
                 <span>1M+ holders</span>
                 <span>5%+ wallets excluded</span>
               </div>
-              <div className="section-kicker">Hood reward protocol</div>
-              <h1>CAT IN HOOD</h1>
-              <p className="hero-subtitle">The hooded cat pays the holders.</p>
+              <div className="section-kicker">Hood Strategy protocol</div>
+              <h1>HOOD STRATEGY</h1>
+              <p className="hero-subtitle">Real airdrops. Verified holders. Neon proof.</p>
               <p className="hero-lead">
-                Cat in Hood turns creator fees into live HOODx Stock rewards.
+                Hood Strategy turns creator fees into live HOOD rewards for the timeline and the chain.
                 <br />
                 <br />
-                Every 5 minutes, creator fees automatically buy and airdrop {`$${REWARD_SYMBOL}`} to eligible {SOURCE_LABEL} holders.
+                50% of usable rewards automatically airdrops to {ELIGIBILITY_LABEL}+ {SOURCE_LABEL} holders.
                 <br />
                 <br />
-                Rewards are proportional to eligible holder balance, with 5%+ wallets excluded from the snapshot.
+                The other 50% funds verified Hood memecoin holders, early movers and live draw prizes. Winners have 24 hours to claim and prove wallet ownership through X.
                 <br />
                 <br />
-                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. Stay below the whale cap. Let the hood eat.
+                Hold, stay active on X, verify ownership, and let the Hood Board show the receipts.
               </p>
-              <div className="bullify-brief-grid" aria-label="Cat in Hood reward structure">
+              <div className="bullify-brief-grid" aria-label="Hood Strategy reward structure">
                 <article>
                   <span>Holder floor</span>
                   <strong>{ELIGIBILITY_LABEL}+ {SOURCE_LABEL}</strong>
@@ -74,15 +75,15 @@ export default function Page() {
                   <strong>5 minutes</strong>
                 </article>
                 <article>
-                  <span>Whale cap</span>
-                  <strong>5% max</strong>
+                  <span>Split</span>
+                  <strong>50 / 50</strong>
                 </article>
               </div>
-              <div className="ansemfication-steps" aria-label="Cat in Hood flow">
+              <div className="ansemfication-steps" aria-label="Hood Strategy flow">
                 {[
                   ["01", `Hold ${SOURCE_LABEL}`],
-                  ["02", `Fees buy ${REWARD_SYMBOL}`],
-                  ["03", "Holders receive drops"]
+                  ["02", "Verify on X"],
+                  ["03", "Live draws settle"]
                 ].map(([number, label]) => (
                   <article className="ansemfication-step" key={label}>
                     <span>{number}</span>
@@ -92,9 +93,9 @@ export default function Page() {
               </div>
               <div className="hero-actions">
                 <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
-                  Join the Hood
+                  Join Hood Strategy
                 </a>
-                <CopyCaButton address={CONTRACT_ADDRESS} label={compactAddress(CONTRACT_ADDRESS)} />
+                {CONTRACT_ADDRESS !== "soon" ? <CopyCaButton address={CONTRACT_ADDRESS} label={compactAddress(CONTRACT_ADDRESS)} /> : null}
                 <a className="cta secondary" href="#airdrops">
                   View Airdrops
                 </a>
@@ -105,7 +106,6 @@ export default function Page() {
           </div>
         </section>
         <HowItWorks />
-        <CatPfpConveyor />
         <RewardExplanation />
         <HallOfBulls />
         <LatestHoodActivity />
@@ -115,15 +115,15 @@ export default function Page() {
         <section className="section faq-section ansemfy-faq" id="faq">
           <div className="container">
             <div className="section-kicker">FAQ</div>
-            <h2>Cat in Hood mechanics.</h2>
+            <h2>Hood Strategy mechanics.</h2>
             <div className="faq-grid bullify-faq-grid">
-              <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL} and remain eligible at the snapshot.`} />
-              <FaqItem title="What gets airdropped?" body={`Creator fees buy ${REWARD_SYMBOL} Stock. Settled transfers are sent directly to eligible holders every 5 minutes.`} />
+              <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}, stay under the 5% wallet cap, and keep ownership provable from that wallet.`} />
+              <FaqItem title="What gets airdropped?" body={`50% of usable rewards buys back ${REWARD_SYMBOL} for automatic holder drops. 50% funds verified Hood holders and live draw prizes.`} />
               <FaqItem title="What is the Hood Board?" body="The Hood Board is the live proof layer for holders, drops, reward totals and transaction receipts." />
-              <FaqItem title="Do I need to claim?" body="No. Holder airdrops are automatic after each completed epoch." />
+              <FaqItem title="Do I need to claim?" body="Automatic holder drops do not need a claim. Live draw winners must respond on X within 24 hours and prove wallet ownership." />
               <FaqItem title="Who is excluded?" body="Wallets holding more than 5% of supply are excluded from reward snapshots." />
+              <FaqItem title="Who gets verified rewards?" body="Verified Hood memecoin holders, early movers and active X community members can be queued for claimable draws." />
               <FaqItem title="Where is proof?" body="Latest reward rounds, holder transfers and Solscan links appear in the live airdrop section." />
-              <FaqItem title="What should holders watch?" body="Next epoch, eligible holders, total distributed and latest transaction proof." />
             </div>
           </div>
         </section>
@@ -134,9 +134,9 @@ export default function Page() {
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src={LOGO_SRC} alt={`${PROJECT_NAME} logo`} />
-            <strong>Cat in Hood</strong>
+            <strong>Hood Strategy</strong>
           </div>
-          <p>Hooded cat energy. 5-minute HOODx Stock airdrops with proof on every drop.</p>
+          <p>Hood Strategy on Sol. 50/50 HOOD airdrops with proof on every drop and draw.</p>
           <div className="footer-links">
             <a href="#initiation">Protocol</a>
             <a href="#rewards">Rewards</a>
@@ -158,8 +158,8 @@ function FallenBulls() {
       <div className="container">
         <div className="section-kicker">Out of the Hood</div>
         <div className="section-head split-head">
-          <h2>Eligibility is earned every epoch.</h2>
-          <p>Wallets that fall below the threshold leave the reward queue until they qualify again.</p>
+          <h2>Sell once. Out forever.</h2>
+          <p>Hood Strategy rewards stay scarce by removing wallets that sell from the airdrop queue.</p>
         </div>
         <div className="bullify-fallen-empty">
           <strong>No wallets out of the hood yet.</strong>

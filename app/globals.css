@@ -6119,3 +6119,223 @@ td a,
     transform: none;
   }
 }
+
+/* Hood Strategy neon launch pass */
+.hood-page {
+  --hood-neon: #c8ff00;
+  --hood-green: #39ff6a;
+  --hood-ink: #f7fff0;
+  --hood-muted: rgba(247, 255, 240, 0.7);
+  --hood-panel: rgba(3, 7, 5, 0.86);
+  color: var(--hood-ink);
+  background:
+    linear-gradient(120deg, rgba(200, 255, 0, 0.09), transparent 26%, rgba(57, 255, 106, 0.07) 63%, transparent),
+    linear-gradient(180deg, #010201 0%, #071006 50%, #010201 100%);
+}
+
+.hood-page .ansemfy-aurora {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(5, 20, 4, 0.42), rgba(0, 0, 0, 0.9)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.92)),
+    url("/brand/bullify-bg-global.jpg") center / cover no-repeat !important;
+  filter: saturate(1.4) contrast(1.1);
+  opacity: 0.86 !important;
+}
+
+.hood-page .hero-shade {
+  background:
+    repeating-linear-gradient(0deg, rgba(200, 255, 0, 0.045) 0 1px, transparent 1px 5px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.94), rgba(5, 20, 4, 0.48) 52%, rgba(0, 0, 0, 0.9)),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.94) 96%);
+}
+
+.hood-page .bullify-signal-card,
+.hood-page .hero-countdown,
+.hood-page .metric-card,
+.hood-page .history-card,
+.hood-page .faq-item,
+.hood-page .reward-flow-card,
+.hood-page .ansemfy-split-card,
+.hood-page .bullify-leaderboard,
+.hood-page .bullify-fallen-empty,
+.hood-page .hall-bulls-stats article,
+.hood-page .verified-holder-grid article {
+  border-color: rgba(200, 255, 0, 0.28) !important;
+  background:
+    linear-gradient(180deg, rgba(200, 255, 0, 0.07), rgba(255, 255, 255, 0.018)),
+    var(--hood-panel) !important;
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.5),
+    0 0 42px rgba(200, 255, 0, 0.08),
+    inset 0 0 36px rgba(200, 255, 0, 0.04) !important;
+}
+
+.hood-page .bullify-hero-logo,
+.hood-page .brand-logo,
+.hood-page .ticker-brand img,
+.hood-page .loader-mascot img {
+  border-radius: 18px;
+  box-shadow: 0 0 28px rgba(200, 255, 0, 0.24);
+}
+
+.hood-page .section-kicker,
+.hood-page .bullify-signal-card em,
+.hood-page .bullify-signal-card span,
+.hood-page .bullify-history-punch span,
+.hood-page .ansemfication-step span,
+.hood-page .ansemfication-stat span,
+.hood-page .ticker-brand strong,
+.hood-page .ansemfy-flow .ansemfy-flow-card span,
+.hood-page .verified-holder-grid span {
+  color: var(--hood-neon) !important;
+}
+
+.hood-page .bullify-hero h1,
+.hood-page .ansemfy-page .bullify-hero h1 {
+  max-width: 860px;
+  color: var(--hood-ink);
+  text-shadow:
+    0 0 18px rgba(200, 255, 0, 0.25),
+    0 0 58px rgba(57, 255, 106, 0.18);
+}
+
+.hood-page .hero-subtitle,
+.hood-page .hero-lead,
+.hood-page .section-head p,
+.hood-page .footer {
+  color: var(--hood-muted);
+}
+
+.hood-page .cta,
+.hood-page .market-ticker .copy-ca-button {
+  border-color: rgba(200, 255, 0, 0.5);
+  background: var(--hood-neon);
+  color: #050505;
+  box-shadow: 0 0 40px rgba(200, 255, 0, 0.24);
+}
+
+.hood-page .cta.secondary,
+.hood-page .ticker-action {
+  background: rgba(4, 10, 5, 0.72);
+  color: var(--hood-ink);
+}
+
+.hood-page .hero-countdown::before {
+  content: "HOOD STRATEGY TERMINAL" !important;
+  color: var(--hood-neon) !important;
+}
+
+.hood-page .hall-bulls-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.verified-holder-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.verified-holder-grid article {
+  min-height: 132px;
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  border: 1px solid rgba(200, 255, 0, 0.28);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.verified-holder-grid span {
+  font-family: Orbitron, Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.74rem;
+  font-weight: 950;
+}
+
+.verified-holder-grid strong {
+  color: var(--hood-ink);
+  font-size: clamp(0.98rem, 1.15vw, 1.16rem);
+  line-height: 1.12;
+}
+
+@media (max-width: 920px) {
+  .verified-holder-grid,
+  .hood-page .hall-bulls-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .verified-holder-grid,
+  .hood-page .hall-bulls-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .hood-page.has-market-ticker {
+    --market-ticker-height: 66px;
+  }
+
+  .hood-page .market-ticker-inner {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px;
+    width: 100%;
+    padding-inline: 14px;
+  }
+
+  .hood-page .ticker-brand {
+    flex: 0 0 auto;
+  }
+
+  .hood-page .ticker-brand img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .hood-page .ticker-nav {
+    justify-content: flex-start;
+    gap: 12px;
+    mask-image: linear-gradient(90deg, #000 0 78%, transparent);
+  }
+
+  .hood-page .ticker-nav a {
+    font-size: 0.62rem;
+  }
+
+  .hood-page .ticker-actions {
+    flex: 0 0 auto;
+  }
+
+  .hood-page .market-ticker .copy-ca-button {
+    max-width: 70px;
+    overflow: hidden;
+    padding-inline: 8px;
+  }
+
+  .hood-page .ticker-action {
+    width: 34px;
+    padding-inline: 0;
+  }
+
+  .hood-page .bullify-leaderboard {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hood-page .bullify-leaderboard-head,
+  .hood-page .bullify-leaderboard-empty {
+    width: 980px;
+    max-width: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .hood-page .ticker-nav a:nth-child(n + 3) {
+    display: none;
+  }
+
+  .hood-page .ticker-nav {
+    mask-image: none;
+  }
+}
