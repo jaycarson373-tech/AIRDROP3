@@ -111,7 +111,7 @@ async function sendPfpReward(epochId: string, amountLamports: bigint) {
   if (!config.pfpRewardWallet || amountLamports <= 0n) return null;
   const treasury = treasuryKeypair();
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Bullified PFP bonus reserve: ${amountLamports.toString()} lamports to ${config.pfpRewardWallet.toBase58()}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Hood bonus reserve: ${amountLamports.toString()} lamports to ${config.pfpRewardWallet.toBase58()}`
   );
   if (!config.buyEnabled) return null;
 
@@ -127,7 +127,7 @@ async function sendPfpReward(epochId: string, amountLamports: bigint) {
     await connection.confirmTransaction(signature, "confirmed");
     return signature;
   } catch (error) {
-    console.warn(`[${epochId}] Bullified PFP bonus transfer failed; continuing ANSEM airdrop`, error);
+    console.warn(`[${epochId}] Hood bonus transfer failed; continuing ANSEM airdrop`, error);
     return null;
   }
 }
@@ -172,7 +172,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Bullify split: usable=${usableLamports}, ANSEM buy=${amount} lamports (${config.ansemBuyBps} bps), PFP reserve=${pfpRewardLamports} lamports (${config.pfpRewardWallet ? config.pfpRewardBps : 0} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Robin Hood split: usable=${usableLamports}, ANSEM buy=${amount} lamports (${config.ansemBuyBps} bps), PFP reserve=${pfpRewardLamports} lamports (${config.pfpRewardWallet ? config.pfpRewardBps : 0} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
   );
   console.log(
     `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`

@@ -16,15 +16,15 @@ function compactAddress(address: string) {
 
 export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: MarketTickerProps) {
   const navItems = [
-    ["Initiation", "#initiation"],
+    ["Protocol", "#initiation"],
     ["Rewards", "#rewards"],
-    ["Army", "#army"],
+    ["Hood Board", "#army"],
     ["Proof", "#airdrops"],
     ["FAQ", "#faq"]
   ];
 
   return (
-    <div className="market-ticker market-ticker-minimal" aria-label="Bullify header">
+    <div className="market-ticker market-ticker-minimal" aria-label="Robin Hood header">
       <div className="container market-ticker-inner">
         <a className="ticker-brand" href="/" aria-label={`${projectName} home`}>
           <img src={logoSrc} alt="" />
@@ -39,7 +39,7 @@ export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: Ma
         </nav>
         <div className="ticker-actions" aria-label="Project links">
           {contractAddress ? <CopyCaButton address={contractAddress} label={compactAddress(contractAddress)} /> : null}
-          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label="Open Bullify on X">
+          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label="Open Robin Hood on X">
             X
           </a>
         </div>

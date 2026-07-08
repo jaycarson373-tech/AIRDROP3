@@ -4,33 +4,33 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bullify.fun"),
-  title: "Bullify",
-  description: "Bullification for the Black Bull Army. Tag @Bullification_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
+  metadataBase: new URL("https://robinhood.fun"),
+  title: "Robin Hood",
+  description: "Steal from the rich. Give to the trenches. Robin Hood routes creator-fee rewards back to eligible holders with live proof.",
   openGraph: {
-    title: "Bullify",
-    description: "Bullification for the Black Bull Army. Tag @Bullification_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
-    url: "https://bullify.fun",
-    siteName: "Bullify",
+    title: "Robin Hood",
+    description: "Steal from the rich. Give to the trenches. Live reward drops for the holders still in the forest.",
+    url: "https://robinhood.fun",
+    siteName: "Robin Hood",
     images: [
       {
-        url: "/brand/bullify-logo.png",
-        width: 1254,
-        height: 1254,
-        alt: "Bullify"
+        url: "/brand/robin-hood-logo.svg",
+        width: 512,
+        height: 512,
+        alt: "Robin Hood"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bullify",
-    description: "Bullification for the Black Bull Army. Tag @Bullification_ on X, receive a Bullified PFP, and earn automated ANSEM rewards.",
-    images: ["/brand/bullify-logo.png"]
+    title: "Robin Hood",
+    description: "Steal from the rich. Give to the trenches. Live reward drops for eligible holders.",
+    images: ["/brand/robin-hood-logo.svg"]
   },
   icons: {
     icon: [
-      { url: "/brand/bullify-logo.png", type: "image/png" },
+      { url: "/brand/robin-hood-logo.svg", type: "image/svg+xml" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },

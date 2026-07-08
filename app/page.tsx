@@ -1,15 +1,15 @@
-import { HallOfBulls, HeroCountdown, HowItWorks, LatestBullifiedProfiles, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
+import { HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
 import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
 
-const PROJECT_NAME = "Bullify";
+const PROJECT_NAME = "Robin Hood";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? "EtvM4ugrmpzpgYjbg2oxqNYKWgNDgh5c9TwbRz5mpump";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/i/communities/2028470502415835347";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/HOODSTR_";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
-const LOGO_SRC = "/brand/bullify-logo.png";
+const LOGO_SRC = "/brand/robin-hood-logo.svg";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -18,7 +18,7 @@ function compactAddress(address: string) {
 
 export default function Page() {
   return (
-    <div className="page ansemfy-page has-market-ticker">
+    <div className="page ansemfy-page robin-page has-market-ticker">
       <MarketTicker
         logoSrc={LOGO_SRC}
         projectName={PROJECT_NAME}
@@ -36,53 +36,53 @@ export default function Page() {
           <div className="container ansemfication-hero-inner">
             <div className="ansemfication-copy">
               <div className="bullify-signal-card">
-                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Bullify logo" />
+                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Robin Hood logo" />
                 <div>
                   <em><span aria-hidden="true">●</span> Live</em>
-                  <span>Black Bull Army</span>
-                  <strong>Bullification live</strong>
+                  <span>Trench rewards</span>
+                  <strong>Robin Hood live</strong>
                 </div>
               </div>
-              <div className="bullify-history-punch" aria-label="Bullify thesis">
-                <span>10M+ ANSEM Airdropped</span>
-                <span>350M Peak Market Cap</span>
-                <span>10 Minute Epochs</span>
-                <span>Bulls Only</span>
+              <div className="bullify-history-punch" aria-label="Robin Hood thesis">
+                <span>Steal from the rich</span>
+                <span>Give to the trenches</span>
+                <span>Live reward epochs</span>
+                <span>Holders eat</span>
               </div>
-              <div className="section-kicker">Bulls only protocol</div>
-              <h1>BULLIFICATION</h1>
-              <p className="hero-subtitle">The initiation into the Black Bull Army.</p>
+              <div className="section-kicker">Trench reward protocol</div>
+              <h1>ROBIN HOOD</h1>
+              <p className="hero-subtitle">Steal from the rich. Give to the trenches.</p>
               <p className="hero-lead">
-                Reply to @Bullification_. Receive your Bullified PFP. Wear the horns. Join the Black Bull Army.
+                Robin Hood turns creator fees into live rewards for the holders still in the forest.
                 <br />
                 <br />
-                50% of creator fees automatically buy and airdrop {`$${REWARD_SYMBOL}`} to eligible holders every 10 minutes.
+                Creator fees automatically buy and airdrop {`$${REWARD_SYMBOL}`} to eligible {SOURCE_LABEL} holders.
                 <br />
                 <br />
-                The remaining 50% rewards verified Bullified PFP holders.
+                The Hood Board tracks eligible wallets, proof, latest drops and every settled transaction.
                 <br />
                 <br />
-                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. Sell during an epoch and you&apos;re out. Bulls only.
+                Hold {ELIGIBILITY_LABEL}+ {SOURCE_LABEL}. Stay eligible. Let the trenches eat.
               </p>
-              <div className="bullify-brief-grid" aria-label="Bullify reward structure">
+              <div className="bullify-brief-grid" aria-label="Robin Hood reward structure">
                 <article>
                   <span>Holder floor</span>
                   <strong>{ELIGIBILITY_LABEL}+ {SOURCE_LABEL}</strong>
                 </article>
                 <article>
                   <span>Epoch</span>
-                  <strong>10 minutes</strong>
+                  <strong>Live drops</strong>
                 </article>
                 <article>
-                  <span>Split</span>
-                  <strong>50 / 50</strong>
+                  <span>Route</span>
+                  <strong>Rewards</strong>
                 </article>
               </div>
-              <div className="ansemfication-steps" aria-label="Bullification flow">
+              <div className="ansemfication-steps" aria-label="Robin Hood flow">
                 {[
-                  ["01", "Tag @Bullification_"],
-                  ["02", "Receive Bullified PFP"],
-                  ["03", "Change PFP + bull post"]
+                  ["01", `Hold ${SOURCE_LABEL}`],
+                  ["02", "Fees buy rewards"],
+                  ["03", "Trenches receive drops"]
                 ].map(([number, label]) => (
                   <article className="ansemfication-step" key={label}>
                     <span>{number}</span>
@@ -92,7 +92,7 @@ export default function Page() {
               </div>
               <div className="hero-actions">
                 <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
-                  Become Bullified
+                  Join the Hood
                 </a>
                 <CopyCaButton address={CONTRACT_ADDRESS} label={compactAddress(CONTRACT_ADDRESS)} />
                 <a className="cta secondary" href="#airdrops">
@@ -107,22 +107,22 @@ export default function Page() {
         <HowItWorks />
         <RewardExplanation />
         <HallOfBulls />
-        <LatestBullifiedProfiles />
+        <LatestHoodActivity />
         <LiveAnsemAirdrops />
         <FallenBulls />
 
         <section className="section faq-section ansemfy-faq" id="faq">
           <div className="container">
             <div className="section-kicker">FAQ</div>
-            <h2>Bullification mechanics.</h2>
+            <h2>Robin Hood mechanics.</h2>
             <div className="faq-grid bullify-faq-grid">
-              <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}. No selling ever.`} />
-              <FaqItem title="What gets airdropped?" body={`50% of creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders every 10 minutes.`} />
-              <FaqItem title="What is the Bullified bonus pool?" body="The other 50% is reserved for verified members using their Bullified PFP. Manual fulfillment is supported while the X bot is being connected." />
+              <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL} and remain eligible at the snapshot.`} />
+              <FaqItem title="What gets airdropped?" body={`Creator fees buy ${REWARD_SYMBOL}. Settled transfers are sent directly to eligible holders after each completed epoch.`} />
+              <FaqItem title="What is the Hood Board?" body="The Hood Board is the live proof layer for holders, drops, reward totals and transaction receipts." />
               <FaqItem title="Do I need to claim?" body="No. Holder airdrops are automatic after each completed epoch." />
-              <FaqItem title="What happens if I sell?" body={`Once a connected wallet sells any ${SOURCE_LABEL}, it loses eligibility for both 10-minute ${REWARD_SYMBOL} drops and Bullified PFP bonus drops.`} />
-              <FaqItem title="How do I become Bullified?" body="Tag or reply to @Bullification_ on X, change it to your PFP, then bull post on your timeline and in the X community." />
-              <FaqItem title="How are bonus winners paid?" body="We DM winners. Winners DM their wallet to receive the reward and be added to the Hall of Bulls leaderboard." />
+              <FaqItem title="Why Robin Hood?" body="Because the protocol routes reward energy back to the trenches instead of letting it disappear into the noise." />
+              <FaqItem title="Where is proof?" body="Latest reward rounds, holder transfers and Solscan links appear in the live airdrop section." />
+              <FaqItem title="What should holders watch?" body="Next epoch, eligible holders, total distributed and latest transaction proof." />
             </div>
           </div>
         </section>
@@ -133,13 +133,13 @@ export default function Page() {
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src={LOGO_SRC} alt={`${PROJECT_NAME} logo`} />
-            <strong>Bullify</strong>
+            <strong>Robin Hood</strong>
           </div>
-          <p>Bullification for the Black Bull Army. 50/50 ANSEM holder rewards and Bullified PFP bonus pool.</p>
+          <p>Steal from the rich. Give to the trenches. Live holder rewards with proof on every drop.</p>
           <div className="footer-links">
-            <a href="#initiation">Initiation</a>
+            <a href="#initiation">Protocol</a>
             <a href="#rewards">Rewards</a>
-            <a href="#army">Army</a>
+            <a href="#army">Hood Board</a>
             <a href="#airdrops">Proof</a>
             <a href={X_URL} target="_blank" rel="noreferrer">
               X
@@ -155,14 +155,14 @@ function FallenBulls() {
   return (
     <section className="section bullify-fallen-section" id="fallen">
       <div className="container">
-        <div className="section-kicker">Fallen Bulls</div>
+        <div className="section-kicker">Out of the Hood</div>
         <div className="section-head split-head">
-          <h2>Once a bull sells, they fall.</h2>
-          <p>No 10-minute drops. No Bullified PFP bonus pool.</p>
+          <h2>Eligibility is earned every epoch.</h2>
+          <p>Wallets that fall below the threshold leave the reward queue until they qualify again.</p>
         </div>
         <div className="bullify-fallen-empty">
-          <strong>No fallen bulls yet.</strong>
-          <p>Wallets that sell after connecting will appear here when Supabase records the fall.</p>
+          <strong>No wallets out of the hood yet.</strong>
+          <p>Wallets removed by holder-state rules will appear here when Supabase records them.</p>
         </div>
       </div>
     </section>

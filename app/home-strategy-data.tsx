@@ -64,7 +64,7 @@ const emptyStats: StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "BULLIFY";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "ANSEM";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "500K";
@@ -205,7 +205,7 @@ export function HeroCountdown() {
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const latestDistributionTx = stats?.recentRewards?.find((reward) => reward.txSig)?.txSig ?? null;
-  const eligibleBulls = stats?.roundHistory?.length ? stats.latestEligibleHolders : 0;
+  const eligibleHolders = stats?.roundHistory?.length ? stats.latestEligibleHolders : 0;
   const sourceMarketCap = market?.source.marketCapUsd ?? market?.source.fdvUsd ?? null;
 
   return (
@@ -227,11 +227,11 @@ export function HeroCountdown() {
         <strong>{stats ? formatTotalAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : `0 ${REWARD_SYMBOL}`}</strong>
       </div>
       <div className="ansemfication-stat">
-        <span>Eligible Bulls</span>
-        <strong>{stats ? formatCount(eligibleBulls) : "0"}</strong>
+        <span>Eligible Holders</span>
+        <strong>{stats ? formatCount(eligibleHolders) : "0"}</strong>
       </div>
       <div className="ansemfication-stat">
-        <span>Bullified Profiles</span>
+        <span>Hood Board</span>
         <strong>0</strong>
       </div>
       <div className="ansemfication-stat">
@@ -250,21 +250,21 @@ export function RewardExplanation() {
   return (
     <section className="section ansemfy-how-section" id="rewards">
       <div className="container">
-        <div className="section-kicker">50 / 50 Rewards</div>
+        <div className="section-kicker">Reward Route</div>
         <div className="section-head split-head">
-          <h2>Half for holders. Half for the army.</h2>
-          <p>Simple split. No clutter.</p>
+          <h2>Creator fees flow back to the trenches.</h2>
+          <p>Clean, live, and provable.</p>
         </div>
         <div className="ansemfy-split-cards terminal-reward-route" aria-label="Creator fee route">
           <article className="ansemfy-split-card primary">
-            <span>50%</span>
-            <strong>$ANSEM Holder Rewards</strong>
-            <p>Creator fees buy and airdrop {REWARD_SYMBOL} to eligible {ELIGIBILITY_LABEL}+ holders every 10 minutes.</p>
+            <span>Live</span>
+            <strong>{REWARD_SYMBOL} Holder Rewards</strong>
+            <p>Creator fees buy and airdrop {REWARD_SYMBOL} to eligible {ELIGIBILITY_LABEL}+ holders each reward epoch.</p>
           </article>
           <article className="ansemfy-split-card">
-            <span>50%</span>
-            <strong>Bullified PFP Rewards</strong>
-            <p>Reserved for verified Bullified PFP holders in the Black Bull Army.</p>
+            <span>Proof</span>
+            <strong>The Hood Board</strong>
+            <p>Latest drops, eligible holders and transaction proof stay visible for the trenches.</p>
           </article>
         </div>
       </div>
@@ -278,40 +278,39 @@ export function HallOfBulls() {
   return (
     <section className="section bullify-army-section" id="army">
       <div className="container">
-        <div className="section-kicker">Hall of Bulls</div>
+        <div className="section-kicker">The Hood Board</div>
         <div className="section-head split-head">
-          <h2>Verified bulls only.</h2>
+          <h2>The holders still in the forest.</h2>
           <p>
-            To enter the Hall, a wallet must stay eligible for the holder airdrop: {ELIGIBILITY_LABEL}+ {SOURCE_LABEL} and
-            no connected-wallet sells. PFP and X links appear only after verification.
+            The Hood Board is ready for verified wallets, reward totals, holder status and proof links as the protocol grows.
           </p>
         </div>
 
         <div className="hall-bulls-stats" aria-label="Hall of Bulls SOL totals">
           <article>
-            <span>Total SOL Airdropped</span>
+            <span>Total Bonus Sent</span>
             <strong>{stats ? formatSol(stats.totalPfpRewardSol) : "0 SOL"}</strong>
           </article>
           <article>
-            <span>PFP Reward Wallet Balance</span>
+            <span>Reward Wallet Balance</span>
             <strong>{stats ? formatSol(stats.pfpRewardWalletBalanceSol) : "0 SOL"}</strong>
           </article>
         </div>
 
-        <div className="bullify-leaderboard hall-bulls-leaderboard" aria-label="Hall of Bulls leaderboard">
+        <div className="bullify-leaderboard hall-bulls-leaderboard" aria-label="Hood Board leaderboard">
           <div className="bullify-leaderboard-head hall-bulls-head">
-            <span>PFP</span>
-            <span>X Link</span>
+            <span>Rank</span>
+            <span>Wallet</span>
             <span>Name</span>
-            <span>SOL Won</span>
-            <span>Days Holding</span>
-            <span>Days Since PFP Change</span>
+            <span>Rewards Won</span>
+            <span>Hold Time</span>
+            <span>Last Drop</span>
             <span>Status</span>
           </div>
           <div className="bullify-leaderboard-empty hall-bulls-empty">
             <span className="bullify-empty-pfp" aria-hidden="true" />
-            <strong>The Black Bull Army is assembling.</strong>
-            <p>Tag @Bullification_, wear your Bullified PFP and become one of the first verified Bulls.</p>
+            <strong>The Hood Board is warming up.</strong>
+            <p>Eligible wallets and verified reward totals will appear here after live epochs settle.</p>
           </div>
         </div>
       </div>
@@ -321,20 +320,20 @@ export function HallOfBulls() {
 
 export function HowItWorks() {
   const steps = [
-    ["①", "Reply to @Bullification_"],
-    ["②", "Receive your Bullified PFP"],
-    ["③", "Upload your Bullified PFP to X"],
-    ["④", `Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`],
-    ["⑤", `Earn ${REWARD_SYMBOL} every 10 minutes`]
+    ["①", `Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL}`],
+    ["②", "Creator fees accrue"],
+    ["③", `Fees buy ${REWARD_SYMBOL}`],
+    ["④", "Snapshot eligible wallets"],
+    ["⑤", `Receive ${REWARD_SYMBOL} drops`]
   ];
 
   return (
     <section className="section ansemfy-how-section" id="how">
       <div className="container">
-        <div className="section-kicker">How Bullification Works</div>
+        <div className="section-kicker">How Robin Hood Works</div>
         <div className="section-head split-head">
-          <h2>Reply. Wear the horns. Earn.</h2>
-          <p>Five steps. Bulls only.</p>
+          <h2>Hold. Let fees route back. Watch proof settle.</h2>
+          <p>Five steps. Trenches first.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
           {steps.map(([number, title]) => (
@@ -349,23 +348,23 @@ export function HowItWorks() {
   );
 }
 
-export function LatestBullifiedProfiles() {
+export function LatestHoodActivity() {
   return (
     <section className="section bullify-latest-section" id="latest">
       <div className="container">
-        <div className="section-kicker">Latest Bullified</div>
+        <div className="section-kicker">Latest Hood Activity</div>
         <div className="section-head split-head">
-          <h2>Latest Bullified Profiles</h2>
-          <p>Verified Bullified PFPs will appear here as the Black Bull Army grows.</p>
+          <h2>Latest trench signals</h2>
+          <p>Verified community and reward activity will appear here as the Hood grows.</p>
         </div>
-        <div className="bullify-profile-marquee" aria-label="Latest Bullified Profiles">
+        <div className="bullify-profile-marquee" aria-label="Latest Hood Activity">
           <div className="bullify-profile-track">
             {Array.from({ length: 18 }).map((_, index) => (
               <span className="bullify-profile-skeleton" key={`bullified-profile-${index}`} />
             ))}
           </div>
         </div>
-        <p className="bullify-profile-empty">No verified Bullified profiles yet.</p>
+        <p className="bullify-profile-empty">No verified Hood activity yet.</p>
       </div>
     </section>
   );
@@ -384,9 +383,9 @@ export function LiveAnsemAirdrops() {
   return (
     <section className="section ansemfy-airdrop-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker">Live ANSEM Airdrops</div>
+        <div className="section-kicker">Live Reward Drops</div>
         <div className="section-head split-head">
-          <h2>Live $ANSEM Airdrops</h2>
+          <h2>Live {REWARD_SYMBOL} Airdrops</h2>
           <p>Settled distributions, latest transfers and transaction proof come straight from Supabase.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
@@ -430,7 +429,7 @@ export function LiveAnsemAirdrops() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5}>Awaiting settled ANSEM airdrops.</td>
+                    <td colSpan={5}>Awaiting settled reward drops.</td>
                   </tr>
                 )}
               </tbody>

@@ -2,7 +2,7 @@ import { runEpoch } from "./epoch.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
 
-console.log(`Bullify worker started. Schedule: every ${config.epochMinutes} minutes.`);
+console.log(`Robin Hood worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
@@ -11,7 +11,7 @@ console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} sour
 console.log("Eligibility rule: 500K+ and never sold; fallen wallets are excluded from holder and PFP rewards.");
 console.log(`ANSEM accumulation: ${config.ansemBuyBps} bps of usable creator fees goes to the ANSEM airdrop path after reserves.`);
 console.log(
-  `Bullified PFP bonus pool: ${config.pfpRewardWallet ? `${config.pfpRewardBps} bps to ${config.pfpRewardWallet.toBase58()}` : "disabled; set PFP_REWARD_WALLET_PUBLIC_KEY to enable"}`
+  `Hood bonus pool: ${config.pfpRewardWallet ? `${config.pfpRewardBps} bps to ${config.pfpRewardWallet.toBase58()}` : "disabled; set PFP_REWARD_WALLET_PUBLIC_KEY to enable"}`
 );
 
 async function loop() {
