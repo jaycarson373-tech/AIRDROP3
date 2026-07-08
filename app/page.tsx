@@ -1,4 +1,4 @@
-import { HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
+import { CatPfpConveyor, HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
 import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
 
@@ -105,6 +105,7 @@ export default function Page() {
           </div>
         </section>
         <HowItWorks />
+        <CatPfpConveyor />
         <RewardExplanation />
         <HallOfBulls />
         <LatestHoodActivity />

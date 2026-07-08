@@ -348,6 +348,46 @@ export function HowItWorks() {
   );
 }
 
+const pfpTiles = Array.from(
+  { length: 48 },
+  (_, index) => `/brand/cat-pfps/cat-in-hood-pfp-${String(index + 1).padStart(2, "0")}.png`
+);
+
+export function CatPfpConveyor() {
+  const loopedTiles = [...pfpTiles, ...pfpTiles];
+
+  return (
+    <section className="section cat-pfp-conveyor-section" id="pfps">
+      <div className="container">
+        <div className="section-kicker">Hood PFPs</div>
+        <div className="section-head split-head">
+          <h2>Pick a cat. Wear the hood.</h2>
+          <p>Download a ready-to-use Cat in Hood PFP and join the timeline.</p>
+        </div>
+      </div>
+      <div className="cat-pfp-conveyor" aria-label="Downloadable Cat in Hood PFP conveyor">
+        <div className="cat-pfp-track">
+          {loopedTiles.map((src, index) => {
+            const fileNumber = (index % pfpTiles.length) + 1;
+            return (
+              <a
+                className="cat-pfp-tile"
+                href={src}
+                download={`cat-in-hood-pfp-${String(fileNumber).padStart(2, "0")}.png`}
+                key={`${src}-${index}`}
+                title="Download this Cat in Hood PFP"
+              >
+                <img src={src} alt={`Cat in Hood PFP option ${fileNumber}`} loading="lazy" />
+                <span>Download</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function LatestHoodActivity() {
   return (
     <section className="section bullify-latest-section" id="latest">
