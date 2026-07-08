@@ -5870,14 +5870,14 @@ td a,
 .cat-hood-page .ansemfication-hero-inner,
 .cat-hood-page .bullify-hero .ansemfication-hero-inner {
   display: grid !important;
-  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.78fr);
-  gap: clamp(28px, 4vw, 72px);
+  grid-template-columns: minmax(0, 0.98fr) minmax(300px, 430px);
+  gap: clamp(24px, 3.2vw, 52px);
   align-items: center;
   min-height: unset;
 }
 
 .cat-hood-page .ansemfication-copy {
-  max-width: 850px !important;
+  max-width: 720px !important;
 }
 
 .cat-hood-page .bullify-signal-card,
@@ -5924,6 +5924,7 @@ td a,
 .cat-hood-page .bullify-hero h1,
 .cat-hood-page .ansemfy-page .bullify-hero h1 {
   max-width: 100%;
+  font-size: clamp(4rem, 8vw, 8.4rem);
   color: #f7fff0;
   text-shadow: 0 0 28px rgba(156, 255, 0, 0.11);
 }
@@ -5953,14 +5954,36 @@ td a,
 .cat-hood-page.bullify-hero .hero-countdown {
   position: static !important;
   width: 100% !important;
-  max-width: 520px !important;
+  max-width: 430px !important;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: clamp(14px, 2vw, 22px);
+  justify-self: end;
+  padding: clamp(12px, 1.4vw, 18px);
   border: 1px solid rgba(156, 255, 0, 0.24);
+}
+
+.cat-hood-page .hero-countdown::before,
+.cat-hood-page.bullify-hero .hero-countdown::before {
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  margin-bottom: 4px;
+}
+
+.cat-hood-page .hero-countdown .ansemfication-stat {
+  min-height: 104px;
+  padding: clamp(14px, 1.6vw, 18px);
+  border-radius: 20px;
+}
+
+.cat-hood-page .hero-countdown .ansemfication-stat span {
+  font-size: 0.72rem;
+}
+
+.cat-hood-page .hero-countdown .ansemfication-stat strong {
+  font-size: clamp(1.6rem, 3vw, 2.55rem);
 }
 
 .cat-hood-page .ansemfication-stat.primary {
   grid-column: 1 / -1;
+  min-height: 118px;
 }
 
 .cat-hood-page .ansemfication-stat strong {
@@ -5981,6 +6004,7 @@ td a,
 
   .cat-hood-page .hero-countdown {
     max-width: none !important;
+    justify-self: stretch;
   }
 }
 
