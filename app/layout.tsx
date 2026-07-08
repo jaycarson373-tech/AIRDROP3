@@ -4,33 +4,33 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://catinhood.fun"),
-  title: "catinhood",
-  description: "Cat in Hood uses creator fees to buy HoodX and airdrop it to eligible CIH holders every five minutes.",
+  metadataBase: new URL("https://robinhoodsol.fun"),
+  title: "Robin Hood",
+  description: "Robin Hood on Solana uses creator fees to buy HOOD and airdrop it to eligible holders every five minutes.",
   openGraph: {
-    title: "catinhood",
-    description: "Hold 1M+ CIH for automatic HoodX airdrops. Wallets above 5% are excluded.",
-    url: "https://catinhood.fun",
-    siteName: "catinhood",
+    title: "Robin Hood",
+    description: "Steal from the rich. Give to the trenches. HOOD belongs on Solana.",
+    url: "https://robinhoodsol.fun",
+    siteName: "Robin Hood",
     images: [
       {
-        url: "/brand/cat-in-hood-logo.png",
+        url: "/brand/robin-hood-logo.png",
         width: 512,
         height: 512,
-        alt: "catinhood"
+        alt: "Robin Hood"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "catinhood",
-    description: "Creator fees buy HoodX and airdrop it to eligible CIH holders every five minutes.",
-    images: ["/brand/cat-in-hood-logo.png"]
+    title: "Robin Hood",
+    description: "Creator fees buy HOOD and airdrop it to eligible holders every five minutes.",
+    images: ["/brand/robin-hood-logo.png"]
   },
   icons: {
     icon: [
-      { url: "/brand/cat-in-hood-logo.png", type: "image/png" },
+      { url: "/brand/robin-hood-logo.png", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },

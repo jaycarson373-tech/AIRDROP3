@@ -1,15 +1,15 @@
-import { CatPfpConveyor, HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
+import { HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
 import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "catinhood";
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "FJp7vevpWNU4swprwtpTd5LDTKrnmmy1qe9vitdpump";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/catinhood__";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CIH";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Robin Hood";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "soon";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/RobinHoodSol";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODX";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
-const LOGO_SRC = "/brand/cat-in-hood-logo.png";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
+const LOGO_SRC = "/brand/robin-hood-logo.png";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -36,33 +36,33 @@ export default function Page() {
           <div className="container ansemfication-hero-inner">
             <div className="ansemfication-copy">
               <div className="bullify-signal-card">
-                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Cat in Hood logo" />
+                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Robin Hood logo" />
                 <div>
                   <em><span aria-hidden="true">●</span> Live</em>
-                  <span>Cat in Hood on Sol</span>
-                  <strong>HOODX drops live</strong>
+                  <span>Robin Hood on Solana</span>
+                  <strong>HOOD drops live</strong>
                 </div>
               </div>
-              <div className="bullify-history-punch" aria-label="Cat in Hood thesis">
-                <span>HoodX stock rewards</span>
-                <span>{ELIGIBILITY_LABEL}+ {SOURCE_SYMBOL} holders</span>
-                <span>Every 5 minutes</span>
-                <span>5%+ wallets excluded</span>
-                <span>Solscan proof</span>
+              <div className="bullify-history-punch" aria-label="Robin Hood thesis">
+                <span>Steal from the rich</span>
+                <span>Give to the trenches</span>
+                <span>80% HOOD buybacks</span>
+                <span>20% bagwork fund</span>
+                <span>Hood belongs on Sol</span>
               </div>
-              <div className="section-kicker">Cat in Hood protocol</div>
-              <h1>CAT IN HOOD</h1>
-              <p className="hero-subtitle">Hooded cats. Real HoodX drops.</p>
+              <div className="section-kicker">Robin Hood on Solana</div>
+              <h1>ROBIN HOOD</h1>
+              <p className="hero-subtitle">Steal from the rich. Give to the trenches.</p>
               <p className="hero-lead">
-                Cat in Hood turns creator fees into live {REWARD_SYMBOL} rewards for the hood.
+                Robin Hood belongs on Solana. Last year they removed SOL; now the trenches are taking the hood back.
                 <br />
                 <br />
-                Every 5 minutes, usable creator fees buy {REWARD_SYMBOL} and airdrop it proportionally to {ELIGIBILITY_LABEL}+ {SOURCE_LABEL} holders.
+                Every 5 minutes, creator fees buy {REWARD_SYMBOL} and airdrop it to eligible {SOURCE_LABEL} holders.
                 <br />
                 <br />
-                Wallets above 5% are excluded so the hood stays fair. No fake data, only settled drops and receipts.
+                The rich get clipped, the hood gets paid. Wallets above 5% are excluded and 20% is reserved for bagwork.
               </p>
-              <div className="bullify-brief-grid" aria-label="Cat in Hood reward structure">
+              <div className="bullify-brief-grid" aria-label="Robin Hood reward structure">
                 <article>
                   <span>Holder floor</span>
                   <strong>{ELIGIBILITY_LABEL}+ {SOURCE_LABEL}</strong>
@@ -72,14 +72,14 @@ export default function Page() {
                   <strong>5 minutes</strong>
                 </article>
                 <article>
-                  <span>Reward path</span>
-                  <strong>100%</strong>
+                  <span>Split</span>
+                  <strong>80 / 20</strong>
                 </article>
               </div>
-              <div className="ansemfication-steps" aria-label="Cat in Hood flow">
+              <div className="ansemfication-steps" aria-label="Robin Hood flow">
                 {[
                   ["01", `Hold ${SOURCE_LABEL}`],
-                  ["02", "Fees buy HoodX"],
+                  ["02", "Fees buy HOOD"],
                   ["03", "Drops settle"]
                 ].map(([number, label]) => (
                   <article className="ansemfication-step" key={label}>
@@ -90,7 +90,7 @@ export default function Page() {
               </div>
               <div className="hero-actions">
                 <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
-                  Join the Hood
+                  Join Robin Hood
                 </a>
                 {CONTRACT_ADDRESS !== "soon" ? <CopyCaButton address={CONTRACT_ADDRESS} label={compactAddress(CONTRACT_ADDRESS)} /> : null}
                 <a className="cta secondary" href="#airdrops">
@@ -103,7 +103,6 @@ export default function Page() {
           </div>
         </section>
         <HowItWorks />
-        <CatPfpConveyor />
         <RewardExplanation />
         <HallOfBulls />
         <LatestHoodActivity />
@@ -113,7 +112,7 @@ export default function Page() {
         <section className="section faq-section ansemfy-faq" id="faq">
           <div className="container">
             <div className="section-kicker">FAQ</div>
-            <h2>Cat in Hood mechanics.</h2>
+            <h2>Robin Hood mechanics.</h2>
             <div className="faq-grid bullify-faq-grid">
               <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL} and stay under the 5% wallet cap.`} />
               <FaqItem title="What gets airdropped?" body={`Usable creator fees buy ${REWARD_SYMBOL}, then ${REWARD_SYMBOL} is distributed to eligible holders every 5 minutes.`} />
@@ -132,9 +131,9 @@ export default function Page() {
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src={LOGO_SRC} alt={`${PROJECT_NAME} logo`} />
-            <strong>Cat in Hood</strong>
+            <strong>Robin Hood</strong>
           </div>
-          <p>Cat in Hood on Sol. HoodX airdrops for eligible CIH holders with proof on every drop.</p>
+          <p>Robin Hood on Solana. HOOD airdrops for eligible holders with proof on every drop.</p>
           <div className="footer-links">
             <a href="#initiation">Protocol</a>
             <a href="#rewards">Rewards</a>
@@ -157,7 +156,7 @@ function FallenBulls() {
         <div className="section-kicker">Out of the Hood</div>
         <div className="section-head split-head">
           <h2>Sell once. Out forever.</h2>
-          <p>Cat in Hood keeps the board clean by showing wallets removed by holder-state rules.</p>
+          <p>Robin Hood keeps the board clean by showing wallets removed by holder-state rules.</p>
         </div>
         <div className="bullify-fallen-empty">
           <strong>No wallets out of the hood yet.</strong>

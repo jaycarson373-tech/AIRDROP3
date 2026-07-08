@@ -4682,6 +4682,7 @@ td a,
 }
 
 .bullify-hero .container {
+  width: min(1480px, calc(100% - 40px));
   max-width: 1480px;
 }
 
@@ -5828,7 +5829,7 @@ td a,
   }
 }
 
-/* Cat in Hood launch pass: remove old graphic worlds and keep the app black/lime. */
+/* Robin Hood launch pass: remove old graphic worlds and keep the app black/lime. */
 .cat-hood-page {
   --cat-green: #9cff00;
   --cat-green-soft: rgba(156, 255, 0, 0.16);
@@ -6223,6 +6224,40 @@ td a,
 .hood-page .hero-countdown::before {
   content: "HOOD STRATEGY TERMINAL" !important;
   color: var(--hood-neon) !important;
+}
+
+.hood-page .ansemfication-hero-inner,
+.hood-page .bullify-hero .ansemfication-hero-inner {
+  display: grid !important;
+  grid-template-columns: minmax(0, 740px) minmax(360px, 520px);
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(28px, 4vw, 72px);
+}
+
+.hood-page .ansemfication-copy {
+  max-width: 740px !important;
+}
+
+.hood-page .hero-countdown {
+  position: static !important;
+  width: 100% !important;
+  max-width: 520px !important;
+  justify-self: end;
+  align-self: center;
+  margin: 0 !important;
+}
+
+@media (max-width: 1180px) {
+  .hood-page .ansemfication-hero-inner,
+  .hood-page .bullify-hero .ansemfication-hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .hood-page .hero-countdown {
+    justify-self: stretch;
+    max-width: none !important;
+  }
 }
 
 .hood-page .hall-bulls-stats {

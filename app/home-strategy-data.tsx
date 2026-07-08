@@ -64,10 +64,10 @@ const emptyStats: StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CIH";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODX";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
 
 const emptyMarket: MarketResponse = {
   ansem: {
@@ -252,19 +252,19 @@ export function RewardExplanation() {
       <div className="container">
         <div className="section-kicker">Reward Route</div>
         <div className="section-head split-head">
-          <h2>100% automated {REWARD_SYMBOL} airdrops.</h2>
-          <p>Clean, live, and provable.</p>
+          <h2>80% buybacks. 20% bagwork.</h2>
+          <p>Steal from the rich. Give to the trenches.</p>
         </div>
         <div className="ansemfy-split-cards terminal-reward-route" aria-label="Creator fee route">
           <article className="ansemfy-split-card primary">
-            <span>100%</span>
-            <strong>{REWARD_SYMBOL} Buybacks</strong>
-            <p>Usable creator fees buy {REWARD_SYMBOL} after reserves are protected.</p>
+            <span>80%</span>
+            <strong>{REWARD_SYMBOL} Holder Airdrops</strong>
+            <p>Creator fees buy {REWARD_SYMBOL} and distribute it to eligible holders every 5 minutes.</p>
           </article>
           <article className="ansemfy-split-card">
-            <span>5m</span>
-            <strong>Holder Airdrops</strong>
-            <p>{REWARD_SYMBOL} is distributed proportionally to eligible {ELIGIBILITY_LABEL}+ {SOURCE_LABEL} holders. Wallets above 5% are excluded.</p>
+            <span>20%</span>
+            <strong>Bagwork Fund</strong>
+            <p>Reserved for timeline grinders pushing Robin Hood across Solana.</p>
           </article>
         </div>
       </div>
@@ -280,7 +280,7 @@ export function HallOfBulls() {
       <div className="container">
         <div className="section-kicker">The Hood Board</div>
         <div className="section-head split-head">
-          <h2>The cats still in the hood.</h2>
+          <h2>The hood stays paid.</h2>
           <p>
             Eligible wallets, reward totals and proof links will live here as the protocol grows.
           </p>
@@ -334,9 +334,9 @@ export function HowItWorks() {
   return (
     <section className="section ansemfy-how-section" id="how">
       <div className="container">
-        <div className="section-kicker">How Cat in Hood Works</div>
+        <div className="section-kicker">How Robin Hood Works</div>
         <div className="section-head split-head">
-          <h2>Hold CIH. Watch HoodX drop.</h2>
+          <h2>Hold {SOURCE_SYMBOL}. Watch {REWARD_SYMBOL} drop.</h2>
           <p>Automatic holder rewards, live every five minutes.</p>
         </div>
         <div className="reward-flow ansemfy-flow">
@@ -363,13 +363,13 @@ export function CatPfpConveyor() {
   return (
     <section className="section cat-pfp-conveyor-section" id="pfps">
       <div className="container">
-        <div className="section-kicker">Cat PFPs</div>
+        <div className="section-kicker">Hood PFPs</div>
         <div className="section-head split-head">
-          <h2>Pick a cat. Wear the hood.</h2>
-          <p>Download a ready-to-use Cat in Hood PFP and join the timeline.</p>
+          <h2>Wear the hood.</h2>
+          <p>Download a ready-to-use hood PFP and join the timeline.</p>
         </div>
       </div>
-      <div className="cat-pfp-conveyor" aria-label="Downloadable Cat in Hood PFP conveyor">
+      <div className="cat-pfp-conveyor" aria-label="Downloadable hood PFP conveyor">
         <div className="cat-pfp-track">
           {loopedTiles.map((src, index) => {
             const fileNumber = (index % pfpTiles.length) + 1;
@@ -377,11 +377,11 @@ export function CatPfpConveyor() {
               <a
                 className="cat-pfp-tile"
                 href={src}
-                download={`cat-in-hood-pfp-${String(fileNumber).padStart(2, "0")}.png`}
+                download={`hood-pfp-${String(fileNumber).padStart(2, "0")}.png`}
                 key={`${src}-${index}`}
-                title="Download this Cat in Hood PFP"
+                title="Download this hood PFP"
               >
-                <img src={src} alt={`Cat in Hood PFP option ${fileNumber}`} loading="lazy" />
+                <img src={src} alt={`Hood PFP option ${fileNumber}`} loading="lazy" />
                 <span>Download</span>
               </a>
             );
@@ -405,7 +405,7 @@ export function LatestHoodActivity() {
           {[
             ["01", "Snapshot holders"],
             ["02", "Exclude 5%+ wallets"],
-            ["03", "Buy HoodX"],
+            ["03", `Buy ${REWARD_SYMBOL}`],
             ["04", "Settle transfers"]
           ].map(([number, label]) => (
             <article key={label}>
@@ -440,7 +440,7 @@ export function LiveAnsemAirdrops() {
   return (
     <section className="section ansemfy-airdrop-section" id="airdrops">
       <div className="container">
-        <div className="section-kicker">Live HoodX Drops</div>
+        <div className="section-kicker">Live {REWARD_SYMBOL} Drops</div>
         <div className="section-head split-head">
           <h2>Live {REWARD_SYMBOL} Airdrops</h2>
           <p>Automatic holder transfers and transaction proof come straight from the live reward records.</p>

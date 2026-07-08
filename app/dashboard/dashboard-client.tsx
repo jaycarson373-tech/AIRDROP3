@@ -64,9 +64,9 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? "5") * 60 * 1000;
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "catinhood";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CIH";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODX";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Robin Hood";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
