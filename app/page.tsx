@@ -3,7 +3,7 @@ import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = "Cat in Hood";
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? "EtvM4ugrmpzpgYjbg2oxqNYKWgNDgh5c9TwbRz5mpump";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? "8DhBQSipWCPsGFnYvciUh1Uv5grAZWsvoqn5EnNGR73f";
 const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/CatInHood";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
