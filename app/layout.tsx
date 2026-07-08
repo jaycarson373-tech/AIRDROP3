@@ -4,33 +4,33 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hoodstrategy.fun"),
-  title: "Hood Strategy",
-  description: "Hood Strategy routes rewards into 50/50 HOOD holder airdrops and verified holder live draws.",
+  metadataBase: new URL("https://catinhood.fun"),
+  title: "catinhood",
+  description: "Cat in Hood uses creator fees to buy HoodX and airdrop it to eligible CIH holders every five minutes.",
   openGraph: {
-    title: "Hood Strategy",
-    description: "Hold 1M+ HOOD for automatic drops, verify ownership for live draw prizes.",
-    url: "https://hoodstrategy.fun",
-    siteName: "Hood Strategy",
+    title: "catinhood",
+    description: "Hold 1M+ CIH for automatic HoodX airdrops. Wallets above 5% are excluded.",
+    url: "https://catinhood.fun",
+    siteName: "catinhood",
     images: [
       {
-        url: "/brand/robin-hood-logo.svg",
+        url: "/brand/cat-in-hood-logo.png",
         width: 512,
         height: 512,
-        alt: "Hood Strategy"
+        alt: "catinhood"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hood Strategy",
-    description: "50/50 HOOD airdrops for holders and verified Hood community draws.",
-    images: ["/brand/robin-hood-logo.svg"]
+    title: "catinhood",
+    description: "Creator fees buy HoodX and airdrop it to eligible CIH holders every five minutes.",
+    images: ["/brand/cat-in-hood-logo.png"]
   },
   icons: {
     icon: [
-      { url: "/brand/robin-hood-logo.svg", type: "image/svg+xml" },
+      { url: "/brand/cat-in-hood-logo.png", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000000"
+  themeColor: "#9cff00"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

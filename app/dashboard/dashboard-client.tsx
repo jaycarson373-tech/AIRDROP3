@@ -64,9 +64,9 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? "5") * 60 * 1000;
-const PROJECT_NAME = "Hood Strategy";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "catinhood";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CIH";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODX";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -249,12 +249,12 @@ export function DashboardClient() {
   }, [nextDropMs, now]);
 
   return (
-    <div className="page ansemfy-page">
+    <div className="page cat-hood-page">
       <ParallaxBackground />
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/robin-hood-logo.svg" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/cat-in-hood-logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
               {PROJECT_NAME}
               <small>{REWARD_SYMBOL} Drops</small>

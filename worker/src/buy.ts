@@ -150,7 +150,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
 
   if (amount <= 0n) {
     console.log(
-      `[${epochId}] insufficient treasury after reserve/split, skipping HOOD buyback: balance=${balance}, reserve=${reserveLamports}, usable=${usableLamports}, buyBps=${rewardBuyBps}, bagworkBps=${bagworkBps}`
+      `[${epochId}] insufficient treasury after reserve/split, skipping reward buy: balance=${balance}, reserve=${reserveLamports}, usable=${usableLamports}, buyBps=${rewardBuyBps}, bagworkBps=${bagworkBps}`
     );
     return {
       baseSpentLamports: 0n,
@@ -168,7 +168,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Hood Strategy buyback: usable=${usableLamports}, automatic holders=${amount} lamports (${rewardBuyBps} bps), verified draws=${pfpRewardLamports} lamports (${bagworkBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Cat in Hood reward buy: usable=${usableLamports}, automatic holders=${amount} lamports (${rewardBuyBps} bps), bonus path=${pfpRewardLamports} lamports (${bagworkBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
   );
   console.log(
     `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`
