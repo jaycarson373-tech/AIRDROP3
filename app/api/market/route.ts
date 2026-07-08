@@ -42,7 +42,7 @@ type MarketPayload = {
   updatedAt: string;
 };
 
-const ANSEM_FALLBACK_MINT = "9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump";
+const REWARD_FALLBACK_MINT = "XsvNBAYkrDRNhA7wPHQfX3ZUXZyZLdnCQDfHZ56bzpg";
 const CACHE_MS = 15_000;
 
 let cache: { expiresAt: number; payload: MarketPayload } | null = null;
@@ -56,11 +56,10 @@ function cleanAddress(value: string | undefined | null) {
   return trimmed || null;
 }
 
-function ansemMint() {
+function rewardMint() {
   return (
-    cleanAddress(env("ANSEM_TOKEN_MINT")) ??
     cleanAddress(env("REWARD_TOKEN_MINT")) ??
-    ANSEM_FALLBACK_MINT
+    REWARD_FALLBACK_MINT
   );
 }
 
@@ -120,11 +119,11 @@ export async function GET() {
     return NextResponse.json(cache.payload);
   }
 
-  const ansem = ansemMint();
+  const reward = rewardMint();
   const source = sourceMint();
-  const pairs = await fetchDexPairs([ansem, source].filter(Boolean) as string[]);
+  const pairs = await fetchDexPairs([reward, source].filter(Boolean) as string[]);
   const payload: MarketPayload = {
-    ansem: marketFromPair(pickPair(pairs, ansem), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx"),
+    ansem: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx"),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
       process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT"

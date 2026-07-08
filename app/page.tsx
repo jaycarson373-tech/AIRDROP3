@@ -4,7 +4,7 @@ import { MarketTicker } from "./market-ticker";
 
 const PROJECT_NAME = "Cat in Hood";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? "FJp7vevpWNU4swprwtpTd5LDTKrnmmy1qe9vitdpump";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/CatInHood";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/catinhood__";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
