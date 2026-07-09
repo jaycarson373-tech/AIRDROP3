@@ -2,9 +2,9 @@ import { HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAi
 import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Robin Hood";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Robinhood";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "soon";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/RobinHoodSol";
+const X_URL = "https://x.com/Robhinhood_sol";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
@@ -18,7 +18,7 @@ function compactAddress(address: string) {
 
 export default function Page() {
   return (
-    <div className="page ansemfy-page robin-page hood-page cat-hood-page has-market-ticker">
+    <div className="page ansemfy-page robin-page hood-page has-market-ticker">
       <MarketTicker
         logoSrc={LOGO_SRC}
         projectName={PROJECT_NAME}
@@ -36,25 +36,25 @@ export default function Page() {
           <div className="container ansemfication-hero-inner">
             <div className="ansemfication-copy">
               <div className="bullify-signal-card">
-                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Robin Hood logo" />
+                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Robinhood logo" />
                 <div>
                   <em><span aria-hidden="true">●</span> Live</em>
-                  <span>Robin Hood on Solana</span>
+                  <span>Robinhood on Solana</span>
                   <strong>HOOD drops live</strong>
                 </div>
               </div>
-              <div className="bullify-history-punch" aria-label="Robin Hood thesis">
+              <div className="bullify-history-punch" aria-label="Robinhood thesis">
                 <span>Steal from the rich</span>
                 <span>Give to the trenches</span>
                 <span>80% HOOD buybacks</span>
                 <span>20% bagwork fund</span>
                 <span>Hood belongs on Sol</span>
               </div>
-              <div className="section-kicker">Robin Hood on Solana</div>
-              <h1>ROBIN HOOD</h1>
+              <div className="section-kicker">Robinhood on Solana</div>
+              <h1>ROBINHOOD</h1>
               <p className="hero-subtitle">Steal from the rich. Give to the trenches.</p>
               <p className="hero-lead">
-                Robin Hood belongs on Solana. Last year they removed SOL; now the trenches are taking the hood back.
+                Robinhood belongs on Solana. Last year they removed SOL; now the trenches are taking the hood back.
                 <br />
                 <br />
                 Every 5 minutes, creator fees buy {REWARD_SYMBOL} and airdrop it to eligible {SOURCE_LABEL} holders.
@@ -62,7 +62,7 @@ export default function Page() {
                 <br />
                 The rich get clipped, the hood gets paid. Wallets above 5% are excluded and 20% is reserved for bagwork.
               </p>
-              <div className="bullify-brief-grid" aria-label="Robin Hood reward structure">
+              <div className="bullify-brief-grid" aria-label="Robinhood reward structure">
                 <article>
                   <span>Holder floor</span>
                   <strong>{ELIGIBILITY_LABEL}+ {SOURCE_LABEL}</strong>
@@ -76,7 +76,7 @@ export default function Page() {
                   <strong>80 / 20</strong>
                 </article>
               </div>
-              <div className="ansemfication-steps" aria-label="Robin Hood flow">
+              <div className="ansemfication-steps" aria-label="Robinhood flow">
                 {[
                   ["01", `Hold ${SOURCE_LABEL}`],
                   ["02", "Fees buy HOOD"],
@@ -90,7 +90,7 @@ export default function Page() {
               </div>
               <div className="hero-actions">
                 <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
-                  Join Robin Hood
+                  Join Robinhood
                 </a>
                 {CONTRACT_ADDRESS !== "soon" ? <CopyCaButton address={CONTRACT_ADDRESS} label={compactAddress(CONTRACT_ADDRESS)} /> : null}
                 <a className="cta secondary" href="#airdrops">
@@ -112,7 +112,7 @@ export default function Page() {
         <section className="section faq-section ansemfy-faq" id="faq">
           <div className="container">
             <div className="section-kicker">FAQ</div>
-            <h2>Robin Hood mechanics.</h2>
+            <h2>Robinhood mechanics.</h2>
             <div className="faq-grid bullify-faq-grid">
               <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL} and stay under the 5% wallet cap.`} />
               <FaqItem title="What gets airdropped?" body={`Usable creator fees buy ${REWARD_SYMBOL}, then ${REWARD_SYMBOL} is distributed to eligible holders every 5 minutes.`} />
@@ -131,9 +131,9 @@ export default function Page() {
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src={LOGO_SRC} alt={`${PROJECT_NAME} logo`} />
-            <strong>Robin Hood</strong>
+            <strong>Robinhood</strong>
           </div>
-          <p>Robin Hood on Solana. HOOD airdrops for eligible holders with proof on every drop.</p>
+          <p>Robinhood on Solana. HOOD airdrops for eligible holders with proof on every drop.</p>
           <div className="footer-links">
             <a href="#initiation">Protocol</a>
             <a href="#rewards">Rewards</a>
@@ -156,7 +156,7 @@ function FallenBulls() {
         <div className="section-kicker">Out of the Hood</div>
         <div className="section-head split-head">
           <h2>Sell once. Out forever.</h2>
-          <p>Robin Hood keeps the board clean by showing wallets removed by holder-state rules.</p>
+          <p>Robinhood keeps the board clean by showing wallets removed by holder-state rules.</p>
         </div>
         <div className="bullify-fallen-empty">
           <strong>No wallets out of the hood yet.</strong>

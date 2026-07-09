@@ -264,7 +264,7 @@ export function RewardExplanation() {
           <article className="ansemfy-split-card">
             <span>20%</span>
             <strong>Bagwork Fund</strong>
-            <p>Reserved for timeline grinders pushing Robin Hood across Solana.</p>
+            <p>Reserved for timeline grinders pushing Robinhood across Solana.</p>
           </article>
         </div>
       </div>
@@ -334,7 +334,7 @@ export function HowItWorks() {
   return (
     <section className="section ansemfy-how-section" id="how">
       <div className="container">
-        <div className="section-kicker">How Robin Hood Works</div>
+        <div className="section-kicker">How Robinhood Works</div>
         <div className="section-head split-head">
           <h2>Hold {SOURCE_SYMBOL}. Watch {REWARD_SYMBOL} drop.</h2>
           <p>Automatic holder rewards, live every five minutes.</p>

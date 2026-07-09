@@ -168,7 +168,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Robin Hood reward buy: usable=${usableLamports}, automatic holders=${amount} lamports (${rewardBuyBps} bps), bagwork path=${pfpRewardLamports} lamports (${bagworkBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Robinhood reward buy: usable=${usableLamports}, automatic holders=${amount} lamports (${rewardBuyBps} bps), bagwork path=${pfpRewardLamports} lamports (${bagworkBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
   );
   console.log(
     `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`

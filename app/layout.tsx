@@ -5,26 +5,26 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://robinhoodsol.fun"),
-  title: "Robin Hood",
-  description: "Robin Hood on Solana uses creator fees to buy HOOD and airdrop it to eligible holders every five minutes.",
+  title: "Robinhood",
+  description: "Robinhood on Solana uses creator fees to buy HOOD and airdrop it to eligible holders every five minutes.",
   openGraph: {
-    title: "Robin Hood",
+    title: "Robinhood",
     description: "Steal from the rich. Give to the trenches. HOOD belongs on Solana.",
     url: "https://robinhoodsol.fun",
-    siteName: "Robin Hood",
+    siteName: "Robinhood",
     images: [
       {
         url: "/brand/robin-hood-logo.png",
         width: 512,
         height: 512,
-        alt: "Robin Hood"
+        alt: "Robinhood"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Robin Hood",
+    title: "Robinhood",
     description: "Creator fees buy HOOD and airdrop it to eligible holders every five minutes.",
     images: ["/brand/robin-hood-logo.png"]
   },

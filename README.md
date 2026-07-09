@@ -1,9 +1,9 @@
-# Robin Hood
+# Robinhood
 
 Source token: `$HOOD`
 Reward token: `$HOOD`
 
-Robin Hood routes creator-fee rewards into automatic HOOD buybacks and airdrops for eligible HOOD holders.
+Robinhood routes creator-fee rewards into automatic HOOD buybacks and airdrops for eligible HOOD holders.
 
 ## Reward Engine
 
@@ -18,7 +18,7 @@ Robin Hood routes creator-fee rewards into automatic HOOD buybacks and airdrops 
 ## Vercel Environment
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME=Robin Hood
+NEXT_PUBLIC_PROJECT_NAME=Robinhood
 NEXT_PUBLIC_SOURCE_SYMBOL=HOOD
 NEXT_PUBLIC_REWARD_SYMBOL=HOOD
 NEXT_PUBLIC_CA=<SOURCE_TOKEN_MINT>
@@ -27,7 +27,7 @@ NEXT_PUBLIC_SOURCE_TOKEN_MINT=<SOURCE_TOKEN_MINT>
 NEXT_PUBLIC_REWARD_TOKEN_MINT=<REWARD_TOKEN_MINT>
 NEXT_PUBLIC_ELIGIBILITY_LABEL=100K
 NEXT_PUBLIC_EPOCH_MINUTES=5
-NEXT_PUBLIC_X_URL=https://x.com/RobinHoodSol
+NEXT_PUBLIC_X_URL=https://x.com/Robhinhood_sol
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
 SUPABASE_URL=<SUPABASE_URL>

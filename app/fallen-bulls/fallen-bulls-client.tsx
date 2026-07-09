@@ -68,13 +68,13 @@ export function FallenBullsClient() {
   }, []);
 
   return (
-    <div className="page cat-hood-page">
+    <div className="page hood-page">
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/robin-hood-logo.png" alt="Robin Hood logo" />
+            <img className="brand-logo" src="/brand/robin-hood-logo.png" alt="Robinhood logo" />
             <span>
-              Robin Hood
+              Robinhood
               <small>Ineligible Wallets</small>
             </span>
           </Link>

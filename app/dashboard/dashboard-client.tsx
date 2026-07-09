@@ -64,7 +64,7 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? "5") * 60 * 1000;
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Robin Hood";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Robinhood";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
 
@@ -249,12 +249,12 @@ export function DashboardClient() {
   }, [nextDropMs, now]);
 
   return (
-    <div className="page cat-hood-page">
+    <div className="page hood-page">
       <ParallaxBackground />
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/cat-in-hood-logo.png" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/brand/robin-hood-logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
               {PROJECT_NAME}
               <small>{REWARD_SYMBOL} Drops</small>

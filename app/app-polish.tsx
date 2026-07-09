@@ -69,7 +69,7 @@ export function AppPolish() {
       <div className="loader-mascot">
         <img src="/brand/robin-hood-logo.svg" alt="" />
       </div>
-      <div className="loader-text">ROBIN HOOD</div>
+      <div className="loader-text">ROBINHOOD</div>
       <div className="loader-line" aria-hidden="true">
         <span />
       </div>
