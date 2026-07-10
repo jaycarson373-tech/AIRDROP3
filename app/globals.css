@@ -664,6 +664,25 @@ h3 {
   line-height: 0.9;
 }
 
+.hero-payout-note {
+  color: rgba(247, 250, 245, 0.68);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.hero-countdown.is-distributing {
+  border-color: rgba(245, 255, 0, 0.52);
+  box-shadow:
+    0 0 42px rgba(223, 255, 0, 0.16),
+    0 24px 70px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.hero-countdown.is-distributing strong {
+  font-size: clamp(2rem, 4.2vw, 4.2rem);
+  line-height: 0.96;
+}
+
 .hero-total-distributed {
   display: grid;
   gap: 8px;

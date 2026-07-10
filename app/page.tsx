@@ -91,7 +91,7 @@ export default function Page() {
                 Hold HoodBank. Get paid HOODx.
               </p>
               <p className="hero-lead">
-                Every epoch the machine claims creator fees, buys HOODx, and airdrops it to eligible holders. Proportional to your bag. Fully on-chain. Receipts included.
+                Every 5 minutes the machine claims creator fees, buys HOODx, and airdrops it to eligible holders. Proportional to your bag. Fully on-chain. Receipts included.
               </p>
               <div className="hero-actions">
                 <a className="cta" href="#strategy">

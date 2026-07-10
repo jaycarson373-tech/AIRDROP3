@@ -251,16 +251,22 @@ export function useMarketData() {
 export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
-  const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
+  const msUntilDrop = nextDropTime ? nextDropTime - now : 0;
+  const latestRound = stats?.roundHistory?.[0];
+  const isDistributing = latestRound?.status === "running" || (Boolean(nextDropTime) && msUntilDrop <= 0);
+  const countdown = nextDropTime ? formatCountdown(msUntilDrop) : "Loading";
   const totalDistributed =
     stats && stats.totalRewardAirdropped > 0
       ? `${stats.totalRewardAirdropped.toLocaleString(undefined, { maximumFractionDigits: 4 })} ${REWARD_SYMBOL}`
       : "Awaiting first drop";
 
   return (
-    <div className="hero-countdown" aria-live="polite">
-      <span>Next HOODx Payout</span>
-      <strong>{countdown}</strong>
+    <div className={isDistributing ? "hero-countdown is-distributing" : "hero-countdown"} aria-live="polite">
+      <span>{isDistributing ? "Airdrop in progress" : "HOODx payouts every 5 minutes"}</span>
+      <strong>{isDistributing ? "DISTRIBUTING AIRDROP" : countdown}</strong>
+      <div className="hero-payout-note">
+        {isDistributing ? "Eligible holders are being paid now." : "Next automatic payout window."}
+      </div>
       <div className="hero-total-distributed">
         <span>Total HOODx Paid</span>
         <b>{totalDistributed}</b>
