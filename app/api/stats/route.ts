@@ -188,7 +188,7 @@ async function pfpRewardWalletBalanceSol() {
 
 function epochNumber(epochId: string, fallback: number) {
   const timestamp = Date.parse(epochId);
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
   return Number.isFinite(timestamp) ? Math.floor(timestamp / epochMs) : fallback;
 }
 
@@ -201,7 +201,7 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function nextDropTime() {
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
   return new Date(Math.ceil(Date.now() / epochMs) * epochMs).toISOString();
 }
 
