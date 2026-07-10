@@ -20,6 +20,9 @@ type DexPair = {
   priceChange?: {
     h24?: number;
   } | null;
+  volume?: {
+    h24?: number;
+  } | null;
   liquidity?: {
     usd?: number;
   } | null;
@@ -32,6 +35,8 @@ type TokenMarket = {
   change24h: number | null;
   marketCapUsd: number | null;
   fdvUsd: number | null;
+  volume24hUsd: number | null;
+  liquidityUsd: number | null;
   url: string | null;
   symbol: string;
 };
@@ -39,10 +44,13 @@ type TokenMarket = {
 type MarketPayload = {
   ansem: TokenMarket;
   source: TokenMarket;
+  sol: TokenMarket;
   updatedAt: string;
 };
 
 const REWARD_FALLBACK_MINT = "XsvNBAYkrDRNhA7wPHQfX3ZUXZyZLdnCQDfHZ56bzpg";
+const SOURCE_FALLBACK_MINT = "FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump";
+const SOL_MINT = "So11111111111111111111111111111111111111112";
 const CACHE_MS = 15_000;
 
 let cache: { expiresAt: number; payload: MarketPayload } | null = null;
@@ -64,7 +72,7 @@ function rewardMint() {
 }
 
 function sourceMint() {
-  return cleanAddress(env("SOURCE_TOKEN_MINT"));
+  return cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA")) ?? SOURCE_FALLBACK_MINT;
 }
 
 function sameAddress(a: string | undefined, b: string) {
@@ -90,12 +98,16 @@ function marketFromPair(pair: DexPair | null, symbol: string): TokenMarket {
   const change24h = Number(pair?.priceChange?.h24 ?? NaN);
   const marketCapUsd = Number(pair?.marketCap ?? NaN);
   const fdvUsd = Number(pair?.fdv ?? NaN);
+  const volume24hUsd = Number(pair?.volume?.h24 ?? NaN);
+  const liquidityUsd = Number(pair?.liquidity?.usd ?? NaN);
 
   return {
     priceUsd: Number.isFinite(priceUsd) ? priceUsd : null,
     change24h: Number.isFinite(change24h) ? change24h : null,
     marketCapUsd: Number.isFinite(marketCapUsd) ? marketCapUsd : null,
     fdvUsd: Number.isFinite(fdvUsd) ? fdvUsd : null,
+    volume24hUsd: Number.isFinite(volume24hUsd) ? volume24hUsd : null,
+    liquidityUsd: Number.isFinite(liquidityUsd) ? liquidityUsd : null,
     url: pair?.url ?? null,
     symbol
   };
@@ -121,13 +133,14 @@ export async function GET() {
 
   const reward = rewardMint();
   const source = sourceMint();
-  const pairs = await fetchDexPairs([reward, source].filter(Boolean) as string[]);
+  const pairs = await fetchDexPairs([reward, source, SOL_MINT].filter(Boolean) as string[]);
   const payload: MarketPayload = {
     ansem: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD"),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
       process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD"
     ),
+    sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
     updatedAt: new Date().toISOString()
   };
 

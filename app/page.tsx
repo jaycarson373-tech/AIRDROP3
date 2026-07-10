@@ -6,6 +6,7 @@ import {
   HoodBonusSection,
   HolderLookup,
   LiveProtocolDashboard,
+  MarketVolumeSection,
   PermanentEligibility,
   RecentAirdrops,
   RewardExplanation
@@ -59,7 +60,7 @@ export default function Page() {
               <span>CLAIM FEES</span>
               <span><b>BUY HOODx</b></span>
               <span>PAY HOLDERS</span>
-              <span><b>100K+</b> ELIGIBLE</span>
+              <span><b>1M+</b> ELIGIBLE</span>
               <span>ON-CHAIN RECEIPTS</span>
             </div>
           ))}
@@ -109,7 +110,7 @@ export default function Page() {
               <span>epochs</span>
             </div>
             <div>
-              <strong>100K+</strong>
+              <strong>1M+</strong>
               <span>eligible</span>
             </div>
             <div>
@@ -119,6 +120,7 @@ export default function Page() {
           </div>
         </section>
 
+        <MarketVolumeSection />
         <LiveProtocolDashboard />
         <VaultSection />
         <RewardExplanation />
@@ -133,7 +135,7 @@ export default function Page() {
             <div className="section-kicker">FAQ</div>
             <h2>Vault notes.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body="Hold at least 100,000 $HOOD and stay above that threshold." />
+              <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $HOOD and stay above that threshold." />
               <FaqItem title="How often are rewards sent?" body="Creator fees buy HOODx every epoch when live conditions are met." />
               <FaqItem title="How does the bank work?" body="The backend claims fees, buys HOODx, scans eligible holders, and sends rewards automatically." />
               <FaqItem title="Does supply still matter?" body="Yes. Holder balance is the base weight, so larger holders can still earn more." />

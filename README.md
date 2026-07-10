@@ -31,7 +31,7 @@ Reward weight stays simple and starts from `$HOOD` held:
 - Eligible holders receive automatic HOODx payouts.
 - Receipts are tracked in Supabase and linked to on-chain transactions.
 
-Every epoch is 5 minutes. Default eligibility is 100,000 `$HOOD`. Selling any amount of `$HOOD`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
+Every epoch is 5 minutes. Default eligibility is 1,000,000 `$HOOD`. Selling any amount of `$HOOD`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
 
 ## Supabase
 
@@ -125,7 +125,7 @@ Reward settings:
 
 ```bash
 EPOCH_MINUTES=5
-ELIGIBILITY_MIN=100000
+ELIGIBILITY_MIN=1000000
 MAX_WALLETS_PER_EPOCH=150
 MAX_HOLDER_PCT=5
 EXCLUDE_WALLETS=

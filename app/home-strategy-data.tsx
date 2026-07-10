@@ -34,6 +34,23 @@ type StatsResponse = {
   recentRewards: Reward[];
 };
 
+type MarketToken = {
+  priceUsd: number | null;
+  change24h: number | null;
+  marketCapUsd: number | null;
+  fdvUsd: number | null;
+  volume24hUsd: number | null;
+  liquidityUsd: number | null;
+  url: string | null;
+  symbol: string;
+};
+
+type MarketResponse = {
+  source: MarketToken;
+  sol: MarketToken;
+  updatedAt: string;
+};
+
 type HoldersResponse = {
   topHolders: Array<{
     rank: number;
@@ -83,6 +100,29 @@ const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const emptyMarket: MarketResponse = {
+  source: {
+    priceUsd: null,
+    change24h: null,
+    marketCapUsd: null,
+    fdvUsd: null,
+    volume24hUsd: null,
+    liquidityUsd: null,
+    url: null,
+    symbol: SOURCE_SYMBOL
+  },
+  sol: {
+    priceUsd: null,
+    change24h: null,
+    marketCapUsd: null,
+    fdvUsd: null,
+    volume24hUsd: null,
+    liquidityUsd: null,
+    url: null,
+    symbol: "SOL"
+  },
+  updatedAt: new Date().toISOString()
+};
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -108,6 +148,11 @@ function formatNumber(value: number, maximumFractionDigits = 2) {
 function formatCount(value: number) {
   if (!Number.isFinite(value) || value < 0) return "Awaiting";
   return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function formatUsd(value: number | null | undefined, maximumFractionDigits = 0) {
+  if (!Number.isFinite(value ?? NaN) || !value) return "Awaiting";
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits })}`;
 }
 
 function formatAmount(value: number, symbol: string, maximumFractionDigits = 2) {
@@ -173,6 +218,28 @@ export function useProtocolData() {
   return { stats, holders, now };
 }
 
+export function useMarketData() {
+  const [market, setMarket] = useState<MarketResponse | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const load = async () => {
+      const nextMarket = await getJson<MarketResponse>("/api/market", emptyMarket);
+      if (active) setMarket(nextMarket);
+    };
+
+    load();
+    const refreshTimer = window.setInterval(load, REFRESH_MS);
+    return () => {
+      active = false;
+      window.clearInterval(refreshTimer);
+    };
+  }, []);
+
+  return market;
+}
+
 export function HeroCountdown() {
   const { stats, now } = useProtocolData();
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
@@ -216,6 +283,58 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Next HOODx Payout" value={countdown} />
           <MetricCard label="Bank Weight" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
           <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function MarketVolumeSection() {
+  const market = useMarketData();
+  const hoodVolume = market?.source.volume24hUsd ?? null;
+  const solVolume = market?.sol.volume24hUsd ?? null;
+  const hoodLiquidity = market?.source.liquidityUsd ?? null;
+  const solLiquidity = market?.sol.liquidityUsd ?? null;
+  const hoodShare =
+    Number.isFinite(hoodVolume ?? NaN) && Number.isFinite(solVolume ?? NaN) && (hoodVolume ?? 0) + (solVolume ?? 0) > 0
+      ? Math.max(3, Math.min(97, ((hoodVolume ?? 0) / ((hoodVolume ?? 0) + (solVolume ?? 0))) * 100))
+      : 50;
+  const solShare = 100 - hoodShare;
+
+  return (
+    <section className="section market-volume-section" id="volume">
+      <div className="container volume-panel">
+        <div className="section-head split-head">
+          <div>
+            <div className="section-kicker">DEX volume</div>
+            <h2>HOOD volume vs SOL volume.</h2>
+          </div>
+          <p>Live DexScreener volume comparison. The bank watches the rails, not vibes.</p>
+        </div>
+        <div className="volume-race" aria-label="HOOD DEX volume versus SOL DEX volume">
+          <div className="volume-card hood-volume-card">
+            <span>{SOURCE_SYMBOL} DEX volume</span>
+            <strong>{formatUsd(hoodVolume)}</strong>
+            <small>Liquidity {formatUsd(hoodLiquidity)}</small>
+          </div>
+          <div className="volume-divider" aria-hidden="true">
+            <b>VS</b>
+          </div>
+          <div className="volume-card sol-volume-card">
+            <span>SOL DEX volume</span>
+            <strong>{formatUsd(solVolume)}</strong>
+            <small>Liquidity {formatUsd(solLiquidity)}</small>
+          </div>
+        </div>
+        <div className="volume-bars" aria-hidden="true">
+          <i className="hood-volume-bar" style={{ width: `${hoodShare}%` }} />
+          <i className="sol-volume-bar" style={{ width: `${solShare}%` }} />
+        </div>
+        <div className="volume-foot">
+          <span>{market?.updatedAt ? `Updated ${formatDate(market.updatedAt)}` : "Awaiting market feed"}</span>
+          <a href={market?.source.url ?? "https://dexscreener.com/solana"} target="_blank" rel="noreferrer">
+            Open chart
+          </a>
         </div>
       </div>
     </section>
@@ -330,10 +449,10 @@ export function PermanentEligibility() {
       <div className="container warning-layout">
         <div>
           <div className="section-kicker">Eligibility rules</div>
-          <h2>Hold 100K+ HOOD.</h2>
+          <h2>Hold 1M+ HOOD.</h2>
         </div>
         <div className="eligibility-flow">
-          {[`100K+ $${SOURCE_SYMBOL}`, "Fees claimed", "HOODx bought", "Airdrop sent", "Receipt posted"].map((item, index) => (
+          {[`1M+ $${SOURCE_SYMBOL}`, "Fees claimed", "HOODx bought", "Airdrop sent", "Receipt posted"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -356,7 +475,7 @@ export function RewardExplanation() {
         </div>
         <div className="reward-flow">
           {[
-            `Hold at least 100,000 $${SOURCE_SYMBOL}`,
+            `Hold at least 1,000,000 $${SOURCE_SYMBOL}`,
             "Creator fees buy HOODx",
             "HOODx distributes every epoch",
             "100% of the reward rail goes to holders",
