@@ -3528,3 +3528,169 @@ td a,
     flex-direction: column;
   }
 }
+
+/* Header/background corrective pass */
+.hood-bank-page .market-tape {
+  position: sticky;
+  top: 0;
+  z-index: 120;
+  height: 36px;
+  background: rgba(2, 4, 3, 0.98);
+  box-shadow: 0 1px 0 rgba(223, 255, 0, 0.22);
+}
+
+.hood-bank-page .nav {
+  position: sticky;
+  top: 36px;
+  z-index: 110;
+  border-bottom: 1px solid rgba(223, 255, 0, 0.18);
+  background: rgba(2, 4, 3, 0.94);
+  backdrop-filter: blur(18px);
+  transform: none;
+}
+
+.hood-bank-page .nav-inner {
+  min-height: 74px;
+  gap: clamp(14px, 2vw, 24px);
+}
+
+.hood-bank-page .brand {
+  gap: 12px;
+}
+
+.hood-bank-page .brand-logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #050807;
+}
+
+.hood-bank-page .brand span {
+  color: #f7faf5;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  text-transform: none;
+}
+
+.hood-bank-page .brand small {
+  margin-top: 4px;
+  color: rgba(223, 255, 0, 0.72);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.hood-bank-page .nav-links {
+  flex: 1 1 auto;
+  justify-content: center;
+  gap: clamp(14px, 1.7vw, 24px);
+}
+
+.hood-bank-page .nav-links a {
+  color: rgba(247, 250, 245, 0.68);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.hood-bank-page .nav-actions {
+  gap: 12px;
+}
+
+.hood-bank-page .nav-actions .cta,
+.hood-bank-page .nav-actions .mini-button {
+  min-height: 42px;
+  padding: 0 18px;
+  white-space: nowrap;
+}
+
+.hood-bank-page .hero {
+  padding-top: clamp(82px, 10vw, 128px);
+  background:
+    linear-gradient(90deg, rgba(5, 8, 7, 0.58), rgba(5, 8, 7, 0.2) 48%, rgba(5, 8, 7, 0.58)),
+    radial-gradient(circle at 78% 32%, rgba(223, 255, 0, 0.18), transparent 28rem);
+}
+
+.hood-bank-page .hero-shade {
+  background:
+    linear-gradient(90deg, rgba(2, 4, 3, 0.64), rgba(2, 4, 3, 0.2) 50%, rgba(2, 4, 3, 0.62)),
+    linear-gradient(180deg, rgba(2, 4, 3, 0.04), rgba(2, 4, 3, 0.38) 66%, rgba(2, 4, 3, 0.72));
+}
+
+.hood-bank-page .hero-mountains {
+  opacity: 0.2;
+  background:
+    radial-gradient(circle at 72% 34%, rgba(245, 255, 0, 0.14), transparent 24rem),
+    url("/logo.png") right 8vw center / min(30vw, 360px) auto no-repeat;
+}
+
+.hood-bank-bg-rotator {
+  z-index: 0;
+}
+
+.hood-bank-bg-rotator::after {
+  background:
+    radial-gradient(circle at 50% 38%, transparent 0 34%, rgba(2, 3, 2, 0.08) 54%, rgba(2, 3, 2, 0.5) 100%),
+    linear-gradient(90deg, rgba(2, 3, 2, 0.36), rgba(2, 3, 2, 0.04) 45%, rgba(2, 3, 2, 0.42));
+}
+
+.hood-bank-bg-layer {
+  filter: saturate(1.45) contrast(1.08) brightness(1.12);
+}
+
+.hood-bank-page .section {
+  background:
+    radial-gradient(circle at 78% 0%, rgba(223, 255, 0, 0.08), transparent 24rem),
+    linear-gradient(180deg, rgba(5, 8, 7, 0.62), rgba(7, 12, 9, 0.72));
+}
+
+@keyframes hood-bank-bg-cycle {
+  0% {
+    opacity: 0;
+    transform: scale(1.03) translate3d(-1.2%, -0.8%, 0);
+  }
+  8% {
+    opacity: 0.7;
+  }
+  30% {
+    opacity: 0.7;
+    transform: scale(1.08) translate3d(1.2%, 0.8%, 0);
+  }
+  40%,
+  100% {
+    opacity: 0;
+    transform: scale(1.1) translate3d(1.8%, 1.2%, 0);
+  }
+}
+
+@media (max-width: 1080px) {
+  .hood-bank-page .nav-links {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .hood-bank-page .nav {
+    top: 36px;
+  }
+
+  .hood-bank-page .nav-inner {
+    min-height: 66px;
+  }
+
+  .hood-bank-page .brand-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .hood-bank-page .brand span {
+    font-size: 0.9rem;
+  }
+
+  .hood-bank-page .hero {
+    padding-top: 70px;
+  }
+}
