@@ -90,28 +90,30 @@ async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder
 
   return holders.map((holder, index) => {
     const solLamports = BigInt(ownerInfos[index]?.lamports ?? 0);
-    const baseWeight = holder.rawBalance * 80n;
-    const smallerSeed = medianRaw > 0n && holder.rawBalance > medianRaw ? medianRaw : holder.rawBalance;
+    const cappedBalance = medianRaw > 0n && holder.rawBalance > medianRaw ? medianRaw : holder.rawBalance;
     const halfMedian = medianRaw / 2n;
     const sizeBoostBps =
       medianRaw > 0n && holder.rawBalance <= halfMedian
-        ? 14_000n
+        ? 22_000n
         : medianRaw > 0n && holder.rawBalance <= medianRaw
-          ? 12_500n
-          : 10_000n;
+          ? 18_000n
+          : medianRaw > 0n && holder.rawBalance <= medianRaw * 2n
+            ? 13_000n
+            : 10_000n;
     const solBoostBps =
       solLamports < 100_000_000n
-        ? 14_000n
+        ? 20_000n
         : solLamports < 1_000_000_000n
-          ? 12_500n
+          ? 16_000n
           : solLamports < 5_000_000_000n
-            ? 11_000n
+            ? 13_000n
             : 10_000n;
-    const robinWeight = (((smallerSeed * 20n) * sizeBoostBps) / 10_000n * solBoostBps) / 10_000n;
+    const baseWeight = cappedBalance * 25n;
+    const robinWeight = (((cappedBalance * 75n) * sizeBoostBps) / 10_000n * solBoostBps) / 10_000n;
     const weight = baseWeight + robinWeight;
 
     console.log(
-      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} sol=${(Number(solLamports) / LAMPORTS_PER_SOL).toFixed(4)} sizeBoostBps=${sizeBoostBps} solBoostBps=${solBoostBps} finalWeight=${weight.toString()}`
+      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} sol=${(Number(solLamports) / LAMPORTS_PER_SOL).toFixed(4)} cappedSourceRaw=${cappedBalance.toString()} sizeBoostBps=${sizeBoostBps} solBoostBps=${solBoostBps} finalWeight=${weight.toString()}`
     );
 
     return {

@@ -24,9 +24,12 @@ Every epoch:
 
 ## Holder Weighting
 
-Reward weight stays simple and starts from `$HOOD` held:
+Reward weight starts from `$HOOD` held, then skews toward smaller holders:
 
-- `$HOOD` balance is the foundation of the score.
+- Eligible wallets above `MAX_HOLDER_PCT` are excluded before selection.
+- Recipient selection is deterministic-random, with a boost for lower eligible balances.
+- Payout weighting caps large holder balance impact around the median eligible wallet.
+- Lower-balance wallets and lower-SOL-balance wallets receive additional weighting boosts.
 - 100% of the reward pool buys HOODx.
 - Eligible holders receive automatic HOODx payouts.
 - Receipts are tracked in Supabase and linked to on-chain transactions.

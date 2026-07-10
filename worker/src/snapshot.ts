@@ -67,24 +67,42 @@ function holderPct(rawBalance: bigint, rawSupply: bigint) {
   return Number((rawBalance * 1_000_000n) / rawSupply) / 10_000;
 }
 
-function recipientScore(epochId: string, holder: Holder) {
-  return createHash("sha256")
+function recipientScoreValue(epochId: string, holder: Holder) {
+  return BigInt(
+    `0x${createHash("sha256")
     .update(`${epochId}:${holder.wallet}:${holder.rawBalance.toString()}`)
-    .digest("hex");
+      .digest("hex")}`
+  );
 }
 
 export function selectRewardRecipients(epochId: string, holders: Holder[]) {
+  const balances = holders.map((holder) => holder.rawBalance).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  const medianRaw = balances[Math.floor(balances.length / 2)] ?? 0n;
+  const halfMedian = medianRaw / 2n;
+
+  const holderSelectionBoostBps = (holder: Holder) => {
+    if (medianRaw <= 0n) return 10_000n;
+    if (holder.rawBalance <= halfMedian) return 20_000n;
+    if (holder.rawBalance <= medianRaw) return 16_000n;
+    return 10_000n;
+  };
+
   const recipients = holders
-    .map((holder) => ({ holder, score: recipientScore(epochId, holder) }))
+    .map((holder) => ({
+      holder,
+      score: recipientScoreValue(epochId, holder) / holderSelectionBoostBps(holder)
+    }))
     .sort((a, b) => {
-      const score = a.score.localeCompare(b.score);
+      const score = a.score < b.score ? -1 : a.score > b.score ? 1 : 0;
       return score || a.holder.wallet.localeCompare(b.holder.wallet);
     })
     .slice(0, config.maxWalletsPerEpoch)
     .map(({ holder }) => holder);
 
   if (holders.length > recipients.length) {
-    console.log(`[SNAPSHOT] selected ${recipients.length} random recipients from ${holders.length} eligible holders`);
+    console.log(
+      `[SNAPSHOT] selected ${recipients.length} lower-balance-skewed recipients from ${holders.length} eligible holders`
+    );
   }
 
   return recipients;
