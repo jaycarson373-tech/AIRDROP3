@@ -29,7 +29,7 @@ export function AppPolish() {
   }, []);
 
   useEffect(() => {
-    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .reset-warning-card, .reward-flow-card, .share-card, .path-card, .black-bull-card, .eligibility-card, .philosophy-card, .conviction-card, .warning-card, .lookup-card, .faq-item";
+    const selector = ".section, .card, .stat, .history-card, .metric-card, .flow-step, .multiplier-card, .reset-warning-card, .reward-flow-card, .share-card, .path-card, .black-bull-card, .eligibility-card, .philosophy-card, .conviction-card, .warning-card, .lookup-card, .faq-item";
     const elements = new Set<Element>();
     const observer = new IntersectionObserver(
       (entries) => {
@@ -67,9 +67,9 @@ export function AppPolish() {
   return (
     <div className={`loading-screen${leaving ? " is-leaving" : ""}`}>
       <div className="loader-mascot">
-        <img src="/brand/robin-hood-logo.png" alt="" />
+        <img src="/brand/hood-strategy-logo.png" alt="" />
       </div>
-      <div className="loader-text">ROBINHOOD</div>
+      <div className="loader-text">HoodBank</div>
       <div className="loader-line" aria-hidden="true">
         <span />
       </div>

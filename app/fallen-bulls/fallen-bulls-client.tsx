@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 type FallenBull = {
   address: string;
   balance: number;
+  currentMultiplier: string | null;
+  currentStreak: number | null;
   totalRewardEarned: number;
   lastAirdropAt: string | null;
   ineligibleReason: string;
@@ -18,9 +20,6 @@ type HoldersResponse = {
 };
 
 const emptyResponse: HoldersResponse = { fallenBulls: [] };
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -68,13 +67,13 @@ export function FallenBullsClient() {
   }, []);
 
   return (
-    <div className="page hood-page">
+    <div className="page">
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/robin-hood-logo.png" alt="Robinhood logo" />
+            <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt="HoodBank logo" />
             <span>
-              Robinhood
+              HoodBank
               <small>Ineligible Wallets</small>
             </span>
           </Link>
@@ -92,7 +91,7 @@ export function FallenBullsClient() {
             <div className="section-kicker">Ineligibility ledger</div>
             <div className="section-head split-head">
               <h1 className="dashboard-title">Ineligible Wallets</h1>
-              <p>Wallets that became ineligible for an epoch by selling or falling below the {ELIGIBILITY_LABEL} {SOURCE_SYMBOL} requirement.</p>
+              <p>Wallets that lost eligibility by selling or falling below the 250,000 HOOD requirement.</p>
             </div>
 
             <div className="history-card bull-board-card">
@@ -104,6 +103,7 @@ export function FallenBullsClient() {
                       <th>Reason</th>
                       <th>Total Rewards Earned</th>
                       <th>Status</th>
+                      <th>Final Streak</th>
                       <th>Last Airdrop</th>
                       <th>Removed At</th>
                     </tr>
@@ -112,17 +112,18 @@ export function FallenBullsClient() {
                     {fallenBulls.length ? (
                       fallenBulls.map((wallet) => (
                         <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "fallen"}`}>
-                          <td><span className="fallen-bull-icon" aria-hidden="true">🐂</span>{compactAddress(wallet.address)}</td>
+                          <td>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
-                          <td>{formatNumber(wallet.totalRewardEarned)} {REWARD_SYMBOL}</td>
+                          <td>{formatNumber(wallet.totalRewardEarned)} SOL</td>
                           <td>Ineligible</td>
+                          <td>{wallet.currentStreak ?? 0} epochs</td>
                           <td>{formatDate(wallet.lastAirdropAt)}</td>
                           <td>{formatDate(wallet.ineligibleAt ?? wallet.lastSeenAt)}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={6}>No ineligible wallets recorded yet.</td>
+                        <td colSpan={7}>No ineligible wallets recorded yet.</td>
                       </tr>
                     )}
                   </tbody>

@@ -1,36 +1,34 @@
 import type { Metadata } from "next";
-import type { Viewport } from "next";
 import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://robinhoodsol.fun"),
-  title: "Robinhood",
-  description: "Robinhood on Solana uses creator fees to buy HOOD and airdrop it to eligible holders every five minutes.",
+  metadataBase: new URL("https://hoodstrategy.fun"),
+  title: "HoodBank",
+  description: "HoodBank claims creator fees, buys HOODx, and pays eligible holders automatically.",
   openGraph: {
-    title: "Robinhood",
-    description: "Steal from the rich. Give to the trenches. HOOD belongs on Solana.",
-    url: "https://robinhoodsol.fun",
-    siteName: "Robinhood",
+    title: "HoodBank",
+    description: "HoodBank claims creator fees, buys HOODx, and pays eligible holders automatically.",
+    url: "https://hoodstrategy.fun",
+    siteName: "HoodBank",
     images: [
       {
-        url: "/brand/robin-hood-logo.png",
-        width: 512,
-        height: 512,
-        alt: "Robinhood"
+        url: "/brand/hood-strategy-logo.png",
+        width: 1200,
+        height: 1200,
+        alt: "HoodBank"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Robinhood",
-    description: "Creator fees buy HOOD and airdrop it to eligible holders every five minutes.",
-    images: ["/brand/robin-hood-logo.png"]
+    title: "HoodBank",
+    description: "HoodBank claims creator fees, buys HOODx, and pays eligible holders automatically.",
+    images: ["/brand/hood-strategy-logo.png"]
   },
   icons: {
     icon: [
-      { url: "/brand/robin-hood-logo.png", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
@@ -38,10 +36,6 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-touch-icon.png"
   }
-};
-
-export const viewport: Viewport = {
-  themeColor: "#9cff00"
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
