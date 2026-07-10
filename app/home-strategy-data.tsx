@@ -301,7 +301,7 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
           <MetricCard label="HOODx Reward Vault" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
           <MetricCard label="Next HOODx Payout" value={countdown} />
-          <MetricCard label="Bank Weight" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
+          <MetricCard label="Holder Weight" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
           <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
         </div>
       </div>
@@ -384,10 +384,10 @@ function MetricCard({
 }
 
 const hoodModelCards = [
-  ["01", "Claim fees", "Creator fees enter the bank every epoch."],
-  ["02", "Buy HOODx", "100% of usable fees route into HOODx."],
-  ["03", "Pay holders", "Eligible wallets receive automatic airdrops."],
-  ["04", "Post receipts", "Settled transactions show in the public ledger."]
+  ["01", "Fees collected", "Creator fees are pulled into the bank each epoch."],
+  ["02", "HOODx bought", "The bank uses those fees to buy HOODx."],
+  ["03", "Holders paid", "Eligible 1M+ HOOD wallets receive the HOODx."],
+  ["04", "Receipts posted", "Completed payouts are listed with transaction proof."]
 ];
 
 const solBoostCards = [
@@ -403,8 +403,8 @@ export function HoodBonusSection() {
       <div className="container">
         <div className="section-kicker">Bank model</div>
         <div className="section-head split-head">
-          <h2>Hold weight in. HOODx out.</h2>
-          <p>Payouts are based on holder weight. The live board shows who is eligible, how rewards settled, and which transactions paid.</p>
+          <h2>Hold HOOD. Earn HOODx.</h2>
+          <p>The bank buys HOODx with creator fees and sends it to eligible holders automatically.</p>
         </div>
         <div className="multiplier-grid">
           {hoodModelCards.map(([value, title, copy]) => (
@@ -422,34 +422,34 @@ export function HoodBonusSection() {
           ))}
         </div>
         <div className="conviction-card streak-card">
-          <span>Transparent bank weight</span>
-          <h3>Bank Weight</h3>
+          <span>Automatic rewards</span>
+          <h3>Simple holder payouts</h3>
           <div className="streak-readout">
             <div>
-              <span>Base</span>
-              <strong>$HOOD held</strong>
+              <span>Hold</span>
+              <strong>1M+ HOOD</strong>
             </div>
             <div>
-              <span>Payout</span>
+              <span>Earn</span>
               <strong>HOODx</strong>
             </div>
             <div>
-              <span>Proof</span>
-              <strong>Receipt</strong>
+              <span>Track</span>
+              <strong>TX proof</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>Holder weight is based on live eligibility and $HOOD balance. When an epoch settles, HOODx payouts and transaction receipts appear on the board.</p>
+          <p>No claiming. No staking. If a wallet is eligible when the epoch runs, the payout is sent and the transaction is posted.</p>
           <div className="max-row">
-            <span>Bank loop</span>
-            <b>100 / 0</b>
+            <span>Payout split</span>
+            <b>100% to holders</b>
           </div>
         </div>
       </div>
       <div className="container rank-strip" aria-label="Reward model">
-        {["Fees claimed", "HOODx bought", "Holders paid", "Receipts posted"].map((rank) => (
+        {["Fees collected", "HOODx bought", "Eligible holders paid", "TX proof posted"].map((rank) => (
           <span key={rank}>{rank}</span>
         ))}
       </div>
@@ -484,16 +484,16 @@ export function RewardExplanation() {
       <div className="container">
           <div className="section-kicker">How the bank pays</div>
         <div className="section-head split-head">
-          <h2>Creator fees buy HOODx.</h2>
-          <p>HoodBank turns creator fees into a live HOODx reward engine for eligible holders.</p>
+          <h2>Creator fees become holder rewards.</h2>
+          <p>Every epoch follows the same loop. Collect fees, buy HOODx, pay eligible holders, post the receipt.</p>
         </div>
         <div className="reward-flow">
           {[
-            `Hold at least 1,000,000 $${SOURCE_SYMBOL}`,
-            "Creator fees buy HOODx",
-            "HOODx distributes every epoch",
-            "100% of the reward rail goes to holders",
-            "Receipts are tracked on-chain"
+            `Hold 1M+ $${SOURCE_SYMBOL}`,
+            "Creator fees are collected",
+            "The bank buys HOODx",
+            "Eligible holders get paid automatically",
+            "Transaction proof is posted"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
               <strong>{item}</strong>
@@ -502,9 +502,9 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Core", "$HOOD held", "bank weight"],
-            ["Rail", "100 / 0", "holder payouts"],
-            ["Receipts", "On-chain", "settled payouts"]
+            ["Eligibility", "1M+ HOOD", "minimum balance"],
+            ["Rewards", "HOODx", "automatic payouts"],
+            ["Proof", "On-chain", "settled transactions"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
               <span>{holder}</span>
@@ -538,7 +538,7 @@ export function BullBoard() {
         <div className="section-kicker">Bank board</div>
         <div className="section-head split-head">
           <h2>HOOD BOARD</h2>
-          <p>Clean holder table showing balance, bank weight, earned HOODx, and latest payout activity.</p>
+          <p>Clean holder table showing balance, holder weight, earned HOODx, and latest payout activity.</p>
           <a className="cta secondary" href="/fallen-bulls">
             Ineligible Wallets
           </a>
@@ -553,7 +553,7 @@ export function BullBoard() {
                   <th>Status</th>
                   <th>Rail</th>
                   <th>Receipt</th>
-                  <th>Bank Weight</th>
+                  <th>Holder Weight</th>
                   <th>Total {REWARD_SYMBOL} Earned</th>
                   <th>Last Airdrop</th>
                 </tr>
@@ -713,7 +713,7 @@ export function AirdropHistory() {
                   <th>Epoch</th>
                   <th>{REWARD_SYMBOL} HOODx Bought</th>
                   <th>Recipients</th>
-                  <th>Bank Weight</th>
+                  <th>Holder Weight</th>
                   <th>Total Paid</th>
                   <th>Transaction</th>
                 </tr>

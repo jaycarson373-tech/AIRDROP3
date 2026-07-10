@@ -22,12 +22,12 @@ Every epoch:
 7. Airdrop HOODx directly to selected wallets.
 8. Store epochs, snapshots, claims, HOODx buys, and payouts in Supabase for the dashboard.
 
-## HoodBank Weighting
+## Holder Weighting
 
 Reward weight stays simple and starts from `$HOOD` held:
 
 - `$HOOD` balance is the foundation of the score.
-- 100% of the reward rail buys HOODx.
+- 100% of the reward pool buys HOODx.
 - Eligible holders receive automatic HOODx payouts.
 - Receipts are tracked in Supabase and linked to on-chain transactions.
 
