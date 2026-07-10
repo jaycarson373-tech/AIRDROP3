@@ -310,69 +310,45 @@ export function LiveProtocolDashboard() {
 }
 
 export function MarketVolumeSection() {
-  const market = useMarketData();
-  const hoodVolume = market?.source.volume24hUsd ?? null;
-  const solVolume = market?.sol.volume24hUsd ?? null;
-  const hoodLiquidity = market?.source.liquidityUsd ?? null;
-  const solLiquidity = market?.sol.liquidityUsd ?? null;
-  const hoodShare =
-    Number.isFinite(hoodVolume ?? NaN) && Number.isFinite(solVolume ?? NaN) && (hoodVolume ?? 0) + (solVolume ?? 0) > 0
-      ? Math.max(3, Math.min(97, ((hoodVolume ?? 0) / ((hoodVolume ?? 0) + (solVolume ?? 0))) * 100))
-      : 50;
-  const solShare = 100 - hoodShare;
-  const directHoodShare =
-    Number.isFinite(hoodVolume ?? NaN) && Number.isFinite(solVolume ?? NaN) && (hoodVolume ?? 0) + (solVolume ?? 0) > 0
-      ? ((hoodVolume ?? 0) / ((hoodVolume ?? 0) + (solVolume ?? 0))) * 100
-      : null;
-  const comparison =
-    Number.isFinite(hoodVolume ?? NaN) && Number.isFinite(solVolume ?? NaN) && (hoodVolume ?? 0) > 0 && (solVolume ?? 0) > 0
-      ? (hoodVolume ?? 0) >= (solVolume ?? 0)
-        ? `${SOURCE_SYMBOL} is ${formatCompact((hoodVolume ?? 0) / (solVolume ?? 1), 2)}x SOL volume`
-        : `SOL is ${formatCompact((solVolume ?? 0) / (hoodVolume ?? 1), 2)}x ${SOURCE_SYMBOL} volume`
-      : "Awaiting live comparison";
+  const robinhoodVolume = 750_000_000;
+  const solanaVolume = 1_800_000_000;
+  const combinedVolume = robinhoodVolume + solanaVolume;
+  const robinhoodShare = (robinhoodVolume / combinedVolume) * 100;
+  const solanaShare = 100 - robinhoodShare;
 
   return (
     <section className="section market-volume-section" id="volume">
       <div className="container volume-panel">
-        <div className="section-head split-head">
-          <div>
-            <div className="section-kicker">DEX volume</div>
-            <h2>HOOD volume vs SOL volume.</h2>
-          </div>
-          <p>Live DexScreener volume comparison. The bank watches the rails, not vibes.</p>
+        <div className="volume-head">
+          <div className="section-kicker">Volume today</div>
+          <h2>Robinhood volume vs Solana volume.</h2>
         </div>
-        <div className="volume-race" aria-label="HOOD DEX volume versus SOL DEX volume">
+        <div className="volume-race" aria-label="Robinhood volume versus Solana volume">
           <div className="volume-card hood-volume-card">
-            <span>{SOURCE_SYMBOL} DEX volume</span>
-            <strong>{formatUsd(hoodVolume)}</strong>
-            <small>Liquidity {formatUsd(hoodLiquidity)}</small>
+            <span>Robinhood volume</span>
+            <strong>$750M</strong>
+            <small>{robinhoodShare.toFixed(1)}% of combined volume</small>
           </div>
           <div className="volume-divider" aria-hidden="true">
             <b>VS</b>
           </div>
           <div className="volume-card sol-volume-card">
-            <span>SOL DEX volume</span>
-            <strong>{formatUsd(solVolume)}</strong>
-            <small>Liquidity {formatUsd(solLiquidity)}</small>
+            <span>Solana volume</span>
+            <strong>$1.8B</strong>
+            <small>{solanaShare.toFixed(1)}% of combined volume</small>
           </div>
         </div>
         <div className="volume-verdict">
-          <strong>{comparison}</strong>
-          <span>
-            {directHoodShare !== null
-              ? `${SOURCE_SYMBOL} share of combined volume: ${directHoodShare.toLocaleString(undefined, { maximumFractionDigits: directHoodShare < 1 ? 4 : 2 })}%`
-              : "Waiting for both markets to report volume"}
-          </span>
+          <strong>Solana is 2.4x Robinhood volume today.</strong>
+          <span>$2.55B combined volume across both markets</span>
         </div>
         <div className="volume-bars" aria-hidden="true">
-          <i className="hood-volume-bar" style={{ width: `${hoodShare}%` }} />
-          <i className="sol-volume-bar" style={{ width: `${solShare}%` }} />
+          <i className="hood-volume-bar" style={{ width: `${robinhoodShare}%` }} />
+          <i className="sol-volume-bar" style={{ width: `${solanaShare}%` }} />
         </div>
         <div className="volume-foot">
-          <span>{market?.updatedAt ? `Updated ${formatDate(market.updatedAt)}` : "Awaiting market feed"}</span>
-          <a href={market?.source.url ?? "https://dexscreener.com/solana"} target="_blank" rel="noreferrer">
-            Open chart
-          </a>
+          <span>Robinhood $750M</span>
+          <span>Solana $1.8B</span>
         </div>
       </div>
     </section>

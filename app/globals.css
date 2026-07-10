@@ -3249,23 +3249,36 @@ td a,
   z-index: 1;
 }
 
+.volume-head {
+  display: grid;
+  max-width: 980px;
+  gap: 14px;
+}
+
+.volume-head h2 {
+  max-width: 900px;
+  font-size: clamp(2.6rem, 6.2vw, 6.8rem);
+  line-height: 0.94;
+}
+
 .volume-race {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
   gap: clamp(14px, 3vw, 24px);
   align-items: stretch;
-  margin-top: 28px;
+  margin-top: clamp(28px, 4vw, 42px);
 }
 
 .volume-card {
-  min-height: 190px;
+  min-width: 0;
+  min-height: 172px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 18px;
+  gap: 16px;
   border: 1px solid rgba(223, 255, 0, 0.18);
   border-radius: 18px;
-  padding: clamp(20px, 3vw, 30px);
+  padding: clamp(20px, 3vw, 28px);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.018)),
     rgba(4, 8, 6, 0.82);
@@ -3295,10 +3308,11 @@ td a,
 
 .volume-card strong {
   color: #f1f8f3;
-  font-size: clamp(2.4rem, 6vw, 6.2rem);
+  font-size: clamp(2.6rem, 5vw, 5.4rem);
   font-weight: 950;
   letter-spacing: -0.07em;
   line-height: 0.85;
+  white-space: nowrap;
 }
 
 .hood-volume-card strong {
@@ -3339,7 +3353,7 @@ td a,
   display: grid;
   gap: 8px;
   margin-top: 24px;
-  padding: clamp(18px, 3vw, 26px);
+  padding: clamp(18px, 3vw, 28px);
   border: 1px solid rgba(223, 255, 0, 0.2);
   border-radius: 18px;
   background:
@@ -3349,10 +3363,10 @@ td a,
 
 .volume-verdict strong {
   color: #f5ff00;
-  font-size: clamp(1.6rem, 4vw, 4.8rem);
+  font-size: clamp(1.7rem, 3.8vw, 4.2rem);
   font-weight: 950;
   letter-spacing: -0.06em;
-  line-height: 0.92;
+  line-height: 0.98;
   text-shadow: 0 0 30px rgba(223, 255, 0, 0.28);
 }
 
@@ -3396,7 +3410,7 @@ td a,
   font-size: 0.72rem;
 }
 
-.volume-foot a {
+.volume-foot span:first-child {
   color: #f5ff00;
 }
 
