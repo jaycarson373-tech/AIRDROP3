@@ -33,27 +33,27 @@
   --charcoal-2: #0e1510;
   --stone: #0b110d;
   --stone-2: #101911;
-  --bronze: #00c805;
-  --bronze-soft: rgba(0, 200, 5, 0.22);
-  --gold: #00e654;
-  --gold-soft: #00c805;
-  --green: #00c805;
-  --green-soft: rgba(0, 200, 5, 0.18);
+  --bronze: #dfff00;
+  --bronze-soft: rgba(223, 255, 0, 0.22);
+  --gold: #f5ff00;
+  --gold-soft: #dfff00;
+  --green: #dfff00;
+  --green-soft: rgba(223, 255, 0, 0.18);
   --ivory: #eef5f0;
   --muted: #93a69b;
   --faint: #5c6e63;
-  --border: rgba(0, 200, 5, 0.16);
+  --border: rgba(223, 255, 0, 0.16);
   --border-soft: rgba(233, 242, 236, 0.08);
   --panel: rgba(11, 17, 13, 0.94);
   --panel-2: rgba(14, 21, 16, 0.94);
   background:
-    radial-gradient(circle at 72% 12%, rgba(0, 200, 5, 0.14), transparent 25rem),
-    radial-gradient(circle at 18% 62%, rgba(0, 230, 84, 0.08), transparent 24rem),
+    radial-gradient(circle at 72% 12%, rgba(223, 255, 0, 0.14), transparent 25rem),
+    radial-gradient(circle at 18% 62%, rgba(245, 255, 0, 0.08), transparent 24rem),
     #050807;
 }
 
 .hood-bank-page::before {
-  background-image: radial-gradient(rgba(0, 200, 5, 0.13) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(223, 255, 0, 0.13) 1px, transparent 1px);
   background-size: 28px 28px;
   opacity: 0.38;
 }
@@ -70,7 +70,7 @@
   height: 36px;
   align-items: center;
   overflow: hidden;
-  border-bottom: 1px solid rgba(0, 200, 5, 0.16);
+  border-bottom: 1px solid rgba(223, 255, 0, 0.16);
   background: rgba(4, 7, 5, 0.94);
   backdrop-filter: blur(12px);
 }
@@ -99,7 +99,7 @@
 }
 
 .market-tape b {
-  color: #00e654;
+  color: #f5ff00;
 }
 
 @keyframes bank-tape-scroll {
@@ -123,7 +123,7 @@
   width: 36px;
   height: 36px;
   border-color: transparent;
-  box-shadow: 0 0 18px rgba(0, 200, 5, 0.36);
+  box-shadow: 0 0 18px rgba(223, 255, 0, 0.36);
 }
 
 .hood-bank-page .brand span,
@@ -140,7 +140,7 @@
 
 .hood-bank-page .brand small,
 .hood-bank-page .section-kicker {
-  color: #00c805;
+  color: #dfff00;
 }
 
 .hood-bank-page .nav-links a,
@@ -154,7 +154,7 @@
   padding: clamp(58px, 8vw, 104px) 0 clamp(42px, 6vw, 74px);
   background:
     linear-gradient(90deg, rgba(5, 8, 7, 0.94), rgba(5, 8, 7, 0.52) 48%, rgba(5, 8, 7, 0.9)),
-    radial-gradient(circle at 80% 28%, rgba(0, 200, 5, 0.2), transparent 25rem),
+    radial-gradient(circle at 80% 28%, rgba(223, 255, 0, 0.2), transparent 25rem),
     url("/airdrop-bg.png") center / cover no-repeat;
 }
 
@@ -174,8 +174,8 @@
 .hood-bank-page h1 span:last-child,
 .hood-bank-page .hero-countdown > strong,
 .hood-bank-page .hero-total-distributed b {
-  color: #00e654;
-  text-shadow: 0 0 34px rgba(0, 200, 5, 0.36);
+  color: #f5ff00;
+  text-shadow: 0 0 34px rgba(223, 255, 0, 0.36);
 }
 
 .hood-bank-page .cta,
@@ -183,15 +183,15 @@
 .hood-bank-page .lookup-card button {
   border: 0;
   border-radius: 999px;
-  background: #00c805;
+  background: #dfff00;
   color: #04140a;
   box-shadow: none;
 }
 
 .hood-bank-page .cta.secondary,
 .hood-bank-page .mini-button {
-  border: 1px solid rgba(0, 200, 5, 0.16);
-  background: rgba(0, 200, 5, 0.08);
+  border: 1px solid rgba(223, 255, 0, 0.16);
+  background: rgba(223, 255, 0, 0.08);
   color: #eef5f0;
 }
 
@@ -206,14 +206,14 @@
 .hood-bank-page .history-card,
 .hood-bank-page .lookup-card,
 .hood-bank-page .faq-item {
-  border: 1px solid rgba(0, 200, 5, 0.16);
+  border: 1px solid rgba(223, 255, 0, 0.16);
   border-radius: 18px;
   background: linear-gradient(180deg, rgba(14, 21, 16, 0.96), rgba(11, 17, 13, 0.96));
   box-shadow: 0 22px 64px rgba(0, 0, 0, 0.36);
 }
 
 .hood-bank-page .black-bull-portrait img {
-  filter: drop-shadow(0 0 24px rgba(0, 200, 5, 0.3));
+  filter: drop-shadow(0 0 24px rgba(223, 255, 0, 0.3));
 }
 
 .hood-bank-page th,
@@ -223,8 +223,8 @@
 }
 
 .hood-bank-page tbody tr:hover {
-  background: rgba(0, 200, 5, 0.08);
-  box-shadow: inset 3px 0 0 #00c805;
+  background: rgba(223, 255, 0, 0.08);
+  box-shadow: inset 3px 0 0 #dfff00;
 }
 
 * {
@@ -2409,19 +2409,19 @@ td a,
   --charcoal-2: #0e1510;
   --stone: #0b110d;
   --stone-2: #101911;
-  --bronze: #00c805;
-  --gold: #00e654;
-  --green: #00c805;
+  --bronze: #dfff00;
+  --gold: #f5ff00;
+  --green: #dfff00;
   --ivory: #eef5f0;
   --muted: #93a69b;
   --faint: #5c6e63;
-  --border: rgba(0, 200, 5, 0.16);
+  --border: rgba(223, 255, 0, 0.16);
   --border-soft: rgba(233, 242, 236, 0.08);
   --panel: rgba(11, 17, 13, 0.94);
   --panel-2: rgba(14, 21, 16, 0.94);
   background:
-    radial-gradient(circle at 72% 12%, rgba(0, 200, 5, 0.14), transparent 25rem),
-    radial-gradient(circle at 18% 62%, rgba(0, 230, 84, 0.08), transparent 24rem),
+    radial-gradient(circle at 72% 12%, rgba(223, 255, 0, 0.14), transparent 25rem),
+    radial-gradient(circle at 18% 62%, rgba(245, 255, 0, 0.08), transparent 24rem),
     #050807;
 }
 
@@ -2438,7 +2438,7 @@ td a,
   padding: clamp(58px, 8vw, 104px) 0 clamp(42px, 6vw, 74px);
   background:
     linear-gradient(90deg, rgba(5, 8, 7, 0.94), rgba(5, 8, 7, 0.52) 48%, rgba(5, 8, 7, 0.9)),
-    radial-gradient(circle at 80% 28%, rgba(0, 200, 5, 0.2), transparent 25rem),
+    radial-gradient(circle at 80% 28%, rgba(223, 255, 0, 0.2), transparent 25rem),
     url("/airdrop-bg.png") center / cover no-repeat;
 }
 
@@ -2465,8 +2465,8 @@ td a,
 .hood-bank-page h1 span:last-child,
 .hood-bank-page .hero-countdown > strong,
 .hood-bank-page .hero-total-distributed b {
-  color: #00e654;
-  text-shadow: 0 0 34px rgba(0, 200, 5, 0.36);
+  color: #f5ff00;
+  text-shadow: 0 0 34px rgba(223, 255, 0, 0.36);
 }
 
 .hood-bank-page .cta,
@@ -2474,15 +2474,15 @@ td a,
 .hood-bank-page .lookup-card button {
   border: 0;
   border-radius: 999px;
-  background: #00c805;
+  background: #dfff00;
   color: #04140a;
   box-shadow: none;
 }
 
 .hood-bank-page .cta.secondary,
 .hood-bank-page .mini-button {
-  border: 1px solid rgba(0, 200, 5, 0.16);
-  background: rgba(0, 200, 5, 0.08);
+  border: 1px solid rgba(223, 255, 0, 0.16);
+  background: rgba(223, 255, 0, 0.08);
   color: #eef5f0;
 }
 
@@ -2497,7 +2497,7 @@ td a,
 .hood-bank-page .history-card,
 .hood-bank-page .lookup-card,
 .hood-bank-page .faq-item {
-  border: 1px solid rgba(0, 200, 5, 0.16);
+  border: 1px solid rgba(223, 255, 0, 0.16);
   border-radius: 18px;
   background: linear-gradient(180deg, rgba(14, 21, 16, 0.96), rgba(11, 17, 13, 0.96));
   box-shadow: 0 22px 64px rgba(0, 0, 0, 0.36);
@@ -2514,7 +2514,7 @@ td a,
   --bronze-soft: #344018;
   --gold: #e7ff00;
   --gold-soft: #b7d400;
-  --green: #00c805;
+  --green: #dfff00;
   --green-soft: #123f22;
   --ivory: #f7faf5;
   --muted: #8c958d;
@@ -2523,7 +2523,7 @@ td a,
   --border-soft: rgba(247, 250, 245, 0.1);
   --panel: rgba(9, 16, 12, 0.9);
   --panel-2: rgba(13, 24, 17, 0.92);
-  --success: #00c805;
+  --success: #dfff00;
 }
 
 .hood-strategy-page,
@@ -2531,7 +2531,7 @@ td a,
 .fallen-bulls-page {
   background:
     radial-gradient(circle at 82% 8%, rgba(231, 255, 0, 0.16), transparent 26%),
-    radial-gradient(circle at 14% 18%, rgba(0, 200, 5, 0.14), transparent 22%),
+    radial-gradient(circle at 14% 18%, rgba(223, 255, 0, 0.14), transparent 22%),
     linear-gradient(180deg, #020403, #060907 48%, #020403);
 }
 
@@ -2646,7 +2646,7 @@ td a,
 .hood-hero .hero-mountains {
   background:
     linear-gradient(135deg, transparent 0 48%, rgba(231, 255, 0, 0.2) 48% 48.25%, transparent 48.25%),
-    linear-gradient(160deg, transparent 0 62%, rgba(0, 200, 5, 0.22) 62% 62.3%, transparent 62.3%),
+    linear-gradient(160deg, transparent 0 62%, rgba(223, 255, 0, 0.22) 62% 62.3%, transparent 62.3%),
     url("/logo.png") right 7vw center / min(42vw, 520px) auto no-repeat;
   opacity: 0.92;
   transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0);
@@ -2895,24 +2895,24 @@ td a,
   --charcoal-2: #0e1510;
   --stone: #0b110d;
   --stone-2: #101911;
-  --gold: #00e654;
-  --green: #00c805;
+  --gold: #f5ff00;
+  --green: #dfff00;
   --ivory: #f1f8f3;
   --muted: #95a69b;
   --faint: #66766c;
-  --border: rgba(0, 200, 5, 0.2);
+  --border: rgba(223, 255, 0, 0.2);
   --panel: rgba(8, 13, 10, 0.94);
   --panel-2: rgba(11, 17, 13, 0.94);
   background:
-    radial-gradient(circle at 74% 14%, rgba(0, 200, 5, 0.18), transparent 28rem),
-    radial-gradient(circle at 16% 58%, rgba(0, 230, 84, 0.1), transparent 24rem),
+    radial-gradient(circle at 74% 14%, rgba(223, 255, 0, 0.18), transparent 28rem),
+    radial-gradient(circle at 16% 58%, rgba(245, 255, 0, 0.1), transparent 24rem),
     #050807;
 }
 
 .hood-bank-page::before {
   background-image:
-    radial-gradient(rgba(0, 230, 84, 0.18) 1px, transparent 1px),
-    linear-gradient(115deg, transparent 0 42%, rgba(0, 200, 5, 0.08) 46%, transparent 52%);
+    radial-gradient(rgba(245, 255, 0, 0.18) 1px, transparent 1px),
+    linear-gradient(115deg, transparent 0 42%, rgba(223, 255, 0, 0.08) 46%, transparent 52%);
   background-size: 30px 30px, 240% 240%;
   animation: bank-grid-drift 18s linear infinite, bank-light-sweep 9s ease-in-out infinite;
   opacity: 0.34;
@@ -2920,8 +2920,8 @@ td a,
 
 .hood-bank-page::after {
   background:
-    radial-gradient(circle at 50% 50%, rgba(0, 230, 84, 0.1), transparent 22rem),
-    linear-gradient(180deg, transparent, rgba(0, 200, 5, 0.04), transparent);
+    radial-gradient(circle at 50% 50%, rgba(245, 255, 0, 0.1), transparent 22rem),
+    linear-gradient(180deg, transparent, rgba(223, 255, 0, 0.04), transparent);
   animation: bank-orbit-glow 12s ease-in-out infinite alternate;
   opacity: 0.42;
 }
@@ -2956,7 +2956,7 @@ td a,
 
 .hood-bank-page .market-tape {
   height: 36px;
-  border-bottom: 1px solid rgba(0, 200, 5, 0.18);
+  border-bottom: 1px solid rgba(223, 255, 0, 0.18);
   background: rgba(3, 7, 5, 0.96);
 }
 
@@ -2970,9 +2970,9 @@ td a,
 .hood-bank-page .brand-logo {
   width: 42px;
   height: 42px;
-  border: 1px solid rgba(0, 200, 5, 0.32);
+  border: 1px solid rgba(223, 255, 0, 0.32);
   background: #050807;
-  box-shadow: 0 0 24px rgba(0, 200, 5, 0.34);
+  box-shadow: 0 0 24px rgba(223, 255, 0, 0.34);
 }
 
 .hood-bank-page .hero {
@@ -2982,13 +2982,13 @@ td a,
   padding: clamp(70px, 9vw, 118px) 0 clamp(44px, 6vw, 78px);
   background:
     linear-gradient(90deg, rgba(5, 8, 7, 0.96), rgba(5, 8, 7, 0.54) 48%, rgba(5, 8, 7, 0.9)),
-    radial-gradient(circle at 78% 32%, rgba(0, 200, 5, 0.22), transparent 28rem),
+    radial-gradient(circle at 78% 32%, rgba(223, 255, 0, 0.22), transparent 28rem),
     url("/airdrop-bg.png") center / cover no-repeat;
 }
 
 .hood-bank-page .hero-mountains {
   background:
-    radial-gradient(circle at 72% 34%, rgba(0, 230, 84, 0.2), transparent 24rem),
+    radial-gradient(circle at 72% 34%, rgba(245, 255, 0, 0.2), transparent 24rem),
     url("/logo.png") right 8vw center / min(34vw, 420px) auto no-repeat;
   opacity: 0.82;
   animation: bank-hero-float 7s ease-in-out infinite alternate;
@@ -3042,8 +3042,8 @@ td a,
 .hood-bank-page .hero-countdown strong,
 .hood-bank-page .hero-total-distributed b,
 .hood-bank-page .metric-card-strong strong {
-  color: #00e654;
-  text-shadow: 0 0 34px rgba(0, 200, 5, 0.42);
+  color: #f5ff00;
+  text-shadow: 0 0 34px rgba(223, 255, 0, 0.42);
 }
 
 .hood-bank-page .hero-subtitle {
@@ -3066,23 +3066,23 @@ td a,
   min-height: 48px;
   border: 0;
   border-radius: 999px;
-  background: #00c805;
+  background: #dfff00;
   color: #021006;
   font-weight: 900;
-  box-shadow: 0 0 24px rgba(0, 200, 5, 0.2);
+  box-shadow: 0 0 24px rgba(223, 255, 0, 0.2);
 }
 
 .hood-bank-page .cta.secondary {
-  border: 1px solid rgba(0, 200, 5, 0.26);
-  background: rgba(0, 200, 5, 0.08);
+  border: 1px solid rgba(223, 255, 0, 0.26);
+  background: rgba(223, 255, 0, 0.08);
   color: #f1f8f3;
 }
 
 .bank-statstrip {
   position: relative;
   z-index: 2;
-  border-top: 1px solid rgba(0, 200, 5, 0.15);
-  border-bottom: 1px solid rgba(0, 200, 5, 0.15);
+  border-top: 1px solid rgba(223, 255, 0, 0.15);
+  border-bottom: 1px solid rgba(223, 255, 0, 0.15);
   background: rgba(3, 7, 5, 0.96);
 }
 
@@ -3098,7 +3098,7 @@ td a,
   justify-content: center;
   gap: 8px;
   padding: 22px clamp(16px, 3vw, 34px);
-  border-right: 1px solid rgba(0, 200, 5, 0.12);
+  border-right: 1px solid rgba(223, 255, 0, 0.12);
 }
 
 .bank-statstrip-inner div:last-child {
@@ -3106,7 +3106,7 @@ td a,
 }
 
 .bank-statstrip-inner strong {
-  color: #00e654;
+  color: #f5ff00;
   font-size: clamp(1.8rem, 3.7vw, 4.4rem);
   font-weight: 950;
   letter-spacing: -0.06em;
@@ -3129,12 +3129,12 @@ td a,
 .volume-panel {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(0, 200, 5, 0.2);
+  border: 1px solid rgba(223, 255, 0, 0.2);
   border-radius: 18px;
   padding: clamp(24px, 4vw, 46px);
   background:
-    radial-gradient(circle at 12% 0%, rgba(0, 230, 84, 0.16), transparent 22rem),
-    radial-gradient(circle at 88% 100%, rgba(0, 200, 5, 0.1), transparent 24rem),
+    radial-gradient(circle at 12% 0%, rgba(245, 255, 0, 0.16), transparent 22rem),
+    radial-gradient(circle at 88% 100%, rgba(223, 255, 0, 0.1), transparent 24rem),
     rgba(7, 12, 9, 0.9);
   box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.44),
@@ -3146,8 +3146,8 @@ td a,
   position: absolute;
   inset: -45%;
   background:
-    conic-gradient(from 120deg, transparent, rgba(0, 230, 84, 0.12), transparent 34%),
-    radial-gradient(circle, rgba(0, 200, 5, 0.08), transparent 44%);
+    conic-gradient(from 120deg, transparent, rgba(245, 255, 0, 0.12), transparent 34%),
+    radial-gradient(circle, rgba(223, 255, 0, 0.08), transparent 44%);
   animation: volume-radar-spin 18s linear infinite;
   pointer-events: none;
 }
@@ -3177,7 +3177,7 @@ td a,
   flex-direction: column;
   justify-content: space-between;
   gap: 18px;
-  border: 1px solid rgba(0, 200, 5, 0.18);
+  border: 1px solid rgba(223, 255, 0, 0.18);
   border-radius: 18px;
   padding: clamp(20px, 3vw, 30px);
   background:
@@ -3188,8 +3188,8 @@ td a,
 
 .volume-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(0, 230, 84, 0.48);
-  box-shadow: 0 0 34px rgba(0, 200, 5, 0.14);
+  border-color: rgba(245, 255, 0, 0.48);
+  box-shadow: 0 0 34px rgba(223, 255, 0, 0.14);
 }
 
 .volume-card span,
@@ -3216,8 +3216,8 @@ td a,
 }
 
 .hood-volume-card strong {
-  color: #00e654;
-  text-shadow: 0 0 34px rgba(0, 200, 5, 0.38);
+  color: #f5ff00;
+  text-shadow: 0 0 34px rgba(223, 255, 0, 0.38);
 }
 
 .volume-divider {
@@ -3230,13 +3230,13 @@ td a,
   height: 58px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(0, 200, 5, 0.26);
+  border: 1px solid rgba(223, 255, 0, 0.26);
   border-radius: 999px;
-  background: #00c805;
+  background: #dfff00;
   color: #021006;
   font-size: 0.9rem;
   font-weight: 950;
-  box-shadow: 0 0 26px rgba(0, 200, 5, 0.22);
+  box-shadow: 0 0 26px rgba(223, 255, 0, 0.22);
 }
 
 .volume-bars {
@@ -3244,7 +3244,7 @@ td a,
   display: flex;
   overflow: hidden;
   margin-top: 24px;
-  border: 1px solid rgba(0, 200, 5, 0.2);
+  border: 1px solid rgba(223, 255, 0, 0.2);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.04);
 }
@@ -3254,20 +3254,20 @@ td a,
   gap: 8px;
   margin-top: 24px;
   padding: clamp(18px, 3vw, 26px);
-  border: 1px solid rgba(0, 200, 5, 0.2);
+  border: 1px solid rgba(223, 255, 0, 0.2);
   border-radius: 18px;
   background:
-    linear-gradient(90deg, rgba(0, 200, 5, 0.12), rgba(255, 255, 255, 0.035)),
+    linear-gradient(90deg, rgba(223, 255, 0, 0.12), rgba(255, 255, 255, 0.035)),
     rgba(3, 7, 5, 0.62);
 }
 
 .volume-verdict strong {
-  color: #00e654;
+  color: #f5ff00;
   font-size: clamp(1.6rem, 4vw, 4.8rem);
   font-weight: 950;
   letter-spacing: -0.06em;
   line-height: 0.92;
-  text-shadow: 0 0 30px rgba(0, 200, 5, 0.28);
+  text-shadow: 0 0 30px rgba(223, 255, 0, 0.28);
 }
 
 .volume-verdict span {
@@ -3287,7 +3287,7 @@ td a,
 
 .hood-volume-bar {
   background:
-    linear-gradient(90deg, #00c805, #00e654),
+    linear-gradient(90deg, #dfff00, #f5ff00),
     repeating-linear-gradient(90deg, transparent 0 16px, rgba(255, 255, 255, 0.18) 16px 18px);
   animation: volume-bar-pulse 2.6s ease-in-out infinite;
 }
@@ -3311,7 +3311,7 @@ td a,
 }
 
 .volume-foot a {
-  color: #00e654;
+  color: #f5ff00;
 }
 
 .hood-bank-page .hero-countdown,
@@ -3325,7 +3325,7 @@ td a,
 .hood-bank-page .faq-item,
 .hood-bank-page .lookup-card,
 .hood-bank-page .black-bull-card {
-  border: 1px solid rgba(0, 200, 5, 0.18);
+  border: 1px solid rgba(223, 255, 0, 0.18);
   border-radius: 18px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
@@ -3341,30 +3341,30 @@ td a,
 .hood-bank-page .multiplier-card:hover,
 .hood-bank-page .eligibility-card:hover,
 .hood-bank-page .faq-item:hover {
-  border-color: rgba(0, 230, 84, 0.46);
+  border-color: rgba(245, 255, 0, 0.46);
   box-shadow:
     0 26px 74px rgba(0, 0, 0, 0.46),
-    0 0 28px rgba(0, 200, 5, 0.12);
+    0 0 28px rgba(223, 255, 0, 0.12);
 }
 
 .hood-bank-page .section {
   background:
-    radial-gradient(circle at 78% 0%, rgba(0, 200, 5, 0.1), transparent 24rem),
+    radial-gradient(circle at 78% 0%, rgba(223, 255, 0, 0.1), transparent 24rem),
     linear-gradient(180deg, #050807, #070c09);
 }
 
 .hood-bank-page .section::before {
   background-image:
-    radial-gradient(rgba(0, 200, 5, 0.14) 1px, transparent 1px),
-    linear-gradient(rgba(0, 200, 5, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 200, 5, 0.025) 1px, transparent 1px);
+    radial-gradient(rgba(223, 255, 0, 0.14) 1px, transparent 1px),
+    linear-gradient(rgba(223, 255, 0, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(223, 255, 0, 0.025) 1px, transparent 1px);
   background-size: 28px 28px, 112px 112px, 112px 112px;
   opacity: 0.38;
 }
 
 .hood-bank-page .black-bull-portrait {
   background:
-    radial-gradient(circle, rgba(0, 230, 84, 0.22), transparent 64%),
+    radial-gradient(circle, rgba(245, 255, 0, 0.22), transparent 64%),
     #050807;
 }
 
@@ -3376,24 +3376,24 @@ td a,
 .hood-bank-page .rank-strip span,
 .hood-bank-page .bull-signal-list span,
 .hood-bank-page .black-bull-timeline span {
-  border-color: rgba(0, 200, 5, 0.22);
-  background: rgba(0, 200, 5, 0.07);
+  border-color: rgba(223, 255, 0, 0.22);
+  background: rgba(223, 255, 0, 0.07);
   color: #f1f8f3;
 }
 
 .hood-bank-page td a,
 .hood-bank-page .details-button {
-  color: #00e654;
+  color: #f5ff00;
 }
 
 .hood-bank-page tbody tr:hover {
-  background: rgba(0, 200, 5, 0.07);
-  box-shadow: inset 3px 0 0 #00c805;
+  background: rgba(223, 255, 0, 0.07);
+  box-shadow: inset 3px 0 0 #dfff00;
 }
 
 .hood-bank-page .final-bull-art {
   background:
-    radial-gradient(circle at 74% 44%, rgba(0, 230, 84, 0.18), transparent 28%),
+    radial-gradient(circle at 74% 44%, rgba(245, 255, 0, 0.18), transparent 28%),
     url("/logo.png") 78% center / min(42vw, 520px) auto no-repeat;
 }
 
@@ -3423,7 +3423,7 @@ td a,
 
   .hood-bank-page .hero-mountains {
     background:
-      radial-gradient(circle at 50% 18%, rgba(0, 230, 84, 0.18), transparent 24rem),
+      radial-gradient(circle at 50% 18%, rgba(245, 255, 0, 0.18), transparent 24rem),
       url("/logo.png") center 4% / min(78vw, 360px) auto no-repeat;
     opacity: 0.34;
   }
@@ -3431,7 +3431,7 @@ td a,
   .bank-statstrip-inner div {
     min-height: 92px;
     border-right: 0;
-    border-bottom: 1px solid rgba(0, 200, 5, 0.12);
+    border-bottom: 1px solid rgba(223, 255, 0, 0.12);
   }
 
   .bank-statstrip-inner div:last-child {
