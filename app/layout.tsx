@@ -14,8 +14,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/logo.png",
-        width: 1200,
-        height: 1200,
+        width: 1254,
+        height: 1254,
         alt: "The Robin Hood"
       }
     ],

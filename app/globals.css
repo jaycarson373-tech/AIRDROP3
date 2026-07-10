@@ -2951,7 +2951,9 @@ td a,
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background: #020302;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(215, 255, 0, 0.18), transparent 24rem),
+    linear-gradient(180deg, #010401, #050807 54%, #020302);
 }
 
 .hood-bank-bg-rotator::after {
@@ -2959,58 +2961,135 @@ td a,
   inset: 0;
   content: "";
   background:
-    radial-gradient(circle at 50% 38%, transparent 0 28%, rgba(2, 3, 2, 0.2) 48%, rgba(2, 3, 2, 0.82) 100%),
-    linear-gradient(90deg, rgba(2, 3, 2, 0.72), rgba(2, 3, 2, 0.2) 45%, rgba(2, 3, 2, 0.78));
+    radial-gradient(circle at 50% 35%, transparent 0 22%, rgba(2, 3, 2, 0.2) 55%, rgba(2, 3, 2, 0.86) 100%),
+    linear-gradient(90deg, rgba(2, 3, 2, 0.86), rgba(2, 3, 2, 0.18) 50%, rgba(2, 3, 2, 0.86)),
+    linear-gradient(180deg, rgba(2, 3, 2, 0.05), rgba(2, 3, 2, 0.76));
+  z-index: 4;
 }
 
 .hood-bank-bg-layer {
   position: absolute;
-  inset: -7%;
+  inset: -8%;
   display: block;
   background-position: center;
   background-size: cover;
   opacity: 0;
-  transform: scale(1.04) translate3d(0, 0, 0);
-  animation: hood-bank-bg-cycle 32s ease-in-out infinite;
-  filter: saturate(1.2) contrast(1.08);
+  transform: scale(1.06) translate3d(0, 0, 0);
+  animation: hood-bank-bg-cycle 30s ease-in-out infinite;
+  filter: saturate(1.35) contrast(1.12) brightness(0.94);
+  z-index: 1;
 }
 
 .bg-layer-one {
-  background-image: url("/brand/robin-hood-backgrounds/neon-city-smoke-1.jpg");
+  background-image: url("/brand/robin-hood-banner.png");
   animation-delay: 0s;
 }
 
 .bg-layer-two {
-  background-image: url("/brand/robin-hood-backgrounds/neon-city-lightning.jpg");
-  animation-delay: 8s;
+  background-image: url("/brand/robin-hood-banner.png");
+  background-position: 48% center;
+  animation-delay: 10s;
 }
 
 .bg-layer-three {
-  background-image: url("/brand/robin-hood-backgrounds/neon-city-smoke-2.jpg");
-  animation-delay: 16s;
+  background-image: url("/brand/robin-hood-banner.png");
+  background-position: 52% center;
+  animation-delay: 20s;
 }
 
 .bg-layer-four {
-  background-image: url("/brand/robin-hood-backgrounds/neon-city-towers.jpg");
-  animation-delay: 24s;
+  display: none;
+}
+
+.hood-matrix-rain,
+.hood-floating-dots {
+  position: absolute;
+  inset: -10%;
+  display: block;
+  pointer-events: none;
+}
+
+.hood-matrix-rain {
+  z-index: 2;
+  opacity: 0.32;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 38px, rgba(215, 255, 0, 0.18) 39px 40px, transparent 41px 74px),
+    repeating-linear-gradient(180deg, transparent 0 12px, rgba(215, 255, 0, 0.13) 13px 14px, transparent 15px 42px);
+  mask-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.55) 55%, transparent),
+    repeating-linear-gradient(90deg, #000 0 3px, transparent 3px 18px);
+  animation: hood-matrix-fall 15s linear infinite;
+}
+
+.hood-floating-dots {
+  z-index: 3;
+  opacity: 0.78;
+  background-image:
+    radial-gradient(circle, rgba(215, 255, 0, 0.95) 0 1.4px, transparent 1.8px),
+    radial-gradient(circle, rgba(245, 255, 0, 0.72) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(215, 255, 0, 0.58) 0 1.2px, transparent 1.7px);
+  background-size: 120px 150px, 180px 220px, 90px 120px;
+  background-position: 8px 12px, 60px 90px, 28px 48px;
+  filter: drop-shadow(0 0 8px rgba(215, 255, 0, 0.62));
+}
+
+.dots-one {
+  animation: hood-dots-float-one 19s ease-in-out infinite alternate;
+}
+
+.dots-two {
+  opacity: 0.45;
+  transform: scale(1.15);
+  animation: hood-dots-float-two 24s ease-in-out infinite alternate;
 }
 
 @keyframes hood-bank-bg-cycle {
   0% {
     opacity: 0;
-    transform: scale(1.04) translate3d(-1.2%, -0.8%, 0);
+    transform: scale(1.04) translate3d(-1%, -0.8%, 0);
   }
   8% {
     opacity: 0.7;
   }
   28% {
     opacity: 0.7;
-    transform: scale(1.1) translate3d(1.2%, 0.8%, 0);
+    transform: scale(1.09) translate3d(1%, 0.9%, 0);
   }
   38%,
   100% {
     opacity: 0;
-    transform: scale(1.12) translate3d(1.8%, 1.2%, 0);
+    transform: scale(1.12) translate3d(1.6%, 1.2%, 0);
+  }
+}
+
+@keyframes hood-matrix-fall {
+  from {
+    background-position: 0 -220px, 0 -420px;
+  }
+  to {
+    background-position: 0 420px, 0 220px;
+  }
+}
+
+@keyframes hood-dots-float-one {
+  from {
+    transform: translate3d(-1.5vw, -1vh, 0);
+    background-position: 8px 12px, 60px 90px, 28px 48px;
+  }
+  to {
+    transform: translate3d(1.5vw, 2vh, 0);
+    background-position: 28px 42px, 38px 124px, 52px 78px;
+  }
+}
+
+@keyframes hood-dots-float-two {
+  from {
+    transform: translate3d(1vw, 2vh, 0) scale(1.15);
+    background-position: 54px 88px, 12px 24px, 82px 16px;
+  }
+  to {
+    transform: translate3d(-2vw, -1vh, 0) scale(1.2);
+    background-position: 18px 128px, 62px 64px, 24px 96px;
   }
 }
 
@@ -3093,9 +3172,9 @@ td a,
 
 .hood-bank-page .hero-mountains {
   background:
-    radial-gradient(circle at 72% 34%, rgba(245, 255, 0, 0.2), transparent 24rem),
-    url("/logo.png") right 8vw center / min(34vw, 420px) auto no-repeat;
-  opacity: 0.82;
+    radial-gradient(circle at 70% 38%, rgba(245, 255, 0, 0.24), transparent 22rem),
+    url("/logo.png") right 5vw center / min(38vw, 500px) auto no-repeat;
+  opacity: 0.72;
   animation: bank-hero-float 7s ease-in-out infinite alternate;
 }
 
@@ -3132,9 +3211,10 @@ td a,
 
 .hood-bank-page h1,
 .hood-bank-page h2 {
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: "Arial Black", Impact, Inter, ui-sans-serif, system-ui, sans-serif;
   font-weight: 900;
-  letter-spacing: -0.055em;
+  font-style: italic;
+  letter-spacing: -0.025em;
 }
 
 .hood-bank-page h1 {
@@ -3643,21 +3723,21 @@ td a,
 .hood-bank-page .hero {
   padding-top: clamp(82px, 10vw, 128px);
   background:
-    linear-gradient(90deg, rgba(5, 8, 7, 0.58), rgba(5, 8, 7, 0.2) 48%, rgba(5, 8, 7, 0.58)),
-    radial-gradient(circle at 78% 32%, rgba(223, 255, 0, 0.18), transparent 28rem);
+    linear-gradient(90deg, rgba(2, 4, 3, 0.76), rgba(2, 4, 3, 0.24) 50%, rgba(2, 4, 3, 0.62)),
+    radial-gradient(circle at 72% 32%, rgba(223, 255, 0, 0.2), transparent 28rem);
 }
 
 .hood-bank-page .hero-shade {
   background:
-    linear-gradient(90deg, rgba(2, 4, 3, 0.64), rgba(2, 4, 3, 0.2) 50%, rgba(2, 4, 3, 0.62)),
-    linear-gradient(180deg, rgba(2, 4, 3, 0.04), rgba(2, 4, 3, 0.38) 66%, rgba(2, 4, 3, 0.72));
+    linear-gradient(90deg, rgba(1, 3, 1, 0.82), rgba(1, 3, 1, 0.26) 48%, rgba(1, 3, 1, 0.56)),
+    linear-gradient(180deg, rgba(2, 4, 3, 0.05), rgba(2, 4, 3, 0.3) 62%, rgba(2, 4, 3, 0.82));
 }
 
 .hood-bank-page .hero-mountains {
-  opacity: 0.2;
+  opacity: 0.5;
   background:
-    radial-gradient(circle at 72% 34%, rgba(245, 255, 0, 0.14), transparent 24rem),
-    url("/logo.png") right 8vw center / min(30vw, 360px) auto no-repeat;
+    radial-gradient(circle at 72% 34%, rgba(245, 255, 0, 0.2), transparent 24rem),
+    url("/logo.png") right 6vw center / min(34vw, 460px) auto no-repeat;
 }
 
 .hood-bank-bg-rotator {
@@ -3666,12 +3746,13 @@ td a,
 
 .hood-bank-bg-rotator::after {
   background:
-    radial-gradient(circle at 50% 38%, transparent 0 34%, rgba(2, 3, 2, 0.08) 54%, rgba(2, 3, 2, 0.5) 100%),
-    linear-gradient(90deg, rgba(2, 3, 2, 0.36), rgba(2, 3, 2, 0.04) 45%, rgba(2, 3, 2, 0.42));
+    radial-gradient(circle at 50% 35%, transparent 0 24%, rgba(2, 3, 2, 0.2) 55%, rgba(2, 3, 2, 0.84) 100%),
+    linear-gradient(90deg, rgba(2, 3, 2, 0.82), rgba(2, 3, 2, 0.16) 50%, rgba(2, 3, 2, 0.82)),
+    linear-gradient(180deg, rgba(2, 3, 2, 0.05), rgba(2, 3, 2, 0.72));
 }
 
 .hood-bank-bg-layer {
-  filter: saturate(1.45) contrast(1.08) brightness(1.12);
+  filter: saturate(1.42) contrast(1.12) brightness(0.96);
 }
 
 .hood-bank-page .section {
@@ -3683,19 +3764,19 @@ td a,
 @keyframes hood-bank-bg-cycle {
   0% {
     opacity: 0;
-    transform: scale(1.03) translate3d(-1.2%, -0.8%, 0);
+    transform: scale(1.04) translate3d(-1%, -0.8%, 0);
   }
   8% {
     opacity: 0.7;
   }
   30% {
     opacity: 0.7;
-    transform: scale(1.08) translate3d(1.2%, 0.8%, 0);
+    transform: scale(1.09) translate3d(1%, 0.9%, 0);
   }
   40%,
   100% {
     opacity: 0;
-    transform: scale(1.1) translate3d(1.8%, 1.2%, 0);
+    transform: scale(1.12) translate3d(1.6%, 1.2%, 0);
   }
 }
 

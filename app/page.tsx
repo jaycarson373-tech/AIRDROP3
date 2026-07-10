@@ -60,6 +60,9 @@ export default function Page() {
   return (
     <div className="page hood-strategy-page hood-bank-page">
       <div className="hood-bank-bg-rotator" aria-hidden="true">
+        <span className="hood-matrix-rain" />
+        <span className="hood-floating-dots dots-one" />
+        <span className="hood-floating-dots dots-two" />
         <span className="hood-bank-bg-layer bg-layer-one" />
         <span className="hood-bank-bg-layer bg-layer-two" />
         <span className="hood-bank-bg-layer bg-layer-three" />
