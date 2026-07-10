@@ -155,6 +155,14 @@ function formatUsd(value: number | null | undefined, maximumFractionDigits = 0) 
   return `$${value.toLocaleString(undefined, { maximumFractionDigits })}`;
 }
 
+function formatCompact(value: number, maximumFractionDigits = 2) {
+  if (!Number.isFinite(value) || value <= 0) return "Awaiting";
+  return value.toLocaleString(undefined, {
+    notation: "compact",
+    maximumFractionDigits
+  });
+}
+
 function formatAmount(value: number, symbol: string, maximumFractionDigits = 2) {
   if (!Number.isFinite(value) || value <= 0) return "Awaiting live distribution";
   return `${formatNumber(value, maximumFractionDigits)} ${symbol}`;
@@ -261,6 +269,18 @@ export function HeroCountdown() {
   );
 }
 
+export function AirdroppedStat() {
+  const { stats } = useProtocolData();
+  const totalAirdropped = stats?.totalRewardAirdropped ?? 0;
+
+  return (
+    <>
+      <strong>{totalAirdropped > 0 ? formatCompact(totalAirdropped, 2) : "Awaiting"}</strong>
+      <span>{REWARD_SYMBOL} airdropped</span>
+    </>
+  );
+}
+
 export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
@@ -300,6 +320,16 @@ export function MarketVolumeSection() {
       ? Math.max(3, Math.min(97, ((hoodVolume ?? 0) / ((hoodVolume ?? 0) + (solVolume ?? 0))) * 100))
       : 50;
   const solShare = 100 - hoodShare;
+  const directHoodShare =
+    Number.isFinite(hoodVolume ?? NaN) && Number.isFinite(solVolume ?? NaN) && (hoodVolume ?? 0) + (solVolume ?? 0) > 0
+      ? ((hoodVolume ?? 0) / ((hoodVolume ?? 0) + (solVolume ?? 0))) * 100
+      : null;
+  const comparison =
+    Number.isFinite(hoodVolume ?? NaN) && Number.isFinite(solVolume ?? NaN) && (hoodVolume ?? 0) > 0 && (solVolume ?? 0) > 0
+      ? (hoodVolume ?? 0) >= (solVolume ?? 0)
+        ? `${SOURCE_SYMBOL} is ${formatCompact((hoodVolume ?? 0) / (solVolume ?? 1), 2)}x SOL volume`
+        : `SOL is ${formatCompact((solVolume ?? 0) / (hoodVolume ?? 1), 2)}x ${SOURCE_SYMBOL} volume`
+      : "Awaiting live comparison";
 
   return (
     <section className="section market-volume-section" id="volume">
@@ -325,6 +355,14 @@ export function MarketVolumeSection() {
             <strong>{formatUsd(solVolume)}</strong>
             <small>Liquidity {formatUsd(solLiquidity)}</small>
           </div>
+        </div>
+        <div className="volume-verdict">
+          <strong>{comparison}</strong>
+          <span>
+            {directHoodShare !== null
+              ? `${SOURCE_SYMBOL} share of combined volume: ${directHoodShare.toLocaleString(undefined, { maximumFractionDigits: directHoodShare < 1 ? 4 : 2 })}%`
+              : "Waiting for both markets to report volume"}
+          </span>
         </div>
         <div className="volume-bars" aria-hidden="true">
           <i className="hood-volume-bar" style={{ width: `${hoodShare}%` }} />

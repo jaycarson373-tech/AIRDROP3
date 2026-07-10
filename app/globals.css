@@ -3107,7 +3107,7 @@ td a,
 
 .bank-statstrip-inner strong {
   color: #00e654;
-  font-size: clamp(1.9rem, 4vw, 4.4rem);
+  font-size: clamp(1.8rem, 3.7vw, 4.4rem);
   font-weight: 950;
   letter-spacing: -0.06em;
   line-height: 0.9;
@@ -3247,6 +3247,36 @@ td a,
   border: 1px solid rgba(0, 200, 5, 0.2);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.04);
+}
+
+.volume-verdict {
+  display: grid;
+  gap: 8px;
+  margin-top: 24px;
+  padding: clamp(18px, 3vw, 26px);
+  border: 1px solid rgba(0, 200, 5, 0.2);
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, rgba(0, 200, 5, 0.12), rgba(255, 255, 255, 0.035)),
+    rgba(3, 7, 5, 0.62);
+}
+
+.volume-verdict strong {
+  color: #00e654;
+  font-size: clamp(1.6rem, 4vw, 4.8rem);
+  font-weight: 950;
+  letter-spacing: -0.06em;
+  line-height: 0.92;
+  text-shadow: 0 0 30px rgba(0, 200, 5, 0.28);
+}
+
+.volume-verdict span {
+  color: #95a69b;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .volume-bars i {

@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { CopyCaButton } from "./copy-ca-button";
 import {
+  AirdroppedStat,
   BullBoard,
   HeroCountdown,
   HoodBonusSection,
@@ -114,8 +115,7 @@ export default function Page() {
               <span>eligible</span>
             </div>
             <div>
-              <strong>HOODx</strong>
-              <span>payout asset</span>
+              <AirdroppedStat />
             </div>
           </div>
         </section>
