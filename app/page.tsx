@@ -53,6 +53,12 @@ function Navbar() {
 export default function Page() {
   return (
     <div className="page hood-strategy-page hood-bank-page">
+      <div className="hood-bank-bg-rotator" aria-hidden="true">
+        <span className="hood-bank-bg-layer bg-layer-one" />
+        <span className="hood-bank-bg-layer bg-layer-two" />
+        <span className="hood-bank-bg-layer bg-layer-three" />
+        <span className="hood-bank-bg-layer bg-layer-four" />
+      </div>
       <div className="market-tape" aria-hidden="true">
         <div className="market-tape-track">
           {Array.from({ length: 2 }).map((_, index) => (

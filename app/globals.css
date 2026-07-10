@@ -2926,6 +2926,93 @@ td a,
   opacity: 0.42;
 }
 
+.hood-bank-bg-rotator {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #020302;
+}
+
+.hood-bank-bg-rotator::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background:
+    radial-gradient(circle at 50% 38%, transparent 0 28%, rgba(2, 3, 2, 0.2) 48%, rgba(2, 3, 2, 0.82) 100%),
+    linear-gradient(90deg, rgba(2, 3, 2, 0.72), rgba(2, 3, 2, 0.2) 45%, rgba(2, 3, 2, 0.78));
+}
+
+.hood-bank-bg-layer {
+  position: absolute;
+  inset: -7%;
+  display: block;
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+  transform: scale(1.04) translate3d(0, 0, 0);
+  animation: hood-bank-bg-cycle 32s ease-in-out infinite;
+  filter: saturate(1.2) contrast(1.08);
+}
+
+.bg-layer-one {
+  background-image: url("/brand/hoodbank-backgrounds/neon-city-smoke-1.jpg");
+  animation-delay: 0s;
+}
+
+.bg-layer-two {
+  background-image: url("/brand/hoodbank-backgrounds/neon-city-lightning.jpg");
+  animation-delay: 8s;
+}
+
+.bg-layer-three {
+  background-image: url("/brand/hoodbank-backgrounds/neon-city-smoke-2.jpg");
+  animation-delay: 16s;
+}
+
+.bg-layer-four {
+  background-image: url("/brand/hoodbank-backgrounds/neon-city-towers.jpg");
+  animation-delay: 24s;
+}
+
+@keyframes hood-bank-bg-cycle {
+  0% {
+    opacity: 0;
+    transform: scale(1.04) translate3d(-1.2%, -0.8%, 0);
+  }
+  8% {
+    opacity: 0.7;
+  }
+  28% {
+    opacity: 0.7;
+    transform: scale(1.1) translate3d(1.2%, 0.8%, 0);
+  }
+  38%,
+  100% {
+    opacity: 0;
+    transform: scale(1.12) translate3d(1.8%, 1.2%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hood-bank-bg-layer {
+    animation: none;
+  }
+
+  .bg-layer-one {
+    opacity: 0.7;
+  }
+}
+
+.hood-bank-page .market-tape,
+.hood-bank-page .nav,
+.hood-bank-page main,
+.hood-bank-page .footer {
+  position: relative;
+  z-index: 2;
+}
+
 @keyframes bank-grid-drift {
   from {
     background-position: 0 0, 0 0;
@@ -2981,9 +3068,8 @@ td a,
   align-items: center;
   padding: clamp(70px, 9vw, 118px) 0 clamp(44px, 6vw, 78px);
   background:
-    linear-gradient(90deg, rgba(5, 8, 7, 0.96), rgba(5, 8, 7, 0.54) 48%, rgba(5, 8, 7, 0.9)),
-    radial-gradient(circle at 78% 32%, rgba(223, 255, 0, 0.22), transparent 28rem),
-    url("/airdrop-bg.png") center / cover no-repeat;
+    linear-gradient(90deg, rgba(5, 8, 7, 0.86), rgba(5, 8, 7, 0.34) 48%, rgba(5, 8, 7, 0.82)),
+    radial-gradient(circle at 78% 32%, rgba(223, 255, 0, 0.22), transparent 28rem);
 }
 
 .hood-bank-page .hero-mountains {
@@ -3350,7 +3436,7 @@ td a,
 .hood-bank-page .section {
   background:
     radial-gradient(circle at 78% 0%, rgba(223, 255, 0, 0.1), transparent 24rem),
-    linear-gradient(180deg, #050807, #070c09);
+    linear-gradient(180deg, rgba(5, 8, 7, 0.78), rgba(7, 12, 9, 0.84));
 }
 
 .hood-bank-page .section::before {
