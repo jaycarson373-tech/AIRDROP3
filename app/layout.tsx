@@ -3,28 +3,28 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hoodbank.fun"),
-  title: "HoodBank",
-  description: "HoodBank claims creator fees, buys HOODx, and pays eligible holders automatically.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://the-robin-hood.fun"),
+  title: "The Robin Hood",
+  description: "The Robin Hood claims creator fees, buys HOODx, and pays eligible HOOD holders automatically every 5 minutes.",
   openGraph: {
-    title: "HoodBank",
-    description: "HoodBank claims creator fees, buys HOODx, and pays eligible holders automatically.",
-    url: "https://hoodbank.fun",
-    siteName: "HoodBank",
+    title: "The Robin Hood",
+    description: "The Robin Hood claims creator fees, buys HOODx, and pays eligible HOOD holders automatically every 5 minutes.",
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://the-robin-hood.fun",
+    siteName: "The Robin Hood",
     images: [
       {
         url: "/logo.png",
         width: 1200,
         height: 1200,
-        alt: "HoodBank"
+        alt: "The Robin Hood"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "HoodBank",
-    description: "HoodBank claims creator fees, buys HOODx, and pays eligible holders automatically.",
+    title: "The Robin Hood",
+    description: "The Robin Hood claims creator fees, buys HOODx, and pays eligible HOOD holders automatically every 5 minutes.",
     images: ["/logo.png"]
   },
   icons: {

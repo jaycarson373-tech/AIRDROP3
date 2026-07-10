@@ -299,13 +299,13 @@ export function LiveProtocolDashboard() {
       <div className="container">
         <div className="section-kicker">Live dashboard</div>
         <div className="section-head split-head">
-          <h2>HoodBank dashboard.</h2>
-          <p>Live values come from the existing reward backend. Total payouts, holder count, reward vault, and transactions update from Supabase.</p>
+          <h2>The Robin Hood dashboard.</h2>
+          <p>Live values come from the reward backend. Total payouts, eligible holders, HOODx bought, and transactions update from Supabase.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="Total HOODx Paid" value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
-          <MetricCard label="HOODx Reward Vault" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
+          <MetricCard label="HOODx Bought" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
           <MetricCard label="Next HOODx Payout" value={countdown} />
           <MetricCard label="Holder Weight" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
           <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
@@ -390,8 +390,8 @@ function MetricCard({
 }
 
 const hoodModelCards = [
-  ["01", "Fees collected", "Creator fees are pulled into the bank each epoch."],
-  ["02", "HOODx bought", "The bank uses those fees to buy HOODx."],
+  ["01", "Fees collected", "Creator fees are pulled every 5 minutes."],
+  ["02", "HOODx bought", "Fees buy HOODx for eligible holders."],
   ["03", "Holders paid", "Eligible 1M+ HOOD wallets receive the HOODx."],
   ["04", "Receipts posted", "Completed payouts are listed with transaction proof."]
 ];
@@ -407,10 +407,10 @@ export function HoodBonusSection() {
   return (
     <section className="section conviction-section" id="hood-bonus">
       <div className="container">
-        <div className="section-kicker">Bank model</div>
+        <div className="section-kicker">Reward model</div>
         <div className="section-head split-head">
           <h2>Hold HOOD. Earn HOODx.</h2>
-          <p>The bank buys HOODx with creator fees and sends it to eligible holders automatically.</p>
+          <p>For HOOD bulls who want HoodX rewards without bridging. Hold the token, stay eligible, and let the backend route rewards.</p>
         </div>
         <div className="multiplier-grid">
           {hoodModelCards.map(([value, title, copy]) => (
@@ -422,14 +422,14 @@ export function HoodBonusSection() {
             </article>
           ))}
         </div>
-        <div className="rank-strip boost-strip" aria-label="HoodBank payout loop">
+        <div className="rank-strip boost-strip" aria-label="The Robin Hood payout loop">
           {solBoostCards.map(([tier, boost]) => (
             <span key={tier}>{tier}: {boost}</span>
           ))}
         </div>
         <div className="conviction-card streak-card">
           <span>Automatic rewards</span>
-          <h3>Simple holder payouts</h3>
+          <h3>HoodX rewards for HOOD holders</h3>
           <div className="streak-readout">
             <div>
               <span>Hold</span>
@@ -447,7 +447,7 @@ export function HoodBonusSection() {
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>No claiming. No staking. If a wallet is eligible when the epoch runs, the payout is sent and the transaction is posted.</p>
+          <p>No bridge. No claiming. No staking. If a wallet is eligible when the 5 minute epoch runs, the payout is sent and the transaction is posted.</p>
           <div className="max-row">
             <span>Payout split</span>
             <b>100% to holders</b>
@@ -488,16 +488,16 @@ export function RewardExplanation() {
   return (
     <section className="section reward-explainer-section" id="how">
       <div className="container">
-          <div className="section-kicker">How the bank pays</div>
+          <div className="section-kicker">How rewards pay</div>
         <div className="section-head split-head">
           <h2>Creator fees become holder rewards.</h2>
-          <p>Every epoch follows the same loop. Collect fees, buy HOODx, pay eligible holders, post the receipt.</p>
+          <p>Every 5 minutes follows the same loop. Collect fees, buy HOODx, pay eligible HOOD holders, post the receipt.</p>
         </div>
         <div className="reward-flow">
           {[
             `Hold 1M+ $${SOURCE_SYMBOL}`,
             "Creator fees are collected",
-            "The bank buys HOODx",
+            "HOODx is bought",
             "Eligible holders get paid automatically",
             "Transaction proof is posted"
           ].map((item) => (
@@ -541,10 +541,10 @@ export function BullBoard() {
   return (
     <section className="section bull-board-section" id="hood-board">
       <div className="container">
-        <div className="section-kicker">Bank board</div>
+        <div className="section-kicker">HOOD board</div>
         <div className="section-head split-head">
           <h2>HOOD BOARD</h2>
-          <p>Clean holder table showing balance, holder weight, earned HOODx, and latest payout activity.</p>
+          <p>Clean holder table showing HOOD balance, holder weight, earned HOODx, and latest payout activity.</p>
           <a className="cta secondary" href="/fallen-bulls">
             Ineligible Wallets
           </a>
@@ -584,7 +584,7 @@ export function BullBoard() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={8}>Awaiting HoodBank board.</td>
+                    <td colSpan={8}>Awaiting The Robin Hood board.</td>
                   </tr>
                 )}
               </tbody>
@@ -667,7 +667,7 @@ export function HolderLookup() {
       <div className="container split-section">
         <div>
           <div className="section-kicker">Holder lookup</div>
-          <h2>Check your HoodBank status.</h2>
+          <h2>Check your HOOD status.</h2>
           <p className="lead">
             Wallet-level status uses the live holder-state tracker after the first tracked epoch.
           </p>
@@ -687,7 +687,7 @@ export function HolderLookup() {
             {submitted ? (
               <>
                 <strong>{compactAddress(wallet)}</strong>
-                <span>Awaiting live backend integration for wallet-level Hood status.</span>
+                <span>Awaiting live backend integration for wallet-level HOOD status.</span>
               </>
             ) : (
               <span>Enter a wallet to check eligibility once lookup integration is live.</span>

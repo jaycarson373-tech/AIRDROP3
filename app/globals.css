@@ -26,7 +26,7 @@
   --scroll-y: 0px;
 }
 
-/* HoodBank terminal skin */
+/* The Robin Hood terminal skin */
 .hood-bank-page {
   --black: #050807;
   --charcoal: #080d0a;
@@ -2421,7 +2421,7 @@ td a,
   }
 }
 
-/* Final HoodBank cascade overrides */
+/* Final The Robin Hood cascade overrides */
 .hood-bank-page {
   --black: #050807;
   --charcoal: #080d0a;
@@ -2522,7 +2522,7 @@ td a,
   box-shadow: 0 22px 64px rgba(0, 0, 0, 0.36);
 }
 
-/* HoodBank fintech rebrand */
+/* The Robin Hood neon rebrand */
 :root {
   --black: #020403;
   --charcoal: #06100a;
@@ -2907,7 +2907,7 @@ td a,
   }
 }
 
-/* Final HoodBank neon override */
+/* Final The Robin Hood neon override */
 .hood-bank-page {
   --black: #050807;
   --charcoal: #080d0a;
@@ -2976,22 +2976,22 @@ td a,
 }
 
 .bg-layer-one {
-  background-image: url("/brand/hoodbank-backgrounds/neon-city-smoke-1.jpg");
+  background-image: url("/brand/robin-hood-backgrounds/neon-city-smoke-1.jpg");
   animation-delay: 0s;
 }
 
 .bg-layer-two {
-  background-image: url("/brand/hoodbank-backgrounds/neon-city-lightning.jpg");
+  background-image: url("/brand/robin-hood-backgrounds/neon-city-lightning.jpg");
   animation-delay: 8s;
 }
 
 .bg-layer-three {
-  background-image: url("/brand/hoodbank-backgrounds/neon-city-smoke-2.jpg");
+  background-image: url("/brand/robin-hood-backgrounds/neon-city-smoke-2.jpg");
   animation-delay: 16s;
 }
 
 .bg-layer-four {
-  background-image: url("/brand/hoodbank-backgrounds/neon-city-towers.jpg");
+  background-image: url("/brand/robin-hood-backgrounds/neon-city-towers.jpg");
   animation-delay: 24s;
 }
 

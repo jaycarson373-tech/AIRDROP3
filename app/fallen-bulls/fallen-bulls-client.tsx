@@ -71,9 +71,9 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/logo.png" alt="HoodBank logo" />
+            <img className="brand-logo" src="/logo.png" alt="The Robin Hood logo" />
             <span>
-              HoodBank
+              The Robin Hood
               <small>Ineligible Wallets</small>
             </span>
           </Link>

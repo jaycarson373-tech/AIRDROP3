@@ -85,7 +85,7 @@ const emptyStats: StatsResponse = {
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = "HoodBank";
+const PROJECT_NAME = "The Robin Hood";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
 
@@ -278,8 +278,8 @@ export function DashboardClient() {
           <Link className="brand" href="/">
             <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
-              HoodBank
-              <small>HOODx vault</small>
+              The Robin Hood
+              <small>HOOD rewards</small>
             </span>
           </Link>
           <div className="nav-links">
