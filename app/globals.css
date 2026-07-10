@@ -26,7 +26,7 @@
   --scroll-y: 0px;
 }
 
-/* HoodBank RobinDrop-style terminal skin */
+/* HoodBank terminal skin */
 .hood-bank-page {
   --black: #050807;
   --charcoal: #080d0a;
@@ -155,7 +155,7 @@
   background:
     linear-gradient(90deg, rgba(5, 8, 7, 0.94), rgba(5, 8, 7, 0.52) 48%, rgba(5, 8, 7, 0.9)),
     radial-gradient(circle at 80% 28%, rgba(0, 200, 5, 0.2), transparent 25rem),
-    url("/brand/backgrounds/pump-street-1.png") center / cover no-repeat;
+    url("/airdrop-bg.png") center / cover no-repeat;
 }
 
 .hood-bank-page h1 {
@@ -752,7 +752,7 @@ h3 {
 
 .feeding-section,
 .airdrop-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 45%;
   --section-art-speed: -0.01;
   background:
@@ -833,7 +833,7 @@ h3 {
 }
 
 .reward-explainer-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   background:
@@ -942,7 +942,7 @@ h3 {
 }
 
 .path-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 45%;
   --section-art-speed: -0.018;
   overflow: hidden;
@@ -1058,7 +1058,7 @@ h3 {
 }
 
 .black-bull-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 50%;
   --section-art-speed: -0.016;
   overflow: hidden;
@@ -1069,7 +1069,7 @@ h3 {
 }
 
 .ansem-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   overflow: hidden;
@@ -1284,7 +1284,7 @@ h3 {
 }
 
 .conviction-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.013;
 }
@@ -1560,7 +1560,7 @@ h3 {
 }
 
 .eligibility-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 50%;
   --section-art-speed: -0.012;
 }
@@ -1639,7 +1639,7 @@ h3 {
 }
 
 .lookup-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.01;
 }
@@ -1680,13 +1680,13 @@ h3 {
 }
 
 .history-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 46%;
   --section-art-speed: -0.012;
 }
 
 .bull-board-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 46%;
   --section-art-speed: -0.01;
   background:
@@ -1697,7 +1697,7 @@ h3 {
 
 .recent-feedings-section,
 .recent-airdrops-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 42%;
   --section-art-speed: -0.012;
   background:
@@ -1759,7 +1759,7 @@ td a,
 }
 
 .philosophy-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 50%;
   --section-art-speed: -0.014;
   background:
@@ -1793,13 +1793,13 @@ td a,
 }
 
 .faq-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 46%;
   --section-art-speed: -0.01;
 }
 
 .final-bull-section {
-  --section-art: url("/brand/backgrounds/robin-forest.png");
+  --section-art: url("/airdrop-bg.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
   min-height: 82vh;
@@ -2439,7 +2439,7 @@ td a,
   background:
     linear-gradient(90deg, rgba(5, 8, 7, 0.94), rgba(5, 8, 7, 0.52) 48%, rgba(5, 8, 7, 0.9)),
     radial-gradient(circle at 80% 28%, rgba(0, 200, 5, 0.2), transparent 25rem),
-    url("/brand/backgrounds/pump-street-1.png") center / cover no-repeat;
+    url("/airdrop-bg.png") center / cover no-repeat;
 }
 
 .hood-bank-page h1,
@@ -2647,7 +2647,7 @@ td a,
   background:
     linear-gradient(135deg, transparent 0 48%, rgba(231, 255, 0, 0.2) 48% 48.25%, transparent 48.25%),
     linear-gradient(160deg, transparent 0 62%, rgba(0, 200, 5, 0.22) 62% 62.3%, transparent 62.3%),
-    url("/brand/hood-strategy-logo.png") right 7vw center / min(42vw, 520px) auto no-repeat;
+    url("/logo.png") right 7vw center / min(42vw, 520px) auto no-repeat;
   opacity: 0.92;
   transform: translate3d(0, calc(var(--scroll-y) * 0.012), 0);
 }
@@ -2835,7 +2835,7 @@ td a,
 .final-bull-art {
   background:
     radial-gradient(circle at 76% 44%, rgba(231, 255, 0, 0.18), transparent 24%),
-    url("/brand/hood-strategy-logo.png") 78% center / min(48vw, 640px) auto no-repeat;
+    url("/logo.png") 78% center / min(48vw, 640px) auto no-repeat;
   filter: none;
 }
 
@@ -2877,7 +2877,7 @@ td a,
   .hood-hero .hero-mountains {
     background:
       radial-gradient(circle at 50% 24%, rgba(231, 255, 0, 0.18), transparent 32%),
-      url("/brand/hood-strategy-logo.png") center 12% / min(86vw, 420px) auto no-repeat;
+      url("/logo.png") center 12% / min(86vw, 420px) auto no-repeat;
     opacity: 0.42;
   }
 
@@ -2885,5 +2885,303 @@ td a,
   .multiplier-grid,
   .black-bull-timeline {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Final HoodBank neon override */
+.hood-bank-page {
+  --black: #050807;
+  --charcoal: #080d0a;
+  --charcoal-2: #0e1510;
+  --stone: #0b110d;
+  --stone-2: #101911;
+  --gold: #00e654;
+  --green: #00c805;
+  --ivory: #f1f8f3;
+  --muted: #95a69b;
+  --faint: #66766c;
+  --border: rgba(0, 200, 5, 0.2);
+  --panel: rgba(8, 13, 10, 0.94);
+  --panel-2: rgba(11, 17, 13, 0.94);
+  background:
+    radial-gradient(circle at 74% 14%, rgba(0, 200, 5, 0.18), transparent 28rem),
+    radial-gradient(circle at 16% 58%, rgba(0, 230, 84, 0.1), transparent 24rem),
+    #050807;
+}
+
+.hood-bank-page .market-tape {
+  height: 36px;
+  border-bottom: 1px solid rgba(0, 200, 5, 0.18);
+  background: rgba(3, 7, 5, 0.96);
+}
+
+.hood-bank-page .nav {
+  top: 36px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(5, 8, 7, 0.86);
+  backdrop-filter: blur(18px);
+}
+
+.hood-bank-page .brand-logo {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(0, 200, 5, 0.32);
+  background: #050807;
+  box-shadow: 0 0 24px rgba(0, 200, 5, 0.34);
+}
+
+.hood-bank-page .hero {
+  min-height: calc(100svh - 102px);
+  display: flex;
+  align-items: center;
+  padding: clamp(70px, 9vw, 118px) 0 clamp(44px, 6vw, 78px);
+  background:
+    linear-gradient(90deg, rgba(5, 8, 7, 0.96), rgba(5, 8, 7, 0.54) 48%, rgba(5, 8, 7, 0.9)),
+    radial-gradient(circle at 78% 32%, rgba(0, 200, 5, 0.22), transparent 28rem),
+    url("/airdrop-bg.png") center / cover no-repeat;
+}
+
+.hood-bank-page .hero-mountains {
+  background:
+    radial-gradient(circle at 72% 34%, rgba(0, 230, 84, 0.2), transparent 24rem),
+    url("/logo.png") right 8vw center / min(34vw, 420px) auto no-repeat;
+  opacity: 0.82;
+}
+
+.hood-bank-page .hero-shade {
+  background:
+    linear-gradient(90deg, rgba(5, 8, 7, 0.96), rgba(5, 8, 7, 0.52) 50%, rgba(5, 8, 7, 0.88)),
+    linear-gradient(180deg, transparent 54%, rgba(5, 8, 7, 0.92));
+}
+
+.hood-bank-page .hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.68fr);
+  gap: clamp(32px, 6vw, 84px);
+  align-items: center;
+}
+
+.hood-bank-page .section-kicker,
+.hood-bank-page .market-tape span,
+.hood-bank-page .metric-card span,
+.hood-bank-page th {
+  font-family: "SF Mono", Consolas, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hood-bank-page h1,
+.hood-bank-page h2 {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.055em;
+}
+
+.hood-bank-page h1 {
+  font-size: clamp(4.3rem, 9.2vw, 10rem);
+  line-height: 0.88;
+}
+
+.hood-bank-page h1 span:last-child,
+.hood-bank-page h2 strong,
+.hood-bank-page .hero-countdown strong,
+.hood-bank-page .hero-total-distributed b,
+.hood-bank-page .metric-card-strong strong {
+  color: #00e654;
+  text-shadow: 0 0 34px rgba(0, 200, 5, 0.42);
+}
+
+.hood-bank-page .hero-subtitle {
+  max-width: 720px;
+  color: #f1f8f3;
+  font-size: clamp(1.45rem, 3vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+}
+
+.hood-bank-page .hero-lead {
+  max-width: 680px;
+  color: rgba(241, 248, 243, 0.74);
+  font-size: clamp(1rem, 1.35vw, 1.22rem);
+  line-height: 1.6;
+}
+
+.hood-bank-page .cta,
+.hood-bank-page .lookup-card button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 999px;
+  background: #00c805;
+  color: #021006;
+  font-weight: 900;
+  box-shadow: 0 0 24px rgba(0, 200, 5, 0.2);
+}
+
+.hood-bank-page .cta.secondary {
+  border: 1px solid rgba(0, 200, 5, 0.26);
+  background: rgba(0, 200, 5, 0.08);
+  color: #f1f8f3;
+}
+
+.bank-statstrip {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid rgba(0, 200, 5, 0.15);
+  border-bottom: 1px solid rgba(0, 200, 5, 0.15);
+  background: rgba(3, 7, 5, 0.96);
+}
+
+.bank-statstrip-inner {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.bank-statstrip-inner div {
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 22px clamp(16px, 3vw, 34px);
+  border-right: 1px solid rgba(0, 200, 5, 0.12);
+}
+
+.bank-statstrip-inner div:last-child {
+  border-right: 0;
+}
+
+.bank-statstrip-inner strong {
+  color: #00e654;
+  font-size: clamp(1.9rem, 4vw, 4.4rem);
+  font-weight: 950;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+}
+
+.bank-statstrip-inner span {
+  color: #95a69b;
+  font-family: "SF Mono", Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hood-bank-page .hero-countdown,
+.hood-bank-page .metric-card,
+.hood-bank-page .history-card,
+.hood-bank-page .conviction-card,
+.hood-bank-page .multiplier-card,
+.hood-bank-page .reward-flow-card,
+.hood-bank-page .share-card,
+.hood-bank-page .eligibility-card,
+.hood-bank-page .faq-item,
+.hood-bank-page .lookup-card,
+.hood-bank-page .black-bull-card {
+  border: 1px solid rgba(0, 200, 5, 0.18);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+    rgba(7, 12, 9, 0.92);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.hood-bank-page .metric-card:hover,
+.hood-bank-page .reward-flow-card:hover,
+.hood-bank-page .share-card:hover,
+.hood-bank-page .multiplier-card:hover,
+.hood-bank-page .eligibility-card:hover,
+.hood-bank-page .faq-item:hover {
+  border-color: rgba(0, 230, 84, 0.46);
+  box-shadow:
+    0 26px 74px rgba(0, 0, 0, 0.46),
+    0 0 28px rgba(0, 200, 5, 0.12);
+}
+
+.hood-bank-page .section {
+  background:
+    radial-gradient(circle at 78% 0%, rgba(0, 200, 5, 0.1), transparent 24rem),
+    linear-gradient(180deg, #050807, #070c09);
+}
+
+.hood-bank-page .section::before {
+  background-image:
+    radial-gradient(rgba(0, 200, 5, 0.14) 1px, transparent 1px),
+    linear-gradient(rgba(0, 200, 5, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 200, 5, 0.025) 1px, transparent 1px);
+  background-size: 28px 28px, 112px 112px, 112px 112px;
+  opacity: 0.38;
+}
+
+.hood-bank-page .black-bull-portrait {
+  background:
+    radial-gradient(circle, rgba(0, 230, 84, 0.22), transparent 64%),
+    #050807;
+}
+
+.hood-bank-page .black-bull-portrait img {
+  object-fit: contain;
+  padding: 8%;
+}
+
+.hood-bank-page .rank-strip span,
+.hood-bank-page .bull-signal-list span,
+.hood-bank-page .black-bull-timeline span {
+  border-color: rgba(0, 200, 5, 0.22);
+  background: rgba(0, 200, 5, 0.07);
+  color: #f1f8f3;
+}
+
+.hood-bank-page td a,
+.hood-bank-page .details-button {
+  color: #00e654;
+}
+
+.hood-bank-page tbody tr:hover {
+  background: rgba(0, 200, 5, 0.07);
+  box-shadow: inset 3px 0 0 #00c805;
+}
+
+.hood-bank-page .final-bull-art {
+  background:
+    radial-gradient(circle at 74% 44%, rgba(0, 230, 84, 0.18), transparent 28%),
+    url("/logo.png") 78% center / min(42vw, 520px) auto no-repeat;
+}
+
+@media (max-width: 1080px) {
+  .hood-bank-page .hero-inner,
+  .bank-statstrip-inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .hood-bank-page .hero {
+    min-height: auto;
+    padding-top: 96px;
+  }
+
+  .hood-bank-page .hero-inner,
+  .bank-statstrip-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .hood-bank-page .hero-mountains {
+    background:
+      radial-gradient(circle at 50% 18%, rgba(0, 230, 84, 0.18), transparent 24rem),
+      url("/logo.png") center 4% / min(78vw, 360px) auto no-repeat;
+    opacity: 0.34;
+  }
+
+  .bank-statstrip-inner div {
+    min-height: 92px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(0, 200, 5, 0.12);
+  }
+
+  .bank-statstrip-inner div:last-child {
+    border-bottom: 0;
   }
 }

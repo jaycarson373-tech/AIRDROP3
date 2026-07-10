@@ -276,7 +276,7 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
               HoodBank
               <small>HOODx vault</small>

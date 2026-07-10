@@ -3,17 +3,17 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hoodstrategy.fun"),
+  metadataBase: new URL("https://hoodbank.fun"),
   title: "HoodBank",
   description: "HoodBank claims creator fees, buys HOODx, and pays eligible holders automatically.",
   openGraph: {
     title: "HoodBank",
     description: "HoodBank claims creator fees, buys HOODx, and pays eligible holders automatically.",
-    url: "https://hoodstrategy.fun",
+    url: "https://hoodbank.fun",
     siteName: "HoodBank",
     images: [
       {
-        url: "/brand/hood-strategy-logo.png",
+        url: "/logo.png",
         width: 1200,
         height: 1200,
         alt: "HoodBank"
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "HoodBank",
     description: "HoodBank claims creator fees, buys HOODx, and pays eligible holders automatically.",
-    images: ["/brand/hood-strategy-logo.png"]
+    images: ["/logo.png"]
   },
   icons: {
     icon: [

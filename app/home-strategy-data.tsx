@@ -81,7 +81,7 @@ const emptyStats: StatsResponse = {
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOODBANK";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
@@ -197,7 +197,6 @@ export function HeroCountdown() {
 export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
   const rounds = stats?.roundHistory ?? [];
-  const todaysAirdrops = countToday(rounds);
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
   const latestRound = rounds[0];
@@ -252,17 +251,17 @@ function MetricCard({
 }
 
 const hoodModelCards = [
-  ["250K-500K", "1.35x", "Holder boost for eligible smaller wallets."],
-  ["500K-1M", "1.20x", "Moderate holder boost above the minimum."],
-  ["1M-3M", "1.10x", "Light holder boost while supply still dominates."],
-  ["3M+", "1.00x", "Base holder weight for larger wallets."]
+  ["01", "Claim fees", "Creator fees enter the bank every epoch."],
+  ["02", "Buy HOODx", "100% of usable fees route into HOODx."],
+  ["03", "Pay holders", "Eligible wallets receive automatic airdrops."],
+  ["04", "Post receipts", "Settled transactions show in the public ledger."]
 ];
 
 const solBoostCards = [
-  ["<1 SOL", "1.35x"],
-  ["1-5 SOL", "1.20x"],
-  ["5-20 SOL", "1.10x"],
-  ["20+ SOL", "1.00x"]
+  ["Claim", "fees"],
+  ["Buy", "HOODx"],
+  ["Airdrop", "holders"],
+  ["Receipt", "posted"]
 ];
 
 export function HoodBonusSection() {
@@ -284,7 +283,7 @@ export function HoodBonusSection() {
             </article>
           ))}
         </div>
-        <div className="rank-strip boost-strip" aria-label="SOL balance boost model">
+        <div className="rank-strip boost-strip" aria-label="HoodBank payout loop">
           {solBoostCards.map(([tier, boost]) => (
             <span key={tier}>{tier}: {boost}</span>
           ))}
@@ -298,26 +297,26 @@ export function HoodBonusSection() {
               <strong>$HOOD held</strong>
             </div>
             <div>
-              <span>Boost</span>
-              <strong>Holder tier</strong>
+              <span>Payout</span>
+              <strong>HOODx</strong>
             </div>
             <div>
-              <span>Balance</span>
-              <strong>SOL tier</strong>
+              <span>Proof</span>
+              <strong>Receipt</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>Final weight = $HOOD balance x holder boost x SOL balance boost. Bigger $HOOD balances still win more, but smaller and lower-balance wallets get a modest capped edge.</p>
+          <p>Holder weight is based on live eligibility and $HOOD balance. When an epoch settles, HOODx payouts and transaction receipts appear on the board.</p>
           <div className="max-row">
-            <span>Max combined boost</span>
-            <b>1.82×</b>
+            <span>Bank loop</span>
+            <b>100 / 0</b>
           </div>
         </div>
       </div>
       <div className="container rank-strip" aria-label="Reward model">
-        {["Supply weighting dominates", "Boosts are capped", "No infinite multipliers", "Every epoch recalculates"].map((rank) => (
+        {["Fees claimed", "HOODx bought", "Holders paid", "Receipts posted"].map((rank) => (
           <span key={rank}>{rank}</span>
         ))}
       </div>
@@ -331,10 +330,10 @@ export function PermanentEligibility() {
       <div className="container warning-layout">
         <div>
           <div className="section-kicker">Eligibility rules</div>
-          <h2>Hold 250K+ HOODBANK.</h2>
+          <h2>Hold 100K+ HOOD.</h2>
         </div>
         <div className="eligibility-flow">
-          {[`250K+ $${SOURCE_SYMBOL}`, "Creator Fees", "Every Epoch", "Boost Score", "On-chain Tracking"].map((item, index) => (
+          {[`100K+ $${SOURCE_SYMBOL}`, "Fees claimed", "HOODx bought", "Airdrop sent", "Receipt posted"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -357,10 +356,10 @@ export function RewardExplanation() {
         </div>
         <div className="reward-flow">
           {[
-            `Hold at least 250,000 $${SOURCE_SYMBOL}`,
+            `Hold at least 100,000 $${SOURCE_SYMBOL}`,
             "Creator fees buy HOODx",
             "HOODx distributes every epoch",
-            "Smaller holders and lower SOL wallets receive a modest boost",
+            "100% of the reward rail goes to holders",
             "Receipts are tracked on-chain"
           ].map((item) => (
             <article className="reward-flow-card" key={item}>
@@ -370,8 +369,8 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Core", "$HOOD held", "base weight"],
-            ["Tilt", "Holder tier", "capped boost"],
+            ["Core", "$HOOD held", "bank weight"],
+            ["Rail", "100 / 0", "holder payouts"],
             ["Receipts", "On-chain", "settled payouts"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
@@ -405,7 +404,7 @@ export function BullBoard() {
       <div className="container">
         <div className="section-kicker">Bank board</div>
         <div className="section-head split-head">
-          <h2>STRATEGY BOARD</h2>
+          <h2>HOOD BOARD</h2>
           <p>Clean holder table showing balance, bank weight, earned HOODx, and latest payout activity.</p>
           <a className="cta secondary" href="/fallen-bulls">
             Ineligible Wallets
@@ -418,9 +417,9 @@ export function BullBoard() {
                 <tr>
                   <th>Wallet</th>
                   <th>$HOOD Held</th>
-                  <th>SOL Balance Tier</th>
-                  <th>Holder Boost</th>
-                  <th>SOL Boost</th>
+                  <th>Status</th>
+                  <th>Rail</th>
+                  <th>Receipt</th>
                   <th>Bank Weight</th>
                   <th>Total {REWARD_SYMBOL} Earned</th>
                   <th>Last Airdrop</th>
@@ -435,9 +434,9 @@ export function BullBoard() {
                       <tr key={holder.address}>
                         <td>{compactAddress(holder.address)}</td>
                         <td>{formatNumber(holder.balance, 0)}</td>
-                        <td>{holder.solBalanceTier}</td>
-                        <td>{holder.holderBoost}</td>
-                        <td>{holder.solBoost}</td>
+                        <td>{holder.permanentlyIneligible ? "Out" : "Eligible"}</td>
+                        <td>HOODx</td>
+                        <td>{holder.lastAirdropAt ? "Posted" : "Awaiting"}</td>
                         <td>{holder.finalWeight ? formatNumber(holder.finalWeight, 0) : "Scored live"}</td>
                         <td>{recentEarned > 0 ? formatAmount(recentEarned, REWARD_SYMBOL) : "Awaiting holder totals"}</td>
                         <td>{holder.lastAirdropAt ? formatDate(holder.lastAirdropAt) : lastReward ? formatDate(lastReward.time) : "Awaiting airdrop"}</td>

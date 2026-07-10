@@ -12,7 +12,7 @@ import {
 } from "./home-strategy-data";
 
 const PROJECT_NAME = "HoodBank";
-const DEFAULT_CA = "8u3oshsLdVmkLnGi4WuPUZVYLLzHccXFajHKQYNzpump";
+const DEFAULT_CA = "FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "https://pump.fun";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
 
@@ -21,7 +21,7 @@ function Navbar() {
     <header className="nav">
       <div className="container nav-inner">
         <a className="brand" href="/">
-          <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+          <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
           <span>
             HoodBank
             <small>HOODx vault</small>
@@ -59,7 +59,7 @@ export default function Page() {
               <span>CLAIM FEES</span>
               <span><b>BUY HOODx</b></span>
               <span>PAY HOLDERS</span>
-              <span><b>250K+</b> ELIGIBLE</span>
+              <span><b>100K+</b> ELIGIBLE</span>
               <span>ON-CHAIN RECEIPTS</span>
             </div>
           ))}
@@ -98,6 +98,27 @@ export default function Page() {
           </div>
         </section>
 
+        <section className="bank-statstrip" aria-label="HoodBank live rail">
+          <div className="container bank-statstrip-inner">
+            <div>
+              <strong>100%</strong>
+              <span>fee rail</span>
+            </div>
+            <div>
+              <strong>5 MIN</strong>
+              <span>epochs</span>
+            </div>
+            <div>
+              <strong>100K+</strong>
+              <span>eligible</span>
+            </div>
+            <div>
+              <strong>HOODx</strong>
+              <span>payout asset</span>
+            </div>
+          </div>
+        </section>
+
         <LiveProtocolDashboard />
         <VaultSection />
         <RewardExplanation />
@@ -112,7 +133,7 @@ export default function Page() {
             <div className="section-kicker">FAQ</div>
             <h2>Vault notes.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body="Hold at least 250,000 $HOOD and stay above that threshold." />
+              <FaqItem title="How do I qualify?" body="Hold at least 100,000 $HOOD and stay above that threshold." />
               <FaqItem title="How often are rewards sent?" body="Creator fees buy HOODx every epoch when live conditions are met." />
               <FaqItem title="How does the bank work?" body="The backend claims fees, buys HOODx, scans eligible holders, and sends rewards automatically." />
               <FaqItem title="Does supply still matter?" body="Yes. Holder balance is the base weight, so larger holders can still earn more." />
@@ -135,7 +156,7 @@ export default function Page() {
       <footer className="footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
             <strong>HoodBank</strong>
           </div>
           <p>Hold HoodBank. Get paid HOODx.</p>
@@ -168,17 +189,17 @@ function VaultSection() {
       <div className="container black-bull-grid">
         <aside className="black-bull-card">
           <div className="black-bull-portrait">
-            <img src="/brand/hood-strategy-logo.png" alt="HoodBank mark" />
+            <img src="/logo.png" alt="HoodBank mark" />
           </div>
           <div className="black-bull-card-head">
             <span>Vault stack</span>
             <strong>HoodBank</strong>
           </div>
           <div className="bull-signal-list">
-            <span>Airdrop tech</span>
-            <span>Retail meta</span>
-            <span>HOOD stock thesis</span>
-            <span>Trenches redistribution</span>
+            <span>Creator fees</span>
+            <span>HOODx buys</span>
+            <span>Holder scan</span>
+            <span>Receipts live</span>
           </div>
         </aside>
 

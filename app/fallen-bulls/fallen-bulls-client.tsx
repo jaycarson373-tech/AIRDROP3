@@ -71,7 +71,7 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/brand/hood-strategy-logo.png" alt="HoodBank logo" />
+            <img className="brand-logo" src="/logo.png" alt="HoodBank logo" />
             <span>
               HoodBank
               <small>Ineligible Wallets</small>
@@ -91,7 +91,7 @@ export function FallenBullsClient() {
             <div className="section-kicker">Ineligibility ledger</div>
             <div className="section-head split-head">
               <h1 className="dashboard-title">Ineligible Wallets</h1>
-              <p>Wallets that lost eligibility by selling or falling below the 250,000 HOOD requirement.</p>
+              <p>Wallets that lost eligibility by selling or falling below the 100,000 HOOD requirement.</p>
             </div>
 
             <div className="history-card bull-board-card">
