@@ -14,10 +14,10 @@ import {
 } from "./home-strategy-data";
 
 const PROJECT_NAME = "The Robin Hood";
-const DEFAULT_CA = "3UiQ7mFuAdpeMUMbQTQDon8N1mK2L4YMiMzfpr4upump";
+const DEFAULT_CA = "G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump";
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? `https://pump.fun/coin/${DEFAULT_CA}`;
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/RobinHoodSol__";
 
 function Navbar() {
   return (
