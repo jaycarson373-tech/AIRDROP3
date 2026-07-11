@@ -46,6 +46,7 @@ type MarketToken = {
 };
 
 type MarketResponse = {
+  reward: MarketToken;
   source: MarketToken;
   sol: MarketToken;
   updatedAt: string;
@@ -101,6 +102,16 @@ const REFRESH_MS = 12_000;
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
 const emptyMarket: MarketResponse = {
+  reward: {
+    priceUsd: null,
+    change24h: null,
+    marketCapUsd: null,
+    fdvUsd: null,
+    volume24hUsd: null,
+    liquidityUsd: null,
+    url: null,
+    symbol: REWARD_SYMBOL
+  },
   source: {
     priceUsd: null,
     change24h: null,
@@ -152,6 +163,12 @@ function formatCount(value: number) {
 
 function formatUsd(value: number | null | undefined, maximumFractionDigits = 0) {
   if (!Number.isFinite(value ?? NaN) || !value) return "Awaiting";
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits })}`;
+}
+
+function formatTokenPrice(value: number | null | undefined) {
+  if (!Number.isFinite(value ?? NaN) || !value) return "Awaiting price";
+  const maximumFractionDigits = value < 0.0001 ? 10 : value < 0.01 ? 8 : value < 1 ? 6 : 4;
   return `$${value.toLocaleString(undefined, { maximumFractionDigits })}`;
 }
 
@@ -289,6 +306,7 @@ export function AirdroppedStat() {
 
 export function LiveProtocolDashboard() {
   const { stats, now } = useProtocolData();
+  const market = useMarketData();
   const rounds = stats?.roundHistory ?? [];
   const nextDropTime = stats?.nextDropTime ? Date.parse(stats.nextDropTime) : 0;
   const countdown = nextDropTime ? formatCountdown(nextDropTime - now) : "Loading";
@@ -304,6 +322,7 @@ export function LiveProtocolDashboard() {
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
           <MetricCard label="Total HOODx Paid" value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
+          <MetricCard label="HOODx Price" value={market ? formatTokenPrice(market.reward.priceUsd) : "Loading"} strong />
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
           <MetricCard label="HOODx Bought" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
           <MetricCard label="Next HOODx Payout" value={countdown} />
