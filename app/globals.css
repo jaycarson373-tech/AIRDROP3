@@ -3822,7 +3822,6 @@ td a,
 
 .hood-bank-page::before,
 .hood-bank-page::after,
-.hood-bank-bg-layer,
 .volume-panel::before,
 .hood-volume-bar,
 .loading-screen .loader-line span {
@@ -3841,11 +3840,27 @@ td a,
     #020302;
 }
 
+.hood-bank-bg-rotator::before {
+  position: absolute;
+  inset: -8%;
+  z-index: 3;
+  content: "";
+  pointer-events: none;
+  opacity: 0.16;
+  background-image:
+    radial-gradient(circle, rgba(223, 255, 0, 0.9) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(245, 255, 0, 0.55) 0 1px, transparent 1.5px);
+  background-size: 150px 130px, 230px 190px;
+  background-position: 12px 28px, 80px 42px;
+  animation: hood-subtle-particles 34s linear infinite;
+}
+
 .hood-bank-bg-layer.bg-layer-one {
   display: block;
-  inset: 0;
+  inset: -2%;
   opacity: 0.28 !important;
-  transform: none !important;
+  transform: scale(1.01);
+  animation: hood-subtle-bg-drift 46s ease-in-out infinite !important;
   background-image: url("/brand/robin-hood-banner.png");
   background-position: center top;
   background-size: cover;
@@ -3865,4 +3880,30 @@ td a,
 .hood-bank-page .hero {
   min-height: calc(100svh - 74px);
   padding-top: clamp(58px, 8vw, 96px);
+}
+
+@keyframes hood-subtle-bg-drift {
+  0%,
+  100% {
+    transform: scale(1.01) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.035) translate3d(0.8%, -0.6%, 0);
+  }
+}
+
+@keyframes hood-subtle-particles {
+  from {
+    background-position: 12px 28px, 80px 42px;
+  }
+  to {
+    background-position: 62px 118px, 22px 152px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hood-bank-bg-rotator::before,
+  .hood-bank-bg-layer.bg-layer-one {
+    animation: none !important;
+  }
 }
