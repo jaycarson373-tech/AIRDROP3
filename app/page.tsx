@@ -132,6 +132,7 @@ export default function Page() {
               <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $HOOD and stay above that threshold." />
               <FaqItem title="How often are rewards sent?" body="Creator fees buy HOODx every 5 minutes when live conditions are met." />
               <FaqItem title="How does it work?" body="The backend claims fees, buys HOODx, scans eligible HOOD holders, and sends rewards automatically." />
+              <FaqItem title="Who gets boosted?" body="The weighting skews toward smaller eligible HOOD bags and wallets with lower SOL balances." />
               <FaqItem title="Why HOOD?" body="This is a HOOD-native rewards token for people bullish on HOOD stock and HoodX, without the bridge headache." />
               <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
             </div>

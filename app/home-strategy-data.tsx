@@ -392,7 +392,7 @@ function MetricCard({
 const hoodModelCards = [
   ["01", "Fees collected", "Creator fees are pulled every 5 minutes."],
   ["02", "HOODx bought", "Fees buy HOODx for eligible holders."],
-  ["03", "Holders paid", "Eligible 1M+ HOOD wallets receive the HOODx."],
+  ["03", "Holders paid", "Lower-balance and lower-SOL wallets get boosted weighting."],
   ["04", "Receipts posted", "Completed payouts are listed with transaction proof."]
 ];
 
@@ -410,7 +410,7 @@ export function HoodBonusSection() {
         <div className="section-kicker">Reward model</div>
         <div className="section-head split-head">
           <h2>Hold HOOD. Earn HOODx.</h2>
-          <p>For HOOD bulls who want HoodX rewards without bridging. Hold the token, stay eligible, and let the backend route rewards.</p>
+          <p>For HOOD bulls who want HoodX rewards without bridging. Rewards run every 5 minutes and skew toward smaller holders and lower-SOL wallets.</p>
         </div>
         <div className="multiplier-grid">
           {hoodModelCards.map(([value, title, copy]) => (
@@ -447,7 +447,7 @@ export function HoodBonusSection() {
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>No bridge. No claiming. No staking. If a wallet is eligible when the 5 minute epoch runs, the payout is sent and the transaction is posted.</p>
+          <p>No bridge. No claiming. No staking. Eligible wallets are paid every 5 minutes, with boosted weighting for smaller bags and lower-SOL wallets.</p>
           <div className="max-row">
             <span>Payout split</span>
             <b>100% to holders</b>
@@ -491,13 +491,14 @@ export function RewardExplanation() {
           <div className="section-kicker">How rewards pay</div>
         <div className="section-head split-head">
           <h2>Creator fees become holder rewards.</h2>
-          <p>Every 5 minutes follows the same loop. Collect fees, buy HOODx, pay eligible HOOD holders, post the receipt.</p>
+          <p>Every 5 minutes follows the same loop. Collect fees, buy HOODx, boost smaller wallets, pay eligible HOOD holders, post the receipt.</p>
         </div>
         <div className="reward-flow">
           {[
             `Hold 1M+ $${SOURCE_SYMBOL}`,
             "Creator fees are collected",
             "HOODx is bought",
+            "Smaller wallets get boosted weighting",
             "Eligible holders get paid automatically",
             "Transaction proof is posted"
           ].map((item) => (
@@ -509,7 +510,8 @@ export function RewardExplanation() {
         <div className="share-example">
           {[
             ["Eligibility", "1M+ HOOD", "minimum balance"],
-            ["Rewards", "HOODx", "automatic payouts"],
+            ["Rewards", "HOODx", "every 5 minutes"],
+            ["Weighting", "Skewed", "smaller wallets boosted"],
             ["Proof", "On-chain", "settled transactions"]
           ].map(([holder, multiplier, copy]) => (
             <article className="share-card" key={holder}>
