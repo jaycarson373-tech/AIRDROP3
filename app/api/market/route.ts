@@ -42,7 +42,7 @@ type TokenMarket = {
 };
 
 type MarketPayload = {
-  ansem: TokenMarket;
+  reward: TokenMarket;
   source: TokenMarket;
   sol: TokenMarket;
   updatedAt: string;
@@ -135,7 +135,7 @@ export async function GET() {
   const source = sourceMint();
   const pairs = await fetchDexPairs([reward, source, SOL_MINT].filter(Boolean) as string[]);
   const payload: MarketPayload = {
-    ansem: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD"),
+    reward: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx"),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
       process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD"

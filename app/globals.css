@@ -1087,7 +1087,7 @@ h3 {
     #020202;
 }
 
-.ansem-section {
+.reward-section {
   --section-art: url("/airdrop-bg.png");
   --section-art-position: center 48%;
   --section-art-speed: -0.014;
@@ -1222,7 +1222,7 @@ h3 {
   letter-spacing: 0.04em;
 }
 
-.ansem-section .black-bull-portrait {
+.reward-section .black-bull-portrait {
   aspect-ratio: 1.35;
 }
 

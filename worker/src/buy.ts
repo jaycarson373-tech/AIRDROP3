@@ -62,7 +62,7 @@ export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
   const usableLamports = balance > reserveLamports ? balance - reserveLamports : 0n;
   const splitBudgetLamports = (usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
   const bagworkBps = config.pfpRewardWallet ? config.pfpRewardBps : 0;
-  const rewardBuyBps = config.pfpRewardWallet ? Math.max(0, Math.min(config.ansemBuyBps, 10_000 - bagworkBps)) : config.ansemBuyBps;
+  const rewardBuyBps = config.pfpRewardWallet ? Math.max(0, Math.min(config.rewardBuyBps, 10_000 - bagworkBps)) : config.rewardBuyBps;
   const amount = (splitBudgetLamports * BigInt(rewardBuyBps)) / 10_000n;
   const pfpRewardLamports = (splitBudgetLamports * BigInt(bagworkBps)) / 10_000n;
   const allocatedLamports = amount + pfpRewardLamports;

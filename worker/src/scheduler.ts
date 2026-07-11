@@ -9,7 +9,7 @@ console.log(
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
 console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ source tokens; wallets above ${config.maxHolderPct}% are excluded.`);
-console.log(`Reward buyback allocation: ${config.ansemBuyBps} bps of usable creator fees is available for HOOD buybacks after reserves.`);
+console.log(`Reward buyback allocation: ${config.rewardBuyBps} bps of usable creator fees is available for HOODx buybacks after reserves.`);
 if (config.pfpRewardWallet && config.pfpRewardBps > 0) {
   console.log(
     `Bagworking split: ${config.pfpRewardBps} bps routes to ${config.pfpRewardWallet.toBase58()}; remaining buy allocation goes to holder airdrops.`

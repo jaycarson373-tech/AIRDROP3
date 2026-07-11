@@ -80,6 +80,7 @@ if (rewardMode === "token" && !configuredRewardTokenMint) {
 const configuredBagworkRewardWallet =
   optionalPublicKeyEnv("BAGWORK_REWARD_WALLET_PUBLIC_KEY") ?? optionalPublicKeyEnv("PFP_REWARD_WALLET_PUBLIC_KEY");
 const configuredBagworkRewardBps = intEnv("BAGWORK_REWARD_BPS", intEnv("PFP_REWARD_BPS", 5000));
+const configuredRewardBuyBps = intEnv("REWARD_BUY_BPS", 5000);
 
 export const config = {
   heliusRpcUrl: required("HELIUS_RPC_URL"),
@@ -101,7 +102,7 @@ export const config = {
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
   swapBalanceBps: Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 9000))),
-  ansemBuyBps: Math.min(10_000, Math.max(0, intEnv("ANSEM_BUY_BPS", 5000))),
+  rewardBuyBps: Math.min(10_000, Math.max(0, configuredRewardBuyBps)),
   pfpRewardWallet: configuredBagworkRewardWallet,
   pfpRewardBps: configuredBagworkRewardWallet ? Math.min(10_000, Math.max(0, configuredBagworkRewardBps)) : 0,
   minSolReserve: Math.max(0.3, numberEnv("MIN_SOL_RESERVE", 0.3)),
