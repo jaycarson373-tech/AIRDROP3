@@ -60,33 +60,12 @@ export default function Page() {
   return (
     <div className="page hood-strategy-page hood-bank-page">
       <div className="hood-bank-bg-rotator" aria-hidden="true">
-        <span className="hood-matrix-rain" />
-        <span className="hood-floating-dots dots-one" />
-        <span className="hood-floating-dots dots-two" />
         <span className="hood-bank-bg-layer bg-layer-one" />
-        <span className="hood-bank-bg-layer bg-layer-two" />
-        <span className="hood-bank-bg-layer bg-layer-three" />
-        <span className="hood-bank-bg-layer bg-layer-four" />
-      </div>
-      <div className="market-tape" aria-hidden="true">
-        <div className="market-tape-track">
-          {Array.from({ length: 2 }).map((_, index) => (
-            <div className="market-tape-set" key={index}>
-              <span><b>THE ROBIN HOOD</b> ONLINE</span>
-              <span>CLAIM FEES</span>
-              <span><b>BUY HOODX</b></span>
-              <span>PAY HOOD HOLDERS</span>
-              <span><b>1M+</b> HOOD</span>
-              <span>ON-CHAIN RECEIPTS</span>
-            </div>
-          ))}
-        </div>
       </div>
       <Navbar />
 
       <main>
         <section className="hero hood-hero" id="top">
-          <div className="hero-art hero-mountains" aria-hidden="true" />
           <div className="hero-shade" aria-hidden="true" />
 
           <div className="container hero-inner">
