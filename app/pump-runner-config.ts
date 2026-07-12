@@ -1,8 +1,10 @@
 export const defaultCurrentRunner = {
-  name: "Girlcoin",
-  ticker: "GIRLCOIN",
-  mint: "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump",
-  logoSrc: "/brand/girl-coin-logo.png"
+  name: "Harris",
+  ticker: "HARRIS",
+  mint: "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump",
+  logoSrc: "/brand/harris-runner-logo.png",
+  scannedMarketCap: "$40.2K",
+  scannedAgo: "15 mins ago"
 } as const;
 
 function cleanEnv(value: string | undefined) {
@@ -14,6 +16,15 @@ function isStaleHomeRunner(value: string) {
   return value.replace(/^\$/, "").toUpperCase() === "HOME";
 }
 
+function isPreviousRunner(value: string) {
+  const normalized = value.replace(/^\$/, "").toUpperCase();
+  return normalized === "GIRL" || normalized === "GIRLCOIN";
+}
+
+function isPreviousRunnerMint(value: string) {
+  return value === "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump";
+}
+
 function looksLikeMint(value: string) {
   return value.length > 30 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(value);
 }
@@ -22,7 +33,7 @@ const contractAddress = cleanEnv(process.env.NEXT_PUBLIC_CA) || cleanEnv(process
 const rawRewardSymbol = cleanEnv(process.env.NEXT_PUBLIC_REWARD_SYMBOL);
 const rawRewardMint = cleanEnv(process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
 const rawActiveRunnerName = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME);
-const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isStaleHomeRunner(rawRewardSymbol) || /home/i.test(rawActiveRunnerName);
+const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isStaleHomeRunner(rawRewardSymbol) || isPreviousRunner(rawRewardSymbol) || isPreviousRunnerMint(rawRewardMint) || /home/i.test(rawActiveRunnerName) || /girl/i.test(rawActiveRunnerName);
 const rewardMint = useDefaultCurrentRunner ? defaultCurrentRunner.mint : rawRewardMint || defaultCurrentRunner.mint;
 const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol;
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
@@ -81,10 +92,10 @@ export const pumpRunnerConfig = {
     mint: rewardMint,
     logoSrc: useDefaultCurrentRunner ? defaultCurrentRunner.logoSrc : cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC) || defaultCurrentRunner.logoSrc,
     dexScreenerUrl: activeRunnerDexUrl,
-    detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? "$54K",
+    detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? defaultCurrentRunner.scannedMarketCap,
     currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
     amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? `Buying ${activeRunnerLabel}`,
-    status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? "Current Runner"
+    status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? `Scanned ${defaultCurrentRunner.scannedAgo}`
   },
   marketTickerFallback: {
     price: "$0.000042",
@@ -101,7 +112,7 @@ export const pumpRunnerConfig = {
   },
   treasuryStatistics: {
     runnersCaughtToday: "1",
-    averageEntryMarketCap: "$54K",
+    averageEntryMarketCap: defaultCurrentRunner.scannedMarketCap,
     averageReturn: "Tracking",
     bestRunner: activeRunnerLabel,
     totalDistributedToday: "0 SOL"
@@ -117,23 +128,23 @@ export const pumpRunnerConfig = {
       rank: "01",
       token: useDefaultCurrentRunner ? defaultCurrentRunner.name : activeRunnerName,
       ticker: activeRunnerLabel,
-      detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? "$54K",
+      detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? defaultCurrentRunner.scannedMarketCap,
       currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
       returnSinceDetection: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_RETURN ?? "Tracking",
       amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? "Buying this epoch",
-      status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? "Current Runner",
+      status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? `Scanned ${defaultCurrentRunner.scannedAgo}`,
       dexScreenerUrl: activeRunnerDexUrl
     },
     {
       rank: "02",
-      token: "Previous Runner",
-      ticker: "—",
-      detectedMarketCap: "Pending",
-      currentMarketCap: "Pending",
-      returnSinceDetection: "Pending",
-      amountAcquired: "Pending",
-      status: "Next update",
-      dexScreenerUrl: fallbackDexScreenerUrl
+      token: "Girlcoin",
+      ticker: "$GIRLCOIN",
+      detectedMarketCap: "$54K",
+      currentMarketCap: "Archived",
+      returnSinceDetection: "Tracking",
+      amountAcquired: "Previous drop",
+      status: "Previous Runner",
+      dexScreenerUrl: "https://dexscreener.com/solana/GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump"
     },
     {
       rank: "03",
@@ -159,8 +170,8 @@ export const pumpRunnerConfig = {
     }
   ] satisfies RunnerBoardRow[],
   performanceRows: [
-    { ticker: activeRunnerLabel, entryMarketCap: 54_000, currentMarketCap: 54_000, changePercent: 0 },
-    { ticker: "Runner 02", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 },
+    { ticker: activeRunnerLabel, entryMarketCap: 40_200, currentMarketCap: 40_200, changePercent: 0 },
+    { ticker: "$GIRLCOIN", entryMarketCap: 54_000, currentMarketCap: 54_000, changePercent: 0 },
     { ticker: "Runner 03", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 },
     { ticker: "Runner 04", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }
   ] satisfies RunnerPerformanceRow[],

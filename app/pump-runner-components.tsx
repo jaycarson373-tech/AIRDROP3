@@ -649,6 +649,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
   const [filter, setFilter] = useState("All Drops");
   const activeRunner = pumpRunnerConfig.runnerBoard[0];
   const activeRunnerCurrentMarketCap = formatCompactUsd(live.market.reward.marketCapUsd ?? live.market.reward.fdvUsd, activeRunner.currentMarketCap);
+  const activeRunnerScanTime = activeRunner.status.replace(/^Scanned\s+/i, "");
   const totalRunnerDropped = live.stats.totalRewardAirdropped
     ? formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)
     : `0 ${rewardSymbol}`;
@@ -685,7 +686,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
           <div>
             <span>Runner 01</span>
             <strong>{activeRunner.token}</strong>
-            <small>{activeRunner.ticker} scanned at {activeRunner.detectedMarketCap}</small>
+            <small>{activeRunner.ticker} scanned at {activeRunner.detectedMarketCap} · {activeRunnerScanTime}</small>
           </div>
           <a href={activeRunner.dexScreenerUrl} target="_blank" rel="noreferrer">
             Open chart <ExternalLink size={15} />
