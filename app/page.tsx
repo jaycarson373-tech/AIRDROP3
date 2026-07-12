@@ -116,6 +116,7 @@ export default function Page() {
         </section>
 
         <MarketVolumeSection />
+        <InsiderMathSection />
         <LiveProtocolDashboard />
         <VaultSection />
         <RewardExplanation />
@@ -217,6 +218,55 @@ function VaultSection() {
         {["Creator fees", "Buy $PUMP", "Holder scan", "Airdrop", "Receipt ledger"].map((item) => (
           <span key={item}>{item}</span>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function InsiderMathSection() {
+  return (
+    <section className="section insider-math-section" id="insider-math">
+      <div className="container insider-panel">
+        <div className="section-kicker">Insider math</div>
+        <div className="section-head split-head">
+          <h2>Insiders rode the HOOD chart.</h2>
+          <p>
+            This is the part that is verifiable: HOOD priced its IPO at $38. A July 2026 Form 4 shows Vlad Tenev selling 375,000 shares around $111-$118 under a planned trading plan. That one reported block works out to roughly $43.6M.
+          </p>
+        </div>
+        <div className="share-example insider-math-grid">
+          <article className="share-card">
+            <span>IPO price</span>
+            <strong>$38</strong>
+            <p>Robinhood went public at $38 per share in 2021.</p>
+          </article>
+          <article className="share-card">
+            <span>Form 4 sale range</span>
+            <strong>$111-$118</strong>
+            <p>Reported July 2026 insider sale range for a 375,000 share block.</p>
+          </article>
+          <article className="share-card">
+            <span>That block</span>
+            <strong>~$43.6M</strong>
+            <p>Approximate gross value of the reported sale block.</p>
+          </article>
+        </div>
+        <div className="insider-copy">
+          <p>
+            That is how the insider upside works. Big equity stakes move hard when the public stock reprices. A slice can be sold for tens of millions, while the remaining stake still rides the chart.
+          </p>
+          <p>
+            Users remember the other side of the ledger: trading restrictions, crypto support deadlines, and platform fine print. RTP turns that frustration into a simple on-chain rail: hold RTP, receive $PUMP, see the receipts.
+          </p>
+        </div>
+        <div className="source-row">
+          <a href="https://investors.robinhood.com/news-releases/news-release-details/robinhood-markets-inc-announces-pricing-initial-public-offering" target="_blank" rel="noreferrer">
+            IPO pricing
+          </a>
+          <a href="https://investors.robinhood.com/sec-filings/sec-filing/4/0001871006-26-000006" target="_blank" rel="noreferrer">
+            July 2026 Form 4
+          </a>
+        </div>
       </div>
     </section>
   );

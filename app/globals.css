@@ -4141,6 +4141,74 @@ td a,
   filter: saturate(1.08) drop-shadow(0 0 30px rgba(72, 247, 174, 0.42));
 }
 
+.rtp-page .insider-panel {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(28px, 5vw, 58px);
+  border: 1px solid rgba(72, 247, 174, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent 32%),
+    linear-gradient(180deg, rgba(7, 39, 30, 0.92), rgba(4, 18, 13, 0.88));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+}
+
+.rtp-page .insider-panel::after {
+  position: absolute;
+  right: -8%;
+  bottom: -28%;
+  width: min(48vw, 620px);
+  aspect-ratio: 1;
+  content: "";
+  opacity: 0.1;
+  background: url("/brand/return-to-pump-logo.png") center / cover no-repeat;
+  filter: drop-shadow(0 0 30px rgba(72, 247, 174, 0.42));
+  pointer-events: none;
+}
+
+.rtp-page .insider-math-grid {
+  position: relative;
+  z-index: 1;
+  margin-top: 22px;
+}
+
+.rtp-page .insider-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+  color: rgba(243, 255, 249, 0.78);
+  font-size: clamp(1rem, 1.8vw, 1.18rem);
+  line-height: 1.6;
+}
+
+.rtp-page .insider-copy p {
+  margin: 0;
+}
+
+.rtp-page .source-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.rtp-page .source-row a {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  border: 1px solid rgba(72, 247, 174, 0.24);
+  border-radius: 999px;
+  padding: 0 16px;
+  color: #dffff3;
+  background: rgba(255, 255, 255, 0.06);
+  font-weight: 800;
+}
+
 @keyframes rtp-sky-drift {
   0%,
   100% {
@@ -4203,6 +4271,10 @@ td a,
 
   .rtp-page h1 {
     font-size: 4.6rem;
+  }
+
+  .rtp-page .insider-copy {
+    grid-template-columns: 1fr;
   }
 
   .rtp-floating-capsule {
