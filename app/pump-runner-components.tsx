@@ -468,14 +468,15 @@ export function RunnerLeaderboard() {
   );
 }
 
-export function ScannerStatus() {
-  const metrics = pumpRunnerConfig.scannerMetrics;
+export function ScannerStatus({ live }: { live: RunnerLiveData }) {
+  const selectedRunners = pumpRunnerConfig.runnerBoard.filter((runner) => runner.status !== "Scanning").length;
   const rows = [
     ["SCANNER STATUS", "ONLINE"],
-    ["TOKENS TRACKED", metrics.tokensTracked],
-    ["SIGNALS REVIEWED", metrics.signalsReviewed],
-    ["RUNNERS SELECTED", metrics.runnersSelected],
-    ["CURRENT EPOCH", metrics.currentEpoch]
+    ["CURRENT RUNNER", rewardSymbol],
+    ["ELIGIBLE HOLDERS", formatCount(live.stats.latestEligibleHolders, "0")],
+    ["RUNNERS SELECTED", selectedRunners.toString()],
+    ["LIVE DROP EPOCHS", formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")],
+    ["HARRIS AIRDROPPED", formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)]
   ];
 
   return (
@@ -917,7 +918,7 @@ export function PumpRunnerHome() {
       <main>
         <HeroSection live={live} />
         <RunnerLeaderboard />
-        <ScannerStatus />
+        <ScannerStatus live={live} />
         <HowItWorks />
         <EligibilityCard live={live} />
         <HoldMultiplier />
