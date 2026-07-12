@@ -26,10 +26,7 @@ function Navbar() {
       <div className="container nav-inner">
         <a className="brand" href="/">
           <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
-          <span>
-            Return to Pump
-            <small>RTP rewards rail</small>
-          </span>
+          <span>Return to Pump</span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#dashboard">Live Data</a>

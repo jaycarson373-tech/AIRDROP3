@@ -1986,63 +1986,6 @@ td a,
   color: var(--gold);
 }
 
-.loading-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  gap: 18px;
-  background: #030303;
-  opacity: 1;
-  transition: opacity 360ms ease, visibility 360ms ease;
-}
-
-.loading-screen.is-leaving {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.loader-mascot {
-  display: grid;
-  place-items: center;
-  width: 94px;
-  height: 94px;
-  overflow: hidden;
-  border: 1px solid rgba(202, 164, 106, 0.34);
-  border-radius: 50%;
-  background: #080806;
-}
-
-.loader-mascot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.loader-text {
-  color: var(--gold);
-  font-family: Cinzel, Georgia, serif;
-  font-size: 0.86rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.loader-line {
-  width: 180px;
-  height: 1px;
-  background: rgba(202, 164, 106, 0.2);
-}
-
-.loader-line span {
-  display: block;
-  width: 42%;
-  height: 100%;
-  background: var(--gold);
-  animation: loaderLine 1.4s ease-in-out infinite;
-}
-
 .dashboard {
   min-height: 100vh;
   padding: 138px 0 80px;
@@ -2257,15 +2200,6 @@ td a,
   }
   to {
     transform: translate3d(2%, -1%, 0);
-  }
-}
-
-@keyframes loaderLine {
-  from {
-    transform: translateX(-120%);
-  }
-  to {
-    transform: translateX(260%);
   }
 }
 
@@ -2666,8 +2600,7 @@ td a,
   border-color: rgba(231, 255, 0, 0.28);
 }
 
-.brand-logo,
-.loader-mascot {
+.brand-logo {
   border-color: rgba(231, 255, 0, 0.38);
   border-radius: 16px;
   background: #e7ff00;
@@ -2928,15 +2861,6 @@ td a,
 .footer {
   border-top-color: rgba(231, 255, 0, 0.16);
   background: #020403;
-}
-
-.loader-text {
-  color: var(--gold);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-}
-
-.loader-line span {
-  background: var(--green);
 }
 
 @media (max-width: 1080px) {
@@ -3886,8 +3810,7 @@ td a,
 .hood-bank-page::before,
 .hood-bank-page::after,
 .volume-panel::before,
-.hood-volume-bar,
-.loading-screen .loader-line span {
+.hood-volume-bar {
   animation: none !important;
 }
 
