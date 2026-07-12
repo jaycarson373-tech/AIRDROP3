@@ -26,7 +26,7 @@
   --scroll-y: 0px;
 }
 
-/* The Robin Hood terminal skin */
+/* Neon reward terminal skin */
 .hood-bank-page {
   --black: #050807;
   --charcoal: #080d0a;
@@ -352,7 +352,7 @@ h3 {
   z-index: -4;
   pointer-events: none;
   background:
-    url("/brand/robin-hood-logo.jpg") 92% 14% / 360px auto no-repeat,
+    url("/brand/return-to-pump-logo.png") 92% 14% / 360px auto no-repeat,
     var(--black);
   opacity: 0.12;
   filter: grayscale(1);
@@ -552,7 +552,7 @@ h3 {
 }
 
 .hero-mountains {
-  background-image: url("/brand/robin-hood-hero.jpg");
+  background-image: url("/brand/return-to-pump-banner.png");
   background-position: center 42%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -1836,7 +1836,7 @@ td a,
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.22) 56%, rgba(0, 0, 0, 0.82)),
     linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.86)),
-    url("/brand/robin-hood-logo.jpg") 72% center / min(64vw, 760px) auto no-repeat;
+    url("/brand/return-to-pump-logo.png") 72% center / min(64vw, 760px) auto no-repeat;
   filter: saturate(0.88) contrast(1.1);
   transform: translate3d(0, calc(var(--scroll-y) * -0.018), 0);
 }
@@ -2408,7 +2408,7 @@ td a,
   .final-bull-art {
     background:
       linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.9)),
-      url("/brand/robin-hood-logo.jpg") center 16% / min(108vw, 620px) auto no-repeat;
+      url("/brand/return-to-pump-logo.png") center 16% / min(108vw, 620px) auto no-repeat;
   }
 
   .activity-row,
@@ -2421,7 +2421,7 @@ td a,
   }
 }
 
-/* Final The Robin Hood cascade overrides */
+/* Final neon cascade overrides */
 .hood-bank-page {
   --black: #050807;
   --charcoal: #080d0a;
@@ -2522,7 +2522,7 @@ td a,
   box-shadow: 0 22px 64px rgba(0, 0, 0, 0.36);
 }
 
-/* The Robin Hood neon rebrand */
+/* Neon reward rebrand */
 :root {
   --black: #020403;
   --charcoal: #06100a;
@@ -2907,7 +2907,7 @@ td a,
   }
 }
 
-/* Final The Robin Hood neon override */
+/* Final neon override */
 .hood-bank-page {
   --black: #050807;
   --charcoal: #080d0a;
@@ -2981,18 +2981,18 @@ td a,
 }
 
 .bg-layer-one {
-  background-image: url("/brand/robin-hood-banner.png");
+  background-image: url("/brand/return-to-pump-banner.png");
   animation-delay: 0s;
 }
 
 .bg-layer-two {
-  background-image: url("/brand/robin-hood-banner.png");
+  background-image: url("/brand/return-to-pump-banner.png");
   background-position: 48% center;
   animation-delay: 10s;
 }
 
 .bg-layer-three {
-  background-image: url("/brand/robin-hood-banner.png");
+  background-image: url("/brand/return-to-pump-banner.png");
   background-position: 52% center;
   animation-delay: 20s;
 }
@@ -3836,7 +3836,7 @@ td a,
 .hood-bank-bg-rotator {
   background:
     linear-gradient(90deg, rgba(1, 3, 1, 0.88), rgba(1, 3, 1, 0.35) 50%, rgba(1, 3, 1, 0.88)),
-    url("/brand/robin-hood-banner.png") center top / cover no-repeat,
+    url("/brand/return-to-pump-banner.png") center top / cover no-repeat,
     #020302;
 }
 
@@ -3861,7 +3861,7 @@ td a,
   opacity: 0.28 !important;
   transform: scale(1.01);
   animation: hood-subtle-bg-drift 46s ease-in-out infinite !important;
-  background-image: url("/brand/robin-hood-banner.png");
+  background-image: url("/brand/return-to-pump-banner.png");
   background-position: center top;
   background-size: cover;
   filter: saturate(1.18) contrast(1.04) brightness(0.78);
@@ -3904,6 +3904,317 @@ td a,
 @media (prefers-reduced-motion: reduce) {
   .hood-bank-bg-rotator::before,
   .hood-bank-bg-layer.bg-layer-one {
+    animation: none !important;
+  }
+}
+
+/* Return to Pump final skin */
+.rtp-page {
+  --black: #051711;
+  --charcoal: #0a2119;
+  --charcoal-2: #0d2b21;
+  --stone: #10291f;
+  --stone-2: #15382b;
+  --bronze: #48f7ae;
+  --bronze-soft: rgba(72, 247, 174, 0.22);
+  --gold: #5dffbc;
+  --gold-soft: #8cffd2;
+  --green: #48f7ae;
+  --green-soft: rgba(72, 247, 174, 0.18);
+  --ivory: #f3fff9;
+  --muted: #8bb8aa;
+  --faint: rgba(243, 255, 249, 0.68);
+  --border: rgba(72, 247, 174, 0.28);
+  --border-soft: rgba(243, 255, 249, 0.14);
+  --panel: rgba(5, 23, 17, 0.82);
+  --panel-2: rgba(9, 35, 26, 0.86);
+  background:
+    linear-gradient(180deg, #8ed9f0 0%, #e8f7ef 36%, #04130e 78%, #03100b 100%);
+}
+
+.rtp-page .hood-bank-bg-rotator {
+  background:
+    linear-gradient(180deg, rgba(7, 37, 35, 0.03) 0%, rgba(6, 28, 24, 0.24) 32%, rgba(3, 15, 11, 0.92) 84%),
+    url("/brand/return-to-pump-banner.png") center top / cover no-repeat,
+    #9ddff2;
+}
+
+.rtp-page .hood-bank-bg-layer.bg-layer-one {
+  opacity: 0.46 !important;
+  background-image: url("/brand/return-to-pump-banner.png");
+  background-position: center top;
+  filter: saturate(1.08) contrast(1.02) brightness(1.02);
+  animation: rtp-sky-drift 44s ease-in-out infinite !important;
+}
+
+.rtp-page .hood-bank-bg-rotator::before {
+  opacity: 0.34;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(72, 247, 174, 0.78) 0 1.2px, transparent 2px),
+    radial-gradient(circle, rgba(8, 56, 38, 0.32) 0 1px, transparent 1.8px);
+  background-size: 96px 112px, 144px 168px, 210px 240px;
+  background-position: 18px 32px, 80px 18px, 120px 90px;
+  animation: rtp-dot-float 26s linear infinite;
+}
+
+.rtp-page .hood-bank-bg-rotator::after {
+  background:
+    linear-gradient(90deg, rgba(4, 21, 15, 0.4), rgba(5, 28, 20, 0.04) 42%, rgba(4, 21, 15, 0.35)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(3, 15, 11, 0.72) 70%, rgba(3, 15, 11, 0.96));
+}
+
+.rtp-floating-capsule {
+  position: fixed;
+  z-index: 1;
+  display: block;
+  width: 116px;
+  aspect-ratio: 1;
+  pointer-events: none;
+  border-radius: 999px;
+  background: url("/brand/return-to-pump-logo.png") center / cover no-repeat;
+  opacity: 0.18;
+  filter: drop-shadow(0 0 24px rgba(72, 247, 174, 0.35));
+}
+
+.rtp-floating-capsule.capsule-one {
+  top: 18%;
+  left: 8%;
+  animation: rtp-float-one 18s ease-in-out infinite;
+}
+
+.rtp-floating-capsule.capsule-two {
+  top: 44%;
+  right: 9%;
+  width: 92px;
+  opacity: 0.12;
+  animation: rtp-float-two 22s ease-in-out infinite;
+}
+
+.rtp-cloud-pulse {
+  position: fixed;
+  right: 14%;
+  bottom: 12%;
+  z-index: 1;
+  width: 42vw;
+  height: 22vw;
+  max-width: 640px;
+  max-height: 280px;
+  pointer-events: none;
+  opacity: 0.22;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.72), rgba(94, 255, 191, 0.14) 46%, transparent 70%);
+  filter: blur(22px);
+  animation: rtp-cloud-breathe 16s ease-in-out infinite;
+}
+
+.rtp-page .nav {
+  border-bottom: 1px solid rgba(72, 247, 174, 0.18);
+  background: rgba(3, 16, 11, 0.68);
+  backdrop-filter: blur(18px);
+}
+
+.rtp-page .brand-logo {
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(72, 247, 174, 0.42);
+}
+
+.rtp-page .brand span,
+.rtp-page .nav-links a,
+.rtp-page .footer-links a,
+.rtp-page .section-kicker {
+  letter-spacing: 0;
+}
+
+.rtp-page .brand small,
+.rtp-page .section-kicker,
+.rtp-page .metric-card span,
+.rtp-page th {
+  color: #5dffbc;
+}
+
+.rtp-page .hero {
+  min-height: calc(100svh - 74px);
+  padding: 96px 0 82px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(3, 15, 11, 0.72) 78%),
+    radial-gradient(ellipse at 42% 24%, rgba(255, 255, 255, 0.32), transparent 38%);
+}
+
+.rtp-page .hero-inner {
+  align-items: center;
+  min-height: 620px;
+}
+
+.rtp-page h1,
+.rtp-page h2,
+.rtp-page h3 {
+  letter-spacing: 0;
+}
+
+.rtp-page h1 {
+  max-width: 880px;
+  color: #f8fffb;
+  font-size: 7.8rem;
+  line-height: 0.9;
+  text-shadow: 0 14px 48px rgba(0, 0, 0, 0.34);
+}
+
+.rtp-page h1 span:first-child,
+.rtp-page h1 span:last-child {
+  display: block;
+  letter-spacing: 0;
+}
+
+.rtp-page h1 span:last-child,
+.rtp-page .hero-countdown strong,
+.rtp-page .hero-total-distributed b,
+.rtp-page .metric-card-strong strong,
+.rtp-page .volume-card strong,
+.rtp-page .conviction-card h3 {
+  color: #58ffb4;
+  text-shadow: 0 0 28px rgba(72, 247, 174, 0.44);
+}
+
+.rtp-page .hero-subtitle {
+  color: #f7fffb;
+}
+
+.rtp-page .hero-lead {
+  max-width: 830px;
+  color: rgba(247, 255, 251, 0.82);
+}
+
+.rtp-page .cta,
+.rtp-page .lookup-card button {
+  border: 0;
+  border-radius: 999px;
+  background: #58ffb4;
+  color: #062219;
+  box-shadow: 0 14px 38px rgba(72, 247, 174, 0.2);
+}
+
+.rtp-page .cta.secondary,
+.rtp-page .mini-button {
+  border: 1px solid rgba(243, 255, 249, 0.2);
+  background: rgba(5, 23, 17, 0.64);
+  color: #f3fff9;
+}
+
+.rtp-page .bank-statstrip,
+.rtp-page .hero-countdown,
+.rtp-page .metric-card,
+.rtp-page .black-bull-card,
+.rtp-page .reward-flow-card,
+.rtp-page .share-card,
+.rtp-page .multiplier-card,
+.rtp-page .conviction-card,
+.rtp-page .eligibility-card,
+.rtp-page .history-card,
+.rtp-page .lookup-card,
+.rtp-page .faq-item,
+.rtp-page .volume-panel,
+.rtp-page .volume-card,
+.rtp-page .volume-verdict {
+  border: 1px solid rgba(72, 247, 174, 0.22);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(6, 28, 21, 0.86), rgba(4, 18, 13, 0.82));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+}
+
+.rtp-page .black-bull-portrait {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.rtp-page .black-bull-portrait img {
+  filter: drop-shadow(0 0 18px rgba(72, 247, 174, 0.38));
+}
+
+.rtp-page .final-bull-section {
+  background:
+    linear-gradient(180deg, rgba(5, 22, 16, 0.82), rgba(3, 15, 11, 0.98)),
+    url("/brand/return-to-pump-banner.png") center / cover no-repeat;
+}
+
+.rtp-page .final-bull-art {
+  background-image: url("/brand/return-to-pump-logo.png");
+  opacity: 0.12;
+  filter: saturate(1.08) drop-shadow(0 0 30px rgba(72, 247, 174, 0.42));
+}
+
+@keyframes rtp-sky-drift {
+  0%,
+  100% {
+    transform: scale(1.01) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.035) translate3d(-0.8%, -0.5%, 0);
+  }
+}
+
+@keyframes rtp-dot-float {
+  from {
+    background-position: 18px 32px, 80px 18px, 120px 90px;
+  }
+  to {
+    background-position: 54px 132px, 126px 176px, 72px 236px;
+  }
+}
+
+@keyframes rtp-float-one {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-5deg);
+  }
+  50% {
+    transform: translate3d(24px, -34px, 0) rotate(4deg);
+  }
+}
+
+@keyframes rtp-float-two {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(6deg);
+  }
+  50% {
+    transform: translate3d(-22px, 28px, 0) rotate(-4deg);
+  }
+}
+
+@keyframes rtp-cloud-breathe {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.16;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.28;
+  }
+}
+
+@media (max-width: 900px) {
+  .rtp-page .hero {
+    padding-top: 78px;
+  }
+
+  .rtp-page .hero-inner {
+    min-height: auto;
+  }
+
+  .rtp-page h1 {
+    font-size: 4.6rem;
+  }
+
+  .rtp-floating-capsule {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rtp-page .hood-bank-bg-rotator::before,
+  .rtp-page .hood-bank-bg-layer.bg-layer-one,
+  .rtp-floating-capsule,
+  .rtp-cloud-pulse {
     animation: none !important;
   }
 }

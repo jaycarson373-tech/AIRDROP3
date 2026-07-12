@@ -1,7 +1,7 @@
-# The Robin Hood
+# Return to Pump
 
-Source token: `$HOOD`
-Reward asset: `HOODx`
+Source token: `$RTP`
+Reward asset: `$PUMP`
 
 One repo for:
 
@@ -11,30 +11,30 @@ One repo for:
 
 ## Flow
 
-Every epoch:
+Every 10-minute epoch:
 
 1. Claim creator fees to the treasury wallet.
-2. Buy HOODx with 100% of usable claimed fees.
-3. Snapshot `$HOOD` holders with at least `ELIGIBILITY_MIN`.
+2. Buy `$PUMP` with 100% of usable claimed fees.
+3. Snapshot `$RTP` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, holders above `MAX_HOLDER_PCT`, and wallets that permanently lost eligibility.
 5. Select up to `MAX_WALLETS_PER_EPOCH` deterministic-random eligible holders for the epoch.
-6. Score selected holders primarily by `$HOOD` held.
-7. Airdrop HOODx directly to selected wallets.
-8. Store epochs, snapshots, claims, HOODx buys, and payouts in Supabase for the dashboard.
+6. Score selected holders with a bias toward smaller eligible balances and lower SOL balances.
+7. Airdrop `$PUMP` directly to selected wallets.
+8. Store epochs, snapshots, claims, buys, and payouts in Supabase for the dashboard.
 
 ## Holder Weighting
 
-Reward weight starts from `$HOOD` held, then skews toward smaller holders:
+Reward weight starts from `$RTP` held, then skews toward smaller holders:
 
 - Eligible wallets above `MAX_HOLDER_PCT` are excluded before selection.
 - Recipient selection is deterministic-random, with a boost for lower eligible balances.
 - Payout weighting caps large holder balance impact around the median eligible wallet.
 - Lower-balance wallets and lower-SOL-balance wallets receive additional weighting boosts.
-- 100% of the reward pool buys HOODx.
-- Eligible holders receive automatic HOODx payouts.
+- 100% of the reward pool buys `$PUMP`.
+- Eligible holders receive automatic `$PUMP` payouts every 10 minutes when live conditions are met.
 - Receipts are tracked in Supabase and linked to on-chain transactions.
 
-Every epoch is 5 minutes. Default eligibility is 1,000,000 `$HOOD`. Selling any amount of `$HOOD`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
+Default eligibility is 1,000,000 `$RTP`. Selling any amount of `$RTP`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
 
 ## Supabase
 
@@ -50,6 +50,7 @@ If the first migration already exists in your project, also run the follow-up mi
 -- supabase/migrations/002_golden_airdrop.sql
 -- supabase/migrations/003_settled_payouts_only.sql
 -- supabase/migrations/004_holder_states.sql
+-- supabase/migrations/005_pfp_reward_split.sql
 ```
 
 The migration enables public read policies for dashboard tables. The worker still uses the service-role key for writes.
@@ -79,14 +80,17 @@ commit;
 Required:
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="The Robin Hood"
-NEXT_PUBLIC_CA=G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump
-NEXT_PUBLIC_SOURCE_SYMBOL=HOOD
-NEXT_PUBLIC_REWARD_SYMBOL=HOODx
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump
-NEXT_PUBLIC_X_URL=https://x.com/RobinHoodSol__
-NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump
+NEXT_PUBLIC_PROJECT_NAME="Return to Pump"
+NEXT_PUBLIC_CA=<RTP_SOURCE_TOKEN_MINT>
+NEXT_PUBLIC_SOURCE_SYMBOL=RTP
+NEXT_PUBLIC_REWARD_SYMBOL=PUMP
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<RTP_SOURCE_TOKEN_MINT>
+NEXT_PUBLIC_REWARD_TOKEN_MINT=<PUMP_REWARD_TOKEN_MINT>
+NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/<RTP_SOURCE_TOKEN_MINT>
+NEXT_PUBLIC_X_URL=
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
+NEXT_PUBLIC_EPOCH_MINUTES=10
+NEXT_PUBLIC_ELIGIBILITY_LABEL=1M
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
 ```
@@ -96,6 +100,11 @@ Recommended server-only Vercel env for dashboard API reads:
 ```bash
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
+EPOCH_MINUTES=10
+ELIGIBILITY_MIN=1000000
+MAX_HOLDER_PCT=4
+SOURCE_TOKEN_MINT=<RTP_SOURCE_TOKEN_MINT>
+REWARD_TOKEN_MINT=<PUMP_REWARD_TOKEN_MINT>
 ```
 
 Never prefix the service-role key with `NEXT_PUBLIC_`.
@@ -107,8 +116,8 @@ Required:
 ```bash
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump
-REWARD_TOKEN_MINT=<HOODX_MINT>
+SOURCE_TOKEN_MINT=<RTP_SOURCE_TOKEN_MINT>
+REWARD_TOKEN_MINT=<PUMP_REWARD_TOKEN_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
@@ -127,11 +136,16 @@ Turn `CLAIM_ENABLED`, `BUY_ENABLED`, and `AIRDROP_ENABLED` to `true` only when t
 Reward settings:
 
 ```bash
-EPOCH_MINUTES=5
+EPOCH_MINUTES=10
 ELIGIBILITY_MIN=1000000
 MAX_WALLETS_PER_EPOCH=150
-MAX_HOLDER_PCT=5
+MAX_HOLDER_PCT=4
 EXCLUDE_WALLETS=
+REWARD_BUY_BPS=10000
+BAGWORK_REWARD_BPS=0
+BAGWORK_REWARD_WALLET_PUBLIC_KEY=
+SWAP_BALANCE_BPS=10000
+SWAP_SLIPPAGE_BPS=1000
 MIN_SOL_RESERVE=0.3
 AIRDROP_SOL_RESERVE=0.05
 AIRDROP_BATCH_SIZE=4
@@ -140,7 +154,7 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` keep SOL available for transaction fees before the worker buys and distributes HOODx. `AIRDROP_REWARD_BPS=10000` routes the full configured reward pool to eligible holders.
+`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` keep SOL available for transaction fees before the worker buys and distributes `$PUMP`. `AIRDROP_REWARD_BPS=10000` routes the full configured reward pool to eligible holders.
 
 `REWARD_TOKEN_MINT`, `SWAP_BALANCE_BPS`, and `SWAP_SLIPPAGE_BPS` are required for token reward mode.
 

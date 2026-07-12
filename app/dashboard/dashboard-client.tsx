@@ -84,10 +84,10 @@ const emptyStats: StatsResponse = {
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
-const EPOCH_MS = 5 * 60 * 1000;
-const PROJECT_NAME = "The Robin Hood";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const EPOCH_MS = 10 * 60 * 1000;
+const PROJECT_NAME = "Return to Pump";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RTP";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "PUMP";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -278,8 +278,8 @@ export function DashboardClient() {
           <Link className="brand" href="/">
             <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
-              The Robin Hood
-              <small>HOOD rewards</small>
+              Return to Pump
+              <small>RTP rewards</small>
             </span>
           </Link>
           <div className="nav-links">
@@ -296,9 +296,9 @@ export function DashboardClient() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Live reward ledger
+                Live $PUMP ledger
               </div>
-              <h1 className="dashboard-title">Airdrop Ledger</h1>
+              <h1 className="dashboard-title">$PUMP Drop Ledger</h1>
             </div>
           </div>
 
@@ -309,7 +309,7 @@ export function DashboardClient() {
               <div className="stats dashboard-stats">
                 <div className="stat live-stat">
                   <strong>{countdown}</strong>
-                  <span>Next Distribution</span>
+                  <span>Next 10-minute distribution</span>
                   <div className="round-progress tiny" aria-hidden="true">
                     <span style={{ width: `${Math.min(100, Math.max(0, progress))}%` }} />
                   </div>
@@ -322,9 +322,9 @@ export function DashboardClient() {
                 </div>
                 <div className="stat">
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
-                    {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Awaiting first winner"}
+                    {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Smaller wallets boosted"}
                   </strong>
-                  <span>Lucky Bonus Winner</span>
+                  <span>Weighting Bias</span>
                 </div>
                 <div className="stat">
                   <strong>
@@ -343,7 +343,7 @@ export function DashboardClient() {
               <section className="history-card" style={{ marginTop: 16 }}>
                 <div className="history-head">
                   <h3>Epoch History</h3>
-                  <span>Latest settled reward rounds</span>
+                  <span>Latest settled $PUMP rounds</span>
                 </div>
                 <div className="table-wrap">
                   <table className="history-table">
@@ -356,9 +356,9 @@ export function DashboardClient() {
                         <th className="right">Fees Collected</th>
                           <th className="right">{REWARD_SYMBOL} Pool</th>
                         <th className="right">Rewards Sent</th>
-                        <th>Lucky Winner</th>
-                        <th className="right">Bonus Amount</th>
-                        <th className="right">Bonus Tx</th>
+                        <th>Weighting</th>
+                        <th className="right">Boost Amount</th>
+                        <th className="right">Boost Tx</th>
                           <th className="right">{REWARD_SYMBOL} Distributed</th>
                         <th className="right">Action</th>
                       </tr>
@@ -419,7 +419,7 @@ export function DashboardClient() {
                                   target="_blank"
                                   rel="noreferrer"
                                 >
-                                  Bonus
+                                  Boost
                                 </a>
                               ) : (
                                 <span className="details-button disabled">Awaiting tx</span>
@@ -460,7 +460,7 @@ export function DashboardClient() {
 
               <div className="dash-grid" style={{ marginTop: 16 }}>
                 <section className="card">
-                  <h3>Recent Drops</h3>
+                  <h3>Recent $PUMP Drops</h3>
                   <div className="activity-feed" style={{ marginTop: 14 }}>
                     {liveStats.recentRewards.length ? (
                       liveStats.recentRewards.map((reward) => (
@@ -468,7 +468,7 @@ export function DashboardClient() {
                           <div>
                             <strong className="mono">
                               {compactAddress(reward.wallet)}
-                              {reward.isGolden ? <span className="golden-badge">Bank Bonus {reward.goldenMultiplier}x</span> : null}
+                              {reward.isGolden ? <span className="golden-badge">Boost {reward.goldenMultiplier}x</span> : null}
                             </strong>
                             <span>{formatTime(reward.time)}</span>
                           </div>

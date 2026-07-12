@@ -48,8 +48,6 @@ type MarketPayload = {
   updatedAt: string;
 };
 
-const REWARD_FALLBACK_MINT = "XsvNBAYkrDRNhA7wPHQfX3ZUXZyZLdnCQDfHZ56bzpg";
-const SOURCE_FALLBACK_MINT = "G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump";
 const SOL_MINT = "So11111111111111111111111111111111111111112";
 const CACHE_MS = 15_000;
 
@@ -66,13 +64,12 @@ function cleanAddress(value: string | undefined | null) {
 
 function rewardMint() {
   return (
-    cleanAddress(env("REWARD_TOKEN_MINT")) ??
-    REWARD_FALLBACK_MINT
+    cleanAddress(env("REWARD_TOKEN_MINT"))
   );
 }
 
 function sourceMint() {
-  return cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA")) ?? SOURCE_FALLBACK_MINT;
+  return cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA"));
 }
 
 function sameAddress(a: string | undefined, b: string) {
@@ -83,7 +80,8 @@ function liquidity(pair: DexPair) {
   return pair.liquidity?.usd ?? 0;
 }
 
-function pickPair(pairs: DexPair[], mint: string) {
+function pickPair(pairs: DexPair[], mint: string | null) {
+  if (!mint) return null;
   const solanaPairs = pairs.filter((pair) => pair.chainId === "solana");
   const basePairs = solanaPairs.filter((pair) => sameAddress(pair.baseToken?.address, mint));
   const matchingPairs = basePairs.length
@@ -135,10 +133,10 @@ export async function GET() {
   const source = sourceMint();
   const pairs = await fetchDexPairs([reward, source, SOL_MINT].filter(Boolean) as string[]);
   const payload: MarketPayload = {
-    reward: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx"),
+    reward: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "PUMP"),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD"
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RTP"
     ),
     sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
     updatedAt: new Date().toISOString()

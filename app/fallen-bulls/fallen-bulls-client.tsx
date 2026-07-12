@@ -71,9 +71,9 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/logo.png" alt="The Robin Hood logo" />
+            <img className="brand-logo" src="/logo.png" alt="Return to Pump logo" />
             <span>
-              The Robin Hood
+              Return to Pump
               <small>Ineligible Wallets</small>
             </span>
           </Link>
@@ -91,7 +91,7 @@ export function FallenBullsClient() {
             <div className="section-kicker">Ineligibility ledger</div>
             <div className="section-head split-head">
               <h1 className="dashboard-title">Ineligible Wallets</h1>
-              <p>Wallets that lost eligibility by selling or falling below the 1,000,000 HOOD requirement.</p>
+              <p>Wallets that lost eligibility by selling or falling below the 1,000,000 RTP requirement.</p>
             </div>
 
             <div className="history-card bull-board-card">
@@ -114,7 +114,7 @@ export function FallenBullsClient() {
                         <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "fallen"}`}>
                           <td>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
-                          <td>{formatNumber(wallet.totalRewardEarned)} HOODx</td>
+                          <td>{formatNumber(wallet.totalRewardEarned)} PUMP</td>
                           <td>Ineligible</td>
                           <td>{wallet.currentStreak ?? 0} epochs</td>
                           <td>{formatDate(wallet.lastAirdropAt)}</td>

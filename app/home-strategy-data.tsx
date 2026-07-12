@@ -99,8 +99,8 @@ const emptyStats: StatsResponse = {
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOODx";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RTP";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "PUMP";
 const emptyMarket: MarketResponse = {
   reward: {
     priceUsd: null,
@@ -279,13 +279,13 @@ export function HeroCountdown() {
 
   return (
     <div className={isDistributing ? "hero-countdown is-distributing" : "hero-countdown"} aria-live="polite">
-      <span>{isDistributing ? "Airdrop in progress" : "HOODx payouts every 5 minutes"}</span>
+      <span>{isDistributing ? "Airdrop in progress" : "$PUMP payouts every 10 minutes"}</span>
       <strong>{isDistributing ? "DISTRIBUTING AIRDROP" : countdown}</strong>
       <div className="hero-payout-note">
         {isDistributing ? "Eligible holders are being paid now." : "Next automatic payout window."}
       </div>
       <div className="hero-total-distributed">
-        <span>Total HOODx Paid</span>
+        <span>Total $PUMP Paid</span>
         <b>{totalDistributed}</b>
       </div>
     </div>
@@ -317,15 +317,15 @@ export function LiveProtocolDashboard() {
       <div className="container">
         <div className="section-kicker">Live dashboard</div>
         <div className="section-head split-head">
-          <h2>The Robin Hood dashboard.</h2>
-          <p>Live values come from the reward backend. Total payouts, eligible holders, HOODx bought, and transactions update from Supabase.</p>
+          <h2>Return to Pump dashboard.</h2>
+          <p>Live values come from the reward backend. Total payouts, eligible holders, $PUMP bought, and transactions update from Supabase.</p>
         </div>
         <div className="lux-grid dashboard-grid airdrop-grid">
-          <MetricCard label="Total HOODx Paid" value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
-          <MetricCard label="HOODx Price" value={market ? formatTokenPrice(market.reward.priceUsd) : "Loading"} strong />
+          <MetricCard label="Total $PUMP Paid" value={stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : "Loading"} strong />
+          <MetricCard label="$PUMP Price" value={market ? formatTokenPrice(market.reward.priceUsd) : "Loading"} strong />
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
-          <MetricCard label="HOODx Bought" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
-          <MetricCard label="Next HOODx Payout" value={countdown} />
+          <MetricCard label="$PUMP Bought" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
+          <MetricCard label="Next $PUMP Payout" value={countdown} />
           <MetricCard label="Holder Weight" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
           <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
         </div>
@@ -346,7 +346,7 @@ export function MarketVolumeSection() {
       <div className="container volume-panel">
         <div className="volume-head">
           <div className="section-kicker">Volume today</div>
-          <h2>Robinhood volume vs Solana volume.</h2>
+          <h2>Hood volume is not the whole market.</h2>
         </div>
         <div className="volume-race" aria-label="Robinhood volume versus Solana volume">
           <div className="volume-card hood-volume-card">
@@ -365,7 +365,7 @@ export function MarketVolumeSection() {
         </div>
         <div className="volume-verdict">
           <strong>Solana is 2.4x Robinhood volume today.</strong>
-          <span>$2.55B combined volume across both markets</span>
+          <span>Return to Pump sits where attention comes back on-chain.</span>
         </div>
         <div className="volume-bars" aria-hidden="true">
           <i className="hood-volume-bar" style={{ width: `${robinhoodShare}%` }} />
@@ -409,27 +409,27 @@ function MetricCard({
 }
 
 const hoodModelCards = [
-  ["01", "Fees collected", "Creator fees are pulled every 5 minutes."],
-  ["02", "HOODx bought", "Fees buy HOODx for eligible holders."],
+  ["01", "Fees collected", "Creator fees are pulled every 10 minutes."],
+  ["02", "$PUMP bought", "Fees buy $PUMP for eligible holders."],
   ["03", "Holders paid", "Lower-balance and lower-SOL wallets get boosted weighting."],
   ["04", "Receipts posted", "Completed payouts are listed with transaction proof."]
 ];
 
 const solBoostCards = [
   ["Claim", "fees"],
-  ["Buy", "HOODx"],
+  ["Buy", "$PUMP"],
   ["Airdrop", "holders"],
   ["Receipt", "posted"]
 ];
 
-export function HoodBonusSection() {
+export function RewardModelSection() {
   return (
-    <section className="section conviction-section" id="hood-bonus">
+    <section className="section conviction-section" id="reward-model">
       <div className="container">
         <div className="section-kicker">Reward model</div>
         <div className="section-head split-head">
-          <h2>Hold HOOD. Earn HOODx.</h2>
-          <p>For HOOD bulls who want HoodX rewards without bridging. Rewards run every 5 minutes and skew toward smaller holders and lower-SOL wallets.</p>
+          <h2>Hold RTP. Earn $PUMP.</h2>
+          <p>For holders who want the Pump rail without waiting on Hood narratives. Rewards run every 10 minutes and skew toward smaller holders and lower-SOL wallets.</p>
         </div>
         <div className="multiplier-grid">
           {hoodModelCards.map(([value, title, copy]) => (
@@ -441,22 +441,22 @@ export function HoodBonusSection() {
             </article>
           ))}
         </div>
-        <div className="rank-strip boost-strip" aria-label="The Robin Hood payout loop">
+        <div className="rank-strip boost-strip" aria-label="Return to Pump payout loop">
           {solBoostCards.map(([tier, boost]) => (
             <span key={tier}>{tier}: {boost}</span>
           ))}
         </div>
         <div className="conviction-card streak-card">
           <span>Automatic rewards</span>
-          <h3>HoodX rewards for HOOD holders</h3>
+          <h3>$PUMP rewards for RTP holders</h3>
           <div className="streak-readout">
             <div>
               <span>Hold</span>
-              <strong>1M+ HOOD</strong>
+              <strong>1M+ RTP</strong>
             </div>
             <div>
               <span>Earn</span>
-              <strong>HOODx</strong>
+              <strong>$PUMP</strong>
             </div>
             <div>
               <span>Track</span>
@@ -466,7 +466,7 @@ export function HoodBonusSection() {
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>No bridge. No claiming. No staking. Eligible wallets are paid every 5 minutes, with boosted weighting for smaller bags and lower-SOL wallets.</p>
+          <p>No bridge. No claiming. No staking. Eligible wallets are paid every 10 minutes, with boosted weighting for smaller bags and lower-SOL wallets.</p>
           <div className="max-row">
             <span>Payout split</span>
             <b>100% to holders</b>
@@ -474,7 +474,7 @@ export function HoodBonusSection() {
         </div>
       </div>
       <div className="container rank-strip" aria-label="Reward model">
-        {["Fees collected", "HOODx bought", "Eligible holders paid", "TX proof posted"].map((rank) => (
+        {["Fees collected", "$PUMP bought", "Eligible holders paid", "TX proof posted"].map((rank) => (
           <span key={rank}>{rank}</span>
         ))}
       </div>
@@ -488,10 +488,10 @@ export function PermanentEligibility() {
       <div className="container warning-layout">
         <div>
           <div className="section-kicker">Eligibility rules</div>
-          <h2>Hold 1M+ HOOD.</h2>
+          <h2>Hold 1M+ RTP.</h2>
         </div>
         <div className="eligibility-flow">
-          {[`1M+ $${SOURCE_SYMBOL}`, "Fees claimed", "HOODx bought", "Airdrop sent", "Receipt posted"].map((item, index) => (
+          {[`1M+ $${SOURCE_SYMBOL}`, "Fees claimed", "$PUMP bought", "Airdrop sent", "Receipt posted"].map((item, index) => (
             <article className="eligibility-card" key={item}>
               <span>{index + 1}</span>
               <strong>{item}</strong>
@@ -510,13 +510,13 @@ export function RewardExplanation() {
           <div className="section-kicker">How rewards pay</div>
         <div className="section-head split-head">
           <h2>Creator fees become holder rewards.</h2>
-          <p>Every 5 minutes follows the same loop. Collect fees, buy HOODx, boost smaller wallets, pay eligible HOOD holders, post the receipt.</p>
+          <p>Every 10 minutes follows the same loop. Collect fees, buy $PUMP, boost smaller wallets, pay eligible RTP holders, post the receipt.</p>
         </div>
         <div className="reward-flow">
           {[
             `Hold 1M+ $${SOURCE_SYMBOL}`,
             "Creator fees are collected",
-            "HOODx is bought",
+            "$PUMP is bought",
             "Smaller wallets get boosted weighting",
             "Eligible holders get paid automatically",
             "Transaction proof is posted"
@@ -528,8 +528,8 @@ export function RewardExplanation() {
         </div>
         <div className="share-example">
           {[
-            ["Eligibility", "1M+ HOOD", "minimum balance"],
-            ["Rewards", "HOODx", "every 5 minutes"],
+            ["Eligibility", "1M+ RTP", "minimum balance"],
+            ["Rewards", "$PUMP", "every 10 minutes"],
             ["Weighting", "Skewed", "smaller wallets boosted"],
             ["Proof", "On-chain", "settled transactions"]
           ].map(([holder, multiplier, copy]) => (
@@ -560,12 +560,12 @@ export function BullBoard() {
   const rows = holders?.topHolders ?? [];
 
   return (
-    <section className="section bull-board-section" id="hood-board">
+    <section className="section bull-board-section" id="board">
       <div className="container">
-        <div className="section-kicker">HOOD board</div>
+        <div className="section-kicker">RTP board</div>
         <div className="section-head split-head">
-          <h2>HOOD BOARD</h2>
-          <p>Clean holder table showing HOOD balance, holder weight, earned HOODx, and latest payout activity.</p>
+          <h2>RTP BOARD</h2>
+          <p>Clean holder table showing RTP balance, holder weight, earned $PUMP, and latest payout activity.</p>
           <a className="cta secondary" href="/fallen-bulls">
             Ineligible Wallets
           </a>
@@ -576,7 +576,7 @@ export function BullBoard() {
               <thead>
                 <tr>
                   <th>Wallet</th>
-                  <th>$HOOD Held</th>
+                  <th>$RTP Held</th>
                   <th>Status</th>
                   <th>Rail</th>
                   <th>Receipt</th>
@@ -595,7 +595,7 @@ export function BullBoard() {
                         <td>{compactAddress(holder.address)}</td>
                         <td>{formatNumber(holder.balance, 0)}</td>
                         <td>{holder.permanentlyIneligible ? "Out" : "Eligible"}</td>
-                        <td>HOODx</td>
+                        <td>$PUMP</td>
                         <td>{holder.lastAirdropAt ? "Posted" : "Awaiting"}</td>
                         <td>{holder.finalWeight ? formatNumber(holder.finalWeight, 0) : "Scored live"}</td>
                         <td>{recentEarned > 0 ? formatAmount(recentEarned, REWARD_SYMBOL) : "Awaiting holder totals"}</td>
@@ -605,7 +605,7 @@ export function BullBoard() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={8}>Awaiting The Robin Hood board.</td>
+                    <td colSpan={8}>Awaiting Return to Pump board.</td>
                   </tr>
                 )}
               </tbody>
@@ -627,7 +627,7 @@ export function RecentAirdrops() {
         <div className="section-kicker">Payout history</div>
         <div className="section-head split-head">
           <h2>Receipts or it did not happen.</h2>
-          <p>Settled HOODx transfers from the live backend. Failed or skipped attempts are not counted.</p>
+          <p>Settled $PUMP transfers from the live backend. Failed or skipped attempts are not counted.</p>
         </div>
         <div className="history-card">
           <div className="table-wrap">
@@ -662,7 +662,7 @@ export function RecentAirdrops() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5}>Awaiting settled HOODx payouts.</td>
+                    <td colSpan={5}>Awaiting settled $PUMP payouts.</td>
                   </tr>
                 )}
               </tbody>
@@ -688,7 +688,7 @@ export function HolderLookup() {
       <div className="container split-section">
         <div>
           <div className="section-kicker">Holder lookup</div>
-          <h2>Check your HOOD status.</h2>
+          <h2>Check your RTP status.</h2>
           <p className="lead">
             Wallet-level status uses the live holder-state tracker after the first tracked epoch.
           </p>
@@ -708,7 +708,7 @@ export function HolderLookup() {
             {submitted ? (
               <>
                 <strong>{compactAddress(wallet)}</strong>
-                <span>Awaiting live backend integration for wallet-level HOOD status.</span>
+                <span>Awaiting live backend integration for wallet-level RTP status.</span>
               </>
             ) : (
               <span>Enter a wallet to check eligibility once lookup integration is live.</span>
@@ -738,7 +738,7 @@ export function AirdropHistory() {
               <thead>
                 <tr>
                   <th>Epoch</th>
-                  <th>{REWARD_SYMBOL} HOODx Bought</th>
+                  <th>{REWARD_SYMBOL} Bought</th>
                   <th>Recipients</th>
                   <th>Holder Weight</th>
                   <th>Total Paid</th>
@@ -752,7 +752,7 @@ export function AirdropHistory() {
                       <td>#{round.epoch}</td>
                       <td>{formatAmount(round.rewardBought, REWARD_SYMBOL)}</td>
                       <td>{round.distributedPump > 0 ? "Settled" : statusLabel(round.status)}</td>
-                      <td>Hood Score</td>
+                      <td>RTP Score</td>
                       <td>{formatAmount(round.distributedPump, REWARD_SYMBOL)}</td>
                       <td>
                         {round.txSig ? (
@@ -767,7 +767,7 @@ export function AirdropHistory() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6}>Awaiting settled HOODx payouts.</td>
+                    <td colSpan={6}>Awaiting settled $PUMP payouts.</td>
                   </tr>
                 )}
               </tbody>

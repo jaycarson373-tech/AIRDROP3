@@ -4,7 +4,7 @@ import {
   AirdroppedStat,
   BullBoard,
   HeroCountdown,
-  HoodBonusSection,
+  RewardModelSection,
   HolderLookup,
   LiveProtocolDashboard,
   MarketVolumeSection,
@@ -13,11 +13,11 @@ import {
   RewardExplanation
 } from "./home-strategy-data";
 
-const PROJECT_NAME = "The Robin Hood";
-const DEFAULT_CA = "G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump";
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? `https://pump.fun/coin/${DEFAULT_CA}`;
+const PROJECT_NAME = "Return to Pump";
+const DEFAULT_CA = "";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/RobinHoodSol__";
+const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? (CONTRACT_ADDRESS ? `https://pump.fun/coin/${CONTRACT_ADDRESS}` : "https://pump.fun/");
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "";
 
 function Navbar() {
   return (
@@ -26,16 +26,16 @@ function Navbar() {
         <a className="brand" href="/">
           <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
           <span>
-            The Robin Hood
-            <small>HOOD rewards</small>
+            Return to Pump
+            <small>RTP rewards rail</small>
           </span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#dashboard">Live Data</a>
-          <a href="#strategy">No Bridge</a>
+          <a href="#strategy">Anti-Hood</a>
           <a href="#how">Rewards</a>
-          <a href="#hood-bonus">Reward Model</a>
-          <a href="#hood-board">Board</a>
+          <a href="#reward-model">Reward Model</a>
+          <a href="#board">Board</a>
           <a href="#airdrops">Airdrops</a>
         </nav>
         <div className="nav-actions">
@@ -58,9 +58,10 @@ function Navbar() {
 
 export default function Page() {
   return (
-    <div className="page hood-strategy-page hood-bank-page">
+    <div className="page hood-strategy-page hood-bank-page rtp-page">
       <div className="hood-bank-bg-rotator" aria-hidden="true">
         <span className="hood-bank-bg-layer bg-layer-one" />
+        <span className="rtp-cloud-pulse" />
       </div>
       <Navbar />
 
@@ -70,23 +71,23 @@ export default function Page() {
 
           <div className="container hero-inner">
             <div className="hero-copy-stack">
-              <div className="section-kicker">THE ROBIN HOOD</div>
+              <div className="section-kicker">RETURN TO PUMP</div>
               <h1>
-                <span>The Robin</span>
-                <span>Hood</span>
+                <span>Return</span>
+                <span>to Pump.</span>
               </h1>
               <p className="hero-subtitle">
-                Bullish on HOOD stock. Paid in HoodX.
+                Ticker RTP. Hold RTP. Get paid $PUMP.
               </p>
               <p className="hero-lead">
-                The Robin Hood is for HOOD bulls who want HoodX stock rewards without bridging. Every 5 minutes, creator fees buy HOODx and airdrop it to eligible HOOD holders. Fully on-chain. Receipts included.
+                Robinhood restricted meme-stock trading in 2021. In 2023, it ended SOL support and put unsupported balances on a sale deadline. Return to Pump is the counter-trade: every 10 minutes, creator fees buy $PUMP and airdrop it to eligible RTP holders.
               </p>
               <div className="hero-actions">
                 <a className="cta" href={BUY_URL} target="_blank" rel="noreferrer">
-                  Buy HOOD <ArrowRight size={18} />
+                  Buy RTP <ArrowRight size={18} />
                 </a>
                 <a className="cta secondary" href="#airdrops">
-                  View Rewards
+                  View $PUMP Drops
                 </a>
               </div>
             </div>
@@ -94,19 +95,19 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="bank-statstrip" aria-label="The Robin Hood live rail">
+        <section className="bank-statstrip" aria-label="Return to Pump live rail">
           <div className="container bank-statstrip-inner">
             <div>
               <strong>100%</strong>
-              <span>to HOODx</span>
+              <span>to $PUMP</span>
             </div>
             <div>
-              <strong>5 MIN</strong>
+              <strong>10 MIN</strong>
               <span>epochs</span>
             </div>
             <div>
               <strong>1M+</strong>
-              <span>HOOD eligible</span>
+              <span>RTP eligible</span>
             </div>
             <div>
               <AirdroppedStat />
@@ -118,7 +119,7 @@ export default function Page() {
         <LiveProtocolDashboard />
         <VaultSection />
         <RewardExplanation />
-        <HoodBonusSection />
+        <RewardModelSection />
         <PermanentEligibility />
         <BullBoard />
         <RecentAirdrops />
@@ -129,11 +130,11 @@ export default function Page() {
             <div className="section-kicker">FAQ</div>
             <h2>Holder notes.</h2>
             <div className="faq-grid">
-              <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $HOOD and stay above that threshold." />
-              <FaqItem title="How often are rewards sent?" body="Creator fees buy HOODx every 5 minutes when live conditions are met." />
-              <FaqItem title="How does it work?" body="The backend claims fees, buys HOODx, scans eligible HOOD holders, and sends rewards automatically." />
-              <FaqItem title="Who gets boosted?" body="The weighting skews toward smaller eligible HOOD bags and wallets with lower SOL balances." />
-              <FaqItem title="Why HOOD?" body="This is a HOOD-native rewards token for people bullish on HOOD stock and HoodX, without the bridge headache." />
+              <FaqItem title="How do I qualify?" body="Hold at least 1,000,000 $RTP and stay above that threshold." />
+              <FaqItem title="How often are rewards sent?" body="Creator fees buy $PUMP every 10 minutes when live conditions are met." />
+              <FaqItem title="How does it work?" body="The backend claims fees, buys $PUMP, scans eligible RTP holders, and sends rewards automatically." />
+              <FaqItem title="Who gets boosted?" body="The weighting skews toward smaller eligible RTP bags and wallets with lower SOL balances." />
+              <FaqItem title="Why RTP?" body="Return to Pump is for people who want the Pump rail, on-chain receipts, and none of the brokerage drama." />
               <FaqItem title="Is there claiming?" body="No. The backend handles airdrops automatically. No wallet connection is required to receive rewards." />
             </div>
           </div>
@@ -142,10 +143,10 @@ export default function Page() {
         <section className="section final-bull-section">
           <div className="final-bull-art" aria-hidden="true" />
           <div className="container final-bull-copy">
-            <h2>THE ROBIN HOOD ONLINE. HOODx PAID. RECEIPTS LIVE.</h2>
-            <p>Hold $HOOD.</p>
-            <p>Skip the bridge.</p>
-            <strong>Let the hood run.</strong>
+            <h2>THE RETURN FLIGHT IS LIVE. $PUMP PAID. RECEIPTS POSTED.</h2>
+            <p>Hold $RTP.</p>
+            <p>Get the drop.</p>
+            <strong>Return to Pump.</strong>
           </div>
         </section>
       </main>
@@ -154,14 +155,14 @@ export default function Page() {
         <div className="container footer-grid">
           <div className="footer-brand">
             <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
-            <strong>The Robin Hood</strong>
+            <strong>Return to Pump</strong>
           </div>
-          <p>Hold HOOD. Get paid HOODx.</p>
+          <p>Hold RTP. Get paid $PUMP every 10 minutes.</p>
           <div className="footer-links">
             <a href="#dashboard">Live Data</a>
-            <a href="#strategy">No Bridge</a>
-            <a href="#hood-bonus">Reward Model</a>
-            <a href="#hood-board">Board</a>
+            <a href="#strategy">Anti-Hood</a>
+            <a href="#reward-model">Reward Model</a>
+            <a href="#board">Board</a>
             <a href="#airdrops">Airdrops</a>
             {X_URL ? (
               <a href={X_URL} target="_blank" rel="noreferrer">
@@ -188,32 +189,32 @@ function VaultSection() {
       <div className="container black-bull-grid">
         <aside className="black-bull-card">
           <div className="black-bull-portrait">
-            <img src="/logo.png" alt="The Robin Hood mark" />
+            <img src="/logo.png" alt="Return to Pump mark" />
           </div>
           <div className="black-bull-card-head">
-            <span>HOOD stack</span>
-            <strong>The Robin Hood</strong>
+            <span>RTP stack</span>
+            <strong>Return to Pump</strong>
           </div>
           <div className="bull-signal-list">
             <span>Creator fees</span>
-            <span>HOODx buys</span>
+            <span>$PUMP buys</span>
             <span>Holder scan</span>
             <span>Receipts live</span>
           </div>
         </aside>
 
         <div className="black-bull-copy">
-          <div className="section-kicker">No bridge lane</div>
-          <h2>FEES IN. HOODx OUT. RECEIPTS LIVE.</h2>
+          <div className="section-kicker">Anti-Hood lane</div>
+          <h2>FEES IN. $PUMP OUT. RECEIPTS LIVE.</h2>
           <div className="lore-copy">
-            <p>The Robin Hood turns creator fees into HoodX rewards for HOOD holders.</p>
-            <p>Eligible wallets are scanned every 5 minutes and paid automatically when rewards are available.</p>
-            <p>No bridge. No claiming. Just hold HOOD and read the receipts.</p>
+            <p>Robinhood made users remember the fine print. RTP makes the receipts public.</p>
+            <p>Eligible wallets are scanned every 10 minutes and paid automatically when rewards are available.</p>
+            <p>No bridge. No claiming. Hold RTP, get $PUMP, watch the ledger move.</p>
           </div>
         </div>
       </div>
-      <div className="container black-bull-timeline" aria-label="The Robin Hood reward model">
-        {["Creator fees", "Buy HOODx", "Holder scan", "Airdrop", "Receipt ledger"].map((item) => (
+      <div className="container black-bull-timeline" aria-label="Return to Pump reward model">
+        {["Creator fees", "Buy $PUMP", "Holder scan", "Airdrop", "Receipt ledger"].map((item) => (
           <span key={item}>{item}</span>
         ))}
       </div>

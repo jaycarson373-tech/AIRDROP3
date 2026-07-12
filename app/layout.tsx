@@ -3,29 +3,29 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://the-robin-hood.fun"),
-  title: "The Robin Hood",
-  description: "The Robin Hood claims creator fees, buys HOODx, and pays eligible HOOD holders automatically every 5 minutes.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://returntopump.fun"),
+  title: "Return to Pump",
+  description: "Return to Pump claims creator fees, buys $PUMP, and pays eligible RTP holders automatically every 10 minutes.",
   openGraph: {
-    title: "The Robin Hood",
-    description: "The Robin Hood claims creator fees, buys HOODx, and pays eligible HOOD holders automatically every 5 minutes.",
-    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://the-robin-hood.fun",
-    siteName: "The Robin Hood",
+    title: "Return to Pump",
+    description: "Return to Pump claims creator fees, buys $PUMP, and pays eligible RTP holders automatically every 10 minutes.",
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://returntopump.fun",
+    siteName: "Return to Pump",
     images: [
       {
-        url: "/logo.png",
-        width: 1254,
-        height: 1254,
-        alt: "The Robin Hood"
+        url: "/brand/return-to-pump-banner.png",
+        width: 1280,
+        height: 399,
+        alt: "Return to Pump"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Robin Hood",
-    description: "The Robin Hood claims creator fees, buys HOODx, and pays eligible HOOD holders automatically every 5 minutes.",
-    images: ["/logo.png"]
+    title: "Return to Pump",
+    description: "Return to Pump claims creator fees, buys $PUMP, and pays eligible RTP holders automatically every 10 minutes.",
+    images: ["/brand/return-to-pump-banner.png"]
   },
   icons: {
     icon: [

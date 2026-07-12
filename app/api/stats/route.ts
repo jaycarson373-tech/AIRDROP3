@@ -60,8 +60,6 @@ type ParsedTokenAccountInfo = {
 const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
 const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
 const LIVE_ELIGIBLE_CACHE_MS = 90_000;
-const PFP_REWARD_WALLET_FALLBACK = "76tk5Hyk6kDZn9YG7nd1JBjH2EkcbxoWund9A8GBkGei";
-
 let liveEligibleCache: { key: string; value: number; expiresAt: number } | null = null;
 
 function supabaseConfig() {
@@ -164,8 +162,8 @@ function sourceTokenMint() {
 function pfpRewardWallet() {
   const value =
     process.env.PFP_REWARD_WALLET_PUBLIC_KEY ??
-    process.env.NEXT_PUBLIC_PFP_REWARD_WALLET_PUBLIC_KEY ??
-    PFP_REWARD_WALLET_FALLBACK;
+    process.env.NEXT_PUBLIC_PFP_REWARD_WALLET_PUBLIC_KEY;
+  if (!value) return null;
   try {
     return new PublicKey(value);
   } catch {
@@ -188,7 +186,7 @@ async function pfpRewardWalletBalanceSol() {
 
 function epochNumber(epochId: string, fallback: number) {
   const timestamp = Date.parse(epochId);
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
   return Number.isFinite(timestamp) ? Math.floor(timestamp / epochMs) : fallback;
 }
 
@@ -201,7 +199,7 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function nextDropTime() {
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
   return new Date(Math.ceil(Date.now() / epochMs) * epochMs).toISOString();
 }
 
@@ -281,7 +279,7 @@ async function liveEligibleHolderCount() {
   if (!mint) return null;
 
   const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 1_000_000));
-  const maxHolderPct = numberEnv("MAX_HOLDER_PCT", 5);
+  const maxHolderPct = numberEnv("MAX_HOLDER_PCT", 4);
   const endpoint = rpcUrl();
   const cacheKey = `${endpoint}:${mint.toBase58()}:${eligibilityMin}:${maxHolderPct}`;
   const now = Date.now();

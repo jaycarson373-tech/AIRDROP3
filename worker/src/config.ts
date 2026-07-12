@@ -95,10 +95,10 @@ export const config = {
   buyEnabled: boolEnv("BUY_ENABLED", false),
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
 
-  epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 5)),
+  epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 10)),
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),
   maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 150)),
-  maxHolderPct: numberEnv("MAX_HOLDER_PCT", 5),
+  maxHolderPct: numberEnv("MAX_HOLDER_PCT", 4),
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
 
   swapBalanceBps: Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 9000))),
