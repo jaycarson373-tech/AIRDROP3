@@ -1,10 +1,10 @@
 export const defaultCurrentRunner = {
-  name: "Harris",
-  ticker: "HARRIS",
-  mint: "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump",
-  logoSrc: "/brand/harris-runner-logo.png",
-  scannedMarketCap: "$40.2K",
-  scannedAgo: "22:17:05"
+  name: "The Pink Bull",
+  ticker: "PINKBULL",
+  mint: "Er58M968bCGnmKwvrrPhW21zesoFfo8gXPUDokKMpump",
+  logoSrc: "/brand/pink-bull-runner-logo.png",
+  scannedMarketCap: "$15.2K",
+  scannedAgo: "7:38 PM EST"
 } as const;
 
 function cleanEnv(value: string | undefined) {
@@ -18,11 +18,11 @@ function isStaleHomeRunner(value: string) {
 
 function isPreviousRunner(value: string) {
   const normalized = value.replace(/^\$/, "").toUpperCase();
-  return normalized === "GIRL" || normalized === "GIRLCOIN";
+  return normalized === "GIRL" || normalized === "GIRLCOIN" || normalized === "HARRIS";
 }
 
 function isPreviousRunnerMint(value: string) {
-  return value === "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump";
+  return value === "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump" || value === "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump";
 }
 
 function looksLikeMint(value: string) {
@@ -33,7 +33,7 @@ const contractAddress = cleanEnv(process.env.NEXT_PUBLIC_CA) || cleanEnv(process
 const rawRewardSymbol = cleanEnv(process.env.NEXT_PUBLIC_REWARD_SYMBOL);
 const rawRewardMint = cleanEnv(process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
 const rawActiveRunnerName = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME);
-const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isStaleHomeRunner(rawRewardSymbol) || isPreviousRunner(rawRewardSymbol) || isPreviousRunnerMint(rawRewardMint) || /home/i.test(rawActiveRunnerName) || /girl/i.test(rawActiveRunnerName);
+const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isStaleHomeRunner(rawRewardSymbol) || isPreviousRunner(rawRewardSymbol) || isPreviousRunnerMint(rawRewardMint) || /home/i.test(rawActiveRunnerName) || /girl|harris/i.test(rawActiveRunnerName);
 const rewardMint = useDefaultCurrentRunner ? defaultCurrentRunner.mint : rawRewardMint || defaultCurrentRunner.mint;
 const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol;
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
@@ -137,6 +137,17 @@ export const pumpRunnerConfig = {
     },
     {
       rank: "02",
+      token: "Harris",
+      ticker: "$HARRIS",
+      detectedMarketCap: "$40.2K",
+      currentMarketCap: "Archived",
+      returnSinceDetection: "Tracking",
+      amountAcquired: "Previous drop",
+      status: "Scanned 22:17:05",
+      dexScreenerUrl: "https://dexscreener.com/solana/3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump"
+    },
+    {
+      rank: "03",
       token: "Girlcoin",
       ticker: "$GIRLCOIN",
       detectedMarketCap: "$52.9K",
@@ -147,7 +158,7 @@ export const pumpRunnerConfig = {
       dexScreenerUrl: "https://dexscreener.com/solana/GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump"
     },
     {
-      rank: "03",
+      rank: "04",
       token: "Runner Archive",
       ticker: "—",
       detectedMarketCap: "Pending",
@@ -170,9 +181,9 @@ export const pumpRunnerConfig = {
     }
   ] satisfies RunnerBoardRow[],
   performanceRows: [
-    { ticker: activeRunnerLabel, entryMarketCap: 40_200, currentMarketCap: 40_200, changePercent: 0 },
+    { ticker: activeRunnerLabel, entryMarketCap: 15_200, currentMarketCap: 15_200, changePercent: 0 },
+    { ticker: "$HARRIS", entryMarketCap: 40_200, currentMarketCap: 40_200, changePercent: 0 },
     { ticker: "$GIRLCOIN", entryMarketCap: 52_900, currentMarketCap: 264_500, changePercent: 400 },
-    { ticker: "Runner 03", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 },
     { ticker: "Runner 04", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }
   ] satisfies RunnerPerformanceRow[],
   scannerCards: [
