@@ -245,8 +245,8 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
   const holderCount = live.holders.uniqueHolders ?? live.stats.latestEligibleHolders;
   const items = [
     `CURRENT RUNNER ${pumpRunnerConfig.currentRunner.ticker}`,
+    `${pumpRunnerConfig.currentRunner.ticker} PRICE ${formatPrice(runner.priceUsd, "Awaiting runner price")}`,
     `AIRDROPPED VALUE ${formatSol(airdroppedValueSol)}`,
-    `SCANNED TOKEN PRICE ${formatPrice(runner.priceUsd, "Awaiting runner price")}`,
     `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
     `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
     `${tokenLabel} PRICE ${formatPrice(source.priceUsd)}`,
