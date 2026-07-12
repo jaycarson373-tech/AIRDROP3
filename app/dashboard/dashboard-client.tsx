@@ -85,9 +85,10 @@ const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MINUTES = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5);
 const EPOCH_MS = Math.max(1, EPOCH_MINUTES) * 60 * 1000;
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Pump Runner";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "Runner drops";
+const PROJECT_NAME = "Pump Runner";
+const SOURCE_SYMBOL = "RUNNER";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "TBD";
+const REWARD_TOKEN_MINT = process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? "";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -278,13 +279,13 @@ export function DashboardClient() {
             <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
               {PROJECT_NAME}
-              <small>{SOURCE_SYMBOL} rewards</small>
+              <small>{SOURCE_SYMBOL} catches runners</small>
             </span>
           </Link>
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/fallen-bulls">Ineligible</Link>
+            <Link href="/ineligible">Ineligible</Link>
           </div>
         </div>
       </header>
@@ -297,7 +298,7 @@ export function DashboardClient() {
                 <span className="pulse" />
                 Live runner drop ledger
               </div>
-              <h1 className="dashboard-title">{REWARD_SYMBOL} Ledger</h1>
+              <h1 className="dashboard-title">Active Runner Ledger</h1>
             </div>
           </div>
 
@@ -317,13 +318,13 @@ export function DashboardClient() {
                   <strong className={hasRewards ? "" : "empty-value"}>
                     <AnimatedValue value={hasRewards ? liveStats.lastRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
                   </strong>
-                  <span>Last distribution</span>
+                  <span>Last {REWARD_SYMBOL} airdrop</span>
                 </div>
                 <div className="stat">
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
-                    {latestGolden?.wallet ? compactAddress(latestGolden.wallet) : "Smaller wallets boosted"}
+                    {REWARD_SYMBOL}
                   </strong>
-                  <span>Weighting Bias</span>
+                  <span>{REWARD_TOKEN_MINT ? compactAddress(REWARD_TOKEN_MINT) : "Active runner mint"}</span>
                 </div>
                 <div className="stat">
                   <strong>
@@ -335,7 +336,7 @@ export function DashboardClient() {
                   <strong className={hasRewards ? "" : "empty-value"}>
                     <AnimatedValue value={hasRewards ? liveStats.totalRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
                   </strong>
-                  <span>Total {REWARD_SYMBOL} Distributed</span>
+                  <span>Total {REWARD_SYMBOL} Airdropped</span>
                 </div>
               </div>
 

@@ -83,7 +83,7 @@ type RunnerLiveData = {
 const refreshMs = 12_000;
 const tokenLabel = pumpRunnerConfig.tokenLabel;
 const sourceSymbol = pumpRunnerConfig.ticker;
-const rewardSymbol = pumpRunnerConfig.rewardSymbol;
+const rewardSymbol = pumpRunnerConfig.currentRunner.ticker;
 
 const emptyStats: StatsResponse = {
   currentEpoch: 0,
@@ -188,7 +188,7 @@ function formatUsd(value: number | null | undefined, fallback = "Awaiting") {
   return `$${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 }
 
-function formatPrice(value: number | null | undefined, fallback = pumpRunnerConfig.marketTickerFallback.price) {
+function formatPrice(value: number | null | undefined, fallback: string = pumpRunnerConfig.marketTickerFallback.price) {
   if (!Number.isFinite(value ?? NaN) || !value) return fallback;
   const maximumFractionDigits = value < 0.0001 ? 10 : value < 0.01 ? 8 : value < 1 ? 6 : 4;
   return `$${value.toLocaleString(undefined, { maximumFractionDigits })}`;
@@ -197,6 +197,11 @@ function formatPrice(value: number | null | undefined, fallback = pumpRunnerConf
 function formatCompactUsd(value: number | null | undefined, fallback: string) {
   if (!Number.isFinite(value ?? NaN) || !value) return fallback;
   return `$${value.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 2 })}`;
+}
+
+function formatSol(value: number | null | undefined, fallback = "Awaiting SOL value") {
+  if (!Number.isFinite(value ?? NaN) || !value) return fallback;
+  return `${value.toLocaleString(undefined, { maximumFractionDigits: value < 1 ? 4 : 2 })} SOL`;
 }
 
 function formatCount(value: number | null | undefined, fallback = "Awaiting") {
@@ -232,13 +237,20 @@ function statusText(status: string) {
 
 export function MarketTicker({ live }: { live: RunnerLiveData }) {
   const source = live.market.source;
+  const runner = live.market.reward;
+  const sol = live.market.sol;
+  const airdroppedValueUsd =
+    live.stats.totalRewardAirdropped && runner.priceUsd ? live.stats.totalRewardAirdropped * runner.priceUsd : null;
+  const airdroppedValueSol = airdroppedValueUsd && sol.priceUsd ? airdroppedValueUsd / sol.priceUsd : null;
+  const holderCount = live.holders.uniqueHolders ?? live.stats.latestEligibleHolders;
   const items = [
-    `${tokenLabel} ${formatPrice(source.priceUsd)}`,
-    `MCAP ${formatCompactUsd(source.marketCapUsd ?? source.fdvUsd, pumpRunnerConfig.marketTickerFallback.marketCap)}`,
-    `24H VOL ${formatCompactUsd(source.volume24hUsd, pumpRunnerConfig.marketTickerFallback.volume24h)}`,
-    `HOLDERS ${formatCount(live.holders.uniqueHolders ?? live.stats.latestEligibleHolders, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
-    `NEXT DROP ${live.countdown}`,
-    `DISTRIBUTED ${formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, pumpRunnerConfig.marketTickerFallback.totalDistributed)}`,
+    `CURRENT RUNNER ${pumpRunnerConfig.currentRunner.ticker}`,
+    `AIRDROPPED VALUE ${formatSol(airdroppedValueSol)}`,
+    `SCANNED TOKEN PRICE ${formatPrice(runner.priceUsd, "Awaiting runner price")}`,
+    `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
+    `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
+    `${tokenLabel} PRICE ${formatPrice(source.priceUsd)}`,
+    `NEXT AIRDROP ${live.countdown}`,
     `SCANNER ${pumpRunnerConfig.scannerStatus}`,
     `TREASURY ${pumpRunnerConfig.treasuryStatus}`
   ];
@@ -263,10 +275,10 @@ function RunnerNav() {
   return (
     <header className="runner-nav">
       <a className="runner-brand" href="#top" aria-label="Pump Runner home">
-        <span className="runner-brand-mark">PR</span>
+        <img className="runner-brand-logo" src={pumpRunnerConfig.logoSrc} alt="" />
         <span>
           <strong>{pumpRunnerConfig.name}</strong>
-          <small>{tokenLabel} scanner desk</small>
+          <small>{tokenLabel} catches runners</small>
         </span>
       </a>
       <nav className="runner-links" aria-label="Primary navigation">
@@ -300,15 +312,15 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
         </div>
         <h1>WE CATCH EVERY RUNNER.</h1>
         <p className="runner-hero-subtitle">
-          Pump Runner scans the trenches for emerging runners, acquires selected tokens and distributes them to eligible {tokenLabel} holders.
+          Pump Runner finds the active runner, buys that runner, and airdrops it to eligible {tokenLabel} holders.
         </p>
-        <p className="runner-hero-line">Our scanner finds them. The treasury buys them. Holders receive the drops.</p>
+        <p className="runner-hero-line">Hold {tokenLabel}. The treasury chases the runner. Your wallet receives the airdrop.</p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
           </a>
           <a className="runner-button runner-button-secondary" href="#drops">
-            View Live Drops
+            View Runner Drops
           </a>
         </div>
         <div className="runner-sequence" aria-label="Pump Runner process">
@@ -319,8 +331,18 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
       </div>
 
       <div className="runner-hero-panel" aria-label="Pump Runner live terminal">
+        <img className="runner-hero-logo" src={pumpRunnerConfig.logoSrc} alt="" />
         <div className="runner-panel-header">
-          <span>LIVE EPOCH</span>
+          <span>CURRENT RUNNER</span>
+          <strong>{pumpRunnerConfig.currentRunner.ticker}</strong>
+        </div>
+        <div className="runner-current-card">
+          <span>{pumpRunnerConfig.currentRunner.name}</span>
+          <strong>{pumpRunnerConfig.currentRunner.status}</strong>
+          <small>{pumpRunnerConfig.currentRunner.mint ? compactAddress(pumpRunnerConfig.currentRunner.mint) : "Mint loads from reward env"}</small>
+        </div>
+        <div className="runner-panel-header runner-epoch-header">
+          <span>NEXT AIRDROP</span>
           <strong>{live.countdown}</strong>
         </div>
         <div className="runner-track-display">
@@ -334,7 +356,7 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
             <strong>{formatCount(live.stats.latestEligibleHolders, "0")}</strong>
           </span>
           <span>
-            <small>Total Dropped</small>
+            <small>{pumpRunnerConfig.currentRunner.ticker} Dropped</small>
             <strong>{formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, "0")}</strong>
           </span>
           <span>
@@ -362,8 +384,8 @@ export function RunnerLeaderboard() {
     <section className="runner-section" id="board">
       <div className="runner-section-heading">
         <span className="runner-kicker">Live Runner Board</span>
-        <h2>TODAY'S TOP RUNNERS</h2>
-        <p>Tokens identified and acquired by the Pump Runner scanner today.</p>
+        <h2>TODAY'S RUNNER</h2>
+        <p>The active runner being bought and airdropped to eligible {tokenLabel} holders.</p>
       </div>
       <div className="runner-tabs" role="tablist" aria-label="Runner board range">
         {["Today", "This Week", "All Time"].map((item) => (
@@ -397,7 +419,7 @@ export function RunnerLeaderboard() {
               <th>Detected MC</th>
               <th>Current MC</th>
               <th>Return</th>
-              <th>Acquired</th>
+              <th>Bought</th>
               <th>Status</th>
               <th>Chart</th>
             </tr>
@@ -481,12 +503,12 @@ function HowItWorks() {
     {
       label: "02",
       title: "The treasury acquires it",
-      body: "A portion of project revenue is used to acquire tokens selected by the scanner."
+      body: "Creator-fee revenue is used to acquire the active runner selected by the scanner."
     },
     {
       label: "03",
       title: "Holders receive the drop",
-      body: `Acquired tokens are distributed to eligible ${tokenLabel} holders during scheduled airdrop epochs.`
+      body: `The runner token is distributed to eligible ${tokenLabel} holders during scheduled airdrop epochs.`
     }
   ];
 
@@ -505,7 +527,7 @@ function HowItWorks() {
           </article>
         ))}
       </div>
-      <strong className="runner-bold-line">Hold one token. Gain exposure to the runners our system catches.</strong>
+      <strong className="runner-bold-line">Hold {tokenLabel}. Receive the runner our system catches.</strong>
     </section>
   );
 }
@@ -535,7 +557,7 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
       </div>
       <div className="runner-eligibility-grid">
         <div className="runner-check-card">
-          <h3>To qualify for runner airdrops, a wallet must:</h3>
+          <h3>To qualify for active-runner airdrops, a wallet must:</h3>
           <ul>
             <li>Hold at least {required}</li>
             <li>Be holding at the eligibility snapshot</li>
@@ -723,7 +745,7 @@ function FaqSection() {
     {
       question: "What is Pump Runner?",
       answer:
-        "Pump Runner is a holder-reward system that uses project revenue to acquire selected Pump.fun tokens and distribute them to eligible $RUNNER holders."
+        "Pump Runner is a holder-reward system that uses project revenue to acquire the active Pump.fun runner and distribute that runner token to eligible $RUNNER holders."
     },
     {
       question: "How many tokens must I hold?",
@@ -772,7 +794,7 @@ function FinalCta() {
   return (
     <section className="runner-final-cta">
       <h2>THE NEXT RUNNER IS ALREADY MOVING.</h2>
-      <p>Hold {tokenLabel} and stay eligible for every scheduled drop caught by the system.</p>
+      <p>Hold {tokenLabel} and stay eligible for every scheduled active-runner drop caught by the system.</p>
       <div className="runner-hero-actions">
         <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
           Buy {tokenLabel}

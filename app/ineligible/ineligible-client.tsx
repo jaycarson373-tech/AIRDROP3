@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-type FallenBull = {
+type IneligibleWallet = {
   address: string;
   balance: number;
   currentMultiplier: string | null;
@@ -16,14 +16,17 @@ type FallenBull = {
 };
 
 type HoldersResponse = {
-  fallenBulls?: FallenBull[];
+  ineligibleWallets?: IneligibleWallet[];
 };
 
-const emptyResponse: HoldersResponse = { fallenBulls: [] };
+const emptyResponse: HoldersResponse = { ineligibleWallets: [] };
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Pump Runner";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER";
 const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "Runner drops";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "2.5M";
+const parsedEligibilityMin = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 2_500_000);
+const eligibilityMin = Number.isFinite(parsedEligibilityMin) && parsedEligibilityMin > 0 ? parsedEligibilityMin : 2_500_000;
+const ELIGIBILITY_LABEL =
+  process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? eligibilityMin.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 1 });
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -51,15 +54,15 @@ async function getHolders() {
   }
 }
 
-export function FallenBullsClient() {
-  const [fallenBulls, setFallenBulls] = useState<FallenBull[]>([]);
+export function IneligibleClient() {
+  const [ineligibleWallets, setIneligibleWallets] = useState<IneligibleWallet[]>([]);
 
   useEffect(() => {
     let active = true;
 
     const load = async () => {
       const data = await getHolders();
-      if (active) setFallenBulls(data.fallenBulls ?? []);
+      if (active) setIneligibleWallets(data.ineligibleWallets ?? []);
     };
 
     load();
@@ -84,12 +87,12 @@ export function FallenBullsClient() {
           <div className="nav-links">
             <Link href="/">Landing</Link>
             <Link href="/dashboard">Dashboard</Link>
-            <Link href="/fallen-bulls">Ineligible</Link>
+            <Link href="/ineligible">Ineligible</Link>
           </div>
         </div>
       </header>
 
-      <main className="dashboard fallen-bulls-page">
+      <main className="dashboard ineligible-page">
         <section className="section history-section">
           <div className="container">
             <div className="section-kicker">Ineligibility ledger</div>
@@ -98,7 +101,7 @@ export function FallenBullsClient() {
               <p>Wallets that lost eligibility by selling or falling below the {ELIGIBILITY_LABEL} {SOURCE_SYMBOL} requirement.</p>
             </div>
 
-            <div className="history-card bull-board-card">
+            <div className="history-card ineligible-board-card">
               <div className="table-wrap">
                 <table>
                   <thead>
@@ -113,9 +116,9 @@ export function FallenBullsClient() {
                     </tr>
                   </thead>
                   <tbody>
-                    {fallenBulls.length ? (
-                      fallenBulls.map((wallet) => (
-                        <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "fallen"}`}>
+                    {ineligibleWallets.length ? (
+                      ineligibleWallets.map((wallet) => (
+                        <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "ineligible"}`}>
                           <td>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
                           <td>{formatNumber(wallet.totalRewardEarned)} {REWARD_SYMBOL}</td>

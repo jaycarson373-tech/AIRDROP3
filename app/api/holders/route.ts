@@ -111,16 +111,19 @@ async function getSettledPayouts(config: { url: string; key: string }) {
 
 function reasonLabel(reason: string | null | undefined) {
   const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER";
-  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "2.5M";
+  const parsedEligibilityMin = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? process.env.ELIGIBILITY_MIN ?? 2_500_000);
+  const eligibilityMin = Number.isFinite(parsedEligibilityMin) && parsedEligibilityMin > 0 ? parsedEligibilityMin : 2_500_000;
+  const eligibilityLabel =
+    process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? eligibilityMin.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 1 });
   if (reason === "balance_decreased") return `Sold ${sourceSymbol}`;
   if (reason === "dropped_below_threshold") return `Dropped below ${eligibilityLabel}`;
   if (reason === "dropped_below_threshold_or_sold") return `Sold or dropped below ${eligibilityLabel}`;
-  return "Fallen bull";
+  return "Ineligible";
 }
 
 export async function GET() {
   const config = supabaseConfig();
-  if (!config) return NextResponse.json({ topHolders: [], fallenBulls: [], totalSupply: 0, uniqueHolders: 0 });
+  if (!config) return NextResponse.json({ topHolders: [], ineligibleWallets: [], totalSupply: 0, uniqueHolders: 0 });
 
   try {
     const holderStates = await getJsonOrNull<HolderStateRow[]>(
@@ -128,7 +131,7 @@ export async function GET() {
       config.key
     );
     const activeStates = (holderStates ?? []).filter((row) => !row.permanently_ineligible && !row.ineligible_reason);
-    const fallenStates = (holderStates ?? []).filter((row) => row.permanently_ineligible || row.ineligible_reason);
+    const ineligibleStates = (holderStates ?? []).filter((row) => row.permanently_ineligible || row.ineligible_reason);
     const payoutRows = await getSettledPayouts(config).catch((error) => {
       console.warn("optional payout totals query failed", error);
       return [] as PayoutRow[];
@@ -180,7 +183,7 @@ export async function GET() {
         };
       });
 
-      const fallenBulls = fallenStates
+      const ineligibleWallets = ineligibleStates
         .map((row) => {
           const payout = payoutsByWallet.get(row.wallet);
           return {
@@ -200,7 +203,7 @@ export async function GET() {
         .sort((a, b) => Date.parse(b.ineligibleAt ?? b.lastSeenAt ?? "") - Date.parse(a.ineligibleAt ?? a.lastSeenAt ?? ""))
         .slice(0, 250);
 
-      return NextResponse.json({ topHolders, fallenBulls, totalSupply, uniqueHolders: activeStates.length });
+      return NextResponse.json({ topHolders, ineligibleWallets, totalSupply, uniqueHolders: activeStates.length });
     }
 
     const epochs = await getJson<EpochRow[]>(
@@ -208,7 +211,7 @@ export async function GET() {
       config.key
     );
     const epochId = epochs[0]?.epoch_id;
-    if (!epochId) return NextResponse.json({ topHolders: [], fallenBulls: [], totalSupply: 0, uniqueHolders: 0 });
+    if (!epochId) return NextResponse.json({ topHolders: [], ineligibleWallets: [], totalSupply: 0, uniqueHolders: 0 });
 
     const snapshots = await getJson<SnapshotRow[]>(
       `${config.url}/rest/v1/snapshots?select=wallet,source_balance&epoch_id=eq.${encodeURIComponent(epochId)}&order=source_balance.desc&limit=50`,
@@ -240,9 +243,9 @@ export async function GET() {
       .sort((a, b) => b.totalRewardEarned - a.totalRewardEarned || b.balance - a.balance)
       .map((row, index) => ({ ...row, rank: index + 1 }));
 
-    return NextResponse.json({ topHolders, fallenBulls: [], totalSupply, uniqueHolders: snapshots.length });
+    return NextResponse.json({ topHolders, ineligibleWallets: [], totalSupply, uniqueHolders: snapshots.length });
   } catch (error) {
     console.error("holders route failed", error);
-    return NextResponse.json({ topHolders: [], fallenBulls: [], totalSupply: 0, uniqueHolders: 0 });
+    return NextResponse.json({ topHolders: [], ineligibleWallets: [], totalSupply: 0, uniqueHolders: 0 });
   }
 }
