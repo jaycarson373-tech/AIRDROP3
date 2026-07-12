@@ -1,6 +1,6 @@
 export const defaultCurrentRunner = {
-  name: "Girl Coin",
-  ticker: "GIRL",
+  name: "Girlcoin",
+  ticker: "GIRLCOIN",
   mint: "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump",
   logoSrc: "/brand/girl-coin-logo.png"
 } as const;
@@ -14,14 +14,21 @@ function isStaleHomeRunner(value: string) {
   return value.replace(/^\$/, "").toUpperCase() === "HOME";
 }
 
+function looksLikeMint(value: string) {
+  return value.length > 30 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(value);
+}
+
 const contractAddress = cleanEnv(process.env.NEXT_PUBLIC_CA) || cleanEnv(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT);
 const rawRewardSymbol = cleanEnv(process.env.NEXT_PUBLIC_REWARD_SYMBOL);
 const rawRewardMint = cleanEnv(process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
 const rawActiveRunnerName = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME);
-const useDefaultCurrentRunner = !rawRewardSymbol || isStaleHomeRunner(rawRewardSymbol) || /home/i.test(rawActiveRunnerName);
+const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isStaleHomeRunner(rawRewardSymbol) || /home/i.test(rawActiveRunnerName);
 const rewardMint = useDefaultCurrentRunner ? defaultCurrentRunner.mint : rawRewardMint || defaultCurrentRunner.mint;
 const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol;
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
+const activeRunnerName =
+  rawActiveRunnerName ||
+  (activeRunnerTicker.replace(/^\$/, "").toUpperCase() === defaultCurrentRunner.ticker ? defaultCurrentRunner.name : `${activeRunnerTicker} Runner`);
 const parsedMinimumHolding = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 2_500_000);
 const minimumHolding = Number.isFinite(parsedMinimumHolding) && parsedMinimumHolding > 0 ? parsedMinimumHolding : 2_500_000;
 const rawActiveRunnerDexUrl = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_DEXSCREENER_URL);
@@ -69,12 +76,12 @@ export const pumpRunnerConfig = {
   scannerStatus: "SCANNING",
   treasuryStatus: "ACTIVE",
   currentRunner: {
-    name: useDefaultCurrentRunner ? defaultCurrentRunner.name : rawActiveRunnerName || `${activeRunnerTicker} Runner`,
+    name: useDefaultCurrentRunner ? defaultCurrentRunner.name : activeRunnerName,
     ticker: activeRunnerLabel,
     mint: rewardMint,
     logoSrc: useDefaultCurrentRunner ? defaultCurrentRunner.logoSrc : cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC) || defaultCurrentRunner.logoSrc,
     dexScreenerUrl: activeRunnerDexUrl,
-    detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? "Awaiting entry",
+    detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? "$54K",
     currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
     amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? `Buying ${activeRunnerLabel}`,
     status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? "Current Runner"
@@ -94,10 +101,10 @@ export const pumpRunnerConfig = {
   },
   treasuryStatistics: {
     runnersCaughtToday: "1",
-    averageEntryMarketCap: "Awaiting live scan",
+    averageEntryMarketCap: "$54K",
     averageReturn: "Tracking",
     bestRunner: activeRunnerLabel,
-    totalDistributedToday: "Awaiting first drop"
+    totalDistributedToday: "0 SOL"
   },
   multiplierTiers: [
     { label: "Under 24 hours", multiplier: "1.00x", progress: 12 },
@@ -108,9 +115,9 @@ export const pumpRunnerConfig = {
   runnerBoard: [
     {
       rank: "01",
-      token: useDefaultCurrentRunner ? defaultCurrentRunner.name : rawActiveRunnerName || `${activeRunnerTicker} Runner`,
+      token: useDefaultCurrentRunner ? defaultCurrentRunner.name : activeRunnerName,
       ticker: activeRunnerLabel,
-      detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? "Awaiting entry",
+      detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? "$54K",
       currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
       returnSinceDetection: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_RETURN ?? "Tracking",
       amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? "Buying this epoch",
@@ -152,7 +159,7 @@ export const pumpRunnerConfig = {
     }
   ] satisfies RunnerBoardRow[],
   performanceRows: [
-    { ticker: activeRunnerLabel, entryMarketCap: 30_000, currentMarketCap: 30_000, changePercent: 0 },
+    { ticker: activeRunnerLabel, entryMarketCap: 54_000, currentMarketCap: 54_000, changePercent: 0 },
     { ticker: "Runner 02", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 },
     { ticker: "Runner 03", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 },
     { ticker: "Runner 04", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }

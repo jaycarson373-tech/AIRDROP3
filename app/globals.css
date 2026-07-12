@@ -966,6 +966,95 @@ input {
   margin-top: 10px;
 }
 
+.runner-drop-ledger {
+  border: 1px solid var(--runner-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 0;
+  margin-top: 28px;
+  overflow: hidden;
+}
+
+.runner-drop-feature {
+  align-items: center;
+  background:
+    linear-gradient(90deg, rgba(57, 255, 106, 0.14), transparent 54%),
+    rgba(0, 0, 0, 0.28);
+  border-bottom: 1px solid rgba(57, 255, 106, 0.14);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.runner-drop-feature span,
+.runner-drop-feature small,
+.runner-drop-metrics span {
+  color: var(--runner-muted);
+  display: block;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.runner-drop-feature strong {
+  color: var(--runner-accent);
+  display: block;
+  font-family: Impact, "Arial Black", Arial, sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 0.95;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+.runner-drop-feature small {
+  color: var(--runner-soft);
+  margin-top: 8px;
+}
+
+.runner-drop-feature a {
+  align-items: center;
+  border: 1px solid var(--runner-border);
+  border-radius: 8px;
+  color: var(--runner-accent);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+  font-weight: 900;
+  gap: 7px;
+  padding: 10px 12px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.runner-drop-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  overflow-x: auto;
+}
+
+.runner-drop-metrics div {
+  border-right: 1px solid rgba(57, 255, 106, 0.12);
+  min-width: 150px;
+  padding: 18px 20px;
+}
+
+.runner-drop-metrics div:last-child {
+  border-right: 0;
+}
+
+.runner-drop-metrics strong {
+  color: var(--runner-text);
+  display: block;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 1.02rem;
+  margin-top: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .runner-feed {
   border: 1px solid var(--runner-border);
   border-radius: 8px;
@@ -1187,6 +1276,24 @@ input {
   .runner-current-row strong {
     max-width: 100%;
     text-align: left;
+  }
+
+  .runner-drop-feature {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .runner-drop-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .runner-drop-metrics div {
+    border-bottom: 1px solid rgba(57, 255, 106, 0.12);
+    border-right: 0;
+  }
+
+  .runner-drop-metrics div:last-child {
+    border-bottom: 0;
   }
 
   .runner-hero-stats,

@@ -209,6 +209,14 @@ function formatTokenAmount(value: number | null | undefined, symbol: string, fal
   return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${symbol}`;
 }
 
+function formatSolValue(tokenAmount: number | null | undefined, tokenPriceUsd: number | null | undefined, solPriceUsd: number | null | undefined) {
+  if (!Number.isFinite(tokenAmount ?? NaN) || !tokenAmount || !Number.isFinite(tokenPriceUsd ?? NaN) || !tokenPriceUsd || !Number.isFinite(solPriceUsd ?? NaN) || !solPriceUsd) {
+    return "0 SOL";
+  }
+
+  return `${((tokenAmount * tokenPriceUsd) / solPriceUsd).toLocaleString(undefined, { maximumFractionDigits: 4 })} SOL`;
+}
+
 function formatTime(value: string | null | undefined) {
   const date = new Date(value ?? "");
   return Number.isNaN(date.getTime()) ? "Queued" : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -639,6 +647,12 @@ export function HoldMultiplier() {
 
 export function AirdropFeed({ live }: { live: RunnerLiveData }) {
   const [filter, setFilter] = useState("All Drops");
+  const activeRunner = pumpRunnerConfig.runnerBoard[0];
+  const activeRunnerCurrentMarketCap = formatCompactUsd(live.market.reward.marketCapUsd ?? live.market.reward.fdvUsd, activeRunner.currentMarketCap);
+  const totalRunnerDropped = live.stats.totalRewardAirdropped
+    ? formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)
+    : `0 ${rewardSymbol}`;
+  const totalSolValueDropped = formatSolValue(live.stats.totalRewardAirdropped, live.market.reward.priceUsd, live.market.sol.priceUsd);
   const completedRows = live.stats.recentRewards.map((reward) => ({
     time: formatTime(reward.time),
     token: rewardSymbol,
@@ -664,6 +678,41 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
       <div className="runner-section-heading">
         <span className="runner-kicker">Onchain Feed</span>
         <h2>RECENT DROPS</h2>
+        <p>Each runner stays on the record: scan market cap, live market cap, amount dropped and the current SOL value of the distribution.</p>
+      </div>
+      <div className="runner-drop-ledger">
+        <article className="runner-drop-feature">
+          <div>
+            <span>Runner 01</span>
+            <strong>{activeRunner.token}</strong>
+            <small>{activeRunner.ticker} scanned at {activeRunner.detectedMarketCap}</small>
+          </div>
+          <a href={activeRunner.dexScreenerUrl} target="_blank" rel="noreferrer">
+            Open chart <ExternalLink size={15} />
+          </a>
+        </article>
+        <div className="runner-drop-metrics">
+          <div>
+            <span>Scanned MC</span>
+            <strong>{activeRunner.detectedMarketCap}</strong>
+          </div>
+          <div>
+            <span>Current MC</span>
+            <strong>{activeRunnerCurrentMarketCap}</strong>
+          </div>
+          <div>
+            <span>Total tokens dropped</span>
+            <strong>{totalRunnerDropped}</strong>
+          </div>
+          <div>
+            <span>Total SOL value</span>
+            <strong>{totalSolValueDropped}</strong>
+          </div>
+          <div>
+            <span>Current drop value</span>
+            <strong>{totalSolValueDropped}</strong>
+          </div>
+        </div>
       </div>
       <div className="runner-tabs" role="tablist" aria-label="Airdrop feed filter">
         {["All Drops", "Completed", "Upcoming"].map((item) => (
