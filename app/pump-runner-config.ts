@@ -4,7 +4,7 @@ export const defaultCurrentRunner = {
   mint: "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump",
   logoSrc: "/brand/harris-runner-logo.png",
   scannedMarketCap: "$40.2K",
-  scannedAgo: "15 mins ago"
+  scannedAgo: "22:17:05"
 } as const;
 
 function cleanEnv(value: string | undefined) {
