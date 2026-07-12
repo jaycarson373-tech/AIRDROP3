@@ -334,10 +334,8 @@ export function DashboardClient() {
                   <span>Eligible Holders</span>
                 </div>
                 <div className="stat">
-                  <strong className={hasRewards ? "" : "empty-value"}>
-                    <AnimatedValue value={hasRewards ? liveStats.totalRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
-                  </strong>
-                  <span>Total {REWARD_SYMBOL} Airdropped</span>
+                  <strong>0 SOL</strong>
+                  <span>Total SOL Value Airdropped</span>
                 </div>
               </div>
 

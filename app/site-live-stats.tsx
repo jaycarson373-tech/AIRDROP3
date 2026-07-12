@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { pumpRunnerConfig } from "./pump-runner-config";
 
 type StatsResponse = {
   totalEpochs: number;
@@ -15,7 +14,6 @@ const fallbackStats: StatsResponse = {
   latestEligibleHolders: 0
 };
 const SOURCE_SYMBOL = "RUNNER";
-const REWARD_SYMBOL = pumpRunnerConfig.currentRunner.ticker;
 
 async function getStats() {
   try {
@@ -62,8 +60,8 @@ export function SiteLiveStats() {
         <span>Total epochs</span>
       </div>
       <div className="stat">
-        <strong>{stats ? displayNumber(stats.totalRewardAirdropped, "Awaiting first drop") : "–"}</strong>
-        <span>Total {REWARD_SYMBOL} Airdropped</span>
+        <strong>0 SOL</strong>
+        <span>Total SOL Value Airdropped</span>
       </div>
       <div className="stat">
         <strong>{stats ? displayCount(stats.latestEligibleHolders) : "–"}</strong>

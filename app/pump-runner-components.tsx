@@ -199,11 +199,6 @@ function formatCompactUsd(value: number | null | undefined, fallback: string) {
   return `$${value.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 2 })}`;
 }
 
-function formatSol(value: number | null | undefined, fallback = "Awaiting SOL value") {
-  if (!Number.isFinite(value ?? NaN) || !value) return fallback;
-  return `${value.toLocaleString(undefined, { maximumFractionDigits: value < 1 ? 4 : 2 })} SOL`;
-}
-
 function formatCount(value: number | null | undefined, fallback = "Awaiting") {
   if (!Number.isFinite(value ?? NaN) || value === null || value === undefined) return fallback;
   return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
@@ -238,15 +233,11 @@ function statusText(status: string) {
 export function MarketTicker({ live }: { live: RunnerLiveData }) {
   const source = live.market.source;
   const runner = live.market.reward;
-  const sol = live.market.sol;
-  const airdroppedValueUsd =
-    live.stats.totalRewardAirdropped && runner.priceUsd ? live.stats.totalRewardAirdropped * runner.priceUsd : null;
-  const airdroppedValueSol = airdroppedValueUsd && sol.priceUsd ? airdroppedValueUsd / sol.priceUsd : null;
   const holderCount = live.holders.uniqueHolders ?? live.stats.latestEligibleHolders;
   const items = [
     `CURRENT RUNNER ${pumpRunnerConfig.currentRunner.ticker}`,
     `${pumpRunnerConfig.currentRunner.ticker} PRICE ${formatPrice(runner.priceUsd, "Awaiting runner price")}`,
-    `AIRDROPPED VALUE ${formatSol(airdroppedValueSol)}`,
+    `TOTAL SOL VALUE AIRDROPPED 0 SOL`,
     `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
     `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
     `${tokenLabel} PRICE ${formatPrice(source.priceUsd)}`,
@@ -374,8 +365,8 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
             <strong>{formatCount(live.stats.latestEligibleHolders, "0")}</strong>
           </span>
           <span>
-            <small>{pumpRunnerConfig.currentRunner.ticker} Dropped</small>
-            <strong>{formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, "0")}</strong>
+            <small>SOL Value Airdropped</small>
+            <strong>0 SOL</strong>
           </span>
           <span>
             <small>Epoch</small>
