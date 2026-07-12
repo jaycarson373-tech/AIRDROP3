@@ -67,6 +67,29 @@ type Holder = {
   lastAirdropAt: string | null;
 };
 
+type WalletReceipt = {
+  epochId: string;
+  rewardAmount: number;
+  dropSolValue: number;
+  txSig: string | null;
+  time: string;
+  status: string;
+};
+
+type WalletLookupResponse = {
+  wallet: string;
+  sourceBalance: number;
+  eligible: boolean;
+  eligibilityMinimum: number;
+  status: string;
+  multiplierBps: number | null;
+  totalRewardReceived: number;
+  totalDropSolValue: number;
+  lastAirdropAt: string | null;
+  receipts: WalletReceipt[];
+  error?: string;
+};
+
 type HoldersResponse = {
   topHolders: Holder[];
   totalSupply?: number;
@@ -215,6 +238,19 @@ function formatSolValue(tokenAmount: number | null | undefined, tokenPriceUsd: n
   }
 
   return `${((tokenAmount * tokenPriceUsd) / solPriceUsd).toLocaleString(undefined, { maximumFractionDigits: 4 })} SOL`;
+}
+
+function formatUsdValue(tokenAmount: number | null | undefined, tokenPriceUsd: number | null | undefined) {
+  if (!Number.isFinite(tokenAmount ?? NaN) || !tokenAmount || !Number.isFinite(tokenPriceUsd ?? NaN) || !tokenPriceUsd) {
+    return "$0";
+  }
+
+  return `$${(tokenAmount * tokenPriceUsd).toLocaleString(undefined, { maximumFractionDigits: 4 })}`;
+}
+
+function formatSolAmount(value: number | null | undefined) {
+  if (!Number.isFinite(value ?? NaN) || !value) return "0 SOL";
+  return `${value.toLocaleString(undefined, { maximumFractionDigits: 5 })} SOL`;
 }
 
 function formatTime(value: string | null | undefined) {
@@ -553,19 +589,53 @@ function HowItWorks() {
 export function EligibilityCard({ live }: { live: RunnerLiveData }) {
   const [lookup, setLookup] = useState("");
   const [submitted, setSubmitted] = useState("");
+  const [walletResult, setWalletResult] = useState<WalletLookupResponse | null>(null);
+  const [walletLoading, setWalletLoading] = useState(false);
+  const [walletError, setWalletError] = useState("");
   const match = useMemo(() => {
     if (!submitted) return null;
     return live.holders.topHolders.find((holder) => holder.address.toLowerCase() === submitted.toLowerCase()) ?? null;
   }, [live.holders.topHolders, submitted]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitted(lookup.trim());
+    const address = lookup.trim();
+    setSubmitted(address);
+    setWalletResult(null);
+    setWalletError("");
+    if (!address) return;
+
+    setWalletLoading(true);
+    try {
+      const response = await fetch(`/api/wallet?address=${encodeURIComponent(address)}`, { cache: "no-store" });
+      const data = (await response.json()) as WalletLookupResponse;
+      if (!response.ok) throw new Error(data.error ?? "Wallet lookup failed");
+      setWalletResult(data);
+    } catch (error) {
+      setWalletError(error instanceof Error ? error.message : "Wallet lookup failed");
+    } finally {
+      setWalletLoading(false);
+    }
   };
 
   const required = `${pumpRunnerConfig.minimumHolding.toLocaleString()} ${tokenLabel}`;
-  const connectedLabel = submitted ? (match ? "ELIGIBLE IN LIVE HOLDER DATA" : "NOT FOUND IN LIVE HOLDER DATA") : "WALLET NOT CONNECTED";
-  const balanceLabel = match ? `${match.balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${tokenLabel}` : "-";
+  const connectedLabel = walletLoading
+    ? "CHECKING WALLET"
+    : walletResult
+      ? walletResult.eligible
+        ? "ELIGIBLE"
+        : walletResult.status.replace(/_/g, " ").toUpperCase()
+      : submitted
+        ? match
+          ? "ELIGIBLE IN LIVE HOLDER DATA"
+          : "NOT FOUND IN LIVE HOLDER DATA"
+        : "WALLET NOT CONNECTED";
+  const balanceLabel = walletResult
+    ? `${walletResult.sourceBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${tokenLabel}`
+    : match
+      ? `${match.balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${tokenLabel}`
+      : "-";
+  const currentReceiptValue = walletResult ? formatUsdValue(walletResult.totalRewardReceived, live.market.reward.priceUsd) : "$0";
 
   return (
     <section className="runner-section runner-eligibility" id="eligibility">
@@ -610,6 +680,48 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
               <button type="submit">Check</button>
             </div>
           </form>
+          {walletError ? <p className="runner-wallet-error">{walletError}</p> : null}
+          {walletResult ? (
+            <div className="runner-wallet-results">
+              <div className="runner-wallet-result-grid">
+                <span>
+                  <small>{rewardSymbol} received</small>
+                  <strong>{formatTokenAmount(walletResult.totalRewardReceived, rewardSymbol, `0 ${rewardSymbol}`)}</strong>
+                </span>
+                <span>
+                  <small>Drop value</small>
+                  <strong>{formatSolAmount(walletResult.totalDropSolValue)}</strong>
+                </span>
+                <span>
+                  <small>Current value</small>
+                  <strong>{currentReceiptValue}</strong>
+                </span>
+              </div>
+              <div className="runner-wallet-receipts">
+                {walletResult.receipts.length ? (
+                  walletResult.receipts.slice(0, 6).map((receipt) => {
+                    const txUrl = transactionUrl(receipt.txSig);
+                    return (
+                      <div className="runner-wallet-receipt" key={`${receipt.epochId}-${receipt.txSig ?? receipt.time}`}>
+                        <span>{formatTime(receipt.time)}</span>
+                        <strong>{formatTokenAmount(receipt.rewardAmount, rewardSymbol)}</strong>
+                        <span>{formatSolAmount(receipt.dropSolValue)}</span>
+                        {txUrl ? (
+                          <a href={txUrl} target="_blank" rel="noreferrer">
+                            Receipt
+                          </a>
+                        ) : (
+                          <span>No tx</span>
+                        )}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p>No settled airdrops for this wallet yet.</p>
+                )}
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </section>
