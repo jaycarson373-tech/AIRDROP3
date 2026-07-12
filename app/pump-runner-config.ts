@@ -140,10 +140,10 @@ export const pumpRunnerConfig = {
       token: "Girlcoin",
       ticker: "$GIRLCOIN",
       detectedMarketCap: "$54K",
-      currentMarketCap: "Archived",
-      returnSinceDetection: "Tracking",
-      amountAcquired: "Previous drop",
-      status: "Previous Runner",
+      currentMarketCap: "$270K",
+      returnSinceDetection: "5x",
+      amountAcquired: "Archived",
+      status: "Previous Scan",
       dexScreenerUrl: "https://dexscreener.com/solana/GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump"
     },
     {
@@ -171,7 +171,7 @@ export const pumpRunnerConfig = {
   ] satisfies RunnerBoardRow[],
   performanceRows: [
     { ticker: activeRunnerLabel, entryMarketCap: 40_200, currentMarketCap: 40_200, changePercent: 0 },
-    { ticker: "$GIRLCOIN", entryMarketCap: 54_000, currentMarketCap: 54_000, changePercent: 0 },
+    { ticker: "$GIRLCOIN", entryMarketCap: 54_000, currentMarketCap: 270_000, changePercent: 400 },
     { ticker: "Runner 03", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 },
     { ticker: "Runner 04", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }
   ] satisfies RunnerPerformanceRow[],
