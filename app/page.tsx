@@ -91,6 +91,20 @@ export default function Page() {
                   View $PUMP Drops
                 </a>
               </div>
+              <div className="rtp-hero-manifest" aria-label="Return to Pump reward rail">
+                <span>
+                  <b>RTP runway</b>
+                  <small>fees land here</small>
+                </span>
+                <span>
+                  <b>$PUMP paid</b>
+                  <small>every 10 minutes</small>
+                </span>
+                <span>
+                  <b>Small bags boosted</b>
+                  <small>lower net-worth tilt</small>
+                </span>
+              </div>
             </div>
             <HeroCountdown />
           </div>
@@ -116,6 +130,7 @@ export default function Page() {
           </div>
         </section>
 
+        <RunwayManifestSection />
         <MarketVolumeSection />
         <InsiderMathSection />
         <LiveProtocolDashboard />
@@ -181,6 +196,57 @@ export default function Page() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function RunwayManifestSection() {
+  const steps = [
+    {
+      title: "Fees land",
+      body: "Creator fees collect in the rail and wait for the next epoch."
+    },
+    {
+      title: "Buy $PUMP",
+      body: "The system routes the reward budget into $PUMP."
+    },
+    {
+      title: "Scan holders",
+      body: "Eligible 1M+ RTP wallets are weighted, with smaller bags favored."
+    },
+    {
+      title: "Send receipts",
+      body: "Payouts go on-chain and the site updates the drop board."
+    }
+  ];
+
+  return (
+    <section className="section runway-section" id="runway">
+      <div className="container runway-grid">
+        <div className="runway-copy">
+          <div className="section-kicker">Drop runway</div>
+          <h2>Not another template flight.</h2>
+          <p>
+            RTP is an airdrop terminal with a simple rhythm: watch the clock, watch the buy, watch the receipt.
+          </p>
+          <div className="runway-signal-row" aria-label="Return to Pump signals">
+            <span>10 minute cycle</span>
+            <span>1M+ eligible</span>
+            <span>$PUMP rewards</span>
+          </div>
+        </div>
+
+        <div className="runway-board" aria-label="Return to Pump airdrop sequence">
+          <div className="runway-line" aria-hidden="true" />
+          {steps.map((step, index) => (
+            <article className="runway-step" key={step.title}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 

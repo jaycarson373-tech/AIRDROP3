@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&display=swap");
 
 :root {
   color-scheme: dark;
@@ -241,7 +241,7 @@ body {
   overflow-x: hidden;
   background: var(--black);
   color: var(--ivory);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: Sora, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   letter-spacing: 0;
 }
 
@@ -270,7 +270,7 @@ h1,
 h2,
 .brand span,
 .section-kicker {
-  font-family: Cinzel, Georgia, serif;
+  font-family: Sora, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 h1 {
@@ -3932,6 +3932,12 @@ td a,
     linear-gradient(180deg, #8ed9f0 0%, #e8f7ef 36%, #04130e 78%, #03100b 100%);
 }
 
+.rtp-page,
+.rtp-page * {
+  font-family: Sora, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  letter-spacing: 0 !important;
+}
+
 .rtp-page .hood-bank-bg-rotator {
   background:
     linear-gradient(180deg, rgba(135, 215, 238, 0.96) 0%, rgba(217, 248, 238, 0.88) 23%, rgba(11, 74, 56, 0.54) 48%, rgba(3, 15, 11, 0.96) 83%),
@@ -4027,6 +4033,18 @@ td a,
   color: #5dffbc;
 }
 
+.rtp-page .section-kicker,
+.rtp-page .metric-card span,
+.rtp-page .volume-card span,
+.rtp-page .bank-statstrip-inner span,
+.rtp-page th,
+.rtp-page .runway-step span,
+.rtp-page .rtp-hero-manifest small {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .rtp-page .hero {
   min-height: calc(100svh - 74px);
   padding: 96px 0 82px;
@@ -4044,14 +4062,27 @@ td a,
 .rtp-page h2,
 .rtp-page h3 {
   letter-spacing: 0;
+  text-transform: none;
 }
 
 .rtp-page h1 {
   max-width: 880px;
   color: #f8fffb;
   font-size: 7.8rem;
+  font-weight: 900;
   line-height: 0.9;
   text-shadow: 0 14px 48px rgba(0, 0, 0, 0.34);
+}
+
+.rtp-page h2 {
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 0.92;
+}
+
+.rtp-page h3 {
+  font-size: 1.16rem;
+  font-weight: 800;
 }
 
 .rtp-page h1 span:first-child,
@@ -4072,11 +4103,14 @@ td a,
 
 .rtp-page .hero-subtitle {
   color: #f7fffb;
+  font-size: 2.3rem;
+  line-height: 1.08;
 }
 
 .rtp-page .hero-lead {
   max-width: 830px;
   color: rgba(247, 255, 251, 0.82);
+  font-size: 1.08rem;
 }
 
 .rtp-page .cta,
@@ -4093,6 +4127,39 @@ td a,
   border: 1px solid rgba(243, 255, 249, 0.2);
   background: rgba(5, 23, 17, 0.64);
   color: #f3fff9;
+}
+
+.rtp-page .rtp-hero-manifest {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 780px;
+  margin-top: 26px;
+}
+
+.rtp-page .rtp-hero-manifest span {
+  min-height: 78px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(72, 247, 174, 0.22);
+  border-left: 4px solid #58ffb4;
+  border-radius: 8px;
+  padding: 14px 16px;
+  background:
+    linear-gradient(135deg, rgba(88, 255, 180, 0.14), transparent 38%),
+    rgba(2, 20, 14, 0.72);
+}
+
+.rtp-page .rtp-hero-manifest b {
+  color: #f8fffb;
+  font-size: 0.98rem;
+  line-height: 1.1;
+}
+
+.rtp-page .rtp-hero-manifest small {
+  color: rgba(243, 255, 249, 0.62);
 }
 
 .rtp-page .bank-statstrip,
@@ -4112,8 +4179,157 @@ td a,
 .rtp-page .volume-verdict {
   border: 1px solid rgba(72, 247, 174, 0.22);
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(6, 28, 21, 0.86), rgba(4, 18, 13, 0.82));
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+  background:
+    linear-gradient(145deg, rgba(9, 42, 31, 0.82), rgba(3, 18, 13, 0.86) 62%),
+    linear-gradient(90deg, rgba(88, 255, 180, 0.08), transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(243, 255, 249, 0.08),
+    0 24px 70px rgba(0, 0, 0, 0.24);
+}
+
+.rtp-page .bank-statstrip-inner strong {
+  font-size: 3.8rem;
+  font-weight: 900;
+}
+
+.rtp-page .bank-statstrip-inner span {
+  color: rgba(243, 255, 249, 0.62);
+}
+
+.rtp-page .runway-section {
+  position: relative;
+  z-index: 2;
+  padding: 90px 0 104px;
+}
+
+.rtp-page .runway-section::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background:
+    linear-gradient(90deg, rgba(72, 247, 174, 0.08) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(72, 247, 174, 0.06) 1px, transparent 1px);
+  background-size: 112px 112px;
+  mask-image: linear-gradient(180deg, transparent, #000 18%, #000 78%, transparent);
+  opacity: 0.32;
+}
+
+.rtp-page .runway-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1.18fr);
+  gap: 34px;
+  align-items: stretch;
+}
+
+.rtp-page .runway-copy {
+  display: flex;
+  min-height: 440px;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 4px solid #58ffb4;
+  padding: 8px 0 8px 28px;
+}
+
+.rtp-page .runway-copy h2 {
+  max-width: 560px;
+  margin-top: 22px;
+}
+
+.rtp-page .runway-copy p {
+  max-width: 560px;
+  margin-top: 22px;
+  color: rgba(243, 255, 249, 0.72);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.rtp-page .runway-signal-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.rtp-page .runway-signal-row span {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(72, 247, 174, 0.2);
+  border-radius: 999px;
+  padding: 0 14px;
+  color: #eafff6;
+  background: rgba(2, 20, 14, 0.62);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.rtp-page .runway-board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(72, 247, 174, 0.24);
+  border-radius: 8px;
+  padding: 14px;
+  background:
+    radial-gradient(ellipse at 20% 18%, rgba(88, 255, 180, 0.18), transparent 34%),
+    linear-gradient(160deg, rgba(5, 32, 23, 0.88), rgba(2, 14, 10, 0.92));
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+}
+
+.rtp-page .runway-board::after {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  top: 50%;
+  height: 2px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgba(88, 255, 180, 0.62), transparent);
+  box-shadow: 0 0 22px rgba(88, 255, 180, 0.36);
+}
+
+.rtp-page .runway-line {
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(243, 255, 249, 0.06);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.rtp-page .runway-step {
+  position: relative;
+  z-index: 1;
+  min-height: 184px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 1px solid rgba(243, 255, 249, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 42%),
+    rgba(2, 20, 14, 0.82);
+}
+
+.rtp-page .runway-step span {
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  color: #58ffb4;
+}
+
+.rtp-page .runway-step h3 {
+  color: #f8fffb;
+  font-size: 1.32rem;
+}
+
+.rtp-page .runway-step p {
+  margin-top: 10px;
+  color: rgba(243, 255, 249, 0.66);
+  font-size: 0.96rem;
+  line-height: 1.55;
 }
 
 .rtp-page .black-bull-portrait {
@@ -4260,6 +4476,47 @@ td a,
 
   .rtp-page h1 {
     font-size: 4.6rem;
+  }
+
+  .rtp-page h2 {
+    font-size: 3.2rem;
+  }
+
+  .rtp-page .hero-subtitle {
+    font-size: 1.55rem;
+  }
+
+  .rtp-page .rtp-hero-manifest,
+  .rtp-page .runway-grid,
+  .rtp-page .runway-board {
+    grid-template-columns: 1fr;
+  }
+
+  .rtp-page .rtp-hero-manifest span {
+    min-height: 68px;
+  }
+
+  .rtp-page .runway-section {
+    padding: 70px 0 78px;
+  }
+
+  .rtp-page .runway-copy {
+    min-height: auto;
+    padding-left: 20px;
+  }
+
+  .rtp-page .runway-board::after {
+    top: 14px;
+    bottom: 14px;
+    left: 50%;
+    right: auto;
+    width: 2px;
+    height: auto;
+    background: linear-gradient(180deg, transparent, rgba(88, 255, 180, 0.62), transparent);
+  }
+
+  .rtp-page .bank-statstrip-inner strong {
+    font-size: 2.35rem;
   }
 
   .rtp-page .insider-copy {
