@@ -134,10 +134,10 @@ export async function GET() {
   const source = sourceMint();
   const pairs = await fetchDexPairs([reward, source, SOL_MINT].filter(Boolean) as string[]);
   const payload: MarketPayload = {
-    reward: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "PUMP"),
+    reward: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "Runner drops"),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RTP"
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER"
     ),
     sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
     updatedAt: new Date().toISOString()

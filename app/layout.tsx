@@ -3,29 +3,20 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://returntopump.fun"),
-  title: "Return to Pump",
-  description: "Return to Pump claims creator fees, buys $PUMP, and pays eligible RTP holders automatically every 10 minutes.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://pumprunner.fun"),
+  title: "Pump Runner",
+  description: "Pump Runner scans Pump.fun runners, acquires selected tokens, and distributes scheduled drops to eligible $RUNNER holders.",
   openGraph: {
-    title: "Return to Pump",
-    description: "Return to Pump claims creator fees, buys $PUMP, and pays eligible RTP holders automatically every 10 minutes.",
-    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://returntopump.fun",
-    siteName: "Return to Pump",
-    images: [
-      {
-        url: "/brand/return-to-pump-banner.png",
-        width: 1280,
-        height: 399,
-        alt: "Return to Pump"
-      }
-    ],
+    title: "Pump Runner",
+    description: "Pump Runner scans Pump.fun runners, acquires selected tokens, and distributes scheduled drops to eligible $RUNNER holders.",
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://pumprunner.fun",
+    siteName: "Pump Runner",
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Return to Pump",
-    description: "Return to Pump claims creator fees, buys $PUMP, and pays eligible RTP holders automatically every 10 minutes.",
-    images: ["/brand/return-to-pump-banner.png"]
+    title: "Pump Runner",
+    description: "Pump Runner scans Pump.fun runners, acquires selected tokens, and distributes scheduled drops to eligible $RUNNER holders."
   },
   icons: {
     icon: [

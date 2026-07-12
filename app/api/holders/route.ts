@@ -38,17 +38,17 @@ function toNumber(value: unknown) {
   return Number.isFinite(number) ? number : 0;
 }
 
-const HOUR_MS = 60 * 60 * 1000;
-const DAY_MS = 24 * HOUR_MS;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const THREE_DAY_MS = 3 * DAY_MS;
+const SEVEN_DAY_MS = 7 * DAY_MS;
 
 function fallbackMultiplierBps(eligibleSince: string | null) {
   const sinceMs = Date.parse(eligibleSince ?? "");
   if (!Number.isFinite(sinceMs)) return 10_000;
   const heldMs = Math.max(0, Date.now() - sinceMs);
-  if (heldMs >= 30 * DAY_MS) return 100_000;
-  if (heldMs >= 7 * DAY_MS) return 50_000;
-  if (heldMs >= DAY_MS) return 20_000;
-  if (heldMs >= HOUR_MS) return 15_000;
+  if (heldMs >= SEVEN_DAY_MS) return 11_500;
+  if (heldMs >= THREE_DAY_MS) return 11_000;
+  if (heldMs >= DAY_MS) return 10_500;
   return 10_000;
 }
 
@@ -64,10 +64,9 @@ function holdTimeLabel(eligibleSince: string | null) {
   const sinceMs = Date.parse(eligibleSince ?? "");
   if (!Number.isFinite(sinceMs)) return null;
   const heldMs = Math.max(0, Date.now() - sinceMs);
-  if (heldMs >= 30 * DAY_MS) return "1 month+";
-  if (heldMs >= 7 * DAY_MS) return "1 week+";
+  if (heldMs >= SEVEN_DAY_MS) return "7 days+";
+  if (heldMs >= THREE_DAY_MS) return "3 days+";
   if (heldMs >= DAY_MS) return "1 day+";
-  if (heldMs >= HOUR_MS) return "1 hour+";
   return "warming up";
 }
 
@@ -111,8 +110,8 @@ async function getSettledPayouts(config: { url: string; key: string }) {
 }
 
 function reasonLabel(reason: string | null | undefined) {
-  const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RTP";
-  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "1M";
+  const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER";
+  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "2.5M";
   if (reason === "balance_decreased") return `Sold ${sourceSymbol}`;
   if (reason === "dropped_below_threshold") return `Dropped below ${eligibilityLabel}`;
   if (reason === "dropped_below_threshold_or_sold") return `Sold or dropped below ${eligibilityLabel}`;

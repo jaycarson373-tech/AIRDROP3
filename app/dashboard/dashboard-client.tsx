@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ParallaxBackground } from "../parallax-background";
 
 type StatsResponse = {
   currentEpoch: number;
@@ -84,10 +83,11 @@ const emptyStats: StatsResponse = {
 
 const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
-const EPOCH_MS = 10 * 60 * 1000;
-const PROJECT_NAME = "Return to Pump";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RTP";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "PUMP";
+const EPOCH_MINUTES = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5);
+const EPOCH_MS = Math.max(1, EPOCH_MINUTES) * 60 * 1000;
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Pump Runner";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "Runner drops";
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {
@@ -271,15 +271,14 @@ export function DashboardClient() {
   }, [nextDropMs, now]);
 
   return (
-    <div className="page">
-      <ParallaxBackground />
+    <div className="page dashboard-page">
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
             <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
-              Return to Pump
-              <small>RTP rewards</small>
+              {PROJECT_NAME}
+              <small>{SOURCE_SYMBOL} rewards</small>
             </span>
           </Link>
           <div className="nav-links">
@@ -296,9 +295,9 @@ export function DashboardClient() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Live $PUMP ledger
+                Live runner drop ledger
               </div>
-              <h1 className="dashboard-title">$PUMP Drop Ledger</h1>
+              <h1 className="dashboard-title">{REWARD_SYMBOL} Ledger</h1>
             </div>
           </div>
 
@@ -309,7 +308,7 @@ export function DashboardClient() {
               <div className="stats dashboard-stats">
                 <div className="stat live-stat">
                   <strong>{countdown}</strong>
-                  <span>Next 10-minute distribution</span>
+                  <span>Next {EPOCH_MINUTES}-minute distribution</span>
                   <div className="round-progress tiny" aria-hidden="true">
                     <span style={{ width: `${Math.min(100, Math.max(0, progress))}%` }} />
                   </div>
@@ -318,7 +317,7 @@ export function DashboardClient() {
                   <strong className={hasRewards ? "" : "empty-value"}>
                     <AnimatedValue value={hasRewards ? liveStats.lastRewardAirdropped : null} empty="Awaiting first drop" suffix={` ${REWARD_SYMBOL}`} />
                   </strong>
-                  <span>Last {REWARD_SYMBOL} Drop</span>
+                  <span>Last distribution</span>
                 </div>
                 <div className="stat">
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
@@ -343,7 +342,7 @@ export function DashboardClient() {
               <section className="history-card" style={{ marginTop: 16 }}>
                 <div className="history-head">
                   <h3>Epoch History</h3>
-                  <span>Latest settled $PUMP rounds</span>
+                  <span>Latest settled runner drop rounds</span>
                 </div>
                 <div className="table-wrap">
                   <table className="history-table">
@@ -460,7 +459,7 @@ export function DashboardClient() {
 
               <div className="dash-grid" style={{ marginTop: 16 }}>
                 <section className="card">
-                  <h3>Recent $PUMP Drops</h3>
+                  <h3>Recent {REWARD_SYMBOL} Drops</h3>
                   <div className="activity-feed" style={{ marginTop: 14 }}>
                     {liveStats.recentRewards.length ? (
                       liveStats.recentRewards.map((reward) => (

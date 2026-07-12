@@ -153,17 +153,17 @@ async function averageHolderMultiplier(config: SupabaseConfig) {
   }
 }
 
-const HOUR_MS = 60 * 60 * 1000;
-const DAY_MS = 24 * HOUR_MS;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const THREE_DAY_MS = 3 * DAY_MS;
+const SEVEN_DAY_MS = 7 * DAY_MS;
 
 function fallbackMultiplierBps(eligibleSince: string | null) {
   const sinceMs = Date.parse(eligibleSince ?? "");
   if (!Number.isFinite(sinceMs)) return 10_000;
   const heldMs = Math.max(0, Date.now() - sinceMs);
-  if (heldMs >= 30 * DAY_MS) return 100_000;
-  if (heldMs >= 7 * DAY_MS) return 50_000;
-  if (heldMs >= DAY_MS) return 20_000;
-  if (heldMs >= HOUR_MS) return 15_000;
+  if (heldMs >= SEVEN_DAY_MS) return 11_500;
+  if (heldMs >= THREE_DAY_MS) return 11_000;
+  if (heldMs >= DAY_MS) return 10_500;
   return 10_000;
 }
 
@@ -226,7 +226,7 @@ async function pfpRewardWalletBalanceSol() {
 
 function epochNumber(epochId: string, fallback: number) {
   const timestamp = Date.parse(epochId);
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
   return Number.isFinite(timestamp) ? Math.floor(timestamp / epochMs) : fallback;
 }
 
@@ -239,7 +239,7 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function nextDropTime() {
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
   return new Date(Math.ceil(Date.now() / epochMs) * epochMs).toISOString();
 }
 
@@ -318,7 +318,7 @@ async function liveEligibleHolderCount() {
   const mint = sourceTokenMint();
   if (!mint) return null;
 
-  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 1_000_000));
+  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 2_500_000));
   const maxHolderPct = numberEnv("MAX_HOLDER_PCT", 4);
   const endpoint = rpcUrl();
   const cacheKey = `${endpoint}:${mint.toBase58()}:${eligibilityMin}:${maxHolderPct}`;

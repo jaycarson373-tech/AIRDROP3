@@ -20,6 +20,10 @@ type HoldersResponse = {
 };
 
 const emptyResponse: HoldersResponse = { fallenBulls: [] };
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Pump Runner";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "Runner drops";
+const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "2.5M";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -71,9 +75,9 @@ export function FallenBullsClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/logo.png" alt="Return to Pump logo" />
+            <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
             <span>
-              Return to Pump
+              {PROJECT_NAME}
               <small>Ineligible Wallets</small>
             </span>
           </Link>
@@ -91,7 +95,7 @@ export function FallenBullsClient() {
             <div className="section-kicker">Ineligibility ledger</div>
             <div className="section-head split-head">
               <h1 className="dashboard-title">Ineligible Wallets</h1>
-              <p>Wallets that lost eligibility by selling or falling below the 1,000,000 RTP requirement.</p>
+              <p>Wallets that lost eligibility by selling or falling below the {ELIGIBILITY_LABEL} {SOURCE_SYMBOL} requirement.</p>
             </div>
 
             <div className="history-card bull-board-card">
@@ -114,7 +118,7 @@ export function FallenBullsClient() {
                         <tr key={`${wallet.address}-${wallet.ineligibleAt ?? wallet.lastSeenAt ?? "fallen"}`}>
                           <td>{compactAddress(wallet.address)}</td>
                           <td>{wallet.ineligibleReason}</td>
-                          <td>{formatNumber(wallet.totalRewardEarned)} PUMP</td>
+                          <td>{formatNumber(wallet.totalRewardEarned)} {REWARD_SYMBOL}</td>
                           <td>Ineligible</td>
                           <td>{wallet.currentStreak ?? 0} epochs</td>
                           <td>{formatDate(wallet.lastAirdropAt)}</td>

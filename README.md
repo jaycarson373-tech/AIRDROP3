@@ -1,7 +1,7 @@
-# Return to Pump
+# Pump Runner
 
-Source token: `$RTP`
-Reward asset: `$PUMP`
+Source token: `$RUNNER`
+Reward assets: selected Pump.fun runner tokens
 
 One repo for:
 
@@ -11,30 +11,29 @@ One repo for:
 
 ## Flow
 
-Every 10-minute epoch:
+Every scheduled epoch:
 
 1. Claim creator fees to the treasury wallet.
-2. Buy `$PUMP` with 100% of usable claimed fees.
-3. Snapshot `$RTP` holders with at least `ELIGIBILITY_MIN`.
+2. Buy the configured reward token with the configured reward budget.
+3. Snapshot `$RUNNER` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, curve/pool addresses, `EXCLUDE_WALLETS`, holders above `MAX_HOLDER_PCT`, and wallets that permanently lost eligibility.
 5. Select up to `MAX_WALLETS_PER_EPOCH` deterministic-random eligible holders for the epoch.
 6. Score selected holders with a bias toward smaller eligible balances and lower SOL balances.
-7. Airdrop `$PUMP` directly to selected wallets.
+7. Airdrop the configured reward token directly to selected wallets.
 8. Store epochs, snapshots, claims, buys, and payouts in Supabase for the dashboard.
 
 ## Holder Weighting
 
-Reward weight starts from `$RTP` held, then skews toward smaller holders:
+Reward weight starts from `$RUNNER` held, then skews toward smaller holders:
 
 - Eligible wallets above `MAX_HOLDER_PCT` are excluded before selection.
 - Recipient selection is deterministic-random, with a boost for lower eligible balances.
 - Payout weighting caps large holder balance impact around the median eligible wallet.
 - Lower-balance wallets and lower-SOL-balance wallets receive additional weighting boosts.
-- 100% of the reward pool buys `$PUMP`.
-- Eligible holders receive automatic `$PUMP` payouts every 10 minutes when live conditions are met.
+- The hold multiplier is intentionally modest: 1.00x, 1.05x, 1.10x, then 1.15x at 7+ days.
 - Receipts are tracked in Supabase and linked to on-chain transactions.
 
-Default eligibility is 1,000,000 `$RTP`. Selling any amount of `$RTP`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
+Default eligibility is 2,500,000 `$RUNNER`. Selling any amount of `$RUNNER`, or falling below `ELIGIBILITY_MIN`, permanently removes that wallet from future tracked distributions.
 
 ## Supabase
 
@@ -80,17 +79,20 @@ commit;
 Required:
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Return to Pump"
-NEXT_PUBLIC_CA=ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump
-NEXT_PUBLIC_SOURCE_SYMBOL=RTP
-NEXT_PUBLIC_REWARD_SYMBOL=PUMP
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump
-NEXT_PUBLIC_REWARD_TOKEN_MINT=<PUMP_REWARD_TOKEN_MINT>
-NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump
-NEXT_PUBLIC_X_URL=https://x.com/ReturnToPumpFun
+NEXT_PUBLIC_PROJECT_NAME="Pump Runner"
+NEXT_PUBLIC_CA=<RUNNER_SOURCE_TOKEN_MINT>
+NEXT_PUBLIC_SOURCE_SYMBOL=RUNNER
+NEXT_PUBLIC_REWARD_SYMBOL=<DROPPED_RUNNER_SYMBOL>
+NEXT_PUBLIC_SOURCE_TOKEN_MINT=<RUNNER_SOURCE_TOKEN_MINT>
+NEXT_PUBLIC_REWARD_TOKEN_MINT=<DROPPED_RUNNER_TOKEN_MINT>
+NEXT_PUBLIC_BUY_URL=https://pump.fun/coin/<RUNNER_SOURCE_TOKEN_MINT>
+NEXT_PUBLIC_X_URL=<X_URL>
+NEXT_PUBLIC_TELEGRAM_URL=<TELEGRAM_URL>
+NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/<RUNNER_SOURCE_TOKEN_MINT>
+NEXT_PUBLIC_PUMPFUN_URL=https://pump.fun/coin/<RUNNER_SOURCE_TOKEN_MINT>
 NEXT_PUBLIC_FIRST_AIRDROP_AT=<OPTIONAL_ISO_TIME>
-NEXT_PUBLIC_EPOCH_MINUTES=10
-NEXT_PUBLIC_ELIGIBILITY_LABEL=1M
+NEXT_PUBLIC_EPOCH_MINUTES=5
+NEXT_PUBLIC_ELIGIBILITY_LABEL=2.5M
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
 ```
@@ -100,11 +102,11 @@ Recommended server-only Vercel env for dashboard API reads:
 ```bash
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
-EPOCH_MINUTES=10
-ELIGIBILITY_MIN=1000000
+EPOCH_MINUTES=5
+ELIGIBILITY_MIN=2500000
 MAX_HOLDER_PCT=4
-SOURCE_TOKEN_MINT=ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump
-REWARD_TOKEN_MINT=<PUMP_REWARD_TOKEN_MINT>
+SOURCE_TOKEN_MINT=<RUNNER_SOURCE_TOKEN_MINT>
+REWARD_TOKEN_MINT=<DROPPED_RUNNER_TOKEN_MINT>
 ```
 
 Never prefix the service-role key with `NEXT_PUBLIC_`.
@@ -116,8 +118,8 @@ Required:
 ```bash
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump
-REWARD_TOKEN_MINT=<PUMP_REWARD_TOKEN_MINT>
+SOURCE_TOKEN_MINT=<RUNNER_SOURCE_TOKEN_MINT>
+REWARD_TOKEN_MINT=<DROPPED_RUNNER_TOKEN_MINT>
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
@@ -136,8 +138,8 @@ Turn `CLAIM_ENABLED`, `BUY_ENABLED`, and `AIRDROP_ENABLED` to `true` only when t
 Reward settings:
 
 ```bash
-EPOCH_MINUTES=10
-ELIGIBILITY_MIN=1000000
+EPOCH_MINUTES=5
+ELIGIBILITY_MIN=2500000
 MAX_WALLETS_PER_EPOCH=150
 MAX_HOLDER_PCT=4
 EXCLUDE_WALLETS=
@@ -154,7 +156,7 @@ PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
 ```
 
-`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` keep SOL available for transaction fees before the worker buys and distributes `$PUMP`. `AIRDROP_REWARD_BPS=10000` routes the full configured reward pool to eligible holders.
+`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` keep SOL available for transaction fees before the worker buys and distributes reward tokens. `AIRDROP_REWARD_BPS=10000` routes the full configured reward pool to eligible holders.
 
 `REWARD_TOKEN_MINT`, `SWAP_BALANCE_BPS`, and `SWAP_SLIPPAGE_BPS` are required for token reward mode.
 
@@ -184,3 +186,4 @@ The included `railway.json` builds and starts the worker service.
 - Payouts are idempotent by `epoch_id:wallet`.
 - In `REWARD_MODE=token`, the worker buys the configured reward token and creates holder token accounts when needed.
 - Dashboard reads Supabase; it does not need wallet secrets.
+- Scanner dashboard sample rows live in `app/pump-runner-config.ts` until a real scanner feed is connected.

@@ -1,0 +1,851 @@
+"use client";
+
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { ArrowRight, ExternalLink } from "lucide-react";
+import { CopyCaButton } from "./copy-ca-button";
+import { pumpRunnerConfig } from "./pump-runner-config";
+
+type Round = {
+  epoch: number;
+  status: string;
+  startedAt: string;
+  duration: string;
+  rewardBought: number;
+  distributedPump: number;
+  txSig: string | null;
+};
+
+type Reward = {
+  epoch: number;
+  wallet: string;
+  rewardAmount: number;
+  normalRewardAmount?: number;
+  time: string;
+  status: string;
+  txSig: string | null;
+};
+
+type StatsResponse = {
+  currentEpoch: number;
+  totalEpochs: number;
+  lastRewardAirdropped: number;
+  totalRewardAirdropped: number;
+  latestEligibleHolders: number;
+  averageMultiplier: number | null;
+  nextDropTime: string;
+  roundHistory: Round[];
+  recentRewards: Reward[];
+};
+
+type MarketToken = {
+  priceUsd: number | null;
+  change24h: number | null;
+  marketCapUsd: number | null;
+  fdvUsd: number | null;
+  volume24hUsd: number | null;
+  liquidityUsd: number | null;
+  url: string | null;
+  symbol: string;
+};
+
+type MarketResponse = {
+  reward: MarketToken;
+  source: MarketToken;
+  sol: MarketToken;
+  updatedAt: string;
+};
+
+type Holder = {
+  rank: number;
+  address: string;
+  balance: number;
+  percentage: string;
+  currentMultiplier: string | null;
+  currentMultiplierBps: number | null;
+  currentHoldTime: string | null;
+  totalRewardEarned: number;
+  lastAirdropAt: string | null;
+};
+
+type HoldersResponse = {
+  topHolders: Holder[];
+  totalSupply?: number;
+  uniqueHolders?: number;
+};
+
+type RunnerLiveData = {
+  stats: StatsResponse;
+  market: MarketResponse;
+  holders: HoldersResponse;
+  countdown: string;
+};
+
+const refreshMs = 12_000;
+const tokenLabel = pumpRunnerConfig.tokenLabel;
+const sourceSymbol = pumpRunnerConfig.ticker;
+const rewardSymbol = pumpRunnerConfig.rewardSymbol;
+
+const emptyStats: StatsResponse = {
+  currentEpoch: 0,
+  totalEpochs: 0,
+  lastRewardAirdropped: 0,
+  totalRewardAirdropped: 0,
+  latestEligibleHolders: 0,
+  averageMultiplier: null,
+  nextDropTime: new Date().toISOString(),
+  roundHistory: [],
+  recentRewards: []
+};
+
+const emptyMarket: MarketResponse = {
+  reward: emptyMarketToken(rewardSymbol),
+  source: emptyMarketToken(sourceSymbol),
+  sol: emptyMarketToken("SOL"),
+  updatedAt: new Date().toISOString()
+};
+
+const emptyHolders: HoldersResponse = {
+  topHolders: [],
+  totalSupply: 0,
+  uniqueHolders: 0
+};
+
+function emptyMarketToken(symbol: string): MarketToken {
+  return {
+    priceUsd: null,
+    change24h: null,
+    marketCapUsd: null,
+    fdvUsd: null,
+    volume24hUsd: null,
+    liquidityUsd: null,
+    url: null,
+    symbol
+  };
+}
+
+async function getJson<T>(path: string, fallback: T): Promise<T> {
+  try {
+    const response = await fetch(path, { cache: "no-store" });
+    if (!response.ok) return fallback;
+    return (await response.json()) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function useRunnerLiveData(): RunnerLiveData {
+  const [stats, setStats] = useState<StatsResponse>(emptyStats);
+  const [market, setMarket] = useState<MarketResponse>(emptyMarket);
+  const [holders, setHolders] = useState<HoldersResponse>(emptyHolders);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    let active = true;
+
+    const load = async () => {
+      const [nextStats, nextMarket, nextHolders] = await Promise.all([
+        getJson<StatsResponse>("/api/stats", emptyStats),
+        getJson<MarketResponse>("/api/market", emptyMarket),
+        getJson<HoldersResponse>("/api/holders", emptyHolders)
+      ]);
+
+      if (!active) return;
+      setStats(nextStats);
+      setMarket(nextMarket);
+      setHolders(nextHolders);
+    };
+
+    load();
+    const refreshTimer = window.setInterval(load, refreshMs);
+    return () => {
+      active = false;
+      window.clearInterval(refreshTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return {
+    stats,
+    market,
+    holders,
+    countdown: formatCountdown(Date.parse(stats.nextDropTime) - now)
+  };
+}
+
+function formatCountdown(ms: number) {
+  const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function formatUsd(value: number | null | undefined, fallback = "Awaiting") {
+  if (!Number.isFinite(value ?? NaN) || !value) return fallback;
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+}
+
+function formatPrice(value: number | null | undefined, fallback = pumpRunnerConfig.marketTickerFallback.price) {
+  if (!Number.isFinite(value ?? NaN) || !value) return fallback;
+  const maximumFractionDigits = value < 0.0001 ? 10 : value < 0.01 ? 8 : value < 1 ? 6 : 4;
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits })}`;
+}
+
+function formatCompactUsd(value: number | null | undefined, fallback: string) {
+  if (!Number.isFinite(value ?? NaN) || !value) return fallback;
+  return `$${value.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 2 })}`;
+}
+
+function formatCount(value: number | null | undefined, fallback = "Awaiting") {
+  if (!Number.isFinite(value ?? NaN) || value === null || value === undefined) return fallback;
+  return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function formatTokenAmount(value: number | null | undefined, symbol: string, fallback = "Awaiting first drop") {
+  if (!Number.isFinite(value ?? NaN) || !value) return fallback;
+  return `${value.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${symbol}`;
+}
+
+function formatTime(value: string | null | undefined) {
+  const date = new Date(value ?? "");
+  return Number.isNaN(date.getTime()) ? "Queued" : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function compactAddress(address: string) {
+  if (!address) return "Not set";
+  if (address.length <= 12) return address;
+  return `${address.slice(0, 5)}...${address.slice(-5)}`;
+}
+
+function transactionUrl(signature: string | null) {
+  return signature ? `https://solscan.io/tx/${signature}` : null;
+}
+
+function statusText(status: string) {
+  if (status === "settled" || status === "completed") return "Confirmed";
+  if (status === "running") return "Processing";
+  return status.replace(/_/g, " ");
+}
+
+export function MarketTicker({ live }: { live: RunnerLiveData }) {
+  const source = live.market.source;
+  const items = [
+    `${tokenLabel} ${formatPrice(source.priceUsd)}`,
+    `MCAP ${formatCompactUsd(source.marketCapUsd ?? source.fdvUsd, pumpRunnerConfig.marketTickerFallback.marketCap)}`,
+    `24H VOL ${formatCompactUsd(source.volume24hUsd, pumpRunnerConfig.marketTickerFallback.volume24h)}`,
+    `HOLDERS ${formatCount(live.holders.uniqueHolders ?? live.stats.latestEligibleHolders, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
+    `NEXT DROP ${live.countdown}`,
+    `DISTRIBUTED ${formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, pumpRunnerConfig.marketTickerFallback.totalDistributed)}`,
+    `SCANNER ${pumpRunnerConfig.scannerStatus}`,
+    `TREASURY ${pumpRunnerConfig.treasuryStatus}`
+  ];
+
+  return (
+    <div className="runner-ticker" aria-label="Live Pump Runner market ticker">
+      <div className="runner-ticker-track">
+        {[0, 1].map((copy) => (
+          <div className="runner-ticker-group" key={copy}>
+            {items.map((item) => (
+              <span key={`${copy}-${item}`}>{item}</span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function RunnerNav() {
+  const ca = pumpRunnerConfig.contractAddress;
+  return (
+    <header className="runner-nav">
+      <a className="runner-brand" href="#top" aria-label="Pump Runner home">
+        <span className="runner-brand-mark">PR</span>
+        <span>
+          <strong>{pumpRunnerConfig.name}</strong>
+          <small>{tokenLabel} scanner desk</small>
+        </span>
+      </a>
+      <nav className="runner-links" aria-label="Primary navigation">
+        <a href="#board">Board</a>
+        <a href="#scanner">Scanner</a>
+        <a href="#eligibility">Eligibility</a>
+        <a href="#drops">Drops</a>
+      </nav>
+      <div className="runner-actions">
+        {ca ? <CopyCaButton address={ca} label={compactAddress(ca)} /> : null}
+        {pumpRunnerConfig.xUrl ? (
+          <a className="runner-small-button" href={pumpRunnerConfig.xUrl} target="_blank" rel="noreferrer">
+            X
+          </a>
+        ) : null}
+        <a className="runner-small-button runner-buy-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
+          Buy
+        </a>
+      </div>
+    </header>
+  );
+}
+
+function HeroSection({ live }: { live: RunnerLiveData }) {
+  return (
+    <section className="runner-hero" id="top">
+      <div className="runner-hero-copy">
+        <div className="runner-live-pill">
+          <span className="runner-live-dot" />
+          RUNNER SCANNER ONLINE
+        </div>
+        <h1>WE CATCH EVERY RUNNER.</h1>
+        <p className="runner-hero-subtitle">
+          Pump Runner scans the trenches for emerging runners, acquires selected tokens and distributes them to eligible {tokenLabel} holders.
+        </p>
+        <p className="runner-hero-line">Our scanner finds them. The treasury buys them. Holders receive the drops.</p>
+        <div className="runner-hero-actions">
+          <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
+            Buy {tokenLabel} <ArrowRight size={18} />
+          </a>
+          <a className="runner-button runner-button-secondary" href="#drops">
+            View Live Drops
+          </a>
+        </div>
+        <div className="runner-sequence" aria-label="Pump Runner process">
+          <span>SCAN</span>
+          <span>BUY</span>
+          <span>AIRDROP</span>
+        </div>
+      </div>
+
+      <div className="runner-hero-panel" aria-label="Pump Runner live terminal">
+        <div className="runner-panel-header">
+          <span>LIVE EPOCH</span>
+          <strong>{live.countdown}</strong>
+        </div>
+        <div className="runner-track-display">
+          <div className="runner-track-line" />
+          <div className="runner-track-lane" />
+          <div className="runner-scan-line" />
+        </div>
+        <div className="runner-hero-stats">
+          <span>
+            <small>Eligible</small>
+            <strong>{formatCount(live.stats.latestEligibleHolders, "0")}</strong>
+          </span>
+          <span>
+            <small>Total Dropped</small>
+            <strong>{formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, "0")}</strong>
+          </span>
+          <span>
+            <small>Epoch</small>
+            <strong>{formatCount(live.stats.currentEpoch, "00")}</strong>
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function RunnerLeaderboard() {
+  const [tab, setTab] = useState("Today");
+  const summary = pumpRunnerConfig.treasuryStatistics;
+  const summaryItems = [
+    ["Runners caught today", summary.runnersCaughtToday],
+    ["Average entry market cap", summary.averageEntryMarketCap],
+    ["Average return", summary.averageReturn],
+    ["Best runner", summary.bestRunner],
+    ["Total distributed today", summary.totalDistributedToday]
+  ];
+
+  return (
+    <section className="runner-section" id="board">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">Live Runner Board</span>
+        <h2>TODAY'S TOP RUNNERS</h2>
+        <p>Tokens identified and acquired by the Pump Runner scanner today.</p>
+      </div>
+      <div className="runner-tabs" role="tablist" aria-label="Runner board range">
+        {["Today", "This Week", "All Time"].map((item) => (
+          <button
+            aria-selected={tab === item}
+            className={tab === item ? "is-active" : ""}
+            key={item}
+            onClick={() => setTab(item)}
+            role="tab"
+            type="button"
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+      <div className="runner-summary-grid">
+        {summaryItems.map(([label, value]) => (
+          <div className="runner-stat-card" key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </div>
+      <div className="runner-table-wrap">
+        <table className="runner-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Token</th>
+              <th>Ticker</th>
+              <th>Detected MC</th>
+              <th>Current MC</th>
+              <th>Return</th>
+              <th>Acquired</th>
+              <th>Status</th>
+              <th>Chart</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pumpRunnerConfig.runnerBoard.map((runner) => (
+              <tr key={`${tab}-${runner.rank}-${runner.ticker}`}>
+                <td>{runner.rank}</td>
+                <td>{runner.token}</td>
+                <td>{runner.ticker}</td>
+                <td>{runner.detectedMarketCap}</td>
+                <td>{runner.currentMarketCap}</td>
+                <td className="runner-positive">{runner.returnSinceDetection}</td>
+                <td>{runner.amountAcquired}</td>
+                <td>
+                  <span className="runner-status-chip">{runner.status}</span>
+                </td>
+                <td>
+                  <a href={runner.dexScreenerUrl} target="_blank" rel="noreferrer" aria-label={`Open ${runner.ticker} chart`}>
+                    <ExternalLink size={16} />
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+export function ScannerStatus() {
+  const metrics = pumpRunnerConfig.scannerMetrics;
+  const rows = [
+    ["SCANNER STATUS", "ONLINE"],
+    ["TOKENS TRACKED", metrics.tokensTracked],
+    ["SIGNALS REVIEWED", metrics.signalsReviewed],
+    ["RUNNERS SELECTED", metrics.runnersSelected],
+    ["CURRENT EPOCH", metrics.currentEpoch]
+  ];
+
+  return (
+    <section className="runner-section" id="scanner">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">Signal Engine</span>
+        <h2>THE RUNNER SCANNER</h2>
+        <p>
+          Pump Runner is powered by a proprietary scanner built to track liquidity, momentum, volume, holder growth and emerging market activity across Pump.fun.
+        </p>
+      </div>
+      <div className="runner-scanner-layout">
+        <div className="runner-card-grid">
+          {pumpRunnerConfig.scannerCards.map((card) => (
+            <article className="runner-info-card" key={card.title}>
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+            </article>
+          ))}
+        </div>
+        <div className="runner-terminal">
+          {rows.map(([label, value]) => (
+            <div className="runner-terminal-row" key={label}>
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </div>
+          ))}
+          <p>The exact scanner methodology remains private to protect the strategy and prevent copy trading.</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks() {
+  const steps = [
+    {
+      label: "01",
+      title: "The scanner finds a runner",
+      body: "The private scanner continuously analyses new and active Pump.fun tokens for high-quality setups."
+    },
+    {
+      label: "02",
+      title: "The treasury acquires it",
+      body: "A portion of project revenue is used to acquire tokens selected by the scanner."
+    },
+    {
+      label: "03",
+      title: "Holders receive the drop",
+      body: `Acquired tokens are distributed to eligible ${tokenLabel} holders during scheduled airdrop epochs.`
+    }
+  ];
+
+  return (
+    <section className="runner-section runner-how" id="how">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">How It Works</span>
+        <h2>RUN WITH THE WINNERS</h2>
+      </div>
+      <div className="runner-step-list">
+        {steps.map((step) => (
+          <article className="runner-step" key={step.label}>
+            <span>{step.label}</span>
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </article>
+        ))}
+      </div>
+      <strong className="runner-bold-line">Hold one token. Gain exposure to the runners our system catches.</strong>
+    </section>
+  );
+}
+
+export function EligibilityCard({ live }: { live: RunnerLiveData }) {
+  const [lookup, setLookup] = useState("");
+  const [submitted, setSubmitted] = useState("");
+  const match = useMemo(() => {
+    if (!submitted) return null;
+    return live.holders.topHolders.find((holder) => holder.address.toLowerCase() === submitted.toLowerCase()) ?? null;
+  }, [live.holders.topHolders, submitted]);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitted(lookup.trim());
+  };
+
+  const required = `${pumpRunnerConfig.minimumHolding.toLocaleString()} ${tokenLabel}`;
+  const connectedLabel = submitted ? (match ? "ELIGIBLE IN LIVE HOLDER DATA" : "NOT FOUND IN LIVE HOLDER DATA") : "WALLET NOT CONNECTED";
+  const balanceLabel = match ? `${match.balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${tokenLabel}` : "-";
+
+  return (
+    <section className="runner-section runner-eligibility" id="eligibility">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">Holder Rules</span>
+        <h2>ELIGIBILITY</h2>
+      </div>
+      <div className="runner-eligibility-grid">
+        <div className="runner-check-card">
+          <h3>To qualify for runner airdrops, a wallet must:</h3>
+          <ul>
+            <li>Hold at least {required}</li>
+            <li>Be holding at the eligibility snapshot</li>
+            <li>Continue holding through the active epoch</li>
+            <li>Meet basic wallet and anti-abuse requirements</li>
+          </ul>
+          <p>{pumpRunnerConfig.rentCopy}</p>
+        </div>
+        <div className="runner-wallet-card">
+          <div className="runner-wallet-row">
+            <span>Your balance</span>
+            <strong>{balanceLabel}</strong>
+          </div>
+          <div className="runner-wallet-row">
+            <span>Required balance</span>
+            <strong>{required}</strong>
+          </div>
+          <div className="runner-wallet-row">
+            <span>Eligibility</span>
+            <strong>{connectedLabel}</strong>
+          </div>
+          <form className="runner-lookup" onSubmit={handleSubmit}>
+            <label htmlFor="wallet-lookup">Public wallet lookup</label>
+            <div>
+              <input
+                id="wallet-lookup"
+                onChange={(event) => setLookup(event.target.value)}
+                placeholder="Paste Solana wallet"
+                type="text"
+                value={lookup}
+              />
+              <button type="submit">Check</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function HoldMultiplier() {
+  return (
+    <section className="runner-section runner-multiplier">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">Loyalty Weight</span>
+        <h2>KEEP RUNNING</h2>
+        <p>Consistent holders receive a modest loyalty multiplier on their eligible distribution weight.</p>
+      </div>
+      <div className="runner-meter-card">
+        <div className="runner-distance-meter" aria-label="Seven day multiplier meter">
+          <span>START</span>
+          <div>
+            <i style={{ width: "72%" }} />
+          </div>
+          <span>7 DAY MULTIPLIER</span>
+        </div>
+        <div className="runner-tier-grid">
+          {pumpRunnerConfig.multiplierTiers.map((tier) => (
+            <div className="runner-tier" key={tier.label}>
+              <span>{tier.label}</span>
+              <strong>{tier.multiplier}</strong>
+            </div>
+          ))}
+        </div>
+        <p>Selling or transferring {tokenLabel} resets the wallet's hold multiplier. The multiplier affects distribution weight, not a fixed reward.</p>
+      </div>
+    </section>
+  );
+}
+
+export function AirdropFeed({ live }: { live: RunnerLiveData }) {
+  const [filter, setFilter] = useState("All Drops");
+  const completedRows = live.stats.recentRewards.map((reward) => ({
+    time: formatTime(reward.time),
+    token: rewardSymbol,
+    distributed: formatTokenAmount(reward.rewardAmount, rewardSymbol),
+    wallets: "1 wallet",
+    signature: reward.txSig,
+    status: statusText(reward.status)
+  }));
+  const upcomingRows = [
+    {
+      time: live.countdown,
+      token: "Next scanner batch",
+      distributed: "Queued",
+      wallets: `${formatCount(live.stats.latestEligibleHolders, "0")} eligible wallets`,
+      signature: null,
+      status: "Upcoming"
+    }
+  ];
+  const rows = filter === "Completed" ? completedRows : filter === "Upcoming" ? upcomingRows : [...completedRows, ...upcomingRows];
+
+  return (
+    <section className="runner-section" id="drops">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">Onchain Feed</span>
+        <h2>RECENT DROPS</h2>
+      </div>
+      <div className="runner-tabs" role="tablist" aria-label="Airdrop feed filter">
+        {["All Drops", "Completed", "Upcoming"].map((item) => (
+          <button
+            aria-selected={filter === item}
+            className={filter === item ? "is-active" : ""}
+            key={item}
+            onClick={() => setFilter(item)}
+            role="tab"
+            type="button"
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+      <div className="runner-feed">
+        {rows.length ? (
+          rows.map((row, index) => {
+            const txUrl = transactionUrl(row.signature);
+            return (
+              <article className="runner-feed-row" key={`${row.time}-${row.token}-${index}`}>
+                <span>{row.time}</span>
+                <strong>{row.token}</strong>
+                <span>{row.distributed}</span>
+                <span>{row.wallets}</span>
+                <span>{row.status}</span>
+                {txUrl ? (
+                  <a href={txUrl} target="_blank" rel="noreferrer">
+                    View Transaction
+                  </a>
+                ) : (
+                  <span>Awaiting txn</span>
+                )}
+              </article>
+            );
+          })
+        ) : (
+          <article className="runner-feed-row">
+            <span>Queued</span>
+            <strong>First drop</strong>
+            <span>Awaiting distribution</span>
+            <span>{formatCount(live.stats.latestEligibleHolders, "0")} eligible wallets</span>
+            <span>Upcoming</span>
+            <span>Awaiting txn</span>
+          </article>
+        )}
+      </div>
+    </section>
+  );
+}
+
+export function RunnerPerformanceChart() {
+  const maxMarketCap = Math.max(...pumpRunnerConfig.performanceRows.map((row) => row.currentMarketCap));
+
+  return (
+    <section className="runner-section" id="history">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">Past Scanner Results</span>
+        <h2>RUNNER HISTORY</h2>
+      </div>
+      <div className="runner-chart">
+        {pumpRunnerConfig.performanceRows.map((row) => (
+          <div className="runner-chart-row" key={row.ticker}>
+            <span>{row.ticker}</span>
+            <div className="runner-chart-bars">
+              <i className="entry" style={{ width: `${Math.max(8, (row.entryMarketCap / maxMarketCap) * 100)}%` }} />
+              <i className="current" style={{ width: `${Math.max(8, (row.currentMarketCap / maxMarketCap) * 100)}%` }} />
+            </div>
+            <strong>+{row.changePercent}%</strong>
+          </div>
+        ))}
+      </div>
+      <p className="runner-disclaimer">Past scanner results do not guarantee future performance. Tokens selected by the system may lose some or all of their value.</p>
+    </section>
+  );
+}
+
+export function RiskDisclosure() {
+  return (
+    <p className="runner-risk">
+      {pumpRunnerConfig.riskCopy}
+    </p>
+  );
+}
+
+function FaqSection() {
+  const faqs = [
+    {
+      question: "What is Pump Runner?",
+      answer:
+        "Pump Runner is a holder-reward system that uses project revenue to acquire selected Pump.fun tokens and distribute them to eligible $RUNNER holders."
+    },
+    {
+      question: "How many tokens must I hold?",
+      answer: "A wallet must hold at least 2,500,000 $RUNNER at the eligibility snapshot."
+    },
+    {
+      question: "How often are drops distributed?",
+      answer: `Runner distributions are processed in scheduled epochs. The current interface is set to ${pumpRunnerConfig.epochMinutes}-minute epochs.`
+    },
+    {
+      question: "What happens when I sell?",
+      answer:
+        "Selling or transferring $RUNNER resets the wallet's hold multiplier. Depending on snapshot rules, it may also remove the wallet from the current distribution epoch."
+    },
+    {
+      question: "Are runner profits guaranteed?",
+      answer:
+        "No. Meme tokens are highly volatile, and scanner selections may decline in value. The scanner is a selection system, not a guarantee of performance."
+    },
+    {
+      question: "Why is there a minimum holding requirement?",
+      answer:
+        "The minimum reduces extremely small distributions and helps prevent network rent and transaction costs from making airdrops inefficient."
+    }
+  ];
+
+  return (
+    <section className="runner-section" id="faq">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">FAQ</span>
+        <h2>FAST ANSWERS</h2>
+      </div>
+      <div className="runner-faq-grid">
+        {faqs.map((faq) => (
+          <article className="runner-info-card" key={faq.question}>
+            <h3>{faq.question}</h3>
+            <p>{faq.answer}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FinalCta() {
+  return (
+    <section className="runner-final-cta">
+      <h2>THE NEXT RUNNER IS ALREADY MOVING.</h2>
+      <p>Hold {tokenLabel} and stay eligible for every scheduled drop caught by the system.</p>
+      <div className="runner-hero-actions">
+        <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
+          Buy {tokenLabel}
+        </a>
+        <a className="runner-button runner-button-secondary" href="#drops">
+          View Drops
+        </a>
+        <a className="runner-button runner-button-secondary" href={pumpRunnerConfig.dexScreenerUrl} target="_blank" rel="noreferrer">
+          Open DexScreener
+        </a>
+      </div>
+    </section>
+  );
+}
+
+function RunnerFooter() {
+  const ca = pumpRunnerConfig.contractAddress;
+
+  return (
+    <footer className="runner-footer">
+      <div>
+        <strong>{pumpRunnerConfig.name}</strong>
+        <span>{tokenLabel}</span>
+      </div>
+      <div className="runner-footer-links">
+        {ca ? <CopyCaButton address={ca} label={compactAddress(ca)} /> : null}
+        {pumpRunnerConfig.xUrl ? (
+          <a href={pumpRunnerConfig.xUrl} target="_blank" rel="noreferrer">
+            X
+          </a>
+        ) : null}
+        {pumpRunnerConfig.telegramUrl ? (
+          <a href={pumpRunnerConfig.telegramUrl} target="_blank" rel="noreferrer">
+            Telegram
+          </a>
+        ) : null}
+        <a href={pumpRunnerConfig.dexScreenerUrl} target="_blank" rel="noreferrer">
+          DexScreener
+        </a>
+        <a href={pumpRunnerConfig.pumpFunUrl} target="_blank" rel="noreferrer">
+          Pump.fun
+        </a>
+        <a href="#drops">Airdrop history</a>
+        <a href="#faq">Terms</a>
+        <a href="#faq">Risk disclosure</a>
+      </div>
+      <p>Built to scan. Built to catch. Built to run.</p>
+      <p>{pumpRunnerConfig.rentCopy}</p>
+      <RiskDisclosure />
+    </footer>
+  );
+}
+
+export function PumpRunnerHome() {
+  const live = useRunnerLiveData();
+
+  return (
+    <div className="pump-runner-page">
+      <MarketTicker live={live} />
+      <RunnerNav />
+      <main>
+        <HeroSection live={live} />
+        <RunnerLeaderboard />
+        <ScannerStatus />
+        <HowItWorks />
+        <EligibilityCard live={live} />
+        <HoldMultiplier />
+        <AirdropFeed live={live} />
+        <RunnerPerformanceChart />
+        <FaqSection />
+        <FinalCta />
+      </main>
+      <RunnerFooter />
+    </div>
+  );
+}
