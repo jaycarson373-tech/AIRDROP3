@@ -42,6 +42,13 @@ type PayoutRow = {
   created_at: string | null;
 };
 
+type HolderStateRow = {
+  eligible_since: string | null;
+  current_multiplier_bps: number | null;
+  permanently_ineligible: boolean | null;
+  ineligible_reason: string | null;
+};
+
 type EpochPayoutSummary = {
   rewardAmount: number;
   normalRewardAmount: number;
@@ -125,6 +132,39 @@ async function getSettledPayouts(config: SupabaseConfig) {
   }
 
   return rows;
+}
+
+async function averageHolderMultiplier(config: SupabaseConfig) {
+  try {
+    const rows = await getSupabaseJson<HolderStateRow[]>(
+      config,
+      "holder_states?select=eligible_since,current_multiplier_bps,permanently_ineligible,ineligible_reason&limit=10000"
+    );
+    const activeRows = rows.filter((row) => !row.permanently_ineligible && !row.ineligible_reason);
+    if (!activeRows.length) return null;
+    const totalBps = activeRows.reduce(
+      (sum, row) => sum + Math.max(toNumber(row.current_multiplier_bps ?? 10_000), fallbackMultiplierBps(row.eligible_since)),
+      0
+    );
+    return totalBps / activeRows.length / 10_000;
+  } catch (error) {
+    console.warn("stats route could not calculate average holder multiplier", error);
+    return null;
+  }
+}
+
+const HOUR_MS = 60 * 60 * 1000;
+const DAY_MS = 24 * HOUR_MS;
+
+function fallbackMultiplierBps(eligibleSince: string | null) {
+  const sinceMs = Date.parse(eligibleSince ?? "");
+  if (!Number.isFinite(sinceMs)) return 10_000;
+  const heldMs = Math.max(0, Date.now() - sinceMs);
+  if (heldMs >= 30 * DAY_MS) return 100_000;
+  if (heldMs >= 7 * DAY_MS) return 50_000;
+  if (heldMs >= DAY_MS) return 20_000;
+  if (heldMs >= HOUR_MS) return 15_000;
+  return 10_000;
 }
 
 function rpcUrl() {
@@ -359,6 +399,7 @@ export async function GET() {
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
       latestEligibleHolders: latestEligibleHolders ?? 0,
+      averageMultiplier: null,
       nextDropTime: nextDropTime(),
       totalPfpRewardSol: 0,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
@@ -395,6 +436,7 @@ export async function GET() {
     const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
     const totalPfpRewardSol = buyRows.reduce((sum, buy) => sum + toNumber(buy.pfp_reward_lamports) / LAMPORTS_PER_SOL, 0);
     const payoutRows = await getSettledPayouts(config);
+    const averageMultiplier = await averageHolderMultiplier(config);
     const payoutsByEpoch = new Map<string, EpochPayoutSummary>();
 
     for (const payout of payoutRows) {
@@ -492,6 +534,7 @@ export async function GET() {
       nextDropTime: nextDropTime(),
       totalPfpRewardSol,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
+      averageMultiplier,
       epochHistory,
       roundHistory,
       recentRewards
@@ -505,6 +548,7 @@ export async function GET() {
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
       latestEligibleHolders: latestEligibleHolders ?? 0,
+      averageMultiplier: null,
       nextDropTime: nextDropTime(),
       totalPfpRewardSol: 0,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,

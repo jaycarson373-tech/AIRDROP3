@@ -326,7 +326,7 @@ export function LiveProtocolDashboard() {
           <MetricCard label="Eligible Holders" value={stats ? formatCount(stats.latestEligibleHolders) : "Loading"} />
           <MetricCard label="$PUMP Bought" value={latestRound ? formatAmount(latestRound.rewardBought, REWARD_SYMBOL, 4) : "Awaiting live distribution"} />
           <MetricCard label="Next $PUMP Payout" value={countdown} />
-          <MetricCard label="Holder Weight" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
+          <MetricCard label="Avg Holder Multiplier" value={stats?.averageMultiplier ? formatMultiplier(stats.averageMultiplier) : "Live epoch score"} muted />
           <MetricCard label="Last Drop TX" value={latestRound?.txSig ? compactAddress(latestRound.txSig) : "Awaiting tx"} muted />
         </div>
       </div>
@@ -422,6 +422,13 @@ const solBoostCards = [
   ["Receipt", "posted"]
 ];
 
+const holderMultiplierCards = [
+  ["1 hour", "1.5x", "first hold boost"],
+  ["1 day", "2x", "day-one weight"],
+  ["1 week", "5x", "sticky holder tier"],
+  ["1 month", "10x", "max loyalty weight"]
+];
+
 export function RewardModelSection() {
   return (
     <section className="section conviction-section" id="reward-model">
@@ -429,7 +436,7 @@ export function RewardModelSection() {
         <div className="section-kicker">Reward model</div>
         <div className="section-head split-head">
           <h2>Hold RTP. Earn $PUMP.</h2>
-          <p>For holders who want the Pump rail without waiting on Hood narratives. Rewards run every 10 minutes and skew toward smaller holders and lower-SOL wallets.</p>
+          <p>For holders who want the Pump rail without waiting on Hood narratives. Rewards run every 10 minutes and stack holder-time multipliers with smaller-holder weighting.</p>
         </div>
         <div className="multiplier-grid">
           {hoodModelCards.map(([value, title, copy]) => (
@@ -446,6 +453,22 @@ export function RewardModelSection() {
             <span key={tier}>{tier}: {boost}</span>
           ))}
         </div>
+        <div className="holder-multiplier-ladder" aria-label="Holder multiplier ladder">
+          <div className="holder-multiplier-copy">
+            <span>Holder multiplier</span>
+            <h3>Longer hold. Bigger payout weight.</h3>
+            <p>Multiplier applies to the live holder score before each $PUMP airdrop. It stacks with the smaller-wallet and lower-SOL tilt.</p>
+          </div>
+          <div className="holder-multiplier-tiers">
+            {holderMultiplierCards.map(([time, multiplier, copy]) => (
+              <article className="holder-multiplier-tier" key={time}>
+                <span>{time}</span>
+                <strong>{multiplier}</strong>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </div>
         <div className="conviction-card streak-card">
           <span>Automatic rewards</span>
           <h3>$PUMP rewards for RTP holders</h3>
@@ -459,14 +482,14 @@ export function RewardModelSection() {
               <strong>$PUMP</strong>
             </div>
             <div>
-              <span>Track</span>
-              <strong>TX proof</strong>
+              <span>Max boost</span>
+              <strong>10x</strong>
             </div>
           </div>
           <div className="conviction-progress" aria-hidden="true">
             <i />
           </div>
-          <p>No bridge. No claiming. No staking. Eligible wallets are paid every 10 minutes, with boosted weighting for smaller bags and lower-SOL wallets.</p>
+          <p>No bridge. No claiming. No staking. Eligible wallets are paid every 10 minutes, with boosted weighting for hold time, smaller bags, and lower-SOL wallets.</p>
           <div className="max-row">
             <span>Payout split</span>
             <b>100% to holders</b>
@@ -517,6 +540,7 @@ export function RewardExplanation() {
             `Hold 1M+ $${SOURCE_SYMBOL}`,
             "Creator fees are collected",
             "$PUMP is bought",
+            "Holder-time multiplier is applied",
             "Smaller wallets get boosted weighting",
             "Eligible holders get paid automatically",
             "Transaction proof is posted"
@@ -530,6 +554,7 @@ export function RewardExplanation() {
           {[
             ["Eligibility", "1M+ RTP", "minimum balance"],
             ["Rewards", "$PUMP", "every 10 minutes"],
+            ["Multiplier", "1.5x-10x", "1h / 1d / 1w / 1m"],
             ["Weighting", "Skewed", "smaller wallets boosted"],
             ["Proof", "On-chain", "settled transactions"]
           ].map(([holder, multiplier, copy]) => (
@@ -578,6 +603,7 @@ export function BullBoard() {
                   <th>Wallet</th>
                   <th>$RTP Held</th>
                   <th>Status</th>
+                  <th>Hold Multiplier</th>
                   <th>Rail</th>
                   <th>Receipt</th>
                   <th>Holder Weight</th>
@@ -595,6 +621,7 @@ export function BullBoard() {
                         <td>{compactAddress(holder.address)}</td>
                         <td>{formatNumber(holder.balance, 0)}</td>
                         <td>{holder.permanentlyIneligible ? "Out" : "Eligible"}</td>
+                        <td>{holder.currentMultiplier ?? "1.00x"}</td>
                         <td>$PUMP</td>
                         <td>{holder.lastAirdropAt ? "Posted" : "Awaiting"}</td>
                         <td>{holder.finalWeight ? formatNumber(holder.finalWeight, 0) : "Scored live"}</td>
@@ -605,7 +632,7 @@ export function BullBoard() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={8}>Awaiting Return to Pump board.</td>
+                    <td colSpan={9}>Awaiting Return to Pump board.</td>
                   </tr>
                 )}
               </tbody>

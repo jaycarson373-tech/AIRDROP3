@@ -9,6 +9,8 @@ type HolderStateRow = {
   wallet: string;
   source_balance: string | number | null;
   eligible_since: string | null;
+  current_streak_epochs: number | null;
+  current_multiplier_bps: number | null;
   permanently_ineligible: boolean | null;
   ineligible_reason: string | null;
   ineligible_at: string | null;
@@ -34,6 +36,39 @@ function supabaseConfig() {
 function toNumber(value: unknown) {
   const number = Number(value ?? 0);
   return Number.isFinite(number) ? number : 0;
+}
+
+const HOUR_MS = 60 * 60 * 1000;
+const DAY_MS = 24 * HOUR_MS;
+
+function fallbackMultiplierBps(eligibleSince: string | null) {
+  const sinceMs = Date.parse(eligibleSince ?? "");
+  if (!Number.isFinite(sinceMs)) return 10_000;
+  const heldMs = Math.max(0, Date.now() - sinceMs);
+  if (heldMs >= 30 * DAY_MS) return 100_000;
+  if (heldMs >= 7 * DAY_MS) return 50_000;
+  if (heldMs >= DAY_MS) return 20_000;
+  if (heldMs >= HOUR_MS) return 15_000;
+  return 10_000;
+}
+
+function multiplierBps(row: HolderStateRow) {
+  return Math.max(row.current_multiplier_bps ?? 10_000, fallbackMultiplierBps(row.eligible_since));
+}
+
+function multiplierLabel(bps: number) {
+  return `${(bps / 10_000).toFixed(2)}x`;
+}
+
+function holdTimeLabel(eligibleSince: string | null) {
+  const sinceMs = Date.parse(eligibleSince ?? "");
+  if (!Number.isFinite(sinceMs)) return null;
+  const heldMs = Math.max(0, Date.now() - sinceMs);
+  if (heldMs >= 30 * DAY_MS) return "1 month+";
+  if (heldMs >= 7 * DAY_MS) return "1 week+";
+  if (heldMs >= DAY_MS) return "1 day+";
+  if (heldMs >= HOUR_MS) return "1 hour+";
+  return "warming up";
 }
 
 async function getJson<T>(url: string, key: string, extraHeaders?: HeadersInit) {
@@ -90,7 +125,7 @@ export async function GET() {
 
   try {
     const holderStates = await getJsonOrNull<HolderStateRow[]>(
-      `${config.url}/rest/v1/holder_states?select=wallet,source_balance,eligible_since,permanently_ineligible,ineligible_reason,ineligible_at,last_seen_at&limit=10000`,
+      `${config.url}/rest/v1/holder_states?select=wallet,source_balance,eligible_since,current_streak_epochs,current_multiplier_bps,permanently_ineligible,ineligible_reason,ineligible_at,last_seen_at&limit=10000`,
       config.key
     );
     const activeStates = (holderStates ?? []).filter((row) => !row.permanently_ineligible && !row.ineligible_reason);
@@ -112,12 +147,20 @@ export async function GET() {
       const mappedHolders = activeStates.map((row) => {
         const balance = toNumber(row.source_balance);
         const payout = payoutsByWallet.get(row.wallet);
+        const bps = multiplierBps(row);
         return {
           rank: 0,
           address: row.wallet,
           balance,
           percentage: totalSupply > 0 ? ((balance / totalSupply) * 100).toFixed(2) : "0.00",
-          finalWeight: balance,
+          currentMultiplier: multiplierLabel(bps),
+          currentMultiplierBps: bps,
+          currentHoldTime: holdTimeLabel(row.eligible_since),
+          currentStreak: row.current_streak_epochs ?? 0,
+          holderBoost: "time-held",
+          solBalanceTier: "live",
+          solBoost: "lower-SOL weighted",
+          finalWeight: balance * (bps / 10_000),
           totalRewardEarned: payout?.total ?? 0,
           lastAirdropAt: payout?.lastRewardAt ?? null,
           permanentlyIneligible: false,
@@ -134,7 +177,7 @@ export async function GET() {
         return {
           ...row,
           rank: index + 1,
-          finalWeight: row.balance
+          finalWeight: row.finalWeight
         };
       });
 
@@ -144,6 +187,10 @@ export async function GET() {
           return {
             address: row.wallet,
             balance: toNumber(row.source_balance),
+            currentMultiplier: multiplierLabel(multiplierBps(row)),
+            currentMultiplierBps: multiplierBps(row),
+            currentHoldTime: holdTimeLabel(row.eligible_since),
+            currentStreak: row.current_streak_epochs ?? 0,
             totalRewardEarned: payout?.total ?? 0,
             lastAirdropAt: payout?.lastRewardAt ?? null,
             ineligibleReason: reasonLabel(row.ineligible_reason),
@@ -177,6 +224,13 @@ export async function GET() {
           address: row.wallet,
           balance,
           percentage: totalSupply > 0 ? ((balance / totalSupply) * 100).toFixed(2) : "0.00",
+          currentMultiplier: "1.00x",
+          currentMultiplierBps: 10_000,
+          currentHoldTime: null,
+          currentStreak: null,
+          holderBoost: "snapshot",
+          solBalanceTier: "live",
+          solBoost: "lower-SOL weighted",
           finalWeight: balance,
           totalRewardEarned: payoutsByWallet.get(row.wallet)?.total ?? 0,
           lastAirdropAt: payoutsByWallet.get(row.wallet)?.lastRewardAt ?? null,

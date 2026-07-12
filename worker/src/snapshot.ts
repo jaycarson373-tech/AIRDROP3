@@ -12,6 +12,8 @@ export type Holder = {
   rawBalance: bigint;
   uiBalance: number;
   holderPct: number;
+  eligibleSince?: string;
+  holdMultiplierBps?: number;
 };
 
 async function tokenProgramForMint(mint: PublicKey) {
@@ -87,10 +89,15 @@ export function selectRewardRecipients(epochId: string, holders: Holder[]) {
     return 10_000n;
   };
 
+  const combinedSelectionBoostBps = (holder: Holder) => {
+    const holdMultiplierBps = BigInt(Math.max(10_000, holder.holdMultiplierBps ?? 10_000));
+    return (holderSelectionBoostBps(holder) * holdMultiplierBps) / 10_000n;
+  };
+
   const recipients = holders
     .map((holder) => ({
       holder,
-      score: recipientScoreValue(epochId, holder) / holderSelectionBoostBps(holder)
+      score: recipientScoreValue(epochId, holder) / combinedSelectionBoostBps(holder)
     }))
     .sort((a, b) => {
       const score = a.score < b.score ? -1 : a.score > b.score ? 1 : 0;

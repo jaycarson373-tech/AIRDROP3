@@ -14,6 +14,9 @@ type HolderStateRow = {
   ineligible_reason: string | null;
 };
 
+const HOUR_MS = 60 * 60 * 1000;
+const DAY_MS = 24 * HOUR_MS;
+
 function parseRaw(value: unknown) {
   try {
     return BigInt(String(value ?? "0"));
@@ -25,6 +28,18 @@ function parseRaw(value: unknown) {
 function isMissingHolderStateTable(error: unknown) {
   const message = JSON.stringify(error);
   return message.includes("holder_states") || message.includes("42P01") || message.includes("PGRST205");
+}
+
+function holderMultiplierBps(eligibleSince: string | null, nowMs: number) {
+  const sinceMs = Date.parse(eligibleSince ?? "");
+  if (!Number.isFinite(sinceMs)) return 10_000;
+
+  const heldMs = Math.max(0, nowMs - sinceMs);
+  if (heldMs >= 30 * DAY_MS) return 100_000;
+  if (heldMs >= 7 * DAY_MS) return 50_000;
+  if (heldMs >= DAY_MS) return 20_000;
+  if (heldMs >= HOUR_MS) return 15_000;
+  return 10_000;
 }
 
 async function getHolderStates() {
@@ -48,6 +63,7 @@ async function upsertHolderStates(rows: Record<string, unknown>[]) {
 export async function applyHolderState(epochId: string, eligibleHolders: Holder[], currentHolders = eligibleHolders): Promise<Holder[]> {
   try {
     const now = new Date().toISOString();
+    const nowMs = Date.parse(now);
     const states = await getHolderStates();
     const stateByWallet = new Map(states.map((state) => [state.wallet, state]));
     const eligibleByWallet = new Map(eligibleHolders.map((holder) => [holder.wallet, holder]));
@@ -135,6 +151,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
       const eligibleSince = existing?.eligible_since ?? now;
       const nextHighest = highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance;
+      const nextMultiplierBps = holderMultiplierBps(eligibleSince, nowMs);
 
       updates.push({
         wallet: holder.wallet,
@@ -146,13 +163,13 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
         last_epoch_id: epochId,
         updated_at: now,
         current_streak_epochs: nextStreak,
-        current_multiplier_bps: 10_000,
+        current_multiplier_bps: nextMultiplierBps,
         permanently_ineligible: false,
         ineligible_reason: null,
         ineligible_at: null
       });
 
-      eligible.push(holder);
+      eligible.push({ ...holder, eligibleSince, holdMultiplierBps: nextMultiplierBps });
     }
 
     await upsertHolderStates(updates);

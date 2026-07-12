@@ -110,10 +110,12 @@ async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder
             : 10_000n;
     const baseWeight = cappedBalance * 25n;
     const returnWeight = (((cappedBalance * 75n) * sizeBoostBps) / 10_000n * solBoostBps) / 10_000n;
-    const weight = baseWeight + returnWeight;
+    const holdMultiplierBps = BigInt(Math.max(10_000, holder.holdMultiplierBps ?? 10_000));
+    const preHoldWeight = baseWeight + returnWeight;
+    const weight = (preHoldWeight * holdMultiplierBps) / 10_000n;
 
     console.log(
-      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} sol=${(Number(solLamports) / LAMPORTS_PER_SOL).toFixed(4)} cappedSourceRaw=${cappedBalance.toString()} sizeBoostBps=${sizeBoostBps} solBoostBps=${solBoostBps} finalWeight=${weight.toString()}`
+      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} sol=${(Number(solLamports) / LAMPORTS_PER_SOL).toFixed(4)} cappedSourceRaw=${cappedBalance.toString()} sizeBoostBps=${sizeBoostBps} solBoostBps=${solBoostBps} holdMultiplierBps=${holdMultiplierBps} finalWeight=${weight.toString()}`
     );
 
     return {

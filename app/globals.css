@@ -1362,6 +1362,69 @@ h3 {
   line-height: 0.92;
 }
 
+.holder-multiplier-ladder {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.72fr) minmax(0, 1.28fr);
+  gap: 18px;
+  align-items: stretch;
+  margin-top: 22px;
+  padding: 18px 0;
+}
+
+.holder-multiplier-copy {
+  border-left: 4px solid var(--gold);
+  padding: 8px 0 8px 18px;
+}
+
+.holder-multiplier-copy > span,
+.holder-multiplier-tier span {
+  display: block;
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.holder-multiplier-copy h3 {
+  margin-top: 12px;
+  font-size: clamp(1.45rem, 2.3vw, 2.35rem);
+}
+
+.holder-multiplier-copy p,
+.holder-multiplier-tier p {
+  margin-top: 10px;
+  color: var(--faint);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.holder-multiplier-tiers {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.holder-multiplier-tier {
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+  background:
+    linear-gradient(145deg, rgba(202, 164, 106, 0.08), transparent 42%),
+    rgba(15, 14, 12, 0.88);
+}
+
+.holder-multiplier-tier strong {
+  display: block;
+  color: var(--gold);
+  font-size: clamp(2.3rem, 4vw, 4.2rem);
+  font-weight: 900;
+  line-height: 0.9;
+}
+
 .reset-warning-card {
   margin-top: 16px;
   border-color: rgba(201, 136, 114, 0.46);
@@ -4039,6 +4102,8 @@ td a,
 .rtp-page .bank-statstrip-inner span,
 .rtp-page th,
 .rtp-page .runway-step span,
+.rtp-page .holder-multiplier-copy > span,
+.rtp-page .holder-multiplier-tier span,
 .rtp-page .rtp-hero-manifest small {
   font-size: 0.78rem;
   font-weight: 800;
@@ -4174,6 +4239,7 @@ td a,
 .rtp-page .history-card,
 .rtp-page .lookup-card,
 .rtp-page .faq-item,
+.rtp-page .holder-multiplier-tier,
 .rtp-page .volume-panel,
 .rtp-page .volume-card,
 .rtp-page .volume-verdict {
@@ -4332,6 +4398,26 @@ td a,
   line-height: 1.55;
 }
 
+.rtp-page .holder-multiplier-ladder {
+  border-top: 1px solid rgba(72, 247, 174, 0.18);
+  border-bottom: 1px solid rgba(72, 247, 174, 0.18);
+}
+
+.rtp-page .holder-multiplier-copy {
+  border-left-color: #58ffb4;
+}
+
+.rtp-page .holder-multiplier-copy h3,
+.rtp-page .holder-multiplier-tier strong {
+  color: #58ffb4;
+  text-shadow: 0 0 24px rgba(72, 247, 174, 0.28);
+}
+
+.rtp-page .holder-multiplier-copy p,
+.rtp-page .holder-multiplier-tier p {
+  color: rgba(243, 255, 249, 0.68);
+}
+
 .rtp-page .black-bull-portrait {
   background: rgba(255, 255, 255, 0.03);
 }
@@ -4488,7 +4574,9 @@ td a,
 
   .rtp-page .rtp-hero-manifest,
   .rtp-page .runway-grid,
-  .rtp-page .runway-board {
+  .rtp-page .runway-board,
+  .rtp-page .holder-multiplier-ladder,
+  .rtp-page .holder-multiplier-tiers {
     grid-template-columns: 1fr;
   }
 
