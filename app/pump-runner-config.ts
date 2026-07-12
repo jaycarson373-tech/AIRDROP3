@@ -87,10 +87,10 @@ export const pumpRunnerConfig = {
     totalDistributed: "$0"
   },
   scannerMetrics: {
-    tokensTracked: "12,481",
-    signalsReviewed: "348",
-    runnersSelected: "4",
-    currentEpoch: "08"
+    tokensTracked: "0",
+    signalsReviewed: "0",
+    runnersSelected: "0",
+    currentEpoch: "0"
   },
   treasuryStatistics: {
     runnersCaughtToday: "1",
