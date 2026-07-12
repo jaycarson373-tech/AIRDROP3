@@ -14,10 +14,11 @@ import {
 } from "./home-strategy-data";
 
 const PROJECT_NAME = "Return to Pump";
-const DEFAULT_CA = "";
+const DEFAULT_CA = "ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump";
+const DEFAULT_X_URL = "https://x.com/ReturnToPumpFun";
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? DEFAULT_CA;
 const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? (CONTRACT_ADDRESS ? `https://pump.fun/coin/${CONTRACT_ADDRESS}` : "https://pump.fun/");
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? DEFAULT_X_URL;
 
 function Navbar() {
   return (

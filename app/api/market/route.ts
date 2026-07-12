@@ -49,6 +49,7 @@ type MarketPayload = {
 };
 
 const SOL_MINT = "So11111111111111111111111111111111111111112";
+const DEFAULT_SOURCE_MINT = "ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump";
 const CACHE_MS = 15_000;
 
 let cache: { expiresAt: number; payload: MarketPayload } | null = null;
@@ -69,7 +70,7 @@ function rewardMint() {
 }
 
 function sourceMint() {
-  return cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA"));
+  return cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA")) ?? DEFAULT_SOURCE_MINT;
 }
 
 function sameAddress(a: string | undefined, b: string) {
