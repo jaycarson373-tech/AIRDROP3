@@ -61,6 +61,7 @@ export default function Page() {
     <div className="page hood-strategy-page hood-bank-page rtp-page">
       <div className="hood-bank-bg-rotator" aria-hidden="true">
         <span className="hood-bank-bg-layer bg-layer-one" />
+        <span className="rtp-sky-glow" />
         <span className="rtp-cloud-pulse" />
       </div>
       <Navbar />
