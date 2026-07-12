@@ -332,10 +332,13 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
 
       <div className="runner-hero-panel" aria-label="Pump Runner live terminal">
         <div className="runner-panel-top">
-          <div>
-            <span>CURRENT RUNNER</span>
-            <strong>{pumpRunnerConfig.currentRunner.ticker}</strong>
-            <small>{pumpRunnerConfig.currentRunner.name}</small>
+          <div className="runner-panel-title">
+            <img className="runner-token-logo" src={pumpRunnerConfig.currentRunner.logoSrc} alt="" />
+            <div>
+              <span>CURRENT RUNNER</span>
+              <strong>{pumpRunnerConfig.currentRunner.ticker}</strong>
+              <small>{pumpRunnerConfig.currentRunner.name}</small>
+            </div>
           </div>
           <a className="runner-panel-link" href={pumpRunnerConfig.currentRunner.dexScreenerUrl} target="_blank" rel="noreferrer">
             Chart <ExternalLink size={14} />

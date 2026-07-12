@@ -1,12 +1,32 @@
-const contractAddress = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
-const rewardMint = process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? "";
-const activeRunnerTicker = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "TBD";
+export const defaultCurrentRunner = {
+  name: "Girl Coin",
+  ticker: "GIRL",
+  mint: "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump",
+  logoSrc: "/brand/girl-coin-logo.png"
+} as const;
+
+function cleanEnv(value: string | undefined) {
+  const trimmed = value?.trim();
+  return trimmed || "";
+}
+
+function isStaleHomeRunner(value: string) {
+  return value.replace(/^\$/, "").toUpperCase() === "HOME";
+}
+
+const contractAddress = cleanEnv(process.env.NEXT_PUBLIC_CA) || cleanEnv(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT);
+const rawRewardSymbol = cleanEnv(process.env.NEXT_PUBLIC_REWARD_SYMBOL);
+const rawRewardMint = cleanEnv(process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
+const rawActiveRunnerName = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME);
+const useDefaultCurrentRunner = !rawRewardSymbol || isStaleHomeRunner(rawRewardSymbol) || /home/i.test(rawActiveRunnerName);
+const rewardMint = useDefaultCurrentRunner ? defaultCurrentRunner.mint : rawRewardMint || defaultCurrentRunner.mint;
+const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol;
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
 const parsedMinimumHolding = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 2_500_000);
 const minimumHolding = Number.isFinite(parsedMinimumHolding) && parsedMinimumHolding > 0 ? parsedMinimumHolding : 2_500_000;
+const rawActiveRunnerDexUrl = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_DEXSCREENER_URL);
 const activeRunnerDexUrl =
-  process.env.NEXT_PUBLIC_ACTIVE_RUNNER_DEXSCREENER_URL ??
-  (rewardMint ? `https://dexscreener.com/solana/${rewardMint}` : "https://dexscreener.com/solana");
+  rawActiveRunnerDexUrl || (rewardMint ? `https://dexscreener.com/solana/${rewardMint}` : "https://dexscreener.com/solana");
 const fallbackPumpFunUrl = contractAddress ? `https://pump.fun/coin/${contractAddress}` : "https://pump.fun/";
 const fallbackDexScreenerUrl = contractAddress ? `https://dexscreener.com/solana/${contractAddress}` : "https://dexscreener.com/solana";
 
@@ -49,13 +69,14 @@ export const pumpRunnerConfig = {
   scannerStatus: "SCANNING",
   treasuryStatus: "ACTIVE",
   currentRunner: {
-    name: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME ?? (activeRunnerTicker === "TBD" ? "First Runner TBD" : `${activeRunnerTicker} Runner`),
+    name: useDefaultCurrentRunner ? defaultCurrentRunner.name : rawActiveRunnerName || `${activeRunnerTicker} Runner`,
     ticker: activeRunnerLabel,
     mint: rewardMint,
+    logoSrc: useDefaultCurrentRunner ? defaultCurrentRunner.logoSrc : cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC) || defaultCurrentRunner.logoSrc,
     dexScreenerUrl: activeRunnerDexUrl,
     detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? "Awaiting entry",
     currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
-    amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? "Buying this epoch",
+    amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? `Buying ${activeRunnerLabel}`,
     status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? "Current Runner"
   },
   marketTickerFallback: {
@@ -87,7 +108,7 @@ export const pumpRunnerConfig = {
   runnerBoard: [
     {
       rank: "01",
-      token: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME ?? (activeRunnerTicker === "TBD" ? "First Runner TBD" : `${activeRunnerTicker} Runner`),
+      token: useDefaultCurrentRunner ? defaultCurrentRunner.name : rawActiveRunnerName || `${activeRunnerTicker} Runner`,
       ticker: activeRunnerLabel,
       detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? "Awaiting entry",
       currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",

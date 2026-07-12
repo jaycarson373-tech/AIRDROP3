@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { pumpRunnerConfig } from "../pump-runner-config";
 
 type IneligibleWallet = {
   address: string;
@@ -22,7 +23,7 @@ type HoldersResponse = {
 const emptyResponse: HoldersResponse = { ineligibleWallets: [] };
 const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Pump Runner";
 const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "Runner drops";
+const REWARD_SYMBOL = pumpRunnerConfig.currentRunner.ticker;
 const parsedEligibilityMin = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 2_500_000);
 const eligibilityMin = Number.isFinite(parsedEligibilityMin) && parsedEligibilityMin > 0 ? parsedEligibilityMin : 2_500_000;
 const ELIGIBILITY_LABEL =

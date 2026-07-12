@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { pumpRunnerConfig } from "./pump-runner-config";
 
 type StatsResponse = {
   totalEpochs: number;
@@ -14,7 +15,7 @@ const fallbackStats: StatsResponse = {
   latestEligibleHolders: 0
 };
 const SOURCE_SYMBOL = "RUNNER";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "TBD";
+const REWARD_SYMBOL = pumpRunnerConfig.currentRunner.ticker;
 
 async function getStats() {
   try {

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { defaultCurrentRunner } from "../../pump-runner-config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -63,10 +64,18 @@ function cleanAddress(value: string | undefined | null) {
   return trimmed || null;
 }
 
+function cleanSymbol(value: string | undefined | null) {
+  return value?.trim().replace(/^\$/, "").toUpperCase() ?? "";
+}
+
+function isStaleHomeRunner() {
+  return cleanSymbol(env("REWARD_SYMBOL")) === "HOME" || /home/i.test(env("ACTIVE_RUNNER_NAME") ?? "");
+}
+
 function rewardMint() {
-  return (
-    cleanAddress(env("REWARD_TOKEN_MINT"))
-  );
+  const configured = cleanAddress(env("REWARD_TOKEN_MINT"));
+  if (!configured || isStaleHomeRunner()) return defaultCurrentRunner.mint;
+  return configured;
 }
 
 function sourceMint() {
@@ -134,7 +143,7 @@ export async function GET() {
   const source = sourceMint();
   const pairs = await fetchDexPairs([reward, source, SOL_MINT].filter(Boolean) as string[]);
   const payload: MarketPayload = {
-    reward: marketFromPair(pickPair(pairs, reward), process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "Runner drops"),
+    reward: marketFromPair(pickPair(pairs, reward), isStaleHomeRunner() ? defaultCurrentRunner.ticker : process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? defaultCurrentRunner.ticker),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
       process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER"

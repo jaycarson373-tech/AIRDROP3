@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { pumpRunnerConfig } from "../pump-runner-config";
 
 type StatsResponse = {
   currentEpoch: number;
@@ -87,8 +88,8 @@ const EPOCH_MINUTES = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5);
 const EPOCH_MS = Math.max(1, EPOCH_MINUTES) * 60 * 1000;
 const PROJECT_NAME = "Pump Runner";
 const SOURCE_SYMBOL = "RUNNER";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "TBD";
-const REWARD_TOKEN_MINT = process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT ?? "";
+const REWARD_SYMBOL = pumpRunnerConfig.currentRunner.ticker;
+const REWARD_TOKEN_MINT = pumpRunnerConfig.rewardMint;
 
 async function getJson<T>(path: string, fallback: T): Promise<T> {
   try {

@@ -436,6 +436,25 @@ input {
   justify-content: space-between;
 }
 
+.runner-panel-title {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+
+.runner-token-logo {
+  aspect-ratio: 1;
+  background: #fff;
+  border: 1px solid rgba(57, 255, 106, 0.38);
+  border-radius: 999px;
+  box-shadow: 0 0 22px rgba(57, 255, 106, 0.18);
+  flex: 0 0 auto;
+  height: 54px;
+  object-fit: cover;
+  width: 54px;
+}
+
 .runner-panel-top span,
 .runner-panel-top small,
 .runner-drop-card span,
