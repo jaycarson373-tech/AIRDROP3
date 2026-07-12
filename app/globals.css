@@ -403,16 +403,25 @@ input {
 }
 
 .runner-hero-panel {
+  background:
+    linear-gradient(135deg, rgba(57, 255, 106, 0.12), transparent 32%),
+    linear-gradient(180deg, rgba(4, 11, 5, 0.94), rgba(3, 7, 4, 0.84)),
+    var(--runner-surface);
+  display: grid;
+  gap: 16px;
   overflow: hidden;
-  padding: 28px;
+  padding: 26px;
   position: relative;
 }
 
 .runner-hero-panel::before {
-  background: url("/brand/pump-runner-banner.png") center / cover no-repeat;
+  background:
+    linear-gradient(rgba(57, 255, 106, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 255, 106, 0.07) 1px, transparent 1px);
+  background-size: 34px 34px;
   content: "";
   inset: 0;
-  opacity: 0.22;
+  opacity: 0.38;
   position: absolute;
 }
 
@@ -420,30 +429,18 @@ input {
   position: relative;
 }
 
-.runner-hero-logo {
-  border: 1px solid rgba(57, 255, 106, 0.32);
-  border-radius: 8px;
-  box-shadow: 0 0 42px rgba(57, 255, 106, 0.24);
-  display: block;
-  height: 150px;
-  margin: 0 auto 24px;
-  object-fit: cover;
-  width: 150px;
-}
-
-.runner-panel-header {
+.runner-panel-top {
   align-items: flex-start;
   display: flex;
+  gap: 18px;
   justify-content: space-between;
 }
 
-.runner-epoch-header {
-  border-top: 1px solid rgba(57, 255, 106, 0.2);
-  margin-top: 22px;
-  padding-top: 20px;
-}
-
-.runner-panel-header span,
+.runner-panel-top span,
+.runner-panel-top small,
+.runner-drop-card span,
+.runner-drop-card small,
+.runner-current-row span,
 .runner-hero-stats small,
 .runner-stat-card span,
 .runner-table th,
@@ -458,11 +455,35 @@ input {
   text-transform: uppercase;
 }
 
-.runner-panel-header strong {
+.runner-panel-top small,
+.runner-drop-card small {
+  color: var(--runner-muted);
+  display: block;
+  margin-top: 8px;
+}
+
+.runner-panel-top strong {
   color: var(--runner-accent);
   font-family: Impact, "Arial Black", Arial, sans-serif;
-  font-size: 3.3rem;
+  font-size: clamp(2rem, 5vw, 3.25rem);
   line-height: 1;
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+.runner-panel-link {
+  align-items: center;
+  border: 1px solid var(--runner-border);
+  border-radius: 8px;
+  color: var(--runner-accent);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 900;
+  gap: 7px;
+  min-height: 36px;
+  padding: 8px 10px;
+  text-decoration: none;
   text-transform: uppercase;
 }
 
@@ -471,25 +492,48 @@ input {
   border: 1px solid rgba(57, 255, 106, 0.24);
   border-radius: 8px;
   display: grid;
-  gap: 8px;
-  margin-top: 18px;
-  padding: 16px;
+  gap: 0;
+  padding: 6px 16px;
 }
 
-.runner-current-card span,
-.runner-current-card small {
-  color: var(--runner-muted);
+.runner-current-row {
+  align-items: center;
+  border-bottom: 1px solid rgba(57, 255, 106, 0.12);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 12px 0;
+}
+
+.runner-current-row:last-child {
+  border-bottom: 0;
+}
+
+.runner-current-row strong {
+  color: var(--runner-text);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 0.78rem;
-  font-weight: 800;
+  font-size: 0.88rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
   text-transform: uppercase;
 }
 
-.runner-current-card strong {
-  color: var(--runner-yellow);
+.runner-drop-card {
+  background: rgba(57, 255, 106, 0.06);
+  border: 1px solid rgba(57, 255, 106, 0.24);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.runner-drop-card strong {
+  color: var(--runner-accent);
+  display: block;
   font-family: Impact, "Arial Black", Arial, sans-serif;
-  font-size: 1.7rem;
-  text-transform: uppercase;
+  font-size: clamp(3rem, 8vw, 4.8rem);
+  line-height: 0.95;
+  margin-top: 10px;
 }
 
 .runner-track-display {
@@ -499,8 +543,7 @@ input {
   background-size: 28px 28px;
   border: 1px solid rgba(57, 255, 106, 0.14);
   border-radius: 8px;
-  height: 230px;
-  margin-top: 26px;
+  height: 128px;
   overflow: hidden;
   position: relative;
 }
@@ -546,7 +589,6 @@ input {
   display: grid;
   gap: 10px;
   grid-template-columns: repeat(3, 1fr);
-  margin-top: 18px;
 }
 
 .runner-hero-stats span {
@@ -566,6 +608,7 @@ input {
   display: block;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-weight: 900;
+  overflow-wrap: anywhere;
 }
 
 .runner-section {
@@ -1072,12 +1115,12 @@ input {
     font-size: 1.08rem;
   }
 
-  .runner-panel-header {
+  .runner-panel-top {
     display: grid;
     gap: 12px;
   }
 
-  .runner-panel-header strong {
+  .runner-panel-top strong {
     font-size: 2.45rem;
   }
 

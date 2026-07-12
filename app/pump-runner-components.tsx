@@ -331,19 +331,34 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
       </div>
 
       <div className="runner-hero-panel" aria-label="Pump Runner live terminal">
-        <img className="runner-hero-logo" src={pumpRunnerConfig.logoSrc} alt="" />
-        <div className="runner-panel-header">
-          <span>CURRENT RUNNER</span>
-          <strong>{pumpRunnerConfig.currentRunner.ticker}</strong>
+        <div className="runner-panel-top">
+          <div>
+            <span>CURRENT RUNNER</span>
+            <strong>{pumpRunnerConfig.currentRunner.ticker}</strong>
+            <small>{pumpRunnerConfig.currentRunner.name}</small>
+          </div>
+          <a className="runner-panel-link" href={pumpRunnerConfig.currentRunner.dexScreenerUrl} target="_blank" rel="noreferrer">
+            Chart <ExternalLink size={14} />
+          </a>
         </div>
         <div className="runner-current-card">
-          <span>{pumpRunnerConfig.currentRunner.name}</span>
-          <strong>{pumpRunnerConfig.currentRunner.status}</strong>
-          <small>{pumpRunnerConfig.currentRunner.mint ? compactAddress(pumpRunnerConfig.currentRunner.mint) : "Mint loads from reward env"}</small>
+          <div className="runner-current-row">
+            <span>Status</span>
+            <strong>{pumpRunnerConfig.currentRunner.status}</strong>
+          </div>
+          <div className="runner-current-row">
+            <span>Mint</span>
+            <strong>{pumpRunnerConfig.currentRunner.mint ? compactAddress(pumpRunnerConfig.currentRunner.mint) : "Set reward mint"}</strong>
+          </div>
+          <div className="runner-current-row">
+            <span>Buying</span>
+            <strong>{pumpRunnerConfig.currentRunner.amountAcquired}</strong>
+          </div>
         </div>
-        <div className="runner-panel-header runner-epoch-header">
+        <div className="runner-drop-card">
           <span>NEXT AIRDROP</span>
           <strong>{live.countdown}</strong>
+          <small>Every {pumpRunnerConfig.epochMinutes} minutes</small>
         </div>
         <div className="runner-track-display">
           <div className="runner-track-line" />
