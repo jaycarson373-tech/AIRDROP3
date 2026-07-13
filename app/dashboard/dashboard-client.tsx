@@ -67,6 +67,11 @@ type HoldersResponse = {
     address: string;
     balance: number;
     percentage: string;
+    currentMultiplier: string | null;
+    currentStreak: number | null;
+    totalRewardEarned: number;
+    rewardEpochs?: number;
+    lastAirdropAt: string | null;
   }>;
 };
 
@@ -511,7 +516,7 @@ export function DashboardClient() {
                 </section>
 
                 <section className="card">
-                  <h3>Eligible {SOURCE_SYMBOL} Holders</h3>
+                  <h3>Holder Payout Leaderboard</h3>
                   <div className="table-wrap" style={{ marginTop: 14 }}>
                     <table>
                       <thead>
@@ -519,7 +524,10 @@ export function DashboardClient() {
                           <th>Rank</th>
                           <th>Wallet</th>
                           <th className="right">Balance</th>
-                          <th className="right">Share</th>
+                          <th className="right">Tokens Received</th>
+                          <th className="right">Reward Epochs</th>
+                          <th className="right">Held Streak</th>
+                          <th className="right">Multiplier</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -531,12 +539,17 @@ export function DashboardClient() {
                               <td className="right">
                                 <AnimatedValue value={holder.balance} maximumFractionDigits={2} />
                               </td>
-                              <td className="right">{holder.percentage}%</td>
+                              <td className="right">
+                                <AnimatedValue value={holder.totalRewardEarned} maximumFractionDigits={4} suffix={` ${REWARD_SYMBOL}`} />
+                              </td>
+                              <td className="right">{holder.rewardEpochs ?? 0}</td>
+                              <td className="right">{holder.currentStreak ?? 0}</td>
+                              <td className="right">{holder.currentMultiplier ?? "1.00x"}</td>
                             </tr>
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={4}>No snapshot yet.</td>
+                            <td colSpan={7}>No snapshot yet.</td>
                           </tr>
                         )}
                       </tbody>

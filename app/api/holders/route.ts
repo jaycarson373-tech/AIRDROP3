@@ -17,6 +17,7 @@ type HolderStateRow = {
   last_seen_at: string | null;
 };
 type PayoutRow = {
+  epoch_id: string;
   wallet: string;
   reward_amount: string | number | null;
   updated_at: string | null;
@@ -46,9 +47,9 @@ function fallbackMultiplierBps(eligibleSince: string | null) {
   const sinceMs = Date.parse(eligibleSince ?? "");
   if (!Number.isFinite(sinceMs)) return 10_000;
   const heldMs = Math.max(0, Date.now() - sinceMs);
-  if (heldMs >= SEVEN_DAY_MS) return 11_500;
-  if (heldMs >= THREE_DAY_MS) return 11_000;
-  if (heldMs >= DAY_MS) return 10_500;
+  if (heldMs >= SEVEN_DAY_MS) return 20_000;
+  if (heldMs >= THREE_DAY_MS) return 15_000;
+  if (heldMs >= DAY_MS) return 12_500;
   return 10_000;
 }
 
@@ -98,7 +99,7 @@ async function getSettledPayouts(config: { url: string; key: string }) {
 
   for (let offset = 0; ; offset += pageSize) {
     const page = await getJson<PayoutRow[]>(
-      `${config.url}/rest/v1/payouts?select=wallet,reward_amount,updated_at,created_at&status=eq.settled&order=updated_at.desc`,
+      `${config.url}/rest/v1/payouts?select=epoch_id,wallet,reward_amount,updated_at,created_at&status=eq.settled&order=updated_at.desc`,
       config.key,
       { Range: `${offset}-${offset + pageSize - 1}` }
     );
@@ -136,10 +137,11 @@ export async function GET() {
       console.warn("optional payout totals query failed", error);
       return [] as PayoutRow[];
     });
-    const payoutsByWallet = new Map<string, { total: number; lastRewardAt: string | null }>();
+    const payoutsByWallet = new Map<string, { total: number; rewardEpochs: Set<string>; lastRewardAt: string | null }>();
     for (const payout of payoutRows ?? []) {
-      const current = payoutsByWallet.get(payout.wallet) ?? { total: 0, lastRewardAt: null };
+      const current = payoutsByWallet.get(payout.wallet) ?? { total: 0, rewardEpochs: new Set<string>(), lastRewardAt: null };
       current.total += toNumber(payout.reward_amount);
+      current.rewardEpochs.add(payout.epoch_id);
       current.lastRewardAt ??= payout.updated_at ?? payout.created_at;
       payoutsByWallet.set(payout.wallet, current);
     }
@@ -164,6 +166,7 @@ export async function GET() {
           solBoost: "lower-SOL weighted",
           finalWeight: balance * (bps / 10_000),
           totalRewardEarned: payout?.total ?? 0,
+          rewardEpochs: payout?.rewardEpochs.size ?? 0,
           lastAirdropAt: payout?.lastRewardAt ?? null,
           permanentlyIneligible: false,
           ineligibleReason: null
@@ -174,7 +177,7 @@ export async function GET() {
           if (earned) return earned;
           return b.balance - a.balance;
         })
-        .slice(0, 50);
+        .slice(0, 100);
       const topHolders = mappedHolders.map((row, index) => {
         return {
           ...row,
@@ -194,6 +197,7 @@ export async function GET() {
             currentHoldTime: holdTimeLabel(row.eligible_since),
             currentStreak: row.current_streak_epochs ?? 0,
             totalRewardEarned: payout?.total ?? 0,
+            rewardEpochs: payout?.rewardEpochs.size ?? 0,
             lastAirdropAt: payout?.lastRewardAt ?? null,
             ineligibleReason: reasonLabel(row.ineligible_reason),
             ineligibleAt: row.ineligible_at,
@@ -235,6 +239,7 @@ export async function GET() {
           solBoost: "lower-SOL weighted",
           finalWeight: balance,
           totalRewardEarned: payoutsByWallet.get(row.wallet)?.total ?? 0,
+          rewardEpochs: payoutsByWallet.get(row.wallet)?.rewardEpochs.size ?? 0,
           lastAirdropAt: payoutsByWallet.get(row.wallet)?.lastRewardAt ?? null,
           permanentlyIneligible: false,
           ineligibleReason: null

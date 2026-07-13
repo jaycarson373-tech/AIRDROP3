@@ -119,9 +119,9 @@ export const pumpRunnerConfig = {
   },
   multiplierTiers: [
     { label: "Under 24 hours", multiplier: "1.00x", progress: 12 },
-    { label: "1-3 days", multiplier: "1.05x", progress: 38 },
-    { label: "3-7 days", multiplier: "1.10x", progress: 68 },
-    { label: "7+ days", multiplier: "1.15x", progress: 100 }
+    { label: "1-3 days", multiplier: "1.25x", progress: 38 },
+    { label: "3-7 days", multiplier: "1.50x", progress: 68 },
+    { label: "7+ days", multiplier: "2.00x", progress: 100 }
   ],
   runnerBoard: [
     {

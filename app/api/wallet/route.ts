@@ -8,6 +8,7 @@ type HolderStateRow = {
   wallet: string;
   source_balance: string | number | null;
   eligible_since: string | null;
+  current_streak_epochs: number | null;
   current_multiplier_bps: number | null;
   permanently_ineligible: boolean | null;
   ineligible_reason: string | null;
@@ -62,6 +63,25 @@ function toNumber(value: unknown) {
   return Number.isFinite(number) ? number : 0;
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+const THREE_DAY_MS = 3 * DAY_MS;
+const SEVEN_DAY_MS = 7 * DAY_MS;
+
+function fallbackMultiplierBps(eligibleSince: string | null) {
+  const sinceMs = Date.parse(eligibleSince ?? "");
+  if (!Number.isFinite(sinceMs)) return 10_000;
+  const heldMs = Math.max(0, Date.now() - sinceMs);
+  if (heldMs >= SEVEN_DAY_MS) return 20_000;
+  if (heldMs >= THREE_DAY_MS) return 15_000;
+  if (heldMs >= DAY_MS) return 12_500;
+  return 10_000;
+}
+
+function multiplierBps(holder: HolderStateRow | null) {
+  if (!holder) return null;
+  return Math.max(holder.current_multiplier_bps ?? 10_000, fallbackMultiplierBps(holder.eligible_since));
+}
+
 function minimumHolding() {
   const parsed = Number(process.env.ELIGIBILITY_MIN ?? process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 1_000_000;
@@ -90,7 +110,7 @@ export async function GET(request: NextRequest) {
   try {
     const [holderStates, payouts] = await Promise.all([
       getJson<HolderStateRow[]>(
-        `${config.url}/rest/v1/holder_states?select=wallet,source_balance,eligible_since,current_multiplier_bps,permanently_ineligible,ineligible_reason,last_seen_at&wallet=eq.${encodeURIComponent(wallet)}&limit=1`,
+        `${config.url}/rest/v1/holder_states?select=wallet,source_balance,eligible_since,current_streak_epochs,current_multiplier_bps,permanently_ineligible,ineligible_reason,last_seen_at&wallet=eq.${encodeURIComponent(wallet)}&limit=1`,
         config.key
       ),
       getJson<PayoutRow[]>(
@@ -130,8 +150,9 @@ export async function GET(request: NextRequest) {
       eligible,
       eligibilityMinimum: min,
       status: eligible ? "eligible" : holder ? holder.ineligible_reason ?? "below_threshold" : "not_found",
-      multiplierBps: holder?.current_multiplier_bps ?? null,
+      multiplierBps: multiplierBps(holder),
       eligibleSince: holder?.eligible_since ?? null,
+      currentStreak: holder?.current_streak_epochs ?? 0,
       lastSeenAt: holder?.last_seen_at ?? null,
       totalRewardReceived,
       totalDropSolValue,

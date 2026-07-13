@@ -64,7 +64,9 @@ type Holder = {
   currentMultiplier: string | null;
   currentMultiplierBps: number | null;
   currentHoldTime: string | null;
+  currentStreak: number | null;
   totalRewardEarned: number;
+  rewardEpochs?: number;
   lastAirdropAt: string | null;
 };
 
@@ -84,6 +86,7 @@ type WalletLookupResponse = {
   eligibilityMinimum: number;
   status: string;
   multiplierBps: number | null;
+  currentStreak?: number;
   totalRewardReceived: number;
   totalDropSolValue: number;
   lastAirdropAt: string | null;
@@ -726,6 +729,10 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
                   <small>Current value</small>
                   <strong>{currentReceiptValue}</strong>
                 </span>
+                <span>
+                  <small>Held streak</small>
+                  <strong>{formatCount(walletResult.currentStreak ?? 0, "0")} epochs</strong>
+                </span>
               </div>
               <div className="runner-wallet-receipts">
                 {walletResult.receipts.length ? (
@@ -764,13 +771,13 @@ export function HoldMultiplier() {
       <div className="runner-section-heading">
         <span className="runner-kicker">Loyalty Weight</span>
         <h2>KEEP COPYING</h2>
-        <p>Consistent holders receive a modest loyalty multiplier on their eligible distribution weight.</p>
+        <p>Consistent holders receive a loyalty multiplier on their eligible distribution weight.</p>
       </div>
       <div className="runner-meter-card">
         <div className="runner-distance-meter" aria-label="Seven day multiplier meter">
           <span>START</span>
           <div>
-            <i style={{ width: "72%" }} />
+            <i style={{ width: "100%" }} />
           </div>
           <span>7 DAY COPY WEIGHT</span>
         </div>
@@ -783,6 +790,54 @@ export function HoldMultiplier() {
           ))}
         </div>
         <p>Selling or transferring {tokenLabel} resets the wallet's hold multiplier. The multiplier affects distribution weight, not a fixed reward.</p>
+      </div>
+    </section>
+  );
+}
+
+export function HolderRewardLeaderboard({ live }: { live: RunnerLiveData }) {
+  const rows = live.holders.topHolders.filter((holder) => holder.totalRewardEarned > 0 || (holder.currentStreak ?? 0) > 0);
+
+  return (
+    <section className="runner-section" id="leaderboard">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">Holder Leaderboard</span>
+        <h2>COPYCAT PAYOUT BOARD</h2>
+        <p>Live holder rewards ranked by scan tokens received, with held-epoch streak and current multiplier.</p>
+      </div>
+      <div className="runner-table-wrap">
+        <table className="runner-table runner-holder-leaderboard">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Wallet</th>
+              <th>Tokens received</th>
+              <th>Reward epochs</th>
+              <th>Held streak</th>
+              <th>Multiplier</th>
+              <th>Last drop</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length ? (
+              rows.map((holder, index) => (
+                <tr key={holder.address}>
+                  <td>#{index + 1}</td>
+                  <td>{compactAddress(holder.address)}</td>
+                  <td className="runner-positive">{formatTokenAmount(holder.totalRewardEarned, rewardSymbol, `0 ${rewardSymbol}`)}</td>
+                  <td>{formatCount(holder.rewardEpochs ?? 0, "0")}</td>
+                  <td>{formatCount(holder.currentStreak ?? 0, "0")}</td>
+                  <td>{holder.currentMultiplier ?? "1.00x"}</td>
+                  <td>{holder.lastAirdropAt ? formatTime(holder.lastAirdropAt) : "Awaiting"}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7}>Leaderboard fills in after the first settled scan drop.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -1066,6 +1121,7 @@ export function PumpRunnerHome() {
         <HowItWorks />
         <EligibilityCard live={live} />
         <HoldMultiplier />
+        <HolderRewardLeaderboard live={live} />
         <AirdropFeed live={live} />
         <RunnerPerformanceChart />
         <FaqSection />

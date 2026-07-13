@@ -36,9 +36,9 @@ function holderMultiplierBps(eligibleSince: string | null, nowMs: number) {
   if (!Number.isFinite(sinceMs)) return 10_000;
 
   const heldMs = Math.max(0, nowMs - sinceMs);
-  if (heldMs >= SEVEN_DAY_MS) return 11_500;
-  if (heldMs >= THREE_DAY_MS) return 11_000;
-  if (heldMs >= DAY_MS) return 10_500;
+  if (heldMs >= SEVEN_DAY_MS) return 20_000;
+  if (heldMs >= THREE_DAY_MS) return 15_000;
+  if (heldMs >= DAY_MS) return 12_500;
   return 10_000;
 }
 
