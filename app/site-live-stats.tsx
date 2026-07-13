@@ -13,7 +13,7 @@ const fallbackStats: StatsResponse = {
   totalRewardAirdropped: 0,
   latestEligibleHolders: 0
 };
-const SOURCE_SYMBOL = "CC";
+const SOURCE_SYMBOL = "COPYCAT";
 
 async function getStats() {
   try {

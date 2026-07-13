@@ -69,12 +69,12 @@ export type RunnerPerformanceRow = {
 
 export const pumpRunnerConfig = {
   name: "Copy Cat",
-  ticker: "CC",
-  tokenLabel: "$CC",
+  ticker: "COPYCAT",
+  tokenLabel: "$COPYCAT",
   rewardSymbol: activeRunnerTicker,
-  logoSrc: "/brand/copy-cat-logo.svg",
-  backgroundSrc: "/brand/copy-cat-logo.svg",
-  bannerSrc: "/brand/copy-cat-logo.svg",
+  logoSrc: "/brand/copy-cat-logo.jpg",
+  backgroundSrc: "/brand/copy-cat-background.jpg",
+  bannerSrc: "/brand/copy-cat-background.jpg",
   contractAddress,
   rewardMint,
   buyUrl: process.env.NEXT_PUBLIC_BUY_URL ?? fallbackPumpFunUrl,
@@ -205,7 +205,7 @@ export const pumpRunnerConfig = {
     }
   ],
   riskCopy:
-    "$CC and all distributed assets are highly speculative digital tokens. Nothing on this website constitutes financial advice or guarantees future returns.",
+    "$COPYCAT and all distributed assets are highly speculative digital tokens. Nothing on this website constitutes financial advice or guarantees future returns.",
   rentCopy:
     "Distribution minimums exist because creating or funding token accounts can incur Solana network rent and transaction costs. Very small allocations may be delayed, combined or excluded when the cost of distribution would be disproportionate to the reward. Requirements may be adjusted as network conditions change."
 } as const;

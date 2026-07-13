@@ -30,7 +30,7 @@ input {
   --runner-accent: #ffffff;
   --runner-accent-2: #d7d7d7;
   --runner-yellow: #ffffff;
-  --runner-danger: #ff786f;
+  --runner-danger: #bdbdbd;
   background: var(--runner-bg);
   color: var(--runner-text);
   font-family: "Arial", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
@@ -42,15 +42,16 @@ input {
 
 .pump-runner-page::before {
   background:
-    radial-gradient(circle at 20% 8%, rgba(255, 255, 255, 0.08), transparent 28%),
-    radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.06), transparent 30%),
-    linear-gradient(180deg, rgba(2, 2, 2, 0.7), rgba(2, 2, 2, 0.95)),
-    #020202;
+    linear-gradient(180deg, rgba(2, 2, 2, 0.32), rgba(2, 2, 2, 0.78) 68%, rgba(2, 2, 2, 0.95)),
+    url("/brand/copy-cat-background.jpg") center top / cover no-repeat;
+  animation: copyCatBackgroundDrift 28s ease-in-out infinite alternate;
   content: "";
   inset: 0;
-  opacity: 1;
+  opacity: 0.77;
   pointer-events: none;
   position: fixed;
+  transform: scale(1.04) translate3d(0, 0, 0);
+  transform-origin: center;
   z-index: -2;
 }
 
@@ -64,6 +65,15 @@ input {
   pointer-events: none;
   position: fixed;
   z-index: -1;
+}
+
+@keyframes copyCatBackgroundDrift {
+  from {
+    transform: scale(1.04) translate3d(-8px, -5px, 0);
+  }
+  to {
+    transform: scale(1.07) translate3d(10px, 7px, 0);
+  }
 }
 
 .pump-runner-page * {
@@ -1424,6 +1434,7 @@ input {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .pump-runner-page::before,
   .runner-ticker-track,
   .runner-live-dot,
   .runner-scan-line {
@@ -1440,11 +1451,12 @@ input {
 /* Shared dashboard pages */
 .page {
   background:
+    linear-gradient(180deg, rgba(2, 2, 2, 0.5), rgba(2, 2, 2, 0.94)),
+    url("/brand/copy-cat-background.jpg") center top / cover fixed no-repeat,
     linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.08), transparent 32%),
     #020202;
-  background-size: 54px 54px, 54px 54px, auto, auto;
+  background-size: auto, cover, 54px 54px, 54px 54px, auto;
   color: #f7f7f7;
   font-family: Arial, "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
   min-height: 100vh;

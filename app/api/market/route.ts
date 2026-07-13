@@ -146,7 +146,7 @@ export async function GET() {
     reward: marketFromPair(pickPair(pairs, reward), isStaleHomeRunner() ? defaultCurrentRunner.ticker : process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? defaultCurrentRunner.ticker),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CC"
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "COPYCAT"
     ),
     sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
     updatedAt: new Date().toISOString()

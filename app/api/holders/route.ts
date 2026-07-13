@@ -110,7 +110,7 @@ async function getSettledPayouts(config: { url: string; key: string }) {
 }
 
 function reasonLabel(reason: string | null | undefined) {
-  const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CC";
+  const sourceSymbol = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "COPYCAT";
   const parsedEligibilityMin = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? process.env.ELIGIBILITY_MIN ?? 1_000_000);
   const eligibilityMin = Number.isFinite(parsedEligibilityMin) && parsedEligibilityMin > 0 ? parsedEligibilityMin : 1_000_000;
   const eligibilityLabel =
