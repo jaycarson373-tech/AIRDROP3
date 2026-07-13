@@ -52,6 +52,7 @@ type MarketPayload = {
 const SOL_MINT = "So11111111111111111111111111111111111111112";
 const DEFAULT_SOURCE_MINT = "";
 const CACHE_MS = 15_000;
+const PREVIOUS_COPY_MINT = "SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump";
 
 let cache: { expiresAt: number; payload: MarketPayload } | null = null;
 
@@ -66,7 +67,7 @@ function cleanAddress(value: string | undefined | null) {
 
 function rewardMint() {
   const configured = cleanAddress(env("REWARD_TOKEN_MINT"));
-  if (!configured) return defaultCurrentRunner.mint;
+  if (!configured || configured === PREVIOUS_COPY_MINT) return defaultCurrentRunner.mint;
   return configured;
 }
 
@@ -134,7 +135,9 @@ export async function GET() {
   const reward = rewardMint();
   const source = sourceMint();
   const pairs = await fetchDexPairs([reward, source, SOL_MINT].filter(Boolean) as string[]);
-  const rewardSymbol = process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || defaultCurrentRunner.ticker;
+  const rewardSymbol = reward === defaultCurrentRunner.mint
+    ? defaultCurrentRunner.ticker
+    : process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || defaultCurrentRunner.ticker;
   const payload: MarketPayload = {
     reward: marketFromPair(pickPair(pairs, reward), rewardSymbol),
     source: marketFromPair(

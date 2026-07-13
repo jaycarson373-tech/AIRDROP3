@@ -1,11 +1,11 @@
 export const defaultCurrentRunner = {
-  name: "Homer let the barts out",
-  ticker: "Barts",
-  mint: "SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump",
-  logoSrc: "/brand/barts-runner-logo.jpg",
-  scannedMarketCap: "$26.7K",
-  scannedAgo: "10:33:34 AM EST",
-  dexScreenerUrl: "https://dexscreener.com/solana/ebjz4mlyeyss57f6f1h1s1hdgtyom8aaqaegej9cyul3"
+  name: "psyopcat",
+  ticker: "PCAT",
+  mint: "3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH",
+  logoSrc: "/brand/psyopcat-logo.png",
+  scannedMarketCap: "$196K",
+  scannedAgo: "12:47 PM EST",
+  dexScreenerUrl: "https://dexscreener.com/solana/3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH"
 } as const;
 
 const defaultContractAddress = "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump";
@@ -20,11 +20,15 @@ function looksLikeMint(value: string) {
   return value.length > 30 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(value);
 }
 
+function isPreviousCopyMint(value: string) {
+  return value === "SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump";
+}
+
 const contractAddress = cleanEnv(process.env.NEXT_PUBLIC_CA) || cleanEnv(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT) || defaultContractAddress;
 const rawRewardSymbol = cleanEnv(process.env.NEXT_PUBLIC_REWARD_SYMBOL);
 const rawRewardMint = cleanEnv(process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
 const rawActiveRunnerName = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME);
-const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol);
+const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isPreviousCopyMint(rawRewardMint);
 const rewardMint = useDefaultCurrentRunner ? defaultCurrentRunner.mint : rawRewardMint || defaultCurrentRunner.mint;
 const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol;
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
@@ -88,7 +92,7 @@ export const pumpRunnerConfig = {
     dexScreenerUrl: activeRunnerDexUrl,
     detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? defaultCurrentRunner.scannedMarketCap,
     currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
-    amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? `Buying ${activeRunnerLabel}`,
+    amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? `Accumulating since ${defaultCurrentRunner.scannedAgo}`,
     status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? `Scanned ${defaultCurrentRunner.scannedAgo}`
   },
   marketTickerFallback: {
@@ -107,7 +111,7 @@ export const pumpRunnerConfig = {
   treasuryStatistics: {
     runnersCaughtToday: "1",
     averageEntryMarketCap: defaultCurrentRunner.scannedMarketCap,
-    averageReturn: "Tracking",
+    averageReturn: "Accumulating",
     bestRunner: activeRunnerLabel,
     totalDistributedToday: "0 SOL"
   },
@@ -127,7 +131,7 @@ export const pumpRunnerConfig = {
       detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? defaultCurrentRunner.scannedMarketCap,
       currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
       returnSinceDetection: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_RETURN ?? "Tracking",
-      amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? "Buying this epoch",
+      amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? `Accumulating since ${defaultCurrentRunner.scannedAgo}`,
       status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? `Scanned ${defaultCurrentRunner.scannedAgo}`,
       dexScreenerUrl: activeRunnerDexUrl
     },
@@ -146,7 +150,7 @@ export const pumpRunnerConfig = {
     }
   ] satisfies RunnerBoardRow[],
   performanceRows: [
-    { ticker: activeRunnerLabel, entryMarketCap: 26_700, currentMarketCap: 35_392, changePercent: 33 }
+    { ticker: activeRunnerLabel, entryMarketCap: 196_000, currentMarketCap: 196_000, changePercent: 0 }
   ] satisfies RunnerPerformanceRow[],
   scannerCards: [
     {

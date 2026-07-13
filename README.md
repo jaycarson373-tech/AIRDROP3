@@ -1,7 +1,7 @@
 # Copy Cat
 
 Source token: `$COPYCAT`
-Active copied asset: `$Barts`
+Active copied asset: `$PCAT`
 
 Copy Cat tracks smart-wallet signals, buys the configured copied asset with creator fees, and airdrops it to eligible `$COPYCAT` holders.
 
@@ -11,8 +11,8 @@ Copy Cat tracks smart-wallet signals, buys the configured copied asset with crea
 NEXT_PUBLIC_PROJECT_NAME="Copy Cat"
 NEXT_PUBLIC_SOURCE_SYMBOL="Copycat"
 NEXT_PUBLIC_SOURCE_TOKEN_MINT="2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump"
-NEXT_PUBLIC_REWARD_SYMBOL="Barts"
-NEXT_PUBLIC_REWARD_TOKEN_MINT="SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump"
+NEXT_PUBLIC_REWARD_SYMBOL="PCAT"
+NEXT_PUBLIC_REWARD_TOKEN_MINT="3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH"
 NEXT_PUBLIC_CA="2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump"
 NEXT_PUBLIC_X_URL="https://x.com/CopyCat_pf"
 NEXT_PUBLIC_EPOCH_MINUTES="5"
@@ -61,7 +61,7 @@ CLAIM_ENABLED="true"
 BUY_ENABLED="true"
 AIRDROP_ENABLED="true"
 SOURCE_TOKEN_MINT="2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump"
-REWARD_TOKEN_MINT="SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump"
+REWARD_TOKEN_MINT="3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH"
 EPOCH_MINUTES="5"
 ELIGIBILITY_MIN="1000000"
 MAX_HOLDER_PCT="4"
