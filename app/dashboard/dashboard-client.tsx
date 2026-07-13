@@ -287,7 +287,6 @@ export function DashboardClient() {
             <img className="brand-logo" src={pumpRunnerConfig.logoSrc} alt={`${PROJECT_NAME} logo`} />
             <span>
               {PROJECT_NAME}
-              <small>{SOURCE_SYMBOL} copies smart wallets</small>
             </span>
           </Link>
           <div className="nav-links">

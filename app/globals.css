@@ -166,7 +166,8 @@ input {
 
 .runner-brand strong {
   font-family: Impact, "Arial Black", Arial, sans-serif;
-  font-size: 1.16rem;
+  font-size: 1.35rem;
+  line-height: 0.92;
   text-transform: uppercase;
 }
 
@@ -235,8 +236,9 @@ input {
 .runner-button {
   background: linear-gradient(180deg, #f7f7f7, var(--runner-accent));
   border: 1px solid var(--runner-accent);
-  color: #020202;
+  color: #020202 !important;
   box-shadow: 0 14px 38px rgba(255, 255, 255, 0.22);
+  text-shadow: none;
 }
 
 .runner-button {
@@ -248,10 +250,21 @@ input {
   padding: 14px 18px;
 }
 
+.runner-button svg,
+.runner-buy-button svg {
+  color: #020202;
+  stroke: #020202;
+}
+
 .runner-button-secondary {
   background: rgba(255, 255, 255, 0.06);
   border-color: var(--runner-border-strong);
+  color: var(--runner-text) !important;
+}
+
+.runner-button-secondary svg {
   color: var(--runner-text);
+  stroke: var(--runner-text);
 }
 
 .runner-hero,
@@ -359,7 +372,8 @@ input {
   margin-top: 30px;
 }
 
-.runner-sequence {
+.runner-sequence,
+.copy-terminal-strip {
   align-items: center;
   border: 1px solid var(--runner-border);
   border-radius: 8px;
@@ -374,6 +388,25 @@ input {
   overflow: hidden;
   padding: 16px;
   position: relative;
+}
+
+.copy-terminal-strip {
+  align-items: flex-start;
+  background: rgba(0, 0, 0, 0.58);
+  display: grid;
+  justify-content: initial;
+}
+
+.copy-terminal-strip span,
+.copy-terminal-strip small {
+  color: var(--runner-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.copy-terminal-strip strong {
+  color: var(--runner-text);
+  font-size: 1.08rem;
 }
 
 .runner-sequence span {
@@ -609,6 +642,54 @@ input {
   position: relative;
 }
 
+.copy-terminal-card {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    rgba(0, 0, 0, 0.42);
+  background-size: 28px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+}
+
+.copy-terminal-card div {
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 13px 16px;
+}
+
+.copy-terminal-card div:last-child {
+  border-bottom: 0;
+}
+
+.copy-terminal-card span,
+.copy-terminal-card strong {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.copy-terminal-card span {
+  color: var(--runner-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.copy-terminal-card strong {
+  color: var(--runner-text);
+  font-size: 0.94rem;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .runner-track-line,
 .runner-track-lane {
   border-top: 1px solid rgba(255, 255, 255, 0.34);
@@ -731,6 +812,60 @@ input {
 .runner-summary-grid {
   grid-template-columns: repeat(5, 1fr);
   margin-top: 16px;
+}
+
+.copy-signal-card {
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 42%),
+    rgba(0, 0, 0, 0.58);
+  border: 1px solid var(--runner-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  margin-top: 18px;
+  padding: 18px;
+}
+
+.copy-signal-card img {
+  aspect-ratio: 1;
+  border: 1px solid var(--runner-border-strong);
+  border-radius: 8px;
+  height: 58px;
+  object-fit: cover;
+  width: 58px;
+}
+
+.copy-signal-card span,
+.copy-signal-card small {
+  color: var(--runner-muted);
+  display: block;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.copy-signal-card strong {
+  color: var(--runner-text);
+  display: block;
+  font-size: 1.16rem;
+  margin: 4px 0;
+}
+
+.copy-signal-card a {
+  align-items: center;
+  border: 1px solid var(--runner-border);
+  border-radius: 8px;
+  color: var(--runner-text);
+  display: inline-flex;
+  font-weight: 900;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 14px;
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
 .runner-stat-card,
@@ -1276,11 +1411,56 @@ input {
   justify-content: center;
 }
 
+.copy-conveyor {
+  margin: -22px auto 42px;
+  max-width: 1180px;
+  overflow: hidden;
+  padding: 0 20px;
+}
+
+.copy-conveyor-track {
+  animation: copyConveyor 38s linear infinite;
+  display: flex;
+  gap: 14px;
+  width: max-content;
+}
+
+.copy-conveyor-card {
+  aspect-ratio: 16 / 9;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+  flex: 0 0 245px;
+  margin: 0;
+  overflow: hidden;
+}
+
+.copy-conveyor-card img {
+  filter: grayscale(1) contrast(1.12);
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.82;
+  width: 100%;
+}
+
+@keyframes copyConveyor {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - 7px));
+  }
+}
+
 .runner-footer {
   border-top: 1px solid var(--runner-border);
   color: var(--runner-muted);
-  display: grid;
-  gap: 22px;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: space-between;
   padding-bottom: 48px;
   padding-top: 36px;
 }
@@ -1342,6 +1522,15 @@ input {
   .runner-scanner-layout,
   .runner-eligibility-grid {
     grid-template-columns: 1fr;
+  }
+
+  .copy-signal-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .copy-signal-card a {
+    grid-column: 1 / -1;
+    justify-content: center;
   }
 }
 
@@ -1425,6 +1614,16 @@ input {
   .runner-wallet-receipt {
     align-items: flex-start;
     grid-template-columns: 1fr;
+  }
+
+  .copy-signal-card {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+  }
+
+  .copy-signal-card img {
+    height: 52px;
+    width: 52px;
   }
 
   .runner-hero-stats,

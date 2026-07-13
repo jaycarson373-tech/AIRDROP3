@@ -111,6 +111,14 @@ const refreshMs = 12_000;
 const tokenLabel = pumpRunnerConfig.tokenLabel;
 const sourceSymbol = pumpRunnerConfig.ticker;
 const rewardSymbol = pumpRunnerConfig.currentRunner.ticker;
+const copyCatBeltImages = [
+  "/brand/copy-cat-belt-1.jpg",
+  "/brand/copy-cat-belt-2.jpg",
+  "/brand/copy-cat-belt-3.jpg",
+  "/brand/copy-cat-belt-4.jpg",
+  "/brand/copy-cat-belt-5.jpg",
+  "/brand/copy-cat-belt-6.jpg"
+];
 
 const emptyStats: StatsResponse = {
   currentEpoch: 0,
@@ -227,21 +235,6 @@ function formatCompactUsd(value: number | null | undefined, fallback: string) {
   return `$${value.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 2 })}`;
 }
 
-function parseMarketCapLabel(value: string) {
-  const trimmed = value.trim().replace(/^\$/, "").replace(/,/g, "");
-  const multiplier = /b$/i.test(trimmed) ? 1_000_000_000 : /m$/i.test(trimmed) ? 1_000_000 : /k$/i.test(trimmed) ? 1_000 : 1;
-  const parsed = Number(trimmed.replace(/[kmb]$/i, ""));
-  return Number.isFinite(parsed) ? parsed * multiplier : null;
-}
-
-function formatReturnFromMarketCaps(entryLabel: string, currentValue: number | null | undefined, fallback: string) {
-  const entryValue = parseMarketCapLabel(entryLabel);
-  if (!entryValue || !Number.isFinite(currentValue ?? NaN) || !currentValue) return fallback;
-  const change = ((currentValue - entryValue) / entryValue) * 100;
-  const prefix = change >= 0 ? "+" : "";
-  return `${prefix}${change.toLocaleString(undefined, { maximumFractionDigits: 0 })}%`;
-}
-
 function formatCount(value: number | null | undefined, fallback = "Awaiting") {
   if (!Number.isFinite(value ?? NaN) || value === null || value === undefined) return fallback;
   return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
@@ -331,16 +324,13 @@ function RunnerNav() {
     <header className="runner-nav">
       <a className="runner-brand" href="#top" aria-label="Copy Cat home">
         <img className="runner-brand-logo" src={pumpRunnerConfig.logoSrc} alt="" />
-        <span>
-          <strong>{pumpRunnerConfig.name}</strong>
-          <small>{tokenLabel} copies smart wallets</small>
-        </span>
+        <strong>{pumpRunnerConfig.name}</strong>
       </a>
       <nav className="runner-links" aria-label="Primary navigation">
-        <a href="#board">Board</a>
-        <a href="#scanner">Scanner</a>
-        <a href="#eligibility">Eligibility</a>
-        <a href="#drops">Drops</a>
+        <a href="#board">Copy</a>
+        <a href="#scanner">Terminal</a>
+        <a href="#eligibility">Holders</a>
+        <a href="#drops">Receipts</a>
       </nav>
       <div className="runner-actions">
         {ca ? <CopyCaButton address={ca} label={compactAddress(ca)} /> : null}
@@ -378,10 +368,10 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
             View Scan Drops
           </a>
         </div>
-        <div className="runner-sequence" aria-label="Copy Cat process">
-          <span>SCAN</span>
-          <span>BUY</span>
-          <span>AIRDROP</span>
+        <div className="copy-terminal-strip" aria-label="Copy Cat terminal preview">
+          <span>copycat://wallet-flow</span>
+          <strong>scanning 1,350 wallets</strong>
+          <small>matching buys / routing fees / preparing drop</small>
         </div>
       </div>
 
@@ -418,10 +408,11 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
           <strong>{live.countdown}</strong>
           <small>Every {pumpRunnerConfig.epochMinutes} minutes</small>
         </div>
-        <div className="runner-track-display">
-          <div className="runner-track-line" />
-          <div className="runner-track-lane" />
-          <div className="runner-scan-line" />
+        <div className="copy-terminal-card" aria-label="Copy Cat live scan terminal">
+          <div><span>scan.feed</span><strong>1,350 wallets</strong></div>
+          <div><span>copy.target</span><strong>{pumpRunnerConfig.currentRunner.ticker}</strong></div>
+          <div><span>fee.route</span><strong>100% active</strong></div>
+          <div><span>next.drop</span><strong>{live.countdown}</strong></div>
         </div>
         <div className="runner-hero-stats">
           <span>
@@ -443,9 +434,9 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
 }
 
 export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
-  const [tab, setTab] = useState("Today");
   const summary = pumpRunnerConfig.treasuryStatistics;
   const liveActiveMarketCap = live.market.reward.marketCapUsd ?? live.market.reward.fdvUsd;
+  const activeCopy = pumpRunnerConfig.runnerBoard[0];
   const summaryItems = [
     ["Copies tracked today", summary.runnersCaughtToday],
     ["Average entry market cap", summary.averageEntryMarketCap],
@@ -461,20 +452,6 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
         <h2>ACTIVE COPY</h2>
         <p>The current smart-wallet signal being copied, bought and airdropped to eligible {tokenLabel} holders.</p>
       </div>
-      <div className="runner-tabs" role="tablist" aria-label="Copy Cat board range">
-        {["Today", "This Week", "All Time"].map((item) => (
-          <button
-            aria-selected={tab === item}
-            className={tab === item ? "is-active" : ""}
-            key={item}
-            onClick={() => setTab(item)}
-            role="tab"
-            type="button"
-          >
-            {item}
-          </button>
-        ))}
-      </div>
       <div className="runner-summary-grid">
         {summaryItems.map(([label, value]) => (
           <div className="runner-stat-card" key={label}>
@@ -483,62 +460,16 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
           </div>
         ))}
       </div>
-      <div className="runner-table-wrap">
-        <table className="runner-table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Token</th>
-              <th>Ticker</th>
-              <th>CA</th>
-              <th>Scan MC</th>
-              <th>Current MC</th>
-              <th>Return</th>
-              <th>Treasury Route</th>
-              <th>Status</th>
-              <th>Chart</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pumpRunnerConfig.runnerBoard.map((runner, index) => {
-              const isActiveRunner = index === 0;
-              const currentMarketCap = isActiveRunner
-                ? formatCompactUsd(liveActiveMarketCap, runner.currentMarketCap)
-                : runner.currentMarketCap;
-              const returnSinceDetection = isActiveRunner
-                ? formatReturnFromMarketCaps(runner.detectedMarketCap, liveActiveMarketCap, runner.returnSinceDetection)
-                : runner.returnSinceDetection;
-
-              return (
-                <tr key={`${tab}-${runner.rank}-${runner.ticker}`}>
-                  <td>{runner.rank}</td>
-                  <td>
-                    <span className="runner-token-cell">
-                      <img src={runner.logoSrc} alt="" />
-                      <span>{runner.token}</span>
-                    </span>
-                  </td>
-                  <td>{runner.ticker}</td>
-                  <td className="runner-ca-cell">{runner.mint ? compactAddress(runner.mint) : "—"}</td>
-                  <td>{runner.detectedMarketCap}</td>
-                  <td>{currentMarketCap}</td>
-                  <td className={returnSinceDetection.startsWith("+") || /x$/i.test(returnSinceDetection) ? "runner-positive" : ""}>
-                    {returnSinceDetection}
-                  </td>
-                  <td>{runner.amountAcquired}</td>
-                  <td>
-                    <span className="runner-status-chip">{runner.status}</span>
-                  </td>
-                  <td>
-                    <a href={runner.dexScreenerUrl} target="_blank" rel="noreferrer" aria-label={`Open ${runner.ticker} chart`}>
-                      <ExternalLink size={16} />
-                    </a>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="copy-signal-card">
+        <img src={activeCopy.logoSrc} alt="" />
+        <div>
+          <span>Copy 01</span>
+          <strong>{activeCopy.token}</strong>
+          <small>{activeCopy.ticker} scanned at {activeCopy.detectedMarketCap} / {activeCopy.status.replace(/^Scanned\s+/i, "")}</small>
+        </div>
+        <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
+          Chart <ExternalLink size={15} />
+        </a>
       </div>
     </section>
   );
@@ -720,7 +651,6 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
             <li>Continue holding through the active epoch</li>
             <li>Meet basic wallet and anti-abuse requirements</li>
           </ul>
-          <p>{pumpRunnerConfig.rentCopy}</p>
         </div>
         <div className="runner-wallet-card">
           <div className="runner-wallet-row">
@@ -1025,14 +955,6 @@ export function CopyHistoryChart() {
   );
 }
 
-export function RiskDisclosure() {
-  return (
-    <p className="runner-risk">
-      {pumpRunnerConfig.riskCopy}
-    </p>
-  );
-}
-
 function FaqSection() {
   const faqs = [
     {
@@ -1103,6 +1025,22 @@ function FinalCta() {
   );
 }
 
+function CopyCatConveyor() {
+  const belt = [...copyCatBeltImages, ...copyCatBeltImages];
+
+  return (
+    <section className="copy-conveyor" aria-label="Copy Cat graphic belt">
+      <div className="copy-conveyor-track">
+        {belt.map((src, index) => (
+          <figure className="copy-conveyor-card" key={`${src}-${index}`}>
+            <img src={src} alt="" loading="lazy" />
+          </figure>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function RunnerFooter() {
   const ca = pumpRunnerConfig.contractAddress;
 
@@ -1134,9 +1072,6 @@ function RunnerFooter() {
         <a href="#faq">Terms</a>
         <a href="#faq">Risk disclosure</a>
       </div>
-      <p>Built to scan. Built to copy. Built to drop.</p>
-      <p>{pumpRunnerConfig.rentCopy}</p>
-      <RiskDisclosure />
     </footer>
   );
 }
@@ -1161,6 +1096,7 @@ export function PumpRunnerHome() {
         <CopyHistoryChart />
         <FaqSection />
         <FinalCta />
+        <CopyCatConveyor />
       </main>
       <RunnerFooter />
     </div>

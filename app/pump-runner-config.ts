@@ -16,23 +16,6 @@ function cleanEnv(value: string | undefined) {
   return trimmed || "";
 }
 
-function isStaleHomeRunner(value: string) {
-  return value.replace(/^\$/, "").toUpperCase() === "HOME";
-}
-
-function isPreviousRunner(value: string) {
-  const normalized = value.replace(/^\$/, "").toUpperCase();
-  return normalized === "GIRL" || normalized === "GIRLCOIN" || normalized === "HARRIS" || normalized === "PINKBULL";
-}
-
-function isPreviousRunnerMint(value: string) {
-  return (
-    value === "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump" ||
-    value === "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump" ||
-    value === "Er58M968bCGnmKwvrrPhW21zesoFfo8gXPUDokKMpump"
-  );
-}
-
 function looksLikeMint(value: string) {
   return value.length > 30 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(value);
 }
@@ -41,7 +24,7 @@ const contractAddress = cleanEnv(process.env.NEXT_PUBLIC_CA) || cleanEnv(process
 const rawRewardSymbol = cleanEnv(process.env.NEXT_PUBLIC_REWARD_SYMBOL);
 const rawRewardMint = cleanEnv(process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
 const rawActiveRunnerName = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME);
-const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isStaleHomeRunner(rawRewardSymbol) || isPreviousRunner(rawRewardSymbol) || isPreviousRunnerMint(rawRewardMint) || /home/i.test(rawActiveRunnerName) || /girl|harris/i.test(rawActiveRunnerName);
+const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol);
 const rewardMint = useDefaultCurrentRunner ? defaultCurrentRunner.mint : rawRewardMint || defaultCurrentRunner.mint;
 const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol;
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
@@ -182,9 +165,5 @@ export const pumpRunnerConfig = {
       title: "Airdrop Rail",
       body: "Airdrops the scan token to eligible holders above the configured holding minimum."
     }
-  ],
-  riskCopy:
-    "$COPYCAT and all distributed assets are highly speculative digital tokens. Nothing on this website constitutes financial advice or guarantees future returns.",
-  rentCopy:
-    "Distribution minimums exist because creating or funding token accounts can incur Solana network rent and transaction costs. Very small allocations may be delayed, combined or excluded when the cost of distribution would be disproportionate to the reward. Requirements may be adjusted as network conditions change."
+  ]
 } as const;
