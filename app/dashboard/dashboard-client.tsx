@@ -9,6 +9,7 @@ type StatsResponse = {
   totalEpochs: number;
   lastRewardAirdropped: number;
   totalRewardAirdropped: number;
+  totalSolValueAirdropped: number;
   latestEligibleHolders: number;
   nextDropTime: string;
   epochHistory: Array<{
@@ -74,6 +75,7 @@ const emptyStats: StatsResponse = {
   totalEpochs: 0,
   lastRewardAirdropped: 0,
   totalRewardAirdropped: 0,
+  totalSolValueAirdropped: 0,
   latestEligibleHolders: 0,
   nextDropTime: new Date().toISOString(),
   epochHistory: [],
@@ -334,7 +336,9 @@ export function DashboardClient() {
                   <span>Eligible Holders</span>
                 </div>
                 <div className="stat">
-                  <strong>0 SOL</strong>
+                  <strong>
+                    <AnimatedValue value={liveStats.totalSolValueAirdropped} maximumFractionDigits={5} suffix=" SOL" />
+                  </strong>
                   <span>Total SOL Value Airdropped</span>
                 </div>
               </div>

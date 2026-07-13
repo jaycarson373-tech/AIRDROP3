@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 type StatsResponse = {
   totalEpochs: number;
   totalRewardAirdropped: number;
+  totalSolValueAirdropped: number;
   latestEligibleHolders: number;
 };
 
 const fallbackStats: StatsResponse = {
   totalEpochs: 0,
   totalRewardAirdropped: 0,
+  totalSolValueAirdropped: 0,
   latestEligibleHolders: 0
 };
 const SOURCE_SYMBOL = "COPYCAT";
@@ -33,6 +35,11 @@ function displayNumber(value: number, empty = "–") {
 function displayCount(value: number) {
   if (!Number.isFinite(value) || value < 0) return "–";
   return value.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function displaySol(value: number) {
+  if (!Number.isFinite(value) || value <= 0) return "0 SOL";
+  return `${value.toLocaleString(undefined, { maximumFractionDigits: 5 })} SOL`;
 }
 
 export function SiteLiveStats() {
@@ -60,7 +67,7 @@ export function SiteLiveStats() {
         <span>Total epochs</span>
       </div>
       <div className="stat">
-        <strong>0 SOL</strong>
+        <strong>{stats ? displaySol(stats.totalSolValueAirdropped) : "–"}</strong>
         <span>Total SOL Value Airdropped</span>
       </div>
       <div className="stat">

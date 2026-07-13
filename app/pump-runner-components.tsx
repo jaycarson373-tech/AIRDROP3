@@ -30,6 +30,7 @@ type StatsResponse = {
   totalEpochs: number;
   lastRewardAirdropped: number;
   totalRewardAirdropped: number;
+  totalSolValueAirdropped: number;
   latestEligibleHolders: number;
   averageMultiplier: number | null;
   nextDropTime: string;
@@ -113,6 +114,7 @@ const emptyStats: StatsResponse = {
   totalEpochs: 0,
   lastRewardAirdropped: 0,
   totalRewardAirdropped: 0,
+  totalSolValueAirdropped: 0,
   latestEligibleHolders: 0,
   averageMultiplier: null,
   nextDropTime: new Date().toISOString(),
@@ -281,7 +283,7 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
   const items = [
     `ACTIVE SCAN ${pumpRunnerConfig.currentRunner.ticker}`,
     `${pumpRunnerConfig.currentRunner.ticker} PRICE ${formatPrice(scan.priceUsd, "Awaiting scan price")}`,
-    `TOTAL SOL VALUE AIRDROPPED 0 SOL`,
+    `TOTAL SOL VALUE AIRDROPPED ${formatSolAmount(live.stats.totalSolValueAirdropped)}`,
     `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
     `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
     `${tokenLabel} PRICE ${formatPrice(source.priceUsd)}`,
@@ -410,7 +412,7 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
           </span>
           <span>
             <small>SOL Value Airdropped</small>
-            <strong>0 SOL</strong>
+            <strong>{formatSolAmount(live.stats.totalSolValueAirdropped)}</strong>
           </span>
           <span>
             <small>Epoch</small>
@@ -794,7 +796,8 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
   const totalRunnerDropped = live.stats.totalRewardAirdropped
     ? formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)
     : `0 ${rewardSymbol}`;
-  const totalSolValueDropped = formatSolValue(live.stats.totalRewardAirdropped, live.market.reward.priceUsd, live.market.sol.priceUsd);
+  const totalSolValueDropped = formatSolAmount(live.stats.totalSolValueAirdropped);
+  const currentValueDropped = formatSolValue(live.stats.totalRewardAirdropped, live.market.reward.priceUsd, live.market.sol.priceUsd);
   const completedRows = live.stats.recentRewards.map((reward) => ({
     time: formatTime(reward.time),
     token: rewardSymbol,
@@ -852,7 +855,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
           </div>
           <div>
             <span>Current drop value</span>
-            <strong>{totalSolValueDropped}</strong>
+            <strong>{currentValueDropped}</strong>
           </div>
         </div>
       </div>

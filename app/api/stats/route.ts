@@ -24,6 +24,7 @@ type BuyRow = {
   epoch_id: string;
   tx_sig: string | null;
   pfp_reward_lamports?: string | number | null;
+  base_spent_lamports?: string | number | null;
 };
 
 type SupabaseConfig = {
@@ -134,6 +135,23 @@ async function getSettledPayouts(config: SupabaseConfig) {
   return rows;
 }
 
+async function getBuysForEpochs(config: SupabaseConfig, epochIds: string[]) {
+  const uniqueEpochIds = [...new Set(epochIds)].filter(Boolean);
+  const rows: BuyRow[] = [];
+  const chunkSize = 100;
+
+  for (let index = 0; index < uniqueEpochIds.length; index += chunkSize) {
+    const chunk = uniqueEpochIds.slice(index, index + chunkSize);
+    const page = await getSupabaseJson<BuyRow[]>(
+      config,
+      `buys?select=epoch_id,tx_sig,pfp_reward_lamports,base_spent_lamports&epoch_id=in.(${chunk.map(encodeURIComponent).join(",")})`
+    );
+    rows.push(...page);
+  }
+
+  return rows;
+}
+
 async function averageHolderMultiplier(config: SupabaseConfig) {
   try {
     const rows = await getSupabaseJson<HolderStateRow[]>(
@@ -186,6 +204,10 @@ function numberEnv(name: string, fallback: number) {
 function toNumber(value: unknown) {
   const number = Number(value ?? 0);
   return Number.isFinite(number) ? number : 0;
+}
+
+function buySolSpent(buy: BuyRow | undefined) {
+  return toNumber(buy?.base_spent_lamports) / LAMPORTS_PER_SOL;
 }
 
 function sourceTokenMint() {
@@ -401,6 +423,7 @@ export async function GET() {
       latestEligibleHolders: latestEligibleHolders ?? 0,
       averageMultiplier: null,
       nextDropTime: nextDropTime(),
+      totalSolValueAirdropped: 0,
       totalPfpRewardSol: 0,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       epochHistory: [],
@@ -426,15 +449,6 @@ export async function GET() {
       : null;
     const claimRows = claims?.ok ? ((await claims.json()) as ClaimRow[]) : [];
     const claimsByEpoch = new Map(claimRows.map((claim) => [claim.epoch_id, claim]));
-    const buys = epochIds.length
-      ? await fetch(`${config.url}/rest/v1/buys?select=epoch_id,tx_sig,pfp_reward_lamports&epoch_id=in.(${epochIds.map(encodeURIComponent).join(",")})`, {
-          headers: supabaseHeaders(config.key),
-          cache: "no-store"
-        })
-      : null;
-    const buyRows = buys?.ok ? ((await buys.json()) as BuyRow[]) : [];
-    const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
-    const totalPfpRewardSol = buyRows.reduce((sum, buy) => sum + toNumber(buy.pfp_reward_lamports) / LAMPORTS_PER_SOL, 0);
     const payoutRows = await getSettledPayouts(config);
     const averageMultiplier = await averageHolderMultiplier(config);
     const payoutsByEpoch = new Map<string, EpochPayoutSummary>();
@@ -472,6 +486,10 @@ export async function GET() {
         return timeA - timeB || epochA.localeCompare(epochB);
       })
       .map(([epochId]) => epochId);
+    const buyRows = await getBuysForEpochs(config, [...epochIds, ...realEpochIds]);
+    const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
+    const totalPfpRewardSol = buyRows.reduce((sum, buy) => sum + toNumber(buy.pfp_reward_lamports) / LAMPORTS_PER_SOL, 0);
+    const totalSolValueAirdropped = realEpochIds.reduce((sum, epochId) => sum + buySolSpent(buysByEpoch.get(epochId)), 0);
     const realEpochCount = realEpochIds.length;
     const displayEpochById = new Map(realEpochIds.map((epochId, index) => [epochId, index + 1]));
     const recentRealEpochIds = [...realEpochIds].reverse().slice(0, 10);
@@ -504,6 +522,7 @@ export async function GET() {
         eligibleCount: toNumber(row?.eligible_count),
         normalRewardsSent: payoutSummary?.normalRewardAmount ?? 0,
         distributedPump: payoutSummary?.rewardAmount ?? 0,
+        solValueAirdropped: buySolSpent(buy),
         txSig: payoutSummary?.latestTxSig ?? claim?.tx_sig ?? buy?.tx_sig ?? null
       };
     });
@@ -532,6 +551,7 @@ export async function GET() {
       totalRewardAirdropped,
       latestEligibleHolders,
       nextDropTime: nextDropTime(),
+      totalSolValueAirdropped,
       totalPfpRewardSol,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       averageMultiplier,
@@ -550,6 +570,7 @@ export async function GET() {
       latestEligibleHolders: latestEligibleHolders ?? 0,
       averageMultiplier: null,
       nextDropTime: nextDropTime(),
+      totalSolValueAirdropped: 0,
       totalPfpRewardSol: 0,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       epochHistory: [],
