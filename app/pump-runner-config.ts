@@ -10,6 +10,7 @@ export const defaultCurrentRunner = {
 
 const defaultContractAddress = "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump";
 const defaultXUrl = "https://x.com/CopyCat_pf";
+const defaultDexScreenerUrl = "https://dexscreener.com/solana/bx5j2uuxsrwohzhack9nuseajckg5bj3rbdhx5ucxqg";
 
 function cleanEnv(value: string | undefined) {
   const trimmed = value?.trim();
@@ -42,7 +43,7 @@ const activeRunnerDexUrl =
   rawActiveRunnerDexUrl ||
   (useDefaultCurrentRunner ? defaultCurrentRunner.dexScreenerUrl : rewardMint ? `https://dexscreener.com/solana/${rewardMint}` : "https://dexscreener.com/solana");
 const fallbackPumpFunUrl = contractAddress ? `https://pump.fun/coin/${contractAddress}` : "https://pump.fun/";
-const fallbackDexScreenerUrl = contractAddress ? `https://dexscreener.com/solana/${contractAddress}` : "https://dexscreener.com/solana";
+const fallbackDexScreenerUrl = defaultDexScreenerUrl;
 
 export type RunnerBoardRow = {
   rank: string;
