@@ -516,7 +516,7 @@ export function DashboardClient() {
                 </section>
 
                 <section className="card">
-                  <h3>Holder Payout Leaderboard</h3>
+                  <h3>Wallet Payout Board</h3>
                   <div className="table-wrap" style={{ marginTop: 14 }}>
                     <table>
                       <thead>

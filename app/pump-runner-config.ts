@@ -1,11 +1,15 @@
 export const defaultCurrentRunner = {
-  name: "The Pink Bull",
-  ticker: "PINKBULL",
-  mint: "Er58M968bCGnmKwvrrPhW21zesoFfo8gXPUDokKMpump",
-  logoSrc: "/brand/pink-bull-runner-logo.png",
-  scannedMarketCap: "$15.2K",
-  scannedAgo: "7:38 PM EST"
+  name: "Homer let the barts out",
+  ticker: "Barts",
+  mint: "SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump",
+  logoSrc: "/brand/barts-runner-logo.jpg",
+  scannedMarketCap: "$26.7K",
+  scannedAgo: "10:33:34 AM EST",
+  dexScreenerUrl: "https://dexscreener.com/solana/ebjz4mlyeyss57f6f1h1s1hdgtyom8aaqaegej9cyul3"
 } as const;
+
+const defaultContractAddress = "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump";
+const defaultXUrl = "https://x.com/CopyCat_pf";
 
 function cleanEnv(value: string | undefined) {
   const trimmed = value?.trim();
@@ -18,18 +22,22 @@ function isStaleHomeRunner(value: string) {
 
 function isPreviousRunner(value: string) {
   const normalized = value.replace(/^\$/, "").toUpperCase();
-  return normalized === "GIRL" || normalized === "GIRLCOIN" || normalized === "HARRIS";
+  return normalized === "GIRL" || normalized === "GIRLCOIN" || normalized === "HARRIS" || normalized === "PINKBULL";
 }
 
 function isPreviousRunnerMint(value: string) {
-  return value === "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump" || value === "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump";
+  return (
+    value === "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump" ||
+    value === "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump" ||
+    value === "Er58M968bCGnmKwvrrPhW21zesoFfo8gXPUDokKMpump"
+  );
 }
 
 function looksLikeMint(value: string) {
   return value.length > 30 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(value);
 }
 
-const contractAddress = cleanEnv(process.env.NEXT_PUBLIC_CA) || cleanEnv(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT);
+const contractAddress = cleanEnv(process.env.NEXT_PUBLIC_CA) || cleanEnv(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT) || defaultContractAddress;
 const rawRewardSymbol = cleanEnv(process.env.NEXT_PUBLIC_REWARD_SYMBOL);
 const rawRewardMint = cleanEnv(process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
 const rawActiveRunnerName = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME);
@@ -39,12 +47,13 @@ const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
 const activeRunnerName =
   rawActiveRunnerName ||
-  (activeRunnerTicker.replace(/^\$/, "").toUpperCase() === defaultCurrentRunner.ticker ? defaultCurrentRunner.name : `${activeRunnerTicker} Scan`);
+  (activeRunnerTicker.replace(/^\$/, "").toUpperCase() === defaultCurrentRunner.ticker ? defaultCurrentRunner.name : `${activeRunnerTicker} Copy`);
 const parsedMinimumHolding = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
 const minimumHolding = Number.isFinite(parsedMinimumHolding) && parsedMinimumHolding > 0 ? parsedMinimumHolding : 1_000_000;
 const rawActiveRunnerDexUrl = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_DEXSCREENER_URL);
 const activeRunnerDexUrl =
-  rawActiveRunnerDexUrl || (rewardMint ? `https://dexscreener.com/solana/${rewardMint}` : "https://dexscreener.com/solana");
+  rawActiveRunnerDexUrl ||
+  (useDefaultCurrentRunner ? defaultCurrentRunner.dexScreenerUrl : rewardMint ? `https://dexscreener.com/solana/${rewardMint}` : "https://dexscreener.com/solana");
 const fallbackPumpFunUrl = contractAddress ? `https://pump.fun/coin/${contractAddress}` : "https://pump.fun/";
 const fallbackDexScreenerUrl = contractAddress ? `https://dexscreener.com/solana/${contractAddress}` : "https://dexscreener.com/solana";
 
@@ -52,6 +61,8 @@ export type RunnerBoardRow = {
   rank: string;
   token: string;
   ticker: string;
+  mint: string;
+  logoSrc: string;
   detectedMarketCap: string;
   currentMarketCap: string;
   returnSinceDetection: string;
@@ -80,7 +91,7 @@ export const pumpRunnerConfig = {
   buyUrl: process.env.NEXT_PUBLIC_BUY_URL ?? fallbackPumpFunUrl,
   pumpFunUrl: process.env.NEXT_PUBLIC_PUMPFUN_URL ?? fallbackPumpFunUrl,
   dexScreenerUrl: process.env.NEXT_PUBLIC_DEXSCREENER_URL ?? fallbackDexScreenerUrl,
-  xUrl: process.env.NEXT_PUBLIC_X_URL ?? "",
+  xUrl: cleanEnv(process.env.NEXT_PUBLIC_X_URL) || defaultXUrl,
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL ?? "",
   minimumHolding,
   epochMinutes: Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5),
@@ -128,6 +139,8 @@ export const pumpRunnerConfig = {
       rank: "01",
       token: useDefaultCurrentRunner ? defaultCurrentRunner.name : activeRunnerName,
       ticker: activeRunnerLabel,
+      mint: rewardMint,
+      logoSrc: useDefaultCurrentRunner ? defaultCurrentRunner.logoSrc : cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC) || defaultCurrentRunner.logoSrc,
       detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? defaultCurrentRunner.scannedMarketCap,
       currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
       returnSinceDetection: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_RETURN ?? "Tracking",
@@ -137,41 +150,10 @@ export const pumpRunnerConfig = {
     },
     {
       rank: "02",
-      token: "Harris",
-      ticker: "$HARRIS",
-      detectedMarketCap: "$40.2K",
-      currentMarketCap: "Archived",
-      returnSinceDetection: "Tracking",
-      amountAcquired: "Previous drop",
-      status: "Scanned 22:17:05",
-      dexScreenerUrl: "https://dexscreener.com/solana/3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump"
-    },
-    {
-      rank: "03",
-      token: "Girlcoin",
-      ticker: "$GIRLCOIN",
-      detectedMarketCap: "$52.9K",
-      currentMarketCap: "$264.5K",
-      returnSinceDetection: "5x",
-      amountAcquired: "Archived",
-      status: "Scanned 20:57 · 48 mins ago",
-      dexScreenerUrl: "https://dexscreener.com/solana/GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump"
-    },
-    {
-      rank: "04",
-      token: "Scan Archive",
+      token: "Private Copy Queue",
       ticker: "—",
-      detectedMarketCap: "Pending",
-      currentMarketCap: "Pending",
-      returnSinceDetection: "Pending",
-      amountAcquired: "Pending",
-      status: "Distributed scans",
-      dexScreenerUrl: fallbackDexScreenerUrl
-    },
-    {
-      rank: "05",
-      token: "Scanner Queue",
-      ticker: "—",
+      mint: "",
+      logoSrc: "/brand/copy-cat-logo.jpg",
       detectedMarketCap: "Private",
       currentMarketCap: "Private",
       returnSinceDetection: "Private",
@@ -181,10 +163,7 @@ export const pumpRunnerConfig = {
     }
   ] satisfies RunnerBoardRow[],
   performanceRows: [
-    { ticker: activeRunnerLabel, entryMarketCap: 15_200, currentMarketCap: 15_200, changePercent: 0 },
-    { ticker: "$HARRIS", entryMarketCap: 40_200, currentMarketCap: 40_200, changePercent: 0 },
-    { ticker: "$GIRLCOIN", entryMarketCap: 52_900, currentMarketCap: 264_500, changePercent: 400 },
-    { ticker: "Scan 04", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }
+    { ticker: activeRunnerLabel, entryMarketCap: 26_700, currentMarketCap: 35_392, changePercent: 33 }
   ] satisfies RunnerPerformanceRow[],
   scannerCards: [
     {

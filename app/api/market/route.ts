@@ -68,13 +68,28 @@ function cleanSymbol(value: string | undefined | null) {
   return value?.trim().replace(/^\$/, "").toUpperCase() ?? "";
 }
 
-function isStaleHomeRunner() {
-  return cleanSymbol(env("REWARD_SYMBOL")) === "HOME" || /home/i.test(env("ACTIVE_RUNNER_NAME") ?? "");
+function isPreviousRunnerSymbol(value: string) {
+  return ["HOME", "GIRL", "GIRLCOIN", "HARRIS", "PINKBULL"].includes(value);
+}
+
+function isPreviousRunnerMint(value: string | null) {
+  return (
+    value === "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump" ||
+    value === "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump" ||
+    value === "Er58M968bCGnmKwvrrPhW21zesoFfo8gXPUDokKMpump"
+  );
+}
+
+function isStaleRunner() {
+  const symbol = cleanSymbol(env("REWARD_SYMBOL"));
+  const activeRunnerName = env("ACTIVE_RUNNER_NAME") ?? "";
+  const configuredMint = cleanAddress(env("REWARD_TOKEN_MINT"));
+  return isPreviousRunnerSymbol(symbol) || /home|girl|harris|pink bull/i.test(activeRunnerName) || isPreviousRunnerMint(configuredMint);
 }
 
 function rewardMint() {
   const configured = cleanAddress(env("REWARD_TOKEN_MINT"));
-  if (!configured || isStaleHomeRunner()) return defaultCurrentRunner.mint;
+  if (!configured || isStaleRunner()) return defaultCurrentRunner.mint;
   return configured;
 }
 
@@ -142,8 +157,9 @@ export async function GET() {
   const reward = rewardMint();
   const source = sourceMint();
   const pairs = await fetchDexPairs([reward, source, SOL_MINT].filter(Boolean) as string[]);
+  const rewardSymbol = isStaleRunner() ? defaultCurrentRunner.ticker : process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? defaultCurrentRunner.ticker;
   const payload: MarketPayload = {
-    reward: marketFromPair(pickPair(pairs, reward), isStaleHomeRunner() ? defaultCurrentRunner.ticker : process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? defaultCurrentRunner.ticker),
+    reward: marketFromPair(pickPair(pairs, reward), rewardSymbol),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
       process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "COPYCAT"

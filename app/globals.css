@@ -762,7 +762,7 @@ input {
 
 .runner-table {
   border-collapse: collapse;
-  min-width: 920px;
+  min-width: 1080px;
   width: 100%;
 }
 
@@ -782,6 +782,31 @@ input {
 
 .runner-table tr:last-child td {
   border-bottom: 0;
+}
+
+.runner-token-cell {
+  align-items: center;
+  color: var(--runner-text);
+  display: inline-flex;
+  gap: 10px;
+  min-width: 210px;
+  white-space: normal;
+}
+
+.runner-token-cell img {
+  aspect-ratio: 1;
+  border: 1px solid var(--runner-border);
+  border-radius: 8px;
+  flex: 0 0 36px;
+  height: 36px;
+  object-fit: cover;
+  width: 36px;
+}
+
+.runner-ca-cell {
+  color: var(--runner-muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 .runner-positive,
