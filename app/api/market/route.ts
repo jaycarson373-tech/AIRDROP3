@@ -50,7 +50,7 @@ type MarketPayload = {
 };
 
 const SOL_MINT = "So11111111111111111111111111111111111111112";
-const DEFAULT_SOURCE_MINT = "ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump";
+const DEFAULT_SOURCE_MINT = "";
 const CACHE_MS = 15_000;
 
 let cache: { expiresAt: number; payload: MarketPayload } | null = null;
@@ -79,7 +79,7 @@ function rewardMint() {
 }
 
 function sourceMint() {
-  return cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA")) ?? DEFAULT_SOURCE_MINT;
+  return cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA")) ?? cleanAddress(DEFAULT_SOURCE_MINT);
 }
 
 function sameAddress(a: string | undefined, b: string) {
@@ -146,7 +146,7 @@ export async function GET() {
     reward: marketFromPair(pickPair(pairs, reward), isStaleHomeRunner() ? defaultCurrentRunner.ticker : process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? defaultCurrentRunner.ticker),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER"
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CC"
     ),
     sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
     updatedAt: new Date().toISOString()

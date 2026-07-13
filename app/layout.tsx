@@ -3,36 +3,36 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://pumprunner.fun"),
-  title: "Pump Runner",
-  description: "Pump Runner buys the active runner and airdrops that runner token to eligible $RUNNER holders.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://copycat.fun"),
+  title: "Copy Cat",
+  description: "Copy Cat aggregates smart-wallet scans, buys the active scan with fees and airdrops it to eligible $CC holders.",
   openGraph: {
-    title: "Pump Runner",
-    description: "Pump Runner buys the active runner and airdrops that runner token to eligible $RUNNER holders.",
-    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://pumprunner.fun",
-    siteName: "Pump Runner",
+    title: "Copy Cat",
+    description: "Copy Cat aggregates smart-wallet scans, buys the active scan with fees and airdrops it to eligible $CC holders.",
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://copycat.fun",
+    siteName: "Copy Cat",
     images: [
       {
-        url: "/brand/pump-runner-banner.png",
+        url: "/brand/copy-cat-logo.svg",
         width: 1280,
-        height: 511,
-        alt: "Pump Fun Runner banner"
+        height: 1280,
+        alt: "Copy Cat"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pump Runner",
-    description: "Pump Runner buys the active runner and airdrops that runner token to eligible $RUNNER holders.",
-    images: ["/brand/pump-runner-banner.png"]
+    title: "Copy Cat",
+    description: "Copy Cat aggregates smart-wallet scans, buys the active scan with fees and airdrops it to eligible $CC holders.",
+    images: ["/brand/copy-cat-logo.svg"]
   },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
-      { url: "/brand/pump-runner-logo.png", type: "image/png" }
+      { url: "/brand/copy-cat-logo.svg", type: "image/svg+xml" }
     ],
     apple: "/apple-touch-icon.png"
   }

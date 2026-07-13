@@ -276,11 +276,11 @@ function statusText(status: string) {
 
 export function MarketTicker({ live }: { live: RunnerLiveData }) {
   const source = live.market.source;
-  const runner = live.market.reward;
+  const scan = live.market.reward;
   const holderCount = live.holders.uniqueHolders ?? live.stats.latestEligibleHolders;
   const items = [
-    `CURRENT RUNNER ${pumpRunnerConfig.currentRunner.ticker}`,
-    `${pumpRunnerConfig.currentRunner.ticker} PRICE ${formatPrice(runner.priceUsd, "Awaiting runner price")}`,
+    `ACTIVE SCAN ${pumpRunnerConfig.currentRunner.ticker}`,
+    `${pumpRunnerConfig.currentRunner.ticker} PRICE ${formatPrice(scan.priceUsd, "Awaiting scan price")}`,
     `TOTAL SOL VALUE AIRDROPPED 0 SOL`,
     `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
     `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
@@ -291,7 +291,7 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
   ];
 
   return (
-    <div className="runner-ticker" aria-label="Live Pump Runner market ticker">
+    <div className="runner-ticker" aria-label="Live Copy Cat market ticker">
       <div className="runner-ticker-track">
         {[0, 1].map((copy) => (
           <div className="runner-ticker-group" key={copy}>
@@ -309,11 +309,11 @@ function RunnerNav() {
   const ca = pumpRunnerConfig.contractAddress;
   return (
     <header className="runner-nav">
-      <a className="runner-brand" href="#top" aria-label="Pump Runner home">
+      <a className="runner-brand" href="#top" aria-label="Copy Cat home">
         <img className="runner-brand-logo" src={pumpRunnerConfig.logoSrc} alt="" />
         <span>
           <strong>{pumpRunnerConfig.name}</strong>
-          <small>{tokenLabel} catches runners</small>
+          <small>{tokenLabel} copies smart wallets</small>
         </span>
       </a>
       <nav className="runner-links" aria-label="Primary navigation">
@@ -343,34 +343,34 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
       <div className="runner-hero-copy">
         <div className="runner-live-pill">
           <span className="runner-live-dot" />
-          RUNNER SCANNER ONLINE
+          COPY CAT SCANNER ONLINE
         </div>
-        <h1>WE CATCH EVERY RUNNER.</h1>
+        <h1>COPY THE SMART MONEY.</h1>
         <p className="runner-hero-subtitle">
-          Pump Runner finds the active runner, buys that runner, and airdrops it to eligible {tokenLabel} holders.
+          Copy Cat aggregates smart-wallet scans, buys the active scan with 100% of fees, and airdrops it to eligible {tokenLabel} holders.
         </p>
-        <p className="runner-hero-line">Hold {tokenLabel}. The treasury chases the runner. Your wallet receives the airdrop.</p>
+        <p className="runner-hero-line">Hold {tokenLabel}. The scanner copies the flow. Your wallet receives the airdrop.</p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
           </a>
           <a className="runner-button runner-button-secondary" href="#drops">
-            View Runner Drops
+            View Scan Drops
           </a>
         </div>
-        <div className="runner-sequence" aria-label="Pump Runner process">
+        <div className="runner-sequence" aria-label="Copy Cat process">
           <span>SCAN</span>
           <span>BUY</span>
           <span>AIRDROP</span>
         </div>
       </div>
 
-      <div className="runner-hero-panel" aria-label="Pump Runner live terminal">
+      <div className="runner-hero-panel" aria-label="Copy Cat live terminal">
         <div className="runner-panel-top">
           <div className="runner-panel-title">
             <img className="runner-token-logo" src={pumpRunnerConfig.currentRunner.logoSrc} alt="" />
             <div>
-              <span>CURRENT RUNNER</span>
+              <span>ACTIVE SCAN</span>
               <strong>{pumpRunnerConfig.currentRunner.ticker}</strong>
               <small>{pumpRunnerConfig.currentRunner.name}</small>
             </div>
@@ -426,21 +426,21 @@ export function RunnerLeaderboard() {
   const [tab, setTab] = useState("Today");
   const summary = pumpRunnerConfig.treasuryStatistics;
   const summaryItems = [
-    ["Runners caught today", summary.runnersCaughtToday],
+    ["Smart-wallet scans today", summary.runnersCaughtToday],
     ["Average entry market cap", summary.averageEntryMarketCap],
     ["Average return", summary.averageReturn],
-    ["Best runner", summary.bestRunner],
+    ["Active scan", summary.bestRunner],
     ["Total distributed today", summary.totalDistributedToday]
   ];
 
   return (
     <section className="runner-section" id="board">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Live Runner Board</span>
-        <h2>TODAY'S RUNNER</h2>
-        <p>The active runner being bought and airdropped to eligible {tokenLabel} holders.</p>
+        <span className="runner-kicker">Live Copy Board</span>
+        <h2>TODAY'S SCAN</h2>
+        <p>The active smart-wallet scan being bought and airdropped to eligible {tokenLabel} holders.</p>
       </div>
-      <div className="runner-tabs" role="tablist" aria-label="Runner board range">
+      <div className="runner-tabs" role="tablist" aria-label="Copy Cat board range">
         {["Today", "This Week", "All Time"].map((item) => (
           <button
             aria-selected={tab === item}
@@ -508,20 +508,20 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
   const selectedRunners = pumpRunnerConfig.runnerBoard.filter((runner) => runner.status !== "Scanning").length;
   const rows = [
     ["SCANNER STATUS", "ONLINE"],
-    ["CURRENT RUNNER", rewardSymbol],
+    ["ACTIVE SCAN", rewardSymbol],
     ["ELIGIBLE HOLDERS", formatCount(live.stats.latestEligibleHolders, "0")],
-    ["RUNNERS SELECTED", selectedRunners.toString()],
+    ["SCANS SELECTED", selectedRunners.toString()],
     ["LIVE DROP EPOCHS", formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")],
-    ["HARRIS AIRDROPPED", formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)]
+    [`${rewardSymbol} AIRDROPPED`, formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)]
   ];
 
   return (
     <section className="runner-section" id="scanner">
       <div className="runner-section-heading">
         <span className="runner-kicker">Signal Engine</span>
-        <h2>THE RUNNER SCANNER</h2>
+        <h2>THE COPY SCANNER</h2>
         <p>
-          Pump Runner is powered by a proprietary scanner built to track liquidity, momentum, volume, holder growth and emerging market activity across Pump.fun.
+          Copy Cat is powered by an aggregated smart-wallet mechanism built to track flow, liquidity, volume, holder growth and emerging market activity across Pump.fun.
         </p>
       </div>
       <div className="runner-scanner-layout">
@@ -540,8 +540,36 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
               <strong>{value}</strong>
             </div>
           ))}
-          <p>The exact scanner methodology remains private to protect the strategy and prevent copy trading.</p>
+          <p>The exact aggregation methodology remains private to protect the strategy and prevent copy trading.</p>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function CopyCatOrigin() {
+  return (
+    <section className="runner-section runner-origin" id="origin">
+      <div className="runner-section-heading">
+        <span className="runner-kicker">The Name</span>
+        <h2>CC WAS THE FIRST COPY CAT.</h2>
+        <p>
+          Our logo nods to CC, short for CopyCat, the first cloned cat. The idea is simple: copy the signal, not the noise.
+        </p>
+      </div>
+      <div className="runner-origin-grid">
+        <article className="runner-info-card">
+          <h3>01 · Aggregate</h3>
+          <p>Smart wallets are grouped into one private scan feed so the system can spot movement early.</p>
+        </article>
+        <article className="runner-info-card">
+          <h3>02 · Copy</h3>
+          <p>100% of usable fees buy the active scan token instead of splitting into side rails.</p>
+        </article>
+        <article className="runner-info-card">
+          <h3>03 · Drop</h3>
+          <p>Eligible holders above 1,000,000 {tokenLabel} receive the scan token through scheduled airdrops.</p>
+        </article>
       </div>
     </section>
   );
@@ -551,18 +579,18 @@ function HowItWorks() {
   const steps = [
     {
       label: "01",
-      title: "The scanner finds a runner",
-      body: "The private scanner continuously analyses new and active Pump.fun tokens for high-quality setups."
+      title: "Smart wallets surface a scan",
+      body: "The private aggregation layer watches selected wallets and active Pump.fun tokens for high-quality setups."
     },
     {
       label: "02",
-      title: "The treasury acquires it",
-      body: "Creator-fee revenue is used to acquire the active runner selected by the scanner."
+      title: "Fees buy the scan",
+      body: "100% of usable creator-fee revenue is routed into the active token selected by the scan engine."
     },
     {
       label: "03",
       title: "Holders receive the drop",
-      body: `The runner token is distributed to eligible ${tokenLabel} holders during scheduled airdrop epochs.`
+      body: `The scan token is distributed to eligible ${tokenLabel} holders during scheduled airdrop epochs.`
     }
   ];
 
@@ -570,7 +598,7 @@ function HowItWorks() {
     <section className="runner-section runner-how" id="how">
       <div className="runner-section-heading">
         <span className="runner-kicker">How It Works</span>
-        <h2>RUN WITH THE WINNERS</h2>
+        <h2>COPY THE FLOW</h2>
       </div>
       <div className="runner-step-list">
         {steps.map((step) => (
@@ -581,7 +609,7 @@ function HowItWorks() {
           </article>
         ))}
       </div>
-      <strong className="runner-bold-line">Hold {tokenLabel}. Receive the runner our system catches.</strong>
+      <strong className="runner-bold-line">Hold {tokenLabel}. Receive the scans our system copies.</strong>
     </section>
   );
 }
@@ -645,7 +673,7 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
       </div>
       <div className="runner-eligibility-grid">
         <div className="runner-check-card">
-          <h3>To qualify for active-runner airdrops, a wallet must:</h3>
+          <h3>To qualify for active-scan airdrops, a wallet must:</h3>
           <ul>
             <li>Hold at least {required}</li>
             <li>Be holding at the eligibility snapshot</li>
@@ -733,7 +761,7 @@ export function HoldMultiplier() {
     <section className="runner-section runner-multiplier">
       <div className="runner-section-heading">
         <span className="runner-kicker">Loyalty Weight</span>
-        <h2>KEEP RUNNING</h2>
+        <h2>KEEP COPYING</h2>
         <p>Consistent holders receive a modest loyalty multiplier on their eligible distribution weight.</p>
       </div>
       <div className="runner-meter-card">
@@ -742,7 +770,7 @@ export function HoldMultiplier() {
           <div>
             <i style={{ width: "72%" }} />
           </div>
-          <span>7 DAY MULTIPLIER</span>
+          <span>7 DAY COPY WEIGHT</span>
         </div>
         <div className="runner-tier-grid">
           {pumpRunnerConfig.multiplierTiers.map((tier) => (
@@ -792,12 +820,12 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
       <div className="runner-section-heading">
         <span className="runner-kicker">Onchain Feed</span>
         <h2>RECENT DROPS</h2>
-        <p>Each runner stays on the record: scan market cap, live market cap, amount dropped and the current SOL value of the distribution.</p>
+        <p>Each scan stays on the record: scan market cap, live market cap, amount dropped and the current SOL value of the distribution.</p>
       </div>
       <div className="runner-drop-ledger">
         <article className="runner-drop-feature">
           <div>
-            <span>Runner 01</span>
+            <span>Scan 01</span>
             <strong>{activeRunner.token}</strong>
             <small>{activeRunner.ticker} scanned at {activeRunner.detectedMarketCap} · {activeRunnerScanTime}</small>
           </div>
@@ -884,8 +912,8 @@ export function RunnerPerformanceChart() {
   return (
     <section className="runner-section" id="history">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Past Scanner Results</span>
-        <h2>RUNNER HISTORY</h2>
+        <span className="runner-kicker">Past Copy Results</span>
+        <h2>COPY HISTORY</h2>
       </div>
       <div className="runner-chart">
         {pumpRunnerConfig.performanceRows.map((row) => (
@@ -915,25 +943,25 @@ export function RiskDisclosure() {
 function FaqSection() {
   const faqs = [
     {
-      question: "What is Pump Runner?",
+      question: "What is Copy Cat?",
       answer:
-        "Pump Runner is a holder-reward system that uses project revenue to acquire the active Pump.fun runner and distribute that runner token to eligible $RUNNER holders."
+        `Copy Cat is a holder-reward system that aggregates smart-wallet scans, buys the active scan with fees and distributes that token to eligible ${tokenLabel} holders.`
     },
     {
       question: "How many tokens must I hold?",
-      answer: "A wallet must hold at least 2,500,000 $RUNNER at the eligibility snapshot."
+      answer: `A wallet must hold at least ${pumpRunnerConfig.minimumHolding.toLocaleString()} ${tokenLabel} at the eligibility snapshot.`
     },
     {
       question: "How often are drops distributed?",
-      answer: `Runner distributions are processed in scheduled epochs. The current interface is set to ${pumpRunnerConfig.epochMinutes}-minute epochs.`
+      answer: `Scan-token distributions are processed in scheduled epochs. The current interface is set to ${pumpRunnerConfig.epochMinutes}-minute epochs.`
     },
     {
       question: "What happens when I sell?",
       answer:
-        "Selling or transferring $RUNNER resets the wallet's hold multiplier. Depending on snapshot rules, it may also remove the wallet from the current distribution epoch."
+        `Selling or transferring ${tokenLabel} resets the wallet's hold multiplier. Depending on snapshot rules, it may also remove the wallet from the current distribution epoch.`
     },
     {
-      question: "Are runner profits guaranteed?",
+      question: "Are scan profits guaranteed?",
       answer:
         "No. Meme tokens are highly volatile, and scanner selections may decline in value. The scanner is a selection system, not a guarantee of performance."
     },
@@ -965,8 +993,8 @@ function FaqSection() {
 function FinalCta() {
   return (
     <section className="runner-final-cta">
-      <h2>THE NEXT RUNNER IS ALREADY MOVING.</h2>
-      <p>Hold {tokenLabel} and stay eligible for every scheduled active-runner drop caught by the system.</p>
+      <h2>THE NEXT COPY IS ALREADY MOVING.</h2>
+      <p>Hold {tokenLabel} and stay eligible for every scheduled active-scan drop routed through the system.</p>
       <div className="runner-hero-actions">
         <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
           Buy {tokenLabel}
@@ -1013,7 +1041,7 @@ function RunnerFooter() {
         <a href="#faq">Terms</a>
         <a href="#faq">Risk disclosure</a>
       </div>
-      <p>Built to scan. Built to catch. Built to run.</p>
+      <p>Built to scan. Built to copy. Built to drop.</p>
       <p>{pumpRunnerConfig.rentCopy}</p>
       <RiskDisclosure />
     </footer>
@@ -1031,6 +1059,7 @@ export function PumpRunnerHome() {
         <HeroSection live={live} />
         <RunnerLeaderboard />
         <ScannerStatus live={live} />
+        <CopyCatOrigin />
         <HowItWorks />
         <EligibilityCard live={live} />
         <HoldMultiplier />

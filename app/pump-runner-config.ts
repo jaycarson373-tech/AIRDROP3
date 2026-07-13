@@ -39,9 +39,9 @@ const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
 const activeRunnerName =
   rawActiveRunnerName ||
-  (activeRunnerTicker.replace(/^\$/, "").toUpperCase() === defaultCurrentRunner.ticker ? defaultCurrentRunner.name : `${activeRunnerTicker} Runner`);
-const parsedMinimumHolding = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 2_500_000);
-const minimumHolding = Number.isFinite(parsedMinimumHolding) && parsedMinimumHolding > 0 ? parsedMinimumHolding : 2_500_000;
+  (activeRunnerTicker.replace(/^\$/, "").toUpperCase() === defaultCurrentRunner.ticker ? defaultCurrentRunner.name : `${activeRunnerTicker} Scan`);
+const parsedMinimumHolding = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
+const minimumHolding = Number.isFinite(parsedMinimumHolding) && parsedMinimumHolding > 0 ? parsedMinimumHolding : 1_000_000;
 const rawActiveRunnerDexUrl = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_DEXSCREENER_URL);
 const activeRunnerDexUrl =
   rawActiveRunnerDexUrl || (rewardMint ? `https://dexscreener.com/solana/${rewardMint}` : "https://dexscreener.com/solana");
@@ -68,13 +68,13 @@ export type RunnerPerformanceRow = {
 };
 
 export const pumpRunnerConfig = {
-  name: "Pump Runner",
-  ticker: "RUNNER",
-  tokenLabel: "$RUNNER",
+  name: "Copy Cat",
+  ticker: "CC",
+  tokenLabel: "$CC",
   rewardSymbol: activeRunnerTicker,
-  logoSrc: "/brand/pump-runner-logo.png",
-  backgroundSrc: "/brand/pump-runner-bg.png",
-  bannerSrc: "/brand/pump-runner-banner.png",
+  logoSrc: "/brand/copy-cat-logo.svg",
+  backgroundSrc: "/brand/copy-cat-logo.svg",
+  bannerSrc: "/brand/copy-cat-logo.svg",
   contractAddress,
   rewardMint,
   buyUrl: process.env.NEXT_PUBLIC_BUY_URL ?? fallbackPumpFunUrl,
@@ -159,17 +159,17 @@ export const pumpRunnerConfig = {
     },
     {
       rank: "04",
-      token: "Runner Archive",
+      token: "Scan Archive",
       ticker: "—",
       detectedMarketCap: "Pending",
       currentMarketCap: "Pending",
       returnSinceDetection: "Pending",
       amountAcquired: "Pending",
-      status: "Distributed runners",
+      status: "Distributed scans",
       dexScreenerUrl: fallbackDexScreenerUrl
     },
     {
-      rank: "04",
+      rank: "05",
       token: "Scanner Queue",
       ticker: "—",
       detectedMarketCap: "Private",
@@ -184,28 +184,28 @@ export const pumpRunnerConfig = {
     { ticker: activeRunnerLabel, entryMarketCap: 15_200, currentMarketCap: 15_200, changePercent: 0 },
     { ticker: "$HARRIS", entryMarketCap: 40_200, currentMarketCap: 40_200, changePercent: 0 },
     { ticker: "$GIRLCOIN", entryMarketCap: 52_900, currentMarketCap: 264_500, changePercent: 400 },
-    { ticker: "Runner 04", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }
+    { ticker: "Scan 04", entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }
   ] satisfies RunnerPerformanceRow[],
   scannerCards: [
     {
-      title: "Momentum",
-      body: "Tracks acceleration in buys, volume and market activity."
+      title: "Smart Wallets",
+      body: "Aggregates wallets that have historically moved early into live Pump.fun setups."
     },
     {
-      title: "Liquidity",
-      body: "Filters for sufficient liquidity and sustainable trading conditions."
+      title: "Signal Matching",
+      body: "Combines wallet flow, liquidity, volume and timing into one private scan feed."
     },
     {
-      title: "Distribution",
-      body: "Reviews holder concentration and wallet behaviour."
+      title: "Fee Routing",
+      body: "Routes 100% of usable creator fees toward buying the active scan token."
     },
     {
-      title: "Velocity",
-      body: "Measures how quickly attention and capital are entering a token."
+      title: "Airdrop Rail",
+      body: "Airdrops the scan token to eligible holders above the configured holding minimum."
     }
   ],
   riskCopy:
-    "$RUNNER and all distributed assets are highly speculative digital tokens. Nothing on this website constitutes financial advice or guarantees future returns.",
+    "$CC and all distributed assets are highly speculative digital tokens. Nothing on this website constitutes financial advice or guarantees future returns.",
   rentCopy:
     "Distribution minimums exist because creating or funding token accounts can incur Solana network rent and transaction costs. Very small allocations may be delayed, combined or excluded when the cost of distribution would be disproportionate to the reward. Requirements may be adjusted as network conditions change."
 } as const;

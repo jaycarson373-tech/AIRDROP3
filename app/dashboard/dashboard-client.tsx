@@ -86,8 +86,8 @@ const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MINUTES = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5);
 const EPOCH_MS = Math.max(1, EPOCH_MINUTES) * 60 * 1000;
-const PROJECT_NAME = "Pump Runner";
-const SOURCE_SYMBOL = "RUNNER";
+const PROJECT_NAME = "Copy Cat";
+const SOURCE_SYMBOL = "CC";
 const REWARD_SYMBOL = pumpRunnerConfig.currentRunner.ticker;
 const REWARD_TOKEN_MINT = pumpRunnerConfig.rewardMint;
 
@@ -277,10 +277,10 @@ export function DashboardClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src={pumpRunnerConfig.logoSrc} alt={`${PROJECT_NAME} logo`} />
             <span>
               {PROJECT_NAME}
-              <small>{SOURCE_SYMBOL} catches runners</small>
+              <small>{SOURCE_SYMBOL} copies smart wallets</small>
             </span>
           </Link>
           <div className="nav-links">
@@ -297,9 +297,9 @@ export function DashboardClient() {
             <div>
               <div className="eyebrow">
                 <span className="pulse" />
-                Live runner drop ledger
+                Live scan drop ledger
               </div>
-              <h1 className="dashboard-title">Active Runner Ledger</h1>
+              <h1 className="dashboard-title">Active Scan Ledger</h1>
             </div>
           </div>
 
@@ -325,7 +325,7 @@ export function DashboardClient() {
                   <strong className={latestGolden?.wallet ? "mono" : "empty-value"}>
                     {REWARD_SYMBOL}
                   </strong>
-                  <span>{REWARD_TOKEN_MINT ? compactAddress(REWARD_TOKEN_MINT) : "Active runner mint"}</span>
+                  <span>{REWARD_TOKEN_MINT ? compactAddress(REWARD_TOKEN_MINT) : "Active scan mint"}</span>
                 </div>
                 <div className="stat">
                   <strong>
@@ -342,7 +342,7 @@ export function DashboardClient() {
               <section className="history-card" style={{ marginTop: 16 }}>
                 <div className="history-head">
                   <h3>Epoch History</h3>
-                  <span>Latest settled runner drop rounds</span>
+                  <span>Latest settled scan drop rounds</span>
                 </div>
                 <div className="table-wrap">
                   <table className="history-table">

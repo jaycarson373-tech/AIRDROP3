@@ -21,11 +21,11 @@ type HoldersResponse = {
 };
 
 const emptyResponse: HoldersResponse = { ineligibleWallets: [] };
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Pump Runner";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Copy Cat";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CC";
 const REWARD_SYMBOL = pumpRunnerConfig.currentRunner.ticker;
-const parsedEligibilityMin = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 2_500_000);
-const eligibilityMin = Number.isFinite(parsedEligibilityMin) && parsedEligibilityMin > 0 ? parsedEligibilityMin : 2_500_000;
+const parsedEligibilityMin = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
+const eligibilityMin = Number.isFinite(parsedEligibilityMin) && parsedEligibilityMin > 0 ? parsedEligibilityMin : 1_000_000;
 const ELIGIBILITY_LABEL =
   process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? eligibilityMin.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 1 });
 
@@ -79,7 +79,7 @@ export function IneligibleClient() {
       <header className="nav">
         <div className="container nav-inner">
           <Link className="brand" href="/">
-            <img className="brand-logo" src="/logo.png" alt={`${PROJECT_NAME} logo`} />
+            <img className="brand-logo" src={pumpRunnerConfig.logoSrc} alt={`${PROJECT_NAME} logo`} />
             <span>
               {PROJECT_NAME}
               <small>Ineligible Wallets</small>
