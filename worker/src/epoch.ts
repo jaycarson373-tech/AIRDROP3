@@ -36,7 +36,19 @@ export async function runEpoch(date = new Date()) {
     }
 
     await startEpoch(epochId);
-    await claimFees(epochId);
+    const claim = await claimFees(epochId);
+    const claimedLamports = BigInt(claim.amountClaimed || "0");
+    if (claimedLamports <= 0n) {
+      await recordBuy(epochId, "0", "0", "0", null);
+      await completeEpoch(epochId, {
+        eligible_count: 0,
+        reward_bought: "0",
+        reward_distributed: "0",
+        status: "skipped"
+      });
+      console.log(`[${epochId}] claim delta was 0 lamports; shutting down worker before buy/airdrop.`);
+      process.exit(0);
+    }
 
     const sourceHolders = await snapshotSourceHolders();
     const balanceEligibleHolders = await eligibleHoldersFromSnapshot(sourceHolders);

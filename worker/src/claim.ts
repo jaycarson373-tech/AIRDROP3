@@ -55,13 +55,16 @@ export async function claimFees(epochId: string): Promise<ClaimResult> {
       return { txSig: null, amountClaimed: "0" };
     }
 
+    const balanceBefore = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
     const tx = VersionedTransaction.deserialize(bytes);
     tx.sign([treasury]);
     const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
     await connection.confirmTransaction(txSig, "confirmed");
-    await safeRecordClaim(epochId, "0", txSig);
-    console.log(`[${epochId}] claimed creator fees: ${txSig}`);
-    return { txSig, amountClaimed: "0" };
+    const balanceAfter = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
+    const claimedLamports = balanceAfter > balanceBefore ? balanceAfter - balanceBefore : 0n;
+    await safeRecordClaim(epochId, claimedLamports.toString(), txSig);
+    console.log(`[${epochId}] claimed creator fees: ${txSig}; net claim delta=${claimedLamports.toString()} lamports`);
+    return { txSig, amountClaimed: claimedLamports.toString() };
   } catch (error) {
     console.warn(`[${epochId}] creator-fee claim skipped:`, error);
     await safeRecordClaim(epochId, "0", null);
