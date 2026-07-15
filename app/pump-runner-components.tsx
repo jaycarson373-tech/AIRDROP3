@@ -111,11 +111,6 @@ const refreshMs = 12_000;
 const tokenLabel = pumpRunnerConfig.tokenLabel;
 const sourceSymbol = pumpRunnerConfig.ticker;
 const rewardSymbol = pumpRunnerConfig.currentRunner.ticker;
-const copyCatBeltImages = [
-  "/airdrop-bg.png",
-  "/brand/pump-runner-bg.png",
-  "/brand/pump-runner-banner.png"
-];
 
 const emptyStats: StatsResponse = {
   currentEpoch: 0,
@@ -306,11 +301,26 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
         {[0, 1].map((copy) => (
           <div className="runner-ticker-group" key={copy}>
             {items.map((item) => (
-              <span key={`${copy}-${item}`}>{item}</span>
+              <span key={`${copy}-${item}`}>
+                <i aria-hidden="true" />
+                {item}
+              </span>
             ))}
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function AnimatedBackground() {
+  return (
+    <div className="smi-background" aria-hidden="true">
+      <span className="smi-aurora smi-aurora-one" />
+      <span className="smi-aurora smi-aurora-two" />
+      <span className="smi-ring smi-ring-one" />
+      <span className="smi-ring smi-ring-two" />
+      <span className="smi-watermark" />
     </div>
   );
 }
@@ -321,7 +331,10 @@ function RunnerNav() {
     <header className="runner-nav">
       <a className="runner-brand" href="#top" aria-label="SMI6900 home">
         <img className="runner-brand-logo" src={pumpRunnerConfig.logoSrc} alt="" />
-        <strong>{pumpRunnerConfig.name}</strong>
+        <span>
+          <strong>{pumpRunnerConfig.name}</strong>
+          <small>The Solana Meme Index</small>
+        </span>
       </a>
       <nav className="runner-links" aria-label="Primary navigation">
         <a href="#board">Index</a>
@@ -337,7 +350,7 @@ function RunnerNav() {
           </a>
         ) : null}
         <a className="runner-small-button runner-buy-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
-          Buy
+          Buy SMI6900
         </a>
       </div>
     </header>
@@ -352,11 +365,14 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
           <span className="runner-live-dot" />
           SMI6900 INDEX ONLINE
         </div>
-        <h1>THE MEME INDEX OF 6900.</h1>
+        <h1>
+          THE SOLANA
+          <span>MEME INDEX.</span>
+        </h1>
         <p className="runner-hero-subtitle">
-          SMI6900 is a rotating Solana meme index. New coins, old coins, AI coins and 6900 coins can enter the basket.
+          SMI6900 rotates into the strongest memes on Solana.
         </p>
-        <p className="runner-hero-line">Hold {tokenLabel}. Earn weighted basket drops every epoch. The longer you hold, the heavier your weight.</p>
+        <p className="runner-hero-line">Hold the index. Build weight. Receive the active basket drop every epoch.</p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
@@ -366,13 +382,17 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
           </a>
         </div>
         <div className="copy-terminal-strip" aria-label="SMI6900 index terminal preview">
-          <span>smi6900://index-engine</span>
-          <strong>rotating meme assets</strong>
-          <small>one active drop / basket tracking / epoch multiplier</small>
+          <span>Rotating baskets</span>
+          <strong>Weighted holders</strong>
+          <small>Onchain receipts</small>
         </div>
       </div>
 
       <div className="runner-hero-panel" aria-label="SMI6900 live index terminal">
+        <div className="live-index-label">
+          <span className="runner-live-dot" />
+          LIVE INDEX
+        </div>
         <div className="runner-panel-top">
           <div className="runner-panel-title">
             <img className="runner-token-logo" src={pumpRunnerConfig.currentRunner.logoSrc} alt="" />
@@ -396,7 +416,7 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
             <strong>{pumpRunnerConfig.currentRunner.mint ? compactAddress(pumpRunnerConfig.currentRunner.mint) : "Set reward mint"}</strong>
           </div>
           <div className="runner-current-row">
-            <span>Weight</span>
+            <span>Index Weight</span>
             <strong>{pumpRunnerConfig.currentRunner.amountAcquired}</strong>
           </div>
         </div>
@@ -408,7 +428,7 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
         <div className="copy-terminal-card" aria-label="SMI6900 live index terminal">
           <div><span>index.size</span><strong>{pumpRunnerConfig.runnerBoard.length} assets</strong></div>
           <div><span>active.drop</span><strong>{pumpRunnerConfig.currentRunner.ticker}</strong></div>
-          <div><span>basket.route</span><strong>mixed drops</strong></div>
+          <div><span>basket.route</span><strong>weighted basket</strong></div>
           <div><span>next.drop</span><strong>{live.countdown}</strong></div>
         </div>
         <div className="runner-hero-stats">
@@ -430,6 +450,27 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
   );
 }
 
+function IndexStrip({ live }: { live: RunnerLiveData }) {
+  const items = pumpRunnerConfig.runnerBoard;
+
+  return (
+    <section className="index-strip" aria-label="Live SMI6900 index strip">
+      <div className="index-strip-track">
+        {[...items, ...items].map((item, index) => (
+          <a className="index-strip-card" href={item.dexScreenerUrl} key={`${item.rank}-${index}`} target="_blank" rel="noreferrer">
+            <img src={item.logoSrc} alt="" loading="lazy" />
+            <span>
+              <strong>{item.ticker}</strong>
+              <small>{index === 0 ? formatPrice(live.market.reward.priceUsd, "Live") : item.status}</small>
+            </span>
+            <em>{item.amountAcquired}</em>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
   const summary = pumpRunnerConfig.treasuryStatistics;
   const liveActiveMarketCap = live.market.reward.marketCapUsd ?? live.market.reward.fdvUsd;
@@ -445,9 +486,9 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
   return (
     <section className="runner-section" id="board">
       <div className="runner-section-heading">
-        <span className="runner-kicker">SMI Board</span>
-        <h2>THE INDEX</h2>
-        <p>SMI6900 continuously adds meme assets to the index. One coin can be the current drop while the basket keeps expanding.</p>
+        <span className="runner-kicker">Current Index</span>
+        <h2>CURRENT INDEX</h2>
+        <p>The live basket shows the current drop asset and tracked Solana meme slots feeding the index.</p>
       </div>
       <div className="runner-summary-grid">
         {summaryItems.map(([label, value]) => (
@@ -460,13 +501,33 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
       <div className="copy-signal-card">
         <img src={activeCopy.logoSrc} alt="" />
         <div>
-          <span>Current Drop</span>
+          <span>Active Basket Asset</span>
           <strong>{activeCopy.token}</strong>
           <small>{activeCopy.ticker} · {activeCopy.detectedMarketCap} · {activeCopy.status}</small>
         </div>
         <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
           Chart <ExternalLink size={15} />
         </a>
+      </div>
+      <div className="smi-index-grid" aria-label="Current SMI6900 index assets">
+        {pumpRunnerConfig.runnerBoard.map((asset) => (
+          <article className="smi-index-asset" key={`${asset.rank}-${asset.ticker}`}>
+            <img src={asset.logoSrc} alt="" loading="lazy" />
+            <div>
+              <span>{asset.rank}</span>
+              <strong>{asset.ticker}</strong>
+              <small>{asset.token}</small>
+            </div>
+            <div>
+              <span>Weight</span>
+              <strong>{asset.amountAcquired}</strong>
+              <small>{asset.status}</small>
+            </div>
+            <a href={asset.dexScreenerUrl} target="_blank" rel="noreferrer" aria-label={`Open ${asset.ticker} chart`}>
+              <ExternalLink size={16} />
+            </a>
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -487,10 +548,10 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
   return (
     <section className="runner-section" id="scanner">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Signal Index</span>
-        <h2>THE SMI ENGINE</h2>
+        <span className="runner-kicker">Index Engine</span>
+        <h2>THE INDEX ENGINE</h2>
         <p>
-          SMI6900 tracks meme momentum, 6900 culture, AI rotations and live Solana flow to decide what enters the index.
+          A rotating basket built around Solana meme momentum.
         </p>
       </div>
       <div className="runner-scanner-layout">
@@ -509,7 +570,7 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
               <strong>{value}</strong>
             </div>
           ))}
-          <p>The exact index methodology remains private so the basket can move before the trade becomes obvious.</p>
+          <p>The exact methodology remains private so the index can rotate before the trade becomes obvious.</p>
         </div>
       </div>
     </section>
@@ -521,23 +582,23 @@ function CopyCatOrigin() {
     <section className="runner-section runner-origin" id="origin">
       <div className="runner-section-heading">
         <span className="runner-kicker">Index Thesis</span>
-        <h2>ONE TOKEN. MANY MEMES.</h2>
+        <h2>THE INDEX NEVER SLEEPS.</h2>
         <p>
-          SMI6900 is built around the idea that meme liquidity rotates. Hold the index token, stay eligible, and receive a mix of the assets the index is tracking.
+          It scans. It rotates. It snapshots. It drops.
         </p>
       </div>
       <div className="runner-origin-grid">
         <article className="runner-info-card">
           <h3>01 · Add</h3>
-          <p>New and older meme assets can be added to the SMI basket when they fit the rotation.</p>
+          <p>New coins, old coins, AI coins and 6900 coins can enter the basket.</p>
         </article>
         <article className="runner-info-card">
           <h3>02 · Weight</h3>
-          <p>The current drop asset can carry more weight while other index members remain tracked.</p>
+          <p>Holder balances and streaks determine distribution weight.</p>
         </article>
         <article className="runner-info-card">
           <h3>03 · Drop</h3>
-          <p>Eligible holders receive index-token airdrops through scheduled epochs.</p>
+          <p>Eligible holders receive basket drops with onchain receipts.</p>
         </article>
       </div>
     </section>
@@ -567,7 +628,7 @@ function HowItWorks() {
     <section className="runner-section runner-how" id="how">
       <div className="runner-section-heading">
         <span className="runner-kicker">How It Works</span>
-        <h2>HOLD THE INDEX</h2>
+      <h2>HOLD THE INDEX. WEIGH HEAVIER.</h2>
       </div>
       <div className="runner-step-list">
         {steps.map((step) => (
@@ -578,7 +639,7 @@ function HowItWorks() {
           </article>
         ))}
       </div>
-      <strong className="runner-bold-line">Hold {tokenLabel}. Receive the basket rotations the index drops.</strong>
+      <strong className="runner-bold-line">Hold {tokenLabel}. Stay eligible for the active basket.</strong>
     </section>
   );
 }
@@ -1023,22 +1084,6 @@ function FinalCta() {
   );
 }
 
-function CopyCatConveyor() {
-  const belt = [...copyCatBeltImages, ...copyCatBeltImages];
-
-  return (
-    <section className="copy-conveyor" aria-label="SMI6900 index graphic belt">
-      <div className="copy-conveyor-track">
-        {belt.map((src, index) => (
-          <figure className="copy-conveyor-card" key={`${src}-${index}`}>
-            <img src={src} alt="" loading="lazy" />
-          </figure>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function RunnerFooter() {
   const ca = pumpRunnerConfig.contractAddress;
 
@@ -1066,10 +1111,13 @@ function RunnerFooter() {
         <a href={pumpRunnerConfig.pumpFunUrl} target="_blank" rel="noreferrer">
           Pump.fun
         </a>
-        <a href="#drops">Airdrop history</a>
+        <a href="#drops">Receipts</a>
         <a href="#faq">Terms</a>
         <a href="#faq">Risk disclosure</a>
       </div>
+      <p className="runner-risk">
+        SMI6900 is an experimental Solana meme index project. Digital assets are volatile. Verify all onchain activity independently.
+      </p>
     </footer>
   );
 }
@@ -1079,10 +1127,12 @@ export function PumpRunnerHome() {
 
   return (
     <div className="pump-runner-page">
+      <AnimatedBackground />
       <MarketTicker live={live} />
       <RunnerNav />
       <main>
         <HeroSection live={live} />
+        <IndexStrip live={live} />
         <CopySignalBoard live={live} />
         <ScannerStatus live={live} />
         <CopyCatOrigin />
@@ -1094,7 +1144,6 @@ export function PumpRunnerHome() {
         <CopyHistoryChart />
         <FaqSection />
         <FinalCta />
-        <CopyCatConveyor />
       </main>
       <RunnerFooter />
     </div>

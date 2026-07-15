@@ -2,9 +2,9 @@ export const defaultCurrentRunner = {
   name: "AI6900",
   ticker: "AI6900",
   mint: "",
-  logoSrc: "/airdrop-bg.png",
-  scannedMarketCap: "Index slot 01",
-  scannedAgo: "Live basket",
+  logoSrc: "/brand/smi6900-logo.png",
+  scannedMarketCap: "Active index slot",
+  scannedAgo: "Live basket drop",
   dexScreenerUrl: "https://dexscreener.com/solana"
 } as const;
 
@@ -43,8 +43,7 @@ function looksLikeMint(value: string) {
 }
 
 function isOldReward(value: string) {
-  const normalized = value.toUpperCase();
-  return ["PCAT", "$PCAT", "BARTS", "$BARTS", "HARRIS", "$HARRIS", "GIRLCOIN", "$GIRLCOIN"].includes(normalized) || oldProjectMints.has(value);
+  return oldProjectMints.has(value);
 }
 
 function cleanProjectMint(value: string) {
@@ -97,9 +96,9 @@ export const pumpRunnerConfig = {
   ticker: "SMI6900",
   tokenLabel: "$SMI6900",
   rewardSymbol: activeRunnerTicker,
-  logoSrc: "/airdrop-bg.png",
-  backgroundSrc: "/airdrop-bg.png",
-  bannerSrc: "/airdrop-bg.png",
+  logoSrc: "/brand/smi6900-logo.png",
+  backgroundSrc: "/brand/smi6900-logo.png",
+  bannerSrc: "/brand/smi6900-logo.png",
   contractAddress,
   rewardMint,
   buyUrl: process.env.NEXT_PUBLIC_BUY_URL ?? fallbackPumpFunUrl,
@@ -132,13 +131,13 @@ export const pumpRunnerConfig = {
   scannerMetrics: {
     tokensTracked: "6,900",
     signalsReviewed: "690",
-    runnersSelected: "4",
+    runnersSelected: "3",
     currentEpoch: "0"
   },
   treasuryStatistics: {
-    runnersCaughtToday: "4",
-    averageEntryMarketCap: "Index live",
-    averageReturn: "Tracking",
+    runnersCaughtToday: "3",
+    averageEntryMarketCap: "Rotating",
+    averageReturn: "Live",
     bestRunner: activeRunnerLabel,
     totalDistributedToday: "0 SOL"
   },
@@ -167,11 +166,11 @@ export const pumpRunnerConfig = {
       token: "SPX6900",
       ticker: "$SPX6900",
       mint: "",
-      logoSrc: "/airdrop-bg.png",
-      detectedMarketCap: "Legacy index",
+      logoSrc: "/brand/smi6900-logo.png",
+      detectedMarketCap: "Meme slot",
       currentMarketCap: "Tracked",
       returnSinceDetection: "Basket",
-      amountAcquired: "Queued",
+      amountAcquired: "Index member",
       status: "Index member",
       dexScreenerUrl: defaultDexScreenerUrl
     },
@@ -180,11 +179,11 @@ export const pumpRunnerConfig = {
       token: "AI6900",
       ticker: "$AI6900",
       mint: "",
-      logoSrc: "/airdrop-bg.png",
-      detectedMarketCap: "AI slot",
+      logoSrc: "/brand/smi6900-logo.png",
+      detectedMarketCap: "AI meme slot",
       currentMarketCap: "Tracked",
       returnSinceDetection: "Basket",
-      amountAcquired: "Queued",
+      amountAcquired: "Index member",
       status: "Index member",
       dexScreenerUrl: defaultDexScreenerUrl
     }
@@ -196,20 +195,20 @@ export const pumpRunnerConfig = {
   ] satisfies RunnerPerformanceRow[],
   scannerCards: [
     {
-      title: "Index Engine",
-      body: "Adds new and older meme assets to a rotating Solana meme index."
+      title: "SCAN",
+      body: "The engine monitors Solana meme activity, attention, liquidity and rotation strength."
     },
     {
-      title: "Current Drop",
-      body: "One active asset can be emphasized while the wider basket continues tracking."
+      title: "SELECT",
+      body: "The strongest eligible asset enters the active index basket."
     },
     {
-      title: "Basket Mix",
-      body: "Rewards can be routed into a mix of index coins instead of a single permanent token."
+      title: "SNAPSHOT",
+      body: "Holder weight is calculated every epoch from balance and holding streak."
     },
     {
-      title: "Epoch Bonus",
-      body: "The longer a wallet holds through epochs, the more weight it can earn for future drops."
+      title: "DROP",
+      body: "Eligible holders receive the active basket asset with onchain receipts."
     }
   ]
 } as const;
