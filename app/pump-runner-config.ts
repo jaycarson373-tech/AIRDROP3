@@ -1,49 +1,75 @@
 export const defaultCurrentRunner = {
-  name: "psyopcat",
-  ticker: "PCAT",
-  mint: "3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH",
-  logoSrc: "/brand/psyopcat-logo.png",
-  scannedMarketCap: "$196K",
-  scannedAgo: "12:47 PM EST",
-  dexScreenerUrl: "https://dexscreener.com/solana/3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH"
+  name: "AI6900",
+  ticker: "AI6900",
+  mint: "",
+  logoSrc: "/airdrop-bg.png",
+  scannedMarketCap: "Index slot 01",
+  scannedAgo: "Live basket",
+  dexScreenerUrl: "https://dexscreener.com/solana"
 } as const;
 
-const defaultContractAddress = "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump";
-const defaultXUrl = "https://x.com/CopyCat_pf";
-const defaultDexScreenerUrl = "https://dexscreener.com/solana/bx5j2uuxsrwohzhack9nuseajckg5bj3rbdhx5ucxqg";
+const defaultContractAddress = "";
+const defaultXUrl = "https://x.com/SMI6900";
+const defaultDexScreenerUrl = "https://dexscreener.com/solana";
+const oldProjectMints = new Set([
+  "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump",
+  "3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH",
+  "SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump",
+  "8TUWgrMcBMtviLyuJWUvpXLx8RUUYDKK2Bp7qUVJpump",
+  "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump",
+  "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump",
+  "Er58M968bCGnmKwvrrPhW21zesoFfo8gXPUDokKMpump",
+  "ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump",
+  "G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump",
+  "3UiQ7mFuAdpeMUMbQTQDon8N1mK2L4YMiMzfpr4upump",
+  "FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump"
+]);
 
 function cleanEnv(value: string | undefined) {
   const trimmed = value?.trim();
   return trimmed || "";
 }
 
+function cleanFirstEnv(...names: string[]) {
+  for (const name of names) {
+    const value = cleanEnv(process.env[name]);
+    if (value) return value;
+  }
+  return "";
+}
+
 function looksLikeMint(value: string) {
   return value.length > 30 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(value);
 }
 
-function isPreviousCopyMint(value: string) {
-  return value === "SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump";
+function isOldReward(value: string) {
+  const normalized = value.toUpperCase();
+  return ["PCAT", "$PCAT", "BARTS", "$BARTS", "HARRIS", "$HARRIS", "GIRLCOIN", "$GIRLCOIN"].includes(normalized) || oldProjectMints.has(value);
 }
 
-const contractAddress = cleanEnv(process.env.NEXT_PUBLIC_CA) || cleanEnv(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT) || defaultContractAddress;
+function cleanProjectMint(value: string) {
+  return oldProjectMints.has(value) ? "" : value;
+}
+
+const contractAddress =
+  cleanProjectMint(cleanEnv(process.env.NEXT_PUBLIC_CA)) ||
+  cleanProjectMint(cleanEnv(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT)) ||
+  defaultContractAddress;
 const rawRewardSymbol = cleanEnv(process.env.NEXT_PUBLIC_REWARD_SYMBOL);
 const rawRewardMint = cleanEnv(process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
-const rawActiveRunnerName = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_NAME);
-const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isPreviousCopyMint(rawRewardMint);
+const rawActiveRunnerName = cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_NAME", "NEXT_PUBLIC_ACTIVE_RUNNER_NAME");
+const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isOldReward(rawRewardSymbol) || isOldReward(rawRewardMint);
 const rewardMint = useDefaultCurrentRunner ? defaultCurrentRunner.mint : rawRewardMint || defaultCurrentRunner.mint;
-const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol;
+const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol.replace(/^\$/, "");
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
-const activeRunnerName =
-  rawActiveRunnerName ||
-  (activeRunnerTicker.replace(/^\$/, "").toUpperCase() === defaultCurrentRunner.ticker ? defaultCurrentRunner.name : `${activeRunnerTicker} Copy`);
+const activeRunnerName = rawActiveRunnerName || (useDefaultCurrentRunner ? defaultCurrentRunner.name : `${activeRunnerTicker} Index Asset`);
 const parsedMinimumHolding = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
 const minimumHolding = Number.isFinite(parsedMinimumHolding) && parsedMinimumHolding > 0 ? parsedMinimumHolding : 1_000_000;
-const rawActiveRunnerDexUrl = cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_DEXSCREENER_URL);
+const rawActiveRunnerDexUrl = cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_DEXSCREENER_URL", "NEXT_PUBLIC_ACTIVE_RUNNER_DEXSCREENER_URL");
 const activeRunnerDexUrl =
   rawActiveRunnerDexUrl ||
-  (useDefaultCurrentRunner ? defaultCurrentRunner.dexScreenerUrl : rewardMint ? `https://dexscreener.com/solana/${rewardMint}` : "https://dexscreener.com/solana");
+  (rewardMint ? `https://dexscreener.com/solana/${rewardMint}` : defaultDexScreenerUrl);
 const fallbackPumpFunUrl = contractAddress ? `https://pump.fun/coin/${contractAddress}` : "https://pump.fun/";
-const fallbackDexScreenerUrl = defaultDexScreenerUrl;
 
 export type RunnerBoardRow = {
   rank: string;
@@ -67,52 +93,52 @@ export type RunnerPerformanceRow = {
 };
 
 export const pumpRunnerConfig = {
-  name: "Copy Cat",
-  ticker: "COPYCAT",
-  tokenLabel: "$COPYCAT",
+  name: "SMI6900",
+  ticker: "SMI6900",
+  tokenLabel: "$SMI6900",
   rewardSymbol: activeRunnerTicker,
-  logoSrc: "/brand/copy-cat-logo.jpg",
-  backgroundSrc: "/brand/copy-cat-background.jpg",
-  bannerSrc: "/brand/copy-cat-background.jpg",
+  logoSrc: "/airdrop-bg.png",
+  backgroundSrc: "/airdrop-bg.png",
+  bannerSrc: "/airdrop-bg.png",
   contractAddress,
   rewardMint,
   buyUrl: process.env.NEXT_PUBLIC_BUY_URL ?? fallbackPumpFunUrl,
   pumpFunUrl: process.env.NEXT_PUBLIC_PUMPFUN_URL ?? fallbackPumpFunUrl,
-  dexScreenerUrl: process.env.NEXT_PUBLIC_DEXSCREENER_URL ?? fallbackDexScreenerUrl,
+  dexScreenerUrl: process.env.NEXT_PUBLIC_DEXSCREENER_URL ?? defaultDexScreenerUrl,
   xUrl: cleanEnv(process.env.NEXT_PUBLIC_X_URL) || defaultXUrl,
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL ?? "",
   minimumHolding,
   epochMinutes: Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5),
-  scannerStatus: "SCANNING",
+  scannerStatus: "INDEXING",
   treasuryStatus: "ACTIVE",
   currentRunner: {
-    name: useDefaultCurrentRunner ? defaultCurrentRunner.name : activeRunnerName,
+    name: activeRunnerName,
     ticker: activeRunnerLabel,
     mint: rewardMint,
-    logoSrc: useDefaultCurrentRunner ? defaultCurrentRunner.logoSrc : cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC) || defaultCurrentRunner.logoSrc,
+    logoSrc: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_LOGO_SRC", "NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC") || defaultCurrentRunner.logoSrc,
     dexScreenerUrl: activeRunnerDexUrl,
-    detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? defaultCurrentRunner.scannedMarketCap,
-    currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
-    amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? `Accumulating since ${defaultCurrentRunner.scannedAgo}`,
-    status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? `Scanned ${defaultCurrentRunner.scannedAgo}`
+    detectedMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_ENTRY_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP") || defaultCurrentRunner.scannedMarketCap,
+    currentMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_CURRENT_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP") || "Live basket",
+    amountAcquired: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_AMOUNT", "NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT") || "Index weight active",
+    status: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_STATUS", "NEXT_PUBLIC_ACTIVE_RUNNER_STATUS") || "Airdropping now"
   },
   marketTickerFallback: {
-    price: "$0.000042",
-    marketCap: "$420K",
-    volume24h: "$84K",
-    holderCount: "1,284",
+    price: "$0.00006900",
+    marketCap: "$690K",
+    volume24h: "$69K",
+    holderCount: "6,900",
     totalDistributed: "$0"
   },
   scannerMetrics: {
-    tokensTracked: "0",
-    signalsReviewed: "0",
-    runnersSelected: "0",
+    tokensTracked: "6,900",
+    signalsReviewed: "690",
+    runnersSelected: "4",
     currentEpoch: "0"
   },
   treasuryStatistics: {
-    runnersCaughtToday: "1",
-    averageEntryMarketCap: defaultCurrentRunner.scannedMarketCap,
-    averageReturn: "Accumulating",
+    runnersCaughtToday: "4",
+    averageEntryMarketCap: "Index live",
+    averageReturn: "Tracking",
     bestRunner: activeRunnerLabel,
     totalDistributedToday: "0 SOL"
   },
@@ -125,50 +151,65 @@ export const pumpRunnerConfig = {
   runnerBoard: [
     {
       rank: "01",
-      token: useDefaultCurrentRunner ? defaultCurrentRunner.name : activeRunnerName,
+      token: activeRunnerName,
       ticker: activeRunnerLabel,
       mint: rewardMint,
-      logoSrc: useDefaultCurrentRunner ? defaultCurrentRunner.logoSrc : cleanEnv(process.env.NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC) || defaultCurrentRunner.logoSrc,
-      detectedMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP ?? defaultCurrentRunner.scannedMarketCap,
-      currentMarketCap: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP ?? "Live after buy",
-      returnSinceDetection: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_RETURN ?? "Tracking",
-      amountAcquired: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT ?? `Accumulating since ${defaultCurrentRunner.scannedAgo}`,
-      status: process.env.NEXT_PUBLIC_ACTIVE_RUNNER_STATUS ?? `Scanned ${defaultCurrentRunner.scannedAgo}`,
+      logoSrc: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_LOGO_SRC", "NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC") || defaultCurrentRunner.logoSrc,
+      detectedMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_ENTRY_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP") || defaultCurrentRunner.scannedMarketCap,
+      currentMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_CURRENT_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP") || "Live basket",
+      returnSinceDetection: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_RETURN", "NEXT_PUBLIC_ACTIVE_RUNNER_RETURN") || "Airdropping",
+      amountAcquired: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_AMOUNT", "NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT") || "Index weight active",
+      status: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_STATUS", "NEXT_PUBLIC_ACTIVE_RUNNER_STATUS") || "Airdropping now",
       dexScreenerUrl: activeRunnerDexUrl
     },
     {
       rank: "02",
-      token: "Private Copy Queue",
-      ticker: "—",
+      token: "SPX6900",
+      ticker: "$SPX6900",
       mint: "",
-      logoSrc: "/brand/copy-cat-logo.jpg",
-      detectedMarketCap: "Private",
-      currentMarketCap: "Private",
-      returnSinceDetection: "Private",
-      amountAcquired: "Not published",
-      status: "Scanning",
-      dexScreenerUrl: fallbackDexScreenerUrl
+      logoSrc: "/airdrop-bg.png",
+      detectedMarketCap: "Legacy index",
+      currentMarketCap: "Tracked",
+      returnSinceDetection: "Basket",
+      amountAcquired: "Queued",
+      status: "Index member",
+      dexScreenerUrl: defaultDexScreenerUrl
+    },
+    {
+      rank: "03",
+      token: "AI6900",
+      ticker: "$AI6900",
+      mint: "",
+      logoSrc: "/airdrop-bg.png",
+      detectedMarketCap: "AI slot",
+      currentMarketCap: "Tracked",
+      returnSinceDetection: "Basket",
+      amountAcquired: "Queued",
+      status: "Index member",
+      dexScreenerUrl: defaultDexScreenerUrl
     }
   ] satisfies RunnerBoardRow[],
   performanceRows: [
-    { ticker: activeRunnerLabel, entryMarketCap: 196_000, currentMarketCap: 196_000, changePercent: 0 }
+    { ticker: activeRunnerLabel, entryMarketCap: 69_000, currentMarketCap: 69_000, changePercent: 0 },
+    { ticker: "$SPX6900", entryMarketCap: 69_000, currentMarketCap: 690_000, changePercent: 900 },
+    { ticker: "$AI6900", entryMarketCap: 42_000, currentMarketCap: 420_000, changePercent: 900 }
   ] satisfies RunnerPerformanceRow[],
   scannerCards: [
     {
-      title: "Smart Wallets",
-      body: "Aggregates wallets that have historically moved early into live Pump.fun setups."
+      title: "Index Engine",
+      body: "Adds new and older meme assets to a rotating Solana meme index."
     },
     {
-      title: "Signal Matching",
-      body: "Combines wallet flow, liquidity, volume and timing into one private scan feed."
+      title: "Current Drop",
+      body: "One active asset can be emphasized while the wider basket continues tracking."
     },
     {
-      title: "Fee Routing",
-      body: "Routes 100% of usable creator fees toward buying the active scan token."
+      title: "Basket Mix",
+      body: "Rewards can be routed into a mix of index coins instead of a single permanent token."
     },
     {
-      title: "Airdrop Rail",
-      body: "Airdrops the scan token to eligible holders above the configured holding minimum."
+      title: "Epoch Bonus",
+      body: "The longer a wallet holds through epochs, the more weight it can earn for future drops."
     }
   ]
 } as const;

@@ -52,7 +52,19 @@ type MarketPayload = {
 const SOL_MINT = "So11111111111111111111111111111111111111112";
 const DEFAULT_SOURCE_MINT = "";
 const CACHE_MS = 15_000;
-const PREVIOUS_COPY_MINT = "SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump";
+const OLD_PROJECT_MINTS = new Set([
+  "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump",
+  "3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH",
+  "SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump",
+  "8TUWgrMcBMtviLyuJWUvpXLx8RUUYDKK2Bp7qUVJpump",
+  "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump",
+  "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump",
+  "Er58M968bCGnmKwvrrPhW21zesoFfo8gXPUDokKMpump",
+  "ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump",
+  "G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump",
+  "3UiQ7mFuAdpeMUMbQTQDon8N1mK2L4YMiMzfpr4upump",
+  "FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump"
+]);
 
 let cache: { expiresAt: number; payload: MarketPayload } | null = null;
 
@@ -67,12 +79,14 @@ function cleanAddress(value: string | undefined | null) {
 
 function rewardMint() {
   const configured = cleanAddress(env("REWARD_TOKEN_MINT"));
-  if (!configured || configured === PREVIOUS_COPY_MINT) return defaultCurrentRunner.mint;
+  if (!configured || OLD_PROJECT_MINTS.has(configured)) return defaultCurrentRunner.mint;
   return configured;
 }
 
 function sourceMint() {
-  return cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA")) ?? cleanAddress(DEFAULT_SOURCE_MINT);
+  const configured = cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA"));
+  if (configured && !OLD_PROJECT_MINTS.has(configured)) return configured;
+  return cleanAddress(DEFAULT_SOURCE_MINT);
 }
 
 function sameAddress(a: string | undefined, b: string) {
@@ -142,7 +156,7 @@ export async function GET() {
     reward: marketFromPair(pickPair(pairs, reward), rewardSymbol),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "COPYCAT"
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "SMI6900"
     ),
     sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
     updatedAt: new Date().toISOString()

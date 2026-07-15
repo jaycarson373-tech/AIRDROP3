@@ -3,36 +3,36 @@ import { AppPolish } from "./app-polish";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://copycat.fun"),
-  title: "Copy Cat",
-  description: "Copy Cat aggregates smart-wallet scans, buys the active scan with fees and airdrops it to eligible $COPYCAT holders.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://smi6900.fun"),
+  title: "SMI6900",
+  description: "SMI6900 is a Solana meme index that rotates current drop assets, builds a 6900 basket and airdrops weighted rewards to eligible $SMI6900 holders.",
   openGraph: {
-    title: "Copy Cat",
-    description: "Copy Cat aggregates smart-wallet scans, buys the active scan with fees and airdrops it to eligible $COPYCAT holders.",
-    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://copycat.fun",
-    siteName: "Copy Cat",
+    title: "SMI6900",
+    description: "SMI6900 rotates meme index assets and airdrops basket rewards to eligible holders.",
+    url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://smi6900.fun",
+    siteName: "SMI6900",
     images: [
       {
-        url: "/brand/copy-cat-background.jpg",
+        url: "/airdrop-bg.png",
         width: 1280,
         height: 720,
-        alt: "Copy Cat"
+        alt: "SMI6900"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Copy Cat",
-    description: "Copy Cat aggregates smart-wallet scans, buys the active scan with fees and airdrops it to eligible $COPYCAT holders.",
-    images: ["/brand/copy-cat-background.jpg"]
+    title: "SMI6900",
+    description: "The Solana meme index for 6900 culture, live basket drops and epoch-weighted holders.",
+    images: ["/airdrop-bg.png"]
   },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
-      { url: "/brand/copy-cat-logo.png", type: "image/png" }
+      { url: "/airdrop-bg.png", type: "image/png" }
     ],
     apple: "/apple-touch-icon.png"
   }

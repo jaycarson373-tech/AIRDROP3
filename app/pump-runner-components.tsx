@@ -112,12 +112,9 @@ const tokenLabel = pumpRunnerConfig.tokenLabel;
 const sourceSymbol = pumpRunnerConfig.ticker;
 const rewardSymbol = pumpRunnerConfig.currentRunner.ticker;
 const copyCatBeltImages = [
-  "/brand/copy-cat-belt-1.jpg",
-  "/brand/copy-cat-belt-2.jpg",
-  "/brand/copy-cat-belt-3.jpg",
-  "/brand/copy-cat-belt-4.jpg",
-  "/brand/copy-cat-belt-5.jpg",
-  "/brand/copy-cat-belt-6.jpg"
+  "/airdrop-bg.png",
+  "/brand/pump-runner-bg.png",
+  "/brand/pump-runner-banner.png"
 ];
 
 const emptyStats: StatsResponse = {
@@ -292,19 +289,19 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
   const scan = live.market.reward;
   const holderCount = live.holders.uniqueHolders ?? live.stats.latestEligibleHolders;
   const items = [
-    `ACTIVE COPY ${pumpRunnerConfig.currentRunner.ticker}`,
-    `${pumpRunnerConfig.currentRunner.ticker} PRICE ${formatPrice(scan.priceUsd, "Awaiting scan price")}`,
-    `TOTAL SOL VALUE AIRDROPPED ${formatSolAmount(live.stats.totalSolValueAirdropped)}`,
+    `CURRENT INDEX DROP ${pumpRunnerConfig.currentRunner.ticker}`,
+    `${pumpRunnerConfig.currentRunner.ticker} PRICE ${formatPrice(scan.priceUsd, "Awaiting index price")}`,
+    `TOTAL SOL VALUE DROPPED ${formatSolAmount(live.stats.totalSolValueAirdropped)}`,
     `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
     `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
     `${tokenLabel} PRICE ${formatPrice(source.priceUsd)}`,
     `NEXT AIRDROP ${live.countdown}`,
-    `SCANNER ${pumpRunnerConfig.scannerStatus}`,
+    `INDEX ENGINE ${pumpRunnerConfig.scannerStatus}`,
     `TREASURY ${pumpRunnerConfig.treasuryStatus}`
   ];
 
   return (
-    <div className="runner-ticker" aria-label="Live Copy Cat market ticker">
+    <div className="runner-ticker" aria-label="Live SMI6900 market ticker">
       <div className="runner-ticker-track">
         {[0, 1].map((copy) => (
           <div className="runner-ticker-group" key={copy}>
@@ -322,13 +319,13 @@ function RunnerNav() {
   const ca = pumpRunnerConfig.contractAddress;
   return (
     <header className="runner-nav">
-      <a className="runner-brand" href="#top" aria-label="Copy Cat home">
+      <a className="runner-brand" href="#top" aria-label="SMI6900 home">
         <img className="runner-brand-logo" src={pumpRunnerConfig.logoSrc} alt="" />
         <strong>{pumpRunnerConfig.name}</strong>
       </a>
       <nav className="runner-links" aria-label="Primary navigation">
-        <a href="#board">Copy</a>
-        <a href="#scanner">Terminal</a>
+        <a href="#board">Index</a>
+        <a href="#scanner">Engine</a>
         <a href="#eligibility">Holders</a>
         <a href="#drops">Receipts</a>
       </nav>
@@ -353,34 +350,34 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
       <div className="runner-hero-copy">
         <div className="runner-live-pill">
           <span className="runner-live-dot" />
-          COPY CAT SCANNER ONLINE
+          SMI6900 INDEX ONLINE
         </div>
-        <h1>COPY THE SMART MONEY.</h1>
+        <h1>THE MEME INDEX OF 6900.</h1>
         <p className="runner-hero-subtitle">
-          Copy Cat aggregates smart-wallet scans, buys the active scan with 100% of fees, and airdrops it to eligible {tokenLabel} holders.
+          SMI6900 is a rotating Solana meme index. New coins, old coins, AI coins and 6900 coins can enter the basket.
         </p>
-        <p className="runner-hero-line">Hold {tokenLabel}. The scanner copies the flow. Your wallet receives the airdrop.</p>
+        <p className="runner-hero-line">Hold {tokenLabel}. Earn weighted basket drops every epoch. The longer you hold, the heavier your weight.</p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
           </a>
           <a className="runner-button runner-button-secondary" href="#drops">
-            View Scan Drops
+            View Index Drops
           </a>
         </div>
-        <div className="copy-terminal-strip" aria-label="Copy Cat terminal preview">
-          <span>copycat://wallet-flow</span>
-          <strong>scanning 1,350 wallets</strong>
-          <small>matching buys / routing fees / preparing drop</small>
+        <div className="copy-terminal-strip" aria-label="SMI6900 index terminal preview">
+          <span>smi6900://index-engine</span>
+          <strong>rotating meme assets</strong>
+          <small>one active drop / basket tracking / epoch multiplier</small>
         </div>
       </div>
 
-      <div className="runner-hero-panel" aria-label="Copy Cat live terminal">
+      <div className="runner-hero-panel" aria-label="SMI6900 live index terminal">
         <div className="runner-panel-top">
           <div className="runner-panel-title">
             <img className="runner-token-logo" src={pumpRunnerConfig.currentRunner.logoSrc} alt="" />
             <div>
-              <span>ACTIVE COPY</span>
+              <span>CURRENT DROP</span>
               <strong>{pumpRunnerConfig.currentRunner.ticker}</strong>
               <small>{pumpRunnerConfig.currentRunner.name}</small>
             </div>
@@ -399,7 +396,7 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
             <strong>{pumpRunnerConfig.currentRunner.mint ? compactAddress(pumpRunnerConfig.currentRunner.mint) : "Set reward mint"}</strong>
           </div>
           <div className="runner-current-row">
-            <span>Buying</span>
+            <span>Weight</span>
             <strong>{pumpRunnerConfig.currentRunner.amountAcquired}</strong>
           </div>
         </div>
@@ -408,10 +405,10 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
           <strong>{live.countdown}</strong>
           <small>Every {pumpRunnerConfig.epochMinutes} minutes</small>
         </div>
-        <div className="copy-terminal-card" aria-label="Copy Cat live scan terminal">
-          <div><span>scan.feed</span><strong>1,350 wallets</strong></div>
-          <div><span>copy.target</span><strong>{pumpRunnerConfig.currentRunner.ticker}</strong></div>
-          <div><span>fee.route</span><strong>100% active</strong></div>
+        <div className="copy-terminal-card" aria-label="SMI6900 live index terminal">
+          <div><span>index.size</span><strong>{pumpRunnerConfig.runnerBoard.length} assets</strong></div>
+          <div><span>active.drop</span><strong>{pumpRunnerConfig.currentRunner.ticker}</strong></div>
+          <div><span>basket.route</span><strong>mixed drops</strong></div>
           <div><span>next.drop</span><strong>{live.countdown}</strong></div>
         </div>
         <div className="runner-hero-stats">
@@ -438,19 +435,19 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
   const liveActiveMarketCap = live.market.reward.marketCapUsd ?? live.market.reward.fdvUsd;
   const activeCopy = pumpRunnerConfig.runnerBoard[0];
   const summaryItems = [
-    ["Copies tracked today", summary.runnersCaughtToday],
-    ["Average entry market cap", summary.averageEntryMarketCap],
-    ["Active copy MC", formatCompactUsd(liveActiveMarketCap, summary.averageReturn)],
-    ["Active copy", summary.bestRunner],
+    ["Index assets", summary.runnersCaughtToday],
+    ["Index mode", summary.averageEntryMarketCap],
+    ["Current drop MC", formatCompactUsd(liveActiveMarketCap, summary.averageReturn)],
+    ["Current drop", summary.bestRunner],
     ["Total distributed today", summary.totalDistributedToday]
   ];
 
   return (
     <section className="runner-section" id="board">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Copy Signal Board</span>
-        <h2>ACTIVE COPY</h2>
-        <p>The current smart-wallet signal being copied, bought and airdropped to eligible {tokenLabel} holders.</p>
+        <span className="runner-kicker">SMI Board</span>
+        <h2>THE INDEX</h2>
+        <p>SMI6900 continuously adds meme assets to the index. One coin can be the current drop while the basket keeps expanding.</p>
       </div>
       <div className="runner-summary-grid">
         {summaryItems.map(([label, value]) => (
@@ -463,9 +460,9 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
       <div className="copy-signal-card">
         <img src={activeCopy.logoSrc} alt="" />
         <div>
-          <span>Copy 01</span>
+          <span>Current Drop</span>
           <strong>{activeCopy.token}</strong>
-          <small>{activeCopy.ticker} scanned at {activeCopy.detectedMarketCap} / {activeCopy.status.replace(/^Scanned\s+/i, "")}</small>
+          <small>{activeCopy.ticker} · {activeCopy.detectedMarketCap} · {activeCopy.status}</small>
         </div>
         <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
           Chart <ExternalLink size={15} />
@@ -478,10 +475,11 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
 export function ScannerStatus({ live }: { live: RunnerLiveData }) {
   const selectedCopies = pumpRunnerConfig.runnerBoard.filter((runner) => /^scanned/i.test(runner.status)).length;
   const rows = [
-    ["SCANNER STATUS", "ONLINE"],
-    ["ACTIVE COPY", rewardSymbol],
+    ["INDEX ENGINE", "ONLINE"],
+    ["CURRENT DROP", rewardSymbol],
+    ["INDEX ASSETS", pumpRunnerConfig.runnerBoard.length.toString()],
     ["ELIGIBLE HOLDERS", formatCount(live.stats.latestEligibleHolders, "0")],
-    ["COPIES SELECTED", selectedCopies.toString()],
+    ["BASKET SLOTS", Math.max(selectedCopies, pumpRunnerConfig.runnerBoard.length).toString()],
     ["LIVE DROP EPOCHS", formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")],
     [`${rewardSymbol} AIRDROPPED`, formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)]
   ];
@@ -489,10 +487,10 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
   return (
     <section className="runner-section" id="scanner">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Signal Engine</span>
-        <h2>THE COPY ENGINE</h2>
+        <span className="runner-kicker">Signal Index</span>
+        <h2>THE SMI ENGINE</h2>
         <p>
-          Copy Cat is powered by an aggregated smart-wallet mechanism built to track flow, liquidity, volume, holder growth and emerging market activity across Pump.fun.
+          SMI6900 tracks meme momentum, 6900 culture, AI rotations and live Solana flow to decide what enters the index.
         </p>
       </div>
       <div className="runner-scanner-layout">
@@ -511,7 +509,7 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
               <strong>{value}</strong>
             </div>
           ))}
-          <p>The exact aggregation methodology remains private to protect the strategy and prevent copy trading.</p>
+          <p>The exact index methodology remains private so the basket can move before the trade becomes obvious.</p>
         </div>
       </div>
     </section>
@@ -522,24 +520,24 @@ function CopyCatOrigin() {
   return (
     <section className="runner-section runner-origin" id="origin">
       <div className="runner-section-heading">
-        <span className="runner-kicker">The Name</span>
-        <h2>CC WAS THE FIRST COPY CAT.</h2>
+        <span className="runner-kicker">Index Thesis</span>
+        <h2>ONE TOKEN. MANY MEMES.</h2>
         <p>
-          Our logo nods to CC, short for CopyCat, the first cloned cat. The idea is simple: copy the signal, not the noise.
+          SMI6900 is built around the idea that meme liquidity rotates. Hold the index token, stay eligible, and receive a mix of the assets the index is tracking.
         </p>
       </div>
       <div className="runner-origin-grid">
         <article className="runner-info-card">
-          <h3>01 · Aggregate</h3>
-          <p>Smart wallets are grouped into one private scan feed so the system can spot movement early.</p>
+          <h3>01 · Add</h3>
+          <p>New and older meme assets can be added to the SMI basket when they fit the rotation.</p>
         </article>
         <article className="runner-info-card">
-          <h3>02 · Copy</h3>
-          <p>100% of usable fees buy the active scan token instead of splitting into side rails.</p>
+          <h3>02 · Weight</h3>
+          <p>The current drop asset can carry more weight while other index members remain tracked.</p>
         </article>
         <article className="runner-info-card">
           <h3>03 · Drop</h3>
-          <p>Eligible holders above 1,000,000 {tokenLabel} receive the scan token through scheduled airdrops.</p>
+          <p>Eligible holders receive index-token airdrops through scheduled epochs.</p>
         </article>
       </div>
     </section>
@@ -550,18 +548,18 @@ function HowItWorks() {
   const steps = [
     {
       label: "01",
-      title: "Smart wallets surface a scan",
-      body: "The private aggregation layer watches selected wallets and active Pump.fun tokens for high-quality setups."
+      title: "Assets enter the index",
+      body: "The index can add new launches, older leaders, AI rotations and 6900-coded meme assets."
     },
     {
       label: "02",
-      title: "Fees buy the scan",
-      body: "100% of usable creator-fee revenue is routed into the active token selected by the scan engine."
+      title: "The active basket gets bought",
+      body: "Fees can route into the current drop asset or a weighted mix of index coins."
     },
     {
       label: "03",
       title: "Holders receive the drop",
-      body: `The scan token is distributed to eligible ${tokenLabel} holders during scheduled airdrop epochs.`
+      body: `The current index reward is distributed to eligible ${tokenLabel} holders during scheduled epochs.`
     }
   ];
 
@@ -569,7 +567,7 @@ function HowItWorks() {
     <section className="runner-section runner-how" id="how">
       <div className="runner-section-heading">
         <span className="runner-kicker">How It Works</span>
-        <h2>COPY THE FLOW</h2>
+        <h2>HOLD THE INDEX</h2>
       </div>
       <div className="runner-step-list">
         {steps.map((step) => (
@@ -580,7 +578,7 @@ function HowItWorks() {
           </article>
         ))}
       </div>
-      <strong className="runner-bold-line">Hold {tokenLabel}. Receive the scans our system copies.</strong>
+      <strong className="runner-bold-line">Hold {tokenLabel}. Receive the basket rotations the index drops.</strong>
     </section>
   );
 }
@@ -644,7 +642,7 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
       </div>
       <div className="runner-eligibility-grid">
         <div className="runner-check-card">
-          <h3>To qualify for active-scan airdrops, a wallet must:</h3>
+          <h3>To qualify for index airdrops, a wallet must:</h3>
           <ul>
             <li>Hold at least {required}</li>
             <li>Be holding at the eligibility snapshot</li>
@@ -734,9 +732,9 @@ export function HoldMultiplier() {
   return (
     <section className="runner-section runner-multiplier">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Loyalty Weight</span>
-        <h2>KEEP COPYING</h2>
-        <p>Consistent holders receive a loyalty multiplier on their eligible distribution weight.</p>
+        <span className="runner-kicker">Epoch Multiplier</span>
+        <h2>HOLD MORE EPOCHS</h2>
+        <p>Consistent holders receive a higher index-weight multiplier the longer they stay eligible.</p>
       </div>
       <div className="runner-meter-card">
         <div className="runner-distance-meter" aria-label="Seven day multiplier meter">
@@ -744,7 +742,7 @@ export function HoldMultiplier() {
           <div>
             <i style={{ width: "100%" }} />
           </div>
-          <span>7 DAY COPY WEIGHT</span>
+          <span>7 DAY INDEX WEIGHT</span>
         </div>
         <div className="runner-tier-grid">
           {pumpRunnerConfig.multiplierTiers.map((tier) => (
@@ -754,7 +752,7 @@ export function HoldMultiplier() {
             </div>
           ))}
         </div>
-        <p>Selling or transferring {tokenLabel} resets the wallet's hold multiplier. The multiplier affects distribution weight, not a fixed reward.</p>
+        <p>Selling or transferring {tokenLabel} resets the wallet's epoch multiplier. The multiplier affects distribution weight, not a fixed reward.</p>
       </div>
     </section>
   );
@@ -767,8 +765,8 @@ export function HolderPayoutBoard({ live }: { live: RunnerLiveData }) {
     <section className="runner-section" id="payouts">
       <div className="runner-section-heading">
         <span className="runner-kicker">Wallet Payouts</span>
-        <h2>COPY WEIGHT BOARD</h2>
-        <p>Wallet rewards ranked by copied tokens received, held-epoch streak and current multiplier.</p>
+        <h2>EPOCH WEIGHT BOARD</h2>
+        <p>Wallet rewards ranked by index tokens received, held-epoch streak and current multiplier.</p>
       </div>
       <div className="runner-table-wrap">
         <table className="runner-table runner-holder-payouts">
@@ -798,7 +796,7 @@ export function HolderPayoutBoard({ live }: { live: RunnerLiveData }) {
               ))
             ) : (
               <tr>
-                <td colSpan={7}>Payout board fills in after the first settled copy drop.</td>
+                <td colSpan={7}>Payout board fills in after the first settled index drop.</td>
               </tr>
             )}
           </tbody>
@@ -829,7 +827,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
   const upcomingRows = [
     {
       time: live.countdown,
-      token: "Next copy batch",
+      token: "Next index batch",
       distributed: "Queued",
       wallets: `${formatCount(live.stats.latestEligibleHolders, "0")} eligible wallets`,
       signature: null,
@@ -842,15 +840,15 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
     <section className="runner-section" id="drops">
       <div className="runner-section-heading">
         <span className="runner-kicker">Onchain Feed</span>
-        <h2>DROP LEDGER</h2>
-        <p>Each copy stays on the record: scan market cap, live market cap, amount dropped and current SOL value of the distribution.</p>
+        <h2>INDEX DROP LEDGER</h2>
+        <p>Each index drop stays on the record: basket asset, live market cap, amount dropped and current SOL value of the distribution.</p>
       </div>
       <div className="runner-drop-ledger">
         <article className="runner-drop-feature">
           <div>
-            <span>Copy 01</span>
+            <span>Index Drop 01</span>
             <strong>{activeRunner.token}</strong>
-            <small>{activeRunner.ticker} scanned at {activeRunner.detectedMarketCap} · {activeRunnerScanTime}</small>
+            <small>{activeRunner.ticker} · {activeRunner.detectedMarketCap} · {activeRunnerScanTime}</small>
           </div>
           <a href={activeRunner.dexScreenerUrl} target="_blank" rel="noreferrer">
             Open chart <ExternalLink size={15} />
@@ -858,7 +856,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
         </article>
         <div className="runner-drop-metrics">
           <div>
-            <span>Scanned MC</span>
+            <span>Index Entry</span>
             <strong>{activeRunner.detectedMarketCap}</strong>
           </div>
           <div>
@@ -935,8 +933,8 @@ export function CopyHistoryChart() {
   return (
     <section className="runner-section" id="history">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Past Copy Results</span>
-        <h2>COPY HISTORY</h2>
+        <span className="runner-kicker">Index History</span>
+        <h2>BASKET HISTORY</h2>
       </div>
       <div className="runner-chart">
         {pumpRunnerConfig.performanceRows.map((row) => (
@@ -950,7 +948,7 @@ export function CopyHistoryChart() {
           </div>
         ))}
       </div>
-      <p className="runner-disclaimer">Past copy-scan results do not guarantee future performance. Tokens selected by the system may lose some or all of their value.</p>
+      <p className="runner-disclaimer">Past index selections do not guarantee future performance. Tokens selected by the system may lose some or all of their value.</p>
     </section>
   );
 }
@@ -958,9 +956,9 @@ export function CopyHistoryChart() {
 function FaqSection() {
   const faqs = [
     {
-      question: "What is Copy Cat?",
+      question: "What is SMI6900?",
       answer:
-        `Copy Cat is a holder-reward system that aggregates smart-wallet scans, buys the active scan with fees and distributes that token to eligible ${tokenLabel} holders.`
+        `SMI6900 is a holder-reward meme index that can buy selected index assets and distribute them to eligible ${tokenLabel} holders.`
     },
     {
       question: "How many tokens must I hold?",
@@ -968,7 +966,7 @@ function FaqSection() {
     },
     {
       question: "How often are drops distributed?",
-      answer: `Scan-token distributions are processed in scheduled epochs. The current interface is set to ${pumpRunnerConfig.epochMinutes}-minute epochs.`
+      answer: `Index-token distributions are processed in scheduled epochs. The current interface is set to ${pumpRunnerConfig.epochMinutes}-minute epochs.`
     },
     {
       question: "What happens when I sell?",
@@ -976,9 +974,9 @@ function FaqSection() {
         `Selling or transferring ${tokenLabel} resets the wallet's hold multiplier. Depending on snapshot rules, it may also remove the wallet from the current distribution epoch.`
     },
     {
-      question: "Are scan profits guaranteed?",
+      question: "Are index profits guaranteed?",
       answer:
-        "No. Meme tokens are highly volatile, and copy selections may decline in value. The aggregation layer is a selection system, not a guarantee of performance."
+        "No. Meme tokens are highly volatile, and index selections may decline in value. The index engine is a selection system, not a guarantee of performance."
     },
     {
       question: "Why is there a minimum holding requirement?",
@@ -1008,8 +1006,8 @@ function FaqSection() {
 function FinalCta() {
   return (
     <section className="runner-final-cta">
-      <h2>THE NEXT COPY IS ALREADY MOVING.</h2>
-      <p>Hold {tokenLabel} and stay eligible for every scheduled active-scan drop routed through the system.</p>
+      <h2>THE NEXT INDEX DROP IS ALREADY LOADING.</h2>
+      <p>Hold {tokenLabel} and stay eligible for every scheduled basket drop routed through the system.</p>
       <div className="runner-hero-actions">
         <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
           Buy {tokenLabel}
@@ -1029,7 +1027,7 @@ function CopyCatConveyor() {
   const belt = [...copyCatBeltImages, ...copyCatBeltImages];
 
   return (
-    <section className="copy-conveyor" aria-label="Copy Cat graphic belt">
+    <section className="copy-conveyor" aria-label="SMI6900 index graphic belt">
       <div className="copy-conveyor-track">
         {belt.map((src, index) => (
           <figure className="copy-conveyor-card" key={`${src}-${index}`}>

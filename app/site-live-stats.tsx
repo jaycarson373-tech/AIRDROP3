@@ -15,7 +15,7 @@ const fallbackStats: StatsResponse = {
   totalSolValueAirdropped: 0,
   latestEligibleHolders: 0
 };
-const SOURCE_SYMBOL = "COPYCAT";
+const SOURCE_SYMBOL = "SMI6900";
 
 async function getStats() {
   try {

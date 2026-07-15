@@ -1,11 +1,11 @@
-/* Copy Cat */
+/* SMI6900 */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background: #020202;
-  color: #f7f7f7;
+  background: #030500;
+  color: #f8ffec;
   margin: 0;
 }
 
@@ -19,18 +19,18 @@ input {
 }
 
 .pump-runner-page {
-  --runner-bg: #020202;
-  --runner-surface: rgba(10, 10, 10, 0.86);
-  --runner-surface-strong: rgba(18, 18, 18, 0.94);
-  --runner-border: rgba(255, 255, 255, 0.22);
-  --runner-border-strong: rgba(255, 255, 255, 0.52);
-  --runner-text: #f7f7f7;
-  --runner-muted: #a7a7a7;
-  --runner-soft: #e8e8e8;
-  --runner-accent: #ffffff;
-  --runner-accent-2: #d7d7d7;
-  --runner-yellow: #ffffff;
-  --runner-danger: #bdbdbd;
+  --runner-bg: #030500;
+  --runner-surface: rgba(6, 10, 3, 0.86);
+  --runner-surface-strong: rgba(12, 18, 5, 0.94);
+  --runner-border: rgba(219, 255, 0, 0.22);
+  --runner-border-strong: rgba(219, 255, 0, 0.58);
+  --runner-text: #f8ffec;
+  --runner-muted: #a7b38c;
+  --runner-soft: #edf8d8;
+  --runner-accent: #dbff00;
+  --runner-accent-2: #49ff7d;
+  --runner-yellow: #efff4b;
+  --runner-danger: #ffdd57;
   background: var(--runner-bg);
   color: var(--runner-text);
   font-family: "Arial", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
@@ -42,9 +42,10 @@ input {
 
 .pump-runner-page::before {
   background:
-    linear-gradient(180deg, rgba(2, 2, 2, 0.32), rgba(2, 2, 2, 0.78) 68%, rgba(2, 2, 2, 0.95)),
-    url("/brand/copy-cat-background.jpg") center top / cover no-repeat;
-  animation: copyCatBackgroundDrift 28s ease-in-out infinite alternate;
+    radial-gradient(circle at 68% 18%, rgba(219, 255, 0, 0.18), transparent 32%),
+    linear-gradient(180deg, rgba(3, 5, 0, 0.22), rgba(3, 5, 0, 0.7) 60%, rgba(3, 5, 0, 0.96)),
+    url("/airdrop-bg.png") center top / cover no-repeat;
+  animation: smiBackgroundDrift 26s ease-in-out infinite alternate;
   content: "";
   inset: 0;
   opacity: 0.77;
@@ -57,8 +58,8 @@ input {
 
 .pump-runner-page::after {
   background:
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(219, 255, 0, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(73, 255, 125, 0.045) 1px, transparent 1px);
   background-size: 54px 54px, 54px 54px;
   content: "";
   inset: 0;
@@ -67,7 +68,7 @@ input {
   z-index: -1;
 }
 
-@keyframes copyCatBackgroundDrift {
+@keyframes smiBackgroundDrift {
   from {
     transform: scale(1.04) translate3d(-8px, -5px, 0);
   }
@@ -86,7 +87,7 @@ input {
 }
 
 .runner-ticker {
-  background: #020202;
+  background: rgba(3, 5, 0, 0.98);
   border-bottom: 1px solid var(--runner-border);
   color: var(--runner-accent);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -127,7 +128,7 @@ input {
 
 .runner-nav {
   align-items: center;
-  background: rgba(2, 2, 2, 0.76);
+  background: rgba(3, 5, 0, 0.8);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--runner-border);
   display: flex;
@@ -150,9 +151,9 @@ input {
 .runner-brand-logo {
   align-items: center;
   aspect-ratio: 1;
-  border: 1px solid rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(219, 255, 0, 0.34);
   border-radius: 8px;
-  box-shadow: 0 0 22px rgba(255, 255, 255, 0.24);
+  box-shadow: 0 0 22px rgba(219, 255, 0, 0.2);
   display: inline-flex;
   filter: grayscale(1) contrast(1.08);
   object-fit: cover;
@@ -221,7 +222,7 @@ input {
 .runner-small-button,
 .pump-runner-page .mini-button {
   align-items: center;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(219, 255, 0, 0.08);
   border: 1px solid var(--runner-border);
   color: var(--runner-text);
   display: inline-flex;
@@ -234,10 +235,10 @@ input {
 
 .runner-buy-button,
 .runner-button {
-  background: linear-gradient(180deg, #f7f7f7, var(--runner-accent));
+  background: linear-gradient(180deg, #f6ff90, var(--runner-accent));
   border: 1px solid var(--runner-accent);
-  color: #020202 !important;
-  box-shadow: 0 14px 38px rgba(255, 255, 255, 0.22);
+  color: #071000 !important;
+  box-shadow: 0 14px 38px rgba(219, 255, 0, 0.2);
   text-shadow: none;
 }
 
@@ -252,12 +253,12 @@ input {
 
 .runner-button svg,
 .runner-buy-button svg {
-  color: #020202;
-  stroke: #020202;
+  color: #071000;
+  stroke: #071000;
 }
 
 .runner-button-secondary {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(219, 255, 0, 0.06);
   border-color: var(--runner-border-strong);
   color: var(--runner-text) !important;
 }
@@ -440,7 +441,7 @@ input {
 .runner-chart,
 .runner-final-cta {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 42%),
+    linear-gradient(180deg, rgba(219, 255, 0, 0.12), transparent 42%),
     var(--runner-surface);
   border: 1px solid var(--runner-border);
   border-radius: 8px;
@@ -449,8 +450,8 @@ input {
 
 .runner-hero-panel {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent 32%),
-    linear-gradient(180deg, rgba(18, 18, 18, 0.94), rgba(8, 8, 8, 0.86)),
+    linear-gradient(135deg, rgba(219, 255, 0, 0.14), transparent 32%),
+    linear-gradient(180deg, rgba(12, 18, 5, 0.94), rgba(4, 8, 2, 0.86)),
     var(--runner-surface);
   display: grid;
   gap: 16px;
@@ -463,8 +464,8 @@ input {
 
 .runner-hero-panel::before {
   background:
-    linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    linear-gradient(rgba(219, 255, 0, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(73, 255, 125, 0.06) 1px, transparent 1px);
   background-size: 34px 34px;
   content: "";
   inset: 0;
@@ -499,10 +500,10 @@ input {
 
 .runner-token-logo {
   aspect-ratio: 1;
-  background: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.38);
+  background: #101700;
+  border: 1px solid rgba(219, 255, 0, 0.4);
   border-radius: 999px;
-  box-shadow: 0 0 22px rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 24px rgba(219, 255, 0, 0.16);
   flex: 0 0 auto;
   filter: grayscale(1) contrast(1.12);
   height: 54px;
@@ -573,7 +574,7 @@ input {
 
 .runner-current-card {
   background: rgba(0, 0, 0, 0.34);
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(219, 255, 0, 0.2);
   border-radius: 8px;
   display: grid;
   gap: 0;
@@ -582,7 +583,7 @@ input {
 
 .runner-current-row {
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(219, 255, 0, 0.12);
   display: flex;
   gap: 16px;
   justify-content: space-between;
@@ -615,8 +616,8 @@ input {
 }
 
 .runner-drop-card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(219, 255, 0, 0.07);
+  border: 1px solid rgba(219, 255, 0, 0.22);
   border-radius: 8px;
   padding: 18px;
 }
@@ -632,10 +633,10 @@ input {
 
 .runner-track-display {
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(219, 255, 0, 0.05) 1px, transparent 1px),
     rgba(0, 0, 0, 0.24);
   background-size: 28px 28px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(219, 255, 0, 0.14);
   border-radius: 8px;
   height: 128px;
   overflow: hidden;
@@ -644,10 +645,10 @@ input {
 
 .copy-terminal-card {
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(219, 255, 0, 0.05) 1px, transparent 1px),
     rgba(0, 0, 0, 0.42);
   background-size: 28px 28px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(219, 255, 0, 0.16);
   border-radius: 8px;
   display: grid;
   gap: 0;
@@ -1675,13 +1676,13 @@ input {
 /* Shared dashboard pages */
 .page {
   background:
-    linear-gradient(180deg, rgba(2, 2, 2, 0.5), rgba(2, 2, 2, 0.94)),
-    url("/brand/copy-cat-background.jpg") center top / cover fixed no-repeat,
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-    #020202;
+    linear-gradient(180deg, rgba(3, 5, 0, 0.5), rgba(3, 5, 0, 0.94)),
+    url("/airdrop-bg.png") center top / cover fixed no-repeat,
+    linear-gradient(rgba(219, 255, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(73, 255, 125, 0.04) 1px, transparent 1px),
+    #030500;
   background-size: auto, cover, 54px 54px, 54px 54px, auto;
-  color: #f7f7f7;
+  color: #f8ffec;
   font-family: Arial, "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
   min-height: 100vh;
 }

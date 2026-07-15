@@ -1,21 +1,21 @@
-# Copy Cat
+# SMI6900
 
-Source token: `$COPYCAT`
-Active copied asset: `$PCAT`
+Source token: `$SMI6900`
+Reward rail: rotating meme-index assets
 
-Copy Cat tracks smart-wallet signals, buys the configured copied asset with creator fees, and airdrops it to eligible `$COPYCAT` holders.
+SMI6900 is a holder reward meme index. One coin can be the current active drop while new and older meme assets are continuously added to the index basket. Fees can buy configured index assets, then airdrop the resulting rewards to eligible `$SMI6900` holders with epoch-based hold weighting.
 
 ## Current Launch Values
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME="Copy Cat"
-NEXT_PUBLIC_SOURCE_SYMBOL="Copycat"
-NEXT_PUBLIC_SOURCE_TOKEN_MINT="2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump"
-NEXT_PUBLIC_REWARD_SYMBOL="PCAT"
-NEXT_PUBLIC_REWARD_TOKEN_MINT="3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH"
-NEXT_PUBLIC_CA="2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump"
-NEXT_PUBLIC_X_URL="https://x.com/CopyCat_pf"
-NEXT_PUBLIC_DEXSCREENER_URL="https://dexscreener.com/solana/bx5j2uuxsrwohzhack9nuseajckg5bj3rbdhx5ucxqg"
+NEXT_PUBLIC_PROJECT_NAME="SMI6900"
+NEXT_PUBLIC_SOURCE_SYMBOL="SMI6900"
+NEXT_PUBLIC_SOURCE_TOKEN_MINT="<SMI6900_SOURCE_TOKEN_MINT>"
+NEXT_PUBLIC_REWARD_SYMBOL="<CURRENT_INDEX_DROP_SYMBOL>"
+NEXT_PUBLIC_REWARD_TOKEN_MINT="<CURRENT_INDEX_DROP_MINT>"
+NEXT_PUBLIC_CA="<SMI6900_SOURCE_TOKEN_MINT>"
+NEXT_PUBLIC_X_URL="https://x.com/SMI6900"
+NEXT_PUBLIC_DEXSCREENER_URL="https://dexscreener.com/solana/<SMI6900_SOURCE_TOKEN_MINT>"
 NEXT_PUBLIC_EPOCH_MINUTES="5"
 NEXT_PUBLIC_ELIGIBILITY_MIN="1000000"
 ```
@@ -25,8 +25,8 @@ NEXT_PUBLIC_ELIGIBILITY_MIN="1000000"
 Every scheduled epoch:
 
 1. Claim creator fees to the treasury wallet.
-2. Buy the configured copied asset with the configured reward budget.
-3. Snapshot `$COPYCAT` holders with at least `ELIGIBILITY_MIN`.
+2. Buy the configured current index asset with the configured reward budget.
+3. Snapshot `$SMI6900` holders with at least `ELIGIBILITY_MIN`.
 4. Exclude treasury, pool addresses, explicit exclusions, and wallets above `MAX_HOLDER_PCT`.
 5. Apply hold multipliers and smaller-wallet weighting.
 6. Airdrop the configured reward token directly to selected wallets.
@@ -61,8 +61,8 @@ REWARD_MODE="token"
 CLAIM_ENABLED="true"
 BUY_ENABLED="true"
 AIRDROP_ENABLED="true"
-SOURCE_TOKEN_MINT="2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump"
-REWARD_TOKEN_MINT="3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH"
+SOURCE_TOKEN_MINT="<SMI6900_SOURCE_TOKEN_MINT>"
+REWARD_TOKEN_MINT="<CURRENT_INDEX_DROP_MINT>"
 EPOCH_MINUTES="5"
 ELIGIBILITY_MIN="1000000"
 MAX_HOLDER_PCT="4"
