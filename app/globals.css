@@ -2437,6 +2437,328 @@ input {
   }
 }
 
+/* Mobile launch fixes */
+@media (max-width: 760px) {
+  html,
+  body,
+  .pump-runner-page {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .runner-ticker {
+    overflow-x: auto;
+    position: relative;
+    scrollbar-width: none;
+  }
+
+  .runner-ticker::-webkit-scrollbar {
+    display: none;
+  }
+
+  .runner-ticker-track {
+    animation: none;
+    min-width: 100%;
+    width: max-content;
+  }
+
+  .runner-ticker-group {
+    gap: 18px;
+    padding: 8px 14px;
+  }
+
+  .runner-ticker-group:nth-child(2) {
+    display: none;
+  }
+
+  .runner-ticker-group span {
+    flex: 0 0 auto;
+    font-size: 0.68rem;
+    white-space: nowrap;
+  }
+
+  .runner-nav {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 10px 12px;
+    top: 0;
+    width: 100%;
+  }
+
+  .runner-brand {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .runner-brand-logo {
+    width: 34px;
+  }
+
+  .runner-brand strong {
+    font-size: 0.9rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .runner-brand small {
+    display: none;
+  }
+
+  .runner-links {
+    gap: 14px;
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+    width: 100%;
+  }
+
+  .runner-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .runner-links a {
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
+
+  .runner-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    justify-self: end;
+    min-width: 0;
+  }
+
+  .runner-actions .runner-small-button,
+  .runner-actions .mini-button {
+    font-size: 0.7rem;
+    min-height: 34px;
+    padding: 8px 9px;
+    white-space: nowrap;
+    width: auto;
+  }
+
+  .runner-actions .mini-button {
+    max-width: 108px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .runner-actions .runner-buy-button {
+    font-size: 0;
+    max-width: 58px;
+    padding: 8px 12px;
+  }
+
+  .runner-actions .runner-buy-button::after {
+    content: "Buy";
+    font-size: 0.7rem;
+  }
+
+  .runner-hero {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: auto;
+    padding: 48px 14px 30px;
+    width: 100%;
+  }
+
+  .runner-hero-copy,
+  .runner-hero-panel {
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .runner-live-pill {
+    font-size: 0.72rem;
+  }
+
+  .runner-hero h1 {
+    font-size: clamp(2.8rem, 16vw, 4.25rem);
+    line-height: 0.88;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .runner-hero-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .runner-hero-line {
+    font-size: 0.96rem;
+  }
+
+  .runner-hero-actions {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .runner-button {
+    justify-content: center;
+    min-height: 48px;
+    width: 100%;
+  }
+
+  .copy-terminal-strip {
+    display: grid;
+    gap: 8px;
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .runner-hero-panel {
+    padding: 16px;
+  }
+
+  .runner-panel-top {
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .runner-panel-title {
+    min-width: 0;
+  }
+
+  .runner-panel-top strong {
+    font-size: clamp(1.55rem, 12vw, 2.35rem);
+    line-height: 0.95;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .runner-panel-link {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .runner-current-card,
+  .runner-drop-card,
+  .copy-terminal-card,
+  .runner-hero-stats {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .runner-current-row {
+    align-items: start;
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .runner-current-row strong {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .runner-drop-card strong {
+    font-size: clamp(3rem, 19vw, 4.2rem);
+    line-height: 0.95;
+  }
+
+  .copy-terminal-card,
+  .runner-hero-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .index-strip {
+    margin: 0 auto 34px;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 0 14px 10px;
+    scrollbar-width: none;
+  }
+
+  .index-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .index-strip-track {
+    animation: none;
+  }
+
+  .index-strip-card {
+    grid-template-columns: 38px minmax(0, 1fr);
+    min-width: min(280px, calc(100vw - 28px));
+  }
+
+  .index-strip-card em {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .runner-section {
+    max-width: 100%;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .runner-section h2,
+  .runner-final-cta h2 {
+    font-size: clamp(2.05rem, 12vw, 3rem);
+    overflow-wrap: anywhere;
+  }
+
+  .runner-summary-grid,
+  .runner-info-grid,
+  .runner-terminal-grid,
+  .runner-steps,
+  .runner-faq-grid,
+  .smi-index-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .copy-signal-card,
+  .runner-drop-ledger,
+  .runner-table-wrap,
+  .runner-feed,
+  .runner-wallet-card,
+  .runner-meter-card,
+  .runner-chart {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .smi-index-asset {
+    grid-template-columns: 42px minmax(0, 1fr) 34px;
+  }
+
+  .smi-index-asset > :nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .smi-city-bg {
+    background-position: center top;
+    inset: 0;
+    opacity: 0.48;
+    transform: none !important;
+  }
+
+  .smi-city-bg-secondary,
+  .smi-aurora-two {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .runner-actions .mini-button {
+    display: none;
+  }
+
+  .runner-nav {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
 /* Shared dashboard pages */
 .page {
   background:
