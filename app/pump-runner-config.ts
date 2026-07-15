@@ -8,8 +8,8 @@ export const defaultCurrentRunner = {
   dexScreenerUrl: "https://dexscreener.com/solana/J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump"
 } as const;
 
-const defaultContractAddress = "";
-const defaultXUrl = "https://x.com/SMI6900";
+const defaultContractAddress = "8ZG2jEdmEp5t31aikFFHJrYU4JxJjUGRTjxEpPSipump";
+const defaultXUrl = "https://x.com/SMI6900_";
 const defaultDexScreenerUrl = "https://dexscreener.com/solana";
 const oldProjectMints = new Set([
   "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump",
