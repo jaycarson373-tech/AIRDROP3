@@ -316,6 +316,8 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
 function AnimatedBackground() {
   return (
     <div className="smi-background" aria-hidden="true">
+      <span className="smi-city-bg smi-city-bg-primary" />
+      <span className="smi-city-bg smi-city-bg-secondary" />
       <span className="smi-aurora smi-aurora-one" />
       <span className="smi-aurora smi-aurora-two" />
       <span className="smi-ring smi-ring-one" />

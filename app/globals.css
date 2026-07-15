@@ -1687,12 +1687,14 @@ input {
   --runner-yellow: #efff00;
   --runner-purple: #9945ff;
   background:
-    radial-gradient(circle at 20% 12%, rgba(153, 69, 255, 0.18), transparent 34rem),
-    radial-gradient(circle at 84% 20%, rgba(0, 255, 163, 0.12), transparent 30rem),
-    radial-gradient(circle at 52% 70%, rgba(3, 225, 255, 0.1), transparent 34rem),
+    radial-gradient(circle at 20% 12%, rgba(153, 69, 255, 0.1), transparent 34rem),
+    radial-gradient(circle at 84% 20%, rgba(0, 255, 163, 0.08), transparent 30rem),
+    radial-gradient(circle at 52% 70%, rgba(3, 225, 255, 0.07), transparent 34rem),
     #05060a;
   color: var(--runner-text);
   font-family: "Inter", "Geist", "Space Grotesk", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  isolation: isolate;
+  position: relative;
 }
 
 .pump-runner-page::before {
@@ -1722,21 +1724,57 @@ input {
   overflow: hidden;
   pointer-events: none;
   position: fixed;
-  z-index: -1;
+  z-index: 0;
+}
+
+.pump-runner-page > :not(.smi-background) {
+  position: relative;
+  z-index: 1;
+}
+
+.smi-background::after {
+  background:
+    radial-gradient(circle at 50% 22%, rgba(5, 6, 10, 0.18), transparent 22rem),
+    linear-gradient(180deg, rgba(5, 6, 10, 0.22), rgba(5, 6, 10, 0.48) 42%, #05060a 100%);
+  content: "";
+  inset: 0;
+  position: absolute;
 }
 
 .smi-aurora,
+.smi-city-bg,
 .smi-ring,
 .smi-watermark {
   display: block;
   position: absolute;
 }
 
+.smi-city-bg {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  inset: -4vh -4vw;
+  opacity: 0.65;
+}
+
+.smi-city-bg-primary {
+  animation: smiCityFloat 32s ease-in-out infinite alternate;
+  background-image: url("/brand/smi-city-bg-a.jpg");
+}
+
+.smi-city-bg-secondary {
+  animation: smiCityDrift 44s ease-in-out infinite alternate;
+  background-image: url("/brand/smi-city-bg-b.jpg");
+  mix-blend-mode: screen;
+  opacity: 0.16;
+  transform: scale(1.04);
+}
+
 .smi-aurora {
   border-radius: 999px;
-  filter: blur(72px);
+  filter: blur(86px);
   height: 38rem;
-  opacity: 0.28;
+  opacity: 0.18;
   width: 38rem;
 }
 
@@ -1756,7 +1794,7 @@ input {
 
 .smi-ring {
   animation: smiRingSpin 34s linear infinite;
-  border: 1px solid rgba(3, 225, 255, 0.12);
+  border: 1px solid rgba(3, 225, 255, 0.08);
   border-radius: 999px;
   box-shadow:
     0 0 80px rgba(0, 255, 163, 0.1),
@@ -1781,7 +1819,7 @@ input {
   bottom: 2rem;
   filter: saturate(1.2);
   height: 38rem;
-  opacity: 0.045;
+  opacity: 0.032;
   right: -8rem;
   width: 38rem;
 }
@@ -1799,6 +1837,16 @@ input {
 @keyframes smiAuroraTwo {
   from { transform: translate3d(0, 0, 0) rotate(0deg); }
   to { transform: translate3d(-6rem, -4rem, 0) rotate(-12deg); }
+}
+
+@keyframes smiCityFloat {
+  from { transform: scale(1.02) translate3d(-1.2vw, -0.8vh, 0); }
+  to { transform: scale(1.08) translate3d(1.4vw, 1vh, 0); }
+}
+
+@keyframes smiCityDrift {
+  from { transform: scale(1.05) translate3d(1vw, 0, 0); }
+  to { transform: scale(1.1) translate3d(-1.4vw, -0.7vh, 0); }
 }
 
 @keyframes smiRingSpin {
@@ -2381,6 +2429,7 @@ input {
 
 @media (prefers-reduced-motion: reduce) {
   .smi-aurora,
+  .smi-city-bg,
   .smi-ring,
   .pump-runner-page::before,
   .index-strip-track {
