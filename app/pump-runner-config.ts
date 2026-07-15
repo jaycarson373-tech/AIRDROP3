@@ -11,19 +11,6 @@ export const defaultCurrentRunner = {
 const defaultContractAddress = "8ZG2jEdmEp5t31aikFFHJrYU4JxJjUGRTjxEpPSipump";
 const defaultXUrl = "https://x.com/SMI6900_";
 const defaultDexScreenerUrl = "https://dexscreener.com/solana";
-const oldProjectMints = new Set([
-  "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump",
-  "3dejiWxvpL6QH63rBE38fSrVbna8pVrKbmbPPDke7wuH",
-  "SZriK9WPVbggS4xTWgyCcNAjs3ongzeLB3AzAwwpump",
-  "8TUWgrMcBMtviLyuJWUvpXLx8RUUYDKK2Bp7qUVJpump",
-  "GWNYjjSPsE6PthXjc61JQrTcjfNerSrRzBakeinqpump",
-  "3LT2dbBd5Bw2gffDUuq3d7iXqJzevSd5uuLCvNe9pump",
-  "Er58M968bCGnmKwvrrPhW21zesoFfo8gXPUDokKMpump",
-  "ERhuqP9nGdNcQS8Fb2uGj7a1xrDJkjwRxM99PcXgpump",
-  "G7cjRAF31V8K6r89pxHqLYrmG94TwxkJtfWg3AZapump",
-  "3UiQ7mFuAdpeMUMbQTQDon8N1mK2L4YMiMzfpr4upump",
-  "FTAat9Wt3wHkLkjHXXifJG6TmbUH5yVVWEfAGBhMpump"
-]);
 
 function cleanEnv(value: string | undefined) {
   const trimmed = value?.trim();
@@ -42,12 +29,8 @@ function looksLikeMint(value: string) {
   return value.length > 30 && /^[1-9A-HJ-NP-Za-km-z]+$/.test(value);
 }
 
-function isOldReward(value: string) {
-  return oldProjectMints.has(value);
-}
-
 function cleanProjectMint(value: string) {
-  return oldProjectMints.has(value) ? "" : value;
+  return value === defaultContractAddress ? value : "";
 }
 
 const contractAddress =
@@ -57,7 +40,7 @@ const contractAddress =
 const rawRewardSymbol = cleanEnv(process.env.NEXT_PUBLIC_REWARD_SYMBOL);
 const rawRewardMint = cleanEnv(process.env.NEXT_PUBLIC_REWARD_TOKEN_MINT);
 const rawActiveRunnerName = cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_NAME", "NEXT_PUBLIC_ACTIVE_RUNNER_NAME");
-const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol) || isOldReward(rawRewardSymbol) || isOldReward(rawRewardMint);
+const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbol);
 const rewardMint = useDefaultCurrentRunner ? defaultCurrentRunner.mint : rawRewardMint || defaultCurrentRunner.mint;
 const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol.replace(/^\$/, "");
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
@@ -95,8 +78,8 @@ export type RunnerPerformanceRow = {
 
 export const pumpRunnerConfig = {
   name: "SMI6900",
-  ticker: "SMI6900",
-  tokenLabel: "$SMI6900",
+  ticker: "SMI",
+  tokenLabel: "$SMI",
   rewardSymbol: activeRunnerTicker,
   logoSrc: "/brand/smi6900-logo.png",
   backgroundSrc: "/brand/smi6900-logo.png",
