@@ -1,11 +1,11 @@
 export const defaultCurrentRunner = {
-  name: "AI6900",
-  ticker: "AI6900",
-  mint: "",
-  logoSrc: "/brand/smi6900-logo.png",
-  scannedMarketCap: "Active index slot",
-  scannedAgo: "Live basket drop",
-  dexScreenerUrl: "https://dexscreener.com/solana"
+  name: "TripleT",
+  ticker: "TripleT",
+  mint: "J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump",
+  logoSrc: "/brand/triplet-logo.jpg",
+  scannedMarketCap: "Active accumulation",
+  scannedAgo: "Only active index drop",
+  dexScreenerUrl: "https://dexscreener.com/solana/J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump"
 } as const;
 
 const defaultContractAddress = "";
@@ -61,7 +61,9 @@ const useDefaultCurrentRunner = !rawRewardSymbol || looksLikeMint(rawRewardSymbo
 const rewardMint = useDefaultCurrentRunner ? defaultCurrentRunner.mint : rawRewardMint || defaultCurrentRunner.mint;
 const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker : rawRewardSymbol.replace(/^\$/, "");
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
-const activeRunnerName = rawActiveRunnerName || (useDefaultCurrentRunner ? defaultCurrentRunner.name : `${activeRunnerTicker} Index Asset`);
+const activeRunnerName =
+  rawActiveRunnerName ||
+  (useDefaultCurrentRunner || rewardMint === defaultCurrentRunner.mint ? defaultCurrentRunner.name : `${activeRunnerTicker} Index Asset`);
 const parsedMinimumHolding = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
 const minimumHolding = Number.isFinite(parsedMinimumHolding) && parsedMinimumHolding > 0 ? parsedMinimumHolding : 1_000_000;
 const rawActiveRunnerDexUrl = cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_DEXSCREENER_URL", "NEXT_PUBLIC_ACTIVE_RUNNER_DEXSCREENER_URL");
@@ -131,12 +133,12 @@ export const pumpRunnerConfig = {
   scannerMetrics: {
     tokensTracked: "6,900",
     signalsReviewed: "690",
-    runnersSelected: "3",
+    runnersSelected: "1",
     currentEpoch: "0"
   },
   treasuryStatistics: {
-    runnersCaughtToday: "3",
-    averageEntryMarketCap: "Rotating",
+    runnersCaughtToday: "1",
+    averageEntryMarketCap: "Single asset",
     averageReturn: "Live",
     bestRunner: activeRunnerLabel,
     totalDistributedToday: "0 SOL"
@@ -160,38 +162,10 @@ export const pumpRunnerConfig = {
       amountAcquired: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_AMOUNT", "NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT") || "Index weight active",
       status: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_STATUS", "NEXT_PUBLIC_ACTIVE_RUNNER_STATUS") || "Airdropping now",
       dexScreenerUrl: activeRunnerDexUrl
-    },
-    {
-      rank: "02",
-      token: "SPX6900",
-      ticker: "$SPX6900",
-      mint: "",
-      logoSrc: "/brand/smi6900-logo.png",
-      detectedMarketCap: "Meme slot",
-      currentMarketCap: "Tracked",
-      returnSinceDetection: "Basket",
-      amountAcquired: "Index member",
-      status: "Index member",
-      dexScreenerUrl: defaultDexScreenerUrl
-    },
-    {
-      rank: "03",
-      token: "AI6900",
-      ticker: "$AI6900",
-      mint: "",
-      logoSrc: "/brand/smi6900-logo.png",
-      detectedMarketCap: "AI meme slot",
-      currentMarketCap: "Tracked",
-      returnSinceDetection: "Basket",
-      amountAcquired: "Index member",
-      status: "Index member",
-      dexScreenerUrl: defaultDexScreenerUrl
     }
   ] satisfies RunnerBoardRow[],
   performanceRows: [
-    { ticker: activeRunnerLabel, entryMarketCap: 69_000, currentMarketCap: 69_000, changePercent: 0 },
-    { ticker: "$SPX6900", entryMarketCap: 69_000, currentMarketCap: 690_000, changePercent: 900 },
-    { ticker: "$AI6900", entryMarketCap: 42_000, currentMarketCap: 420_000, changePercent: 900 }
+    { ticker: activeRunnerLabel, entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }
   ] satisfies RunnerPerformanceRow[],
   scannerCards: [
     {
