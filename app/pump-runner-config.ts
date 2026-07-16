@@ -8,6 +8,49 @@ export const defaultCurrentRunner = {
   dexScreenerUrl: "https://dexscreener.com/solana/J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump"
 } as const;
 
+const fundBasketAssets = [
+  {
+    rank: "01",
+    name: "ANSEM",
+    ticker: "$ANSEM",
+    mint: "9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump",
+    logoSrc: "/brand/ansem-logo.jpg",
+    weight: "25%",
+    route: "Epoch 1 of 4",
+    dexScreenerUrl: "https://dexscreener.com/solana/9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump"
+  },
+  {
+    rank: "02",
+    name: "TROLL",
+    ticker: "$TROLL",
+    mint: "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2",
+    logoSrc: "/brand/troll-logo.jpg",
+    weight: "25%",
+    route: "Epoch 2 of 4",
+    dexScreenerUrl: "https://dexscreener.com/solana/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2"
+  },
+  {
+    rank: "03",
+    name: "KINS",
+    ticker: "$KINS",
+    mint: "Tqj8yFmagrg7oorpQkVGYR52r96RFTamvWfth9bpump",
+    logoSrc: "/brand/kins-logo.jpg",
+    weight: "25%",
+    route: "Epoch 3 of 4",
+    dexScreenerUrl: "https://dexscreener.com/solana/Tqj8yFmagrg7oorpQkVGYR52r96RFTamvWfth9bpump"
+  },
+  {
+    rank: "04",
+    name: "TripleT",
+    ticker: "$TripleT",
+    mint: defaultCurrentRunner.mint,
+    logoSrc: defaultCurrentRunner.logoSrc,
+    weight: "25%",
+    route: "Epoch 4 of 4",
+    dexScreenerUrl: defaultCurrentRunner.dexScreenerUrl
+  }
+] as const;
+
 const defaultContractAddress = "";
 const defaultXUrl = "";
 const defaultDexScreenerUrl = "https://dexscreener.com/solana";
@@ -127,10 +170,10 @@ export const pumpRunnerConfig = {
     currentEpoch: "0"
   },
   treasuryStatistics: {
-    runnersCaughtToday: "1",
-    averageEntryMarketCap: "Single asset",
-    averageReturn: "Live",
-    bestRunner: activeRunnerLabel,
+    runnersCaughtToday: "4",
+    averageEntryMarketCap: "25% each",
+    averageReturn: "1 per epoch",
+    bestRunner: "$ANSEM",
     totalDistributedToday: "0 SOL"
   },
   multiplierTiers: [
@@ -139,21 +182,19 @@ export const pumpRunnerConfig = {
     { label: "3-7 days", multiplier: "1.50x", progress: 68 },
     { label: "7+ days", multiplier: "2.00x", progress: 100 }
   ],
-  runnerBoard: [
-    {
-      rank: "01",
-      token: activeRunnerName,
-      ticker: activeRunnerLabel,
-      mint: rewardMint,
-      logoSrc: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_LOGO_SRC", "NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC") || defaultCurrentRunner.logoSrc,
-      detectedMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_ENTRY_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP") || defaultCurrentRunner.scannedMarketCap,
-      currentMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_CURRENT_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP") || "Live basket",
-      returnSinceDetection: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_RETURN", "NEXT_PUBLIC_ACTIVE_RUNNER_RETURN") || "Airdropping",
-      amountAcquired: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_AMOUNT", "NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT") || "Holder weight active",
-      status: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_STATUS", "NEXT_PUBLIC_ACTIVE_RUNNER_STATUS") || "Airdropping now",
-      dexScreenerUrl: activeRunnerDexUrl
-    }
-  ] satisfies RunnerBoardRow[],
+  runnerBoard: fundBasketAssets.map((asset) => ({
+    rank: asset.rank,
+    token: asset.name,
+    ticker: asset.ticker,
+    mint: asset.mint,
+    logoSrc: asset.logoSrc,
+    detectedMarketCap: asset.weight,
+    currentMarketCap: asset.route,
+    returnSinceDetection: "Rotating",
+    amountAcquired: asset.weight,
+    status: "1 asset per epoch",
+    dexScreenerUrl: asset.dexScreenerUrl
+  })) satisfies RunnerBoardRow[],
   performanceRows: [
     { ticker: activeRunnerLabel, entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }
   ] satisfies RunnerPerformanceRow[],

@@ -3422,6 +3422,139 @@ input {
   }
 }
 
+/* Final PTF fund rotation polish */
+.runner-ticker {
+  overflow: hidden;
+}
+
+.runner-ticker-track {
+  animation: ptfTickerMove 27s linear infinite;
+  width: max-content;
+}
+
+.runner-ticker:hover .runner-ticker-track {
+  animation-play-state: paused;
+}
+
+.runner-ticker-group:nth-child(2) {
+  display: flex;
+}
+
+.ptf-orbit,
+.ptf-watermark {
+  opacity: 0.08;
+}
+
+.ptf-floating-pill,
+.ptf-hero-pill {
+  --r: -18deg;
+  --dx: 40px;
+  --dy: -28px;
+  animation: ptfPillParallax 22s ease-in-out infinite alternate;
+  background:
+    radial-gradient(circle at 26% 42%, rgba(255, 255, 255, 0.88), transparent 0.42rem),
+    linear-gradient(90deg, #35ff78 0 48%, #f4fff1 48% 100%);
+  border: 1px solid rgba(216, 255, 189, 0.34);
+  border-radius: 999px;
+  box-shadow:
+    0 0 38px rgba(53, 255, 120, 0.16),
+    inset 0 0 14px rgba(0, 0, 0, 0.5);
+  display: block;
+  height: 34px;
+  opacity: 0.18;
+  position: absolute;
+  transform: translate3d(0, 0, 0) rotate(var(--r));
+  width: 88px;
+}
+
+.ptf-floating-pill::before,
+.ptf-hero-pill::before {
+  background: rgba(0, 0, 0, 0.5);
+  content: "";
+  height: 100%;
+  left: 48%;
+  position: absolute;
+  top: 0;
+  width: 2px;
+}
+
+.ptf-floating-pill:nth-of-type(3) { left: 5%; top: 16%; --r: -24deg; --dx: 62px; --dy: -34px; animation-duration: 24s; }
+.ptf-floating-pill:nth-of-type(4) { left: 18%; top: 62%; --r: 17deg; --dx: -50px; --dy: -48px; animation-delay: -5s; }
+.ptf-floating-pill:nth-of-type(5) { left: 31%; top: 28%; --r: 31deg; --dx: 46px; --dy: 36px; animation-delay: -9s; }
+.ptf-floating-pill:nth-of-type(6) { left: 44%; top: 74%; --r: -13deg; --dx: -64px; --dy: 28px; animation-delay: -2s; }
+.ptf-floating-pill:nth-of-type(7) { left: 56%; top: 12%; --r: 10deg; --dx: 50px; --dy: -30px; animation-delay: -7s; }
+.ptf-floating-pill:nth-of-type(8) { left: 69%; top: 54%; --r: -31deg; --dx: -42px; --dy: -40px; animation-delay: -12s; }
+.ptf-floating-pill:nth-of-type(9) { left: 82%; top: 22%; --r: 23deg; --dx: -58px; --dy: 32px; animation-delay: -4s; }
+.ptf-floating-pill:nth-of-type(10) { left: 91%; top: 78%; --r: -19deg; --dx: -74px; --dy: -28px; animation-delay: -10s; }
+.ptf-floating-pill:nth-of-type(11) { left: 12%; top: 88%; --r: 8deg; --dx: 36px; --dy: -58px; animation-delay: -15s; }
+.ptf-floating-pill:nth-of-type(12) { left: 76%; top: 91%; --r: 29deg; --dx: -44px; --dy: -64px; animation-delay: -18s; }
+.ptf-floating-pill:nth-of-type(13) { left: 38%; top: 45%; --r: -38deg; --dx: 70px; --dy: -18px; animation-delay: -21s; }
+.ptf-floating-pill:nth-of-type(14) { left: 63%; top: 36%; --r: 14deg; --dx: -36px; --dy: 42px; animation-delay: -24s; }
+
+.ptf-floating-logos span.ptf-hero-pill {
+  animation: ptfPillParallax 20s ease-in-out infinite alternate;
+  background:
+    radial-gradient(circle at 26% 42%, rgba(255, 255, 255, 0.9), transparent 0.38rem),
+    linear-gradient(90deg, #35ff78 0 48%, #f4fff1 48% 100%);
+  border-color: rgba(216, 255, 189, 0.42);
+  color: transparent;
+  min-width: 0;
+  padding: 0;
+}
+
+.ptf-floating-logos span.ptf-hero-pill:nth-child(1) { left: 8%; top: 18%; --r: -24deg; }
+.ptf-floating-logos span.ptf-hero-pill:nth-child(2) { left: 72%; top: 16%; --r: 17deg; }
+.ptf-floating-logos span.ptf-hero-pill:nth-child(3) { left: 84%; top: 55%; --r: -31deg; }
+.ptf-floating-logos span.ptf-hero-pill:nth-child(4) { left: 17%; top: 82%; --r: 26deg; }
+.ptf-floating-logos span.ptf-hero-pill:nth-child(5) { left: 47%; top: 10%; --r: -12deg; }
+.ptf-floating-logos span.ptf-hero-pill:nth-child(6) { left: 61%; top: 84%; --r: 9deg; }
+.ptf-floating-logos span.ptf-hero-pill:nth-child(7) { left: 30%; top: 46%; --r: -36deg; }
+.ptf-floating-logos span.ptf-hero-pill:nth-child(8) { left: 91%; top: 29%; --r: 22deg; }
+
+@keyframes ptfTickerMove {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes ptfPillParallax {
+  from { transform: translate3d(0, 0, 0) rotate(var(--r)); }
+  to { transform: translate3d(var(--dx), var(--dy), 80px) rotate(calc(var(--r) + 9deg)); }
+}
+
+@media (max-width: 760px) {
+  .runner-ticker {
+    overflow: hidden;
+  }
+
+  .runner-ticker-track {
+    animation: ptfTickerMove 34s linear infinite;
+    min-width: max-content;
+    width: max-content;
+  }
+
+  .runner-ticker-group {
+    gap: 20px;
+  }
+
+  .runner-ticker-group:nth-child(2) {
+    display: flex;
+  }
+
+  .ptf-floating-pill {
+    height: 24px;
+    opacity: 0.14;
+    width: 62px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runner-ticker-track,
+  .ptf-floating-pill,
+  .ptf-hero-pill {
+    animation: none !important;
+  }
+}
+
 /* Shared dashboard pages */
 .page {
   background:
