@@ -1201,64 +1201,6 @@ function FaqSection() {
   );
 }
 
-function FinalCta() {
-  return (
-    <section className="runner-final-cta">
-      <h2>THE TREASURY NEVER STOPS MOVING.</h2>
-      <p>Hold 1M+ {tokenLabel}. Build holder weight. Stay eligible for every scheduled Pump.fun basket distribution.</p>
-      <div className="runner-hero-actions">
-        <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
-          Buy {tokenLabel}
-        </a>
-        <a className="runner-button runner-button-secondary" href="#drops">
-          View Treasury
-        </a>
-        <a className="runner-button runner-button-secondary" href={pumpRunnerConfig.dexScreenerUrl} target="_blank" rel="noreferrer">
-          Open DexScreener
-        </a>
-      </div>
-    </section>
-  );
-}
-
-function RunnerFooter() {
-  const ca = pumpRunnerConfig.contractAddress;
-
-  return (
-    <footer className="runner-footer">
-      <div>
-        <strong>{pumpRunnerConfig.name}</strong>
-        <span>{tokenLabel}</span>
-      </div>
-      <div className="runner-footer-links">
-        {ca ? <CopyCaButton address={ca} label={compactAddress(ca)} /> : null}
-        {pumpRunnerConfig.xUrl ? (
-          <a href={pumpRunnerConfig.xUrl} target="_blank" rel="noreferrer">
-            X
-          </a>
-        ) : null}
-        {pumpRunnerConfig.telegramUrl ? (
-          <a href={pumpRunnerConfig.telegramUrl} target="_blank" rel="noreferrer">
-            Telegram
-          </a>
-        ) : null}
-        <a href={pumpRunnerConfig.dexScreenerUrl} target="_blank" rel="noreferrer">
-          DexScreener
-        </a>
-        <a href={pumpRunnerConfig.pumpFunUrl} target="_blank" rel="noreferrer">
-          Pump.fun
-        </a>
-        <a href="#drops">Receipts</a>
-        <a href="#faq">Terms</a>
-        <a href="#faq">Risk disclosure</a>
-      </div>
-      <p className="runner-risk">
-        PTF is an experimental Pump.fun token fund project. Digital assets are volatile. Verify all onchain activity independently.
-      </p>
-    </footer>
-  );
-}
-
 export function PumpRunnerHome() {
   const live = useRunnerLiveData();
 
@@ -1281,9 +1223,7 @@ export function PumpRunnerHome() {
         <AirdropFeed live={live} />
         <CopyHistoryChart />
         <FaqSection />
-        <FinalCta />
       </main>
-      <RunnerFooter />
     </div>
   );
 }

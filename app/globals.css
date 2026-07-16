@@ -3508,11 +3508,11 @@ input {
     0 0 38px rgba(53, 255, 120, 0.16),
     inset 0 0 14px rgba(0, 0, 0, 0.5);
   display: block;
-  height: 34px;
-  opacity: 0.18;
+  height: 40px;
+  opacity: 0.34;
   position: absolute;
   transform: translate3d(0, 0, 0) rotate(var(--r));
-  width: 88px;
+  width: 104px;
 }
 
 .ptf-floating-pill::before,
@@ -3548,6 +3548,10 @@ input {
   color: transparent;
   min-width: 0;
   padding: 0;
+}
+
+.ptf-floating-pill {
+  filter: saturate(1.18) drop-shadow(0 0 18px rgba(53, 255, 120, 0.22));
 }
 
 .ptf-floating-logos span.ptf-hero-pill:nth-child(1) { left: 8%; top: 18%; --r: -24deg; }
