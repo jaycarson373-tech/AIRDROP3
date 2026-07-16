@@ -33,6 +33,13 @@ function cleanProjectMint(value: string) {
   return looksLikeMint(value) ? value : "";
 }
 
+function cleanSocialUrl(value: string) {
+  if (!value) return "";
+  const lower = value.toLowerCase();
+  if (!lower.includes("x.com/")) return value;
+  return /(?:ptf|pump|treasury|fund)/i.test(value) ? value : "";
+}
+
 const contractAddress =
   cleanProjectMint(cleanEnv(process.env.NEXT_PUBLIC_CA)) ||
   cleanProjectMint(cleanEnv(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT)) ||
@@ -89,7 +96,7 @@ export const pumpRunnerConfig = {
   buyUrl: process.env.NEXT_PUBLIC_BUY_URL ?? fallbackPumpFunUrl,
   pumpFunUrl: process.env.NEXT_PUBLIC_PUMPFUN_URL ?? fallbackPumpFunUrl,
   dexScreenerUrl: process.env.NEXT_PUBLIC_DEXSCREENER_URL ?? defaultDexScreenerUrl,
-  xUrl: cleanEnv(process.env.NEXT_PUBLIC_X_URL) || defaultXUrl,
+  xUrl: cleanSocialUrl(cleanEnv(process.env.NEXT_PUBLIC_X_URL)) || defaultXUrl,
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL ?? "",
   minimumHolding,
   epochMinutes: Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5),

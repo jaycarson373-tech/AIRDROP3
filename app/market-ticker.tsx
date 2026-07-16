@@ -39,9 +39,11 @@ export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: Ma
         </nav>
         <div className="ticker-actions" aria-label="Project links">
           {contractAddress ? <CopyCaButton address={contractAddress} label={compactAddress(contractAddress)} /> : null}
-          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label={`Open ${projectName} on X`}>
-            X
-          </a>
+          {xUrl ? (
+            <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label={`Open ${projectName} on X`}>
+              X
+            </a>
+          ) : null}
         </div>
       </div>
     </div>
