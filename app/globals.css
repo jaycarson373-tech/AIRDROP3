@@ -3555,6 +3555,253 @@ input {
   }
 }
 
+/* PTF institutional green polish */
+.pump-runner-page {
+  --runner-bg: #010201;
+  --runner-surface: rgba(8, 10, 8, 0.88);
+  --runner-surface-strong: rgba(12, 15, 12, 0.96);
+  --runner-border: rgba(255, 255, 255, 0.11);
+  --runner-border-strong: rgba(53, 255, 120, 0.42);
+  --runner-text: #f7fff5;
+  --runner-muted: #8f9b8e;
+  --runner-soft: #dce7da;
+  --runner-accent: #35ff78;
+  --runner-accent-2: #baffc9;
+  --runner-yellow: #d7ff48;
+  background: #010201;
+  font-family: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
+}
+
+.pump-runner-page::before {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(53, 255, 120, 0.12), transparent 26rem),
+    radial-gradient(circle at 84% 8%, rgba(186, 255, 201, 0.08), transparent 30rem),
+    linear-gradient(180deg, rgba(1, 2, 1, 0.1), #010201 82%);
+  opacity: 1;
+}
+
+.ptf-background::after {
+  background:
+    radial-gradient(circle at 50% 16%, rgba(53, 255, 120, 0.08), transparent 28rem),
+    linear-gradient(180deg, rgba(1, 2, 1, 0.14), rgba(1, 2, 1, 0.64) 48%, #010201 100%);
+}
+
+.runner-nav {
+  background: rgba(1, 2, 1, 0.82);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.runner-brand small {
+  color: #a6b3a4;
+}
+
+.runner-hero {
+  gap: clamp(36px, 5vw, 72px);
+  min-height: 730px;
+  padding-bottom: 86px;
+  padding-top: 92px;
+}
+
+.ptf-hero-bg {
+  background:
+    radial-gradient(circle at 50% 36%, rgba(53, 255, 120, 0.12), transparent 18rem),
+    radial-gradient(circle at 14% 78%, rgba(53, 255, 120, 0.09), transparent 22rem),
+    radial-gradient(circle at 86% 20%, rgba(186, 255, 201, 0.06), transparent 24rem),
+    #010201;
+}
+
+.ptf-hero-bg::before {
+  animation: ptfChartRise 12s linear infinite;
+  background:
+    linear-gradient(90deg, rgba(53, 255, 120, 0), rgba(53, 255, 120, 0.82), rgba(247, 255, 245, 0.22), rgba(53, 255, 120, 0)),
+    linear-gradient(90deg, transparent, rgba(186, 255, 201, 0.12), transparent);
+  content: "";
+  height: 3px;
+  left: -20vw;
+  opacity: 0.78;
+  position: absolute;
+  top: 72%;
+  transform: rotate(-19deg);
+  width: 72vw;
+}
+
+.ptf-hero-bg::after {
+  background:
+    linear-gradient(rgba(53, 255, 120, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 58px 58px;
+  opacity: 0.52;
+}
+
+.runner-hero-overlay {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.56) 48%, rgba(0, 0, 0, 0.9) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.46) 0%, rgba(0, 0, 0, 0.36) 44%, #010201 96%);
+}
+
+.ptf-hero-logo {
+  box-shadow:
+    0 0 70px rgba(53, 255, 120, 0.34),
+    0 0 150px rgba(53, 255, 120, 0.17);
+  max-width: 360px;
+  width: clamp(210px, 23vw, 360px);
+}
+
+.runner-hero h1 {
+  font-size: clamp(4rem, 7.2vw, 7.25rem);
+  letter-spacing: -0.02em;
+}
+
+.runner-hero-subtitle {
+  color: #f7fff5;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+.runner-hero-line {
+  color: #c5d3c2;
+  font-size: 1.04rem;
+  line-height: 1.65;
+  max-width: 650px;
+}
+
+.runner-button,
+.runner-buy-button {
+  background: linear-gradient(135deg, #35ff78 0%, #baffc9 52%, #f7fff5 100%);
+  box-shadow:
+    0 20px 54px rgba(53, 255, 120, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  color: #010201 !important;
+}
+
+.runner-button-secondary {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #f7fff5 !important;
+}
+
+.runner-button:hover,
+.runner-small-button:hover,
+.fund-strip-card:hover,
+.ptf-basket-token:hover {
+  transform: translateY(-2px);
+}
+
+.runner-hero-panel,
+.ptf-treasury-card,
+.runner-info-card,
+.runner-terminal,
+.runner-check-card,
+.runner-wallet-card,
+.runner-meter-card,
+.runner-chart,
+.runner-final-cta,
+.runner-drop-ledger,
+.runner-table-wrap,
+.runner-feed {
+  background:
+    linear-gradient(135deg, rgba(53, 255, 120, 0.06), transparent 36%),
+    linear-gradient(180deg, rgba(16, 20, 16, 0.9), rgba(4, 5, 4, 0.8));
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.runner-section {
+  padding-bottom: 34px;
+  padding-top: 34px;
+}
+
+.runner-section-heading {
+  margin-bottom: 22px;
+}
+
+.runner-section-heading p {
+  color: #aebaaa;
+}
+
+.runner-section h2,
+.runner-final-cta h2 {
+  letter-spacing: -0.025em;
+}
+
+.ptf-countdown-card strong,
+.runner-drop-card strong {
+  color: #35ff78;
+  text-shadow: 0 0 32px rgba(53, 255, 120, 0.28);
+}
+
+.runner-drop-feature strong {
+  color: #f7fff5;
+}
+
+.runner-drop-metrics {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.runner-drop-metrics span,
+.ptf-countdown-card > span,
+.ptf-pie-card > span,
+.ptf-activity-feed > span,
+.runner-terminal-row span {
+  color: #a6b3a4;
+}
+
+.runner-footer {
+  background: rgba(1, 2, 1, 0.92);
+}
+
+.runner-risk {
+  border-color: rgba(53, 255, 120, 0.12);
+}
+
+@media (max-width: 760px) {
+  .runner-hero {
+    gap: 22px;
+    padding-bottom: 32px;
+    padding-top: 42px;
+  }
+
+  .ptf-hero-logo {
+    width: min(178px, 54vw);
+  }
+
+  .ptf-hero-logo-shell {
+    justify-content: center;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+
+  .runner-hero-copy {
+    align-items: center;
+    text-align: center;
+  }
+
+  .runner-hero h1 {
+    font-size: clamp(2.55rem, 13vw, 3.55rem);
+  }
+
+  .runner-hero-line {
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+
+  .ptf-hero-stat-grid {
+    gap: 8px;
+    grid-template-columns: 1fr;
+    margin-top: 12px;
+  }
+
+  .runner-section {
+    padding-bottom: 24px;
+    padding-top: 24px;
+  }
+
+  .runner-drop-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Shared dashboard pages */
 .page {
   background:

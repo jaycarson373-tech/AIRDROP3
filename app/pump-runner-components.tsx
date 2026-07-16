@@ -454,13 +454,13 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
         </div>
         <div className="runner-live-pill">
           <span className="runner-live-dot" />
-          PUMP TOKEN FUND
+          PUMP TREASURY FUND
         </div>
         <h1>Pump Treasury Fund</h1>
         <p className="runner-hero-subtitle">
           Hold one token. Own the Pump.fun rotation.
         </p>
-        <p className="runner-hero-line">Hold 1M+ {tokenLabel} and receive weighted token basket airdrops every 5 minutes as the fund rotates through the strongest Pump.fun tokens.</p>
+        <p className="runner-hero-line">Protocol fees continuously accumulate selected Pump.fun tokens. Hold 1M+ {tokenLabel} to receive weighted treasury distributions every 5 minutes.</p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
@@ -470,9 +470,9 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
           </a>
         </div>
         <div className="copy-terminal-strip" aria-label="PTF fund terminal preview">
-          <span>Hold one token</span>
-          <strong>Own the rotation</strong>
-          <small>Onchain receipts</small>
+          <span>Protocol fees accumulate</span>
+          <strong>Weighted holder distributions</strong>
+          <small>Every 5 minutes</small>
         </div>
         <HeroStats live={live} />
       </div>
@@ -592,15 +592,15 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
     <section className="runner-section" id="board">
       <div className="runner-section-heading">
         <span className="runner-kicker">Live Treasury</span>
-        <h2>CURRENT TREASURY ROTATION</h2>
-        <p>The active Pump.fun basket, countdown and distribution feed in one live treasury view.</p>
+        <h2>CURRENT TREASURY POSITION</h2>
+        <p>A live terminal for the active basket, next distribution and holder-weight flow.</p>
       </div>
       <div className="ptf-treasury-card">
         <div className="ptf-treasury-main">
           <div className="ptf-treasury-head">
             <div>
-              <span className="runner-kicker">Current Basket</span>
-              <h3>Pump.fun token basket</h3>
+              <span className="runner-kicker">Current Fund Basket</span>
+              <h3>Live Pump.fun allocation</h3>
             </div>
             <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
               Active chart <ExternalLink size={15} />
@@ -623,9 +623,9 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
         </div>
         <aside className="ptf-treasury-side">
           <div className="ptf-countdown-card">
-            <span>5 Minute Countdown</span>
+            <span>Next Treasury Distribution</span>
             <strong>{live.countdown}</strong>
-            <p>When this reaches zero, the treasury rotates and eligible holders receive weighted airdrops.</p>
+            <p>When this reaches zero, the treasury rotates and eligible holders receive weighted distributions.</p>
           </div>
           <div className="ptf-pie-card">
             <span>Current Treasury Allocation</span>
@@ -666,9 +666,9 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
     <section className="runner-section" id="scanner">
       <div className="runner-section-heading">
         <span className="runner-kicker">Fund Engine</span>
-        <h2>THE FUND ENGINE</h2>
+        <h2>TREASURY ENGINE</h2>
         <p>
-          A rotating basket built around Pump.fun token momentum.
+          A rotating treasury basket built around Pump.fun token momentum.
         </p>
       </div>
       <div className="runner-scanner-layout">
@@ -830,7 +830,7 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
       </div>
       <div className="runner-eligibility-grid">
         <div className="runner-check-card">
-          <h3>To qualify for fund airdrops, a wallet must:</h3>
+          <h3>To qualify for treasury distributions, a wallet must:</h3>
           <ul>
             <li>Hold at least {required}</li>
             <li>Be holding at the eligibility snapshot</li>
@@ -1015,7 +1015,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
   const upcomingRows = [
     {
       time: live.countdown,
-      token: "Next fund batch",
+      token: "Next treasury distribution",
       distributed: "Queued",
       wallets: `${formatCount(live.stats.latestEligibleHolders, "0")} eligible wallets`,
       signature: null,
@@ -1028,13 +1028,13 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
     <section className="runner-section" id="drops">
       <div className="runner-section-heading">
         <span className="runner-kicker">Onchain Feed</span>
-        <h2>FUND DROP LEDGER</h2>
-        <p>Each fund drop stays on the record: basket asset, live market cap, amount dropped and current SOL value of the distribution.</p>
+        <h2>TREASURY DISTRIBUTION LEDGER</h2>
+        <p>Every distribution is recorded with the basket asset, market cap, token amount and current SOL value.</p>
       </div>
       <div className="runner-drop-ledger">
         <article className="runner-drop-feature">
           <div>
-            <span>Fund Drop 01</span>
+            <span>Treasury Position</span>
             <strong>{activeRunner.token}</strong>
             <small>{activeRunner.ticker} · {activeRunner.detectedMarketCap} · {activeRunnerScanTime}</small>
           </div>
@@ -1044,23 +1044,23 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
         </article>
         <div className="runner-drop-metrics">
           <div>
-            <span>Fund Entry</span>
+            <span>Current Treasury Position</span>
             <strong>{activeRunner.detectedMarketCap}</strong>
           </div>
           <div>
-            <span>Current MC</span>
+            <span>Current Token Market Cap</span>
             <strong>{activeRunnerCurrentMarketCap}</strong>
           </div>
           <div>
-            <span>Total tokens dropped</span>
+            <span>Treasury Distributed</span>
             <strong>{totalRunnerDropped}</strong>
           </div>
           <div>
-            <span>Total SOL value</span>
+            <span>Distribution SOL Value</span>
             <strong>{totalSolValueDropped}</strong>
           </div>
           <div>
-            <span>Current drop value</span>
+            <span>Current Distribution</span>
             <strong>{currentValueDropped}</strong>
           </div>
         </div>
@@ -1146,7 +1146,7 @@ function FaqSection() {
     {
       question: "What is PTF?",
       answer:
-        `PTF is a rotating index fund for Pump.fun tokens. It can buy selected basket assets and distribute them to eligible ${tokenLabel} holders.`
+        `PTF is Pump Treasury Fund: a rotating treasury protocol for selected Pump.fun tokens. Holders own exposure to the rotation through scheduled distributions.`
     },
     {
       question: "How many tokens must I hold?",
@@ -1154,22 +1154,22 @@ function FaqSection() {
     },
     {
       question: "How often are drops distributed?",
-      answer: `Pump.fun token basket distributions are processed in scheduled epochs. The current interface is set to ${pumpRunnerConfig.epochMinutes}-minute epochs.`
+      answer: `Treasury distributions run on scheduled ${pumpRunnerConfig.epochMinutes}-minute epochs when the treasury has eligible assets after reserves.`
     },
     {
       question: "What happens when I sell?",
       answer:
-        `Selling or transferring ${tokenLabel} resets the wallet's hold multiplier. Depending on snapshot rules, it may also remove the wallet from the current distribution epoch.`
+        `Selling or transferring ${tokenLabel} resets holder weight and may remove the wallet from the active snapshot. Hold longer to build more weight.`
     },
     {
-      question: "Are fund profits guaranteed?",
+      question: "Are returns guaranteed?",
       answer:
-        "No. Pump.fun tokens are highly volatile, and fund selections may decline in value. The fund engine is a selection system, not a guarantee of performance."
+        "No. Pump.fun tokens are volatile. PTF is a treasury rotation system, not a promise of profit or future performance."
     },
     {
       question: "Why is there a minimum holding requirement?",
       answer:
-        "The minimum reduces extremely small distributions and helps prevent network rent and transaction costs from making airdrops inefficient."
+        "The 1M+ threshold keeps distributions meaningful and helps avoid network costs eating tiny allocations."
     }
   ];
 
@@ -1194,14 +1194,14 @@ function FaqSection() {
 function FinalCta() {
   return (
     <section className="runner-final-cta">
-      <h2>THE NEXT FUND ROTATION IS ALREADY LOADING.</h2>
-      <p>Hold {tokenLabel} and stay eligible for every scheduled basket drop routed through the system.</p>
+      <h2>THE TREASURY NEVER STOPS MOVING.</h2>
+      <p>Hold 1M+ {tokenLabel}. Build holder weight. Stay eligible for every scheduled Pump.fun basket distribution.</p>
       <div className="runner-hero-actions">
         <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
           Buy {tokenLabel}
         </a>
         <a className="runner-button runner-button-secondary" href="#drops">
-          View Drops
+          View Treasury
         </a>
         <a className="runner-button runner-button-secondary" href={pumpRunnerConfig.dexScreenerUrl} target="_blank" rel="noreferrer">
           Open DexScreener
