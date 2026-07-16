@@ -141,7 +141,7 @@ export async function GET() {
     reward: marketFromPair(pickPair(pairs, reward), rewardSymbol),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "SMI"
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "PTF"
     ),
     sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
     updatedAt: new Date().toISOString()

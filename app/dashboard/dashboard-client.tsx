@@ -93,8 +93,8 @@ const emptyHolders: HoldersResponse = { topHolders: [] };
 const REFRESH_MS = 12000;
 const EPOCH_MINUTES = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5);
 const EPOCH_MS = Math.max(1, EPOCH_MINUTES) * 60 * 1000;
-const PROJECT_NAME = "SMI6900";
-const SOURCE_SYMBOL = "SMI";
+const PROJECT_NAME = "PTF";
+const SOURCE_SYMBOL = "PTF";
 const REWARD_SYMBOL = pumpRunnerConfig.currentRunner.ticker;
 const REWARD_TOKEN_MINT = pumpRunnerConfig.rewardMint;
 

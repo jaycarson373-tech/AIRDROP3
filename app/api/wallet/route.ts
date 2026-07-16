@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
   try {
     wallet = new PublicKey(rawAddress).toBase58();
   } catch {
-    return NextResponse.json({ error: "Invalid Solana wallet" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid wallet" }, { status: 400 });
   }
 
   try {

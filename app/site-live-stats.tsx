@@ -15,7 +15,7 @@ const fallbackStats: StatsResponse = {
   totalSolValueAirdropped: 0,
   latestEligibleHolders: 0
 };
-const SOURCE_SYMBOL = "SMI";
+const SOURCE_SYMBOL = "PTF";
 
 async function getStats() {
   try {
