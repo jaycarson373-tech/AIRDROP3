@@ -222,6 +222,12 @@ function formatPrice(value: number | null | undefined, fallback: string = pumpRu
   return `$${value.toLocaleString(undefined, { maximumFractionDigits })}`;
 }
 
+function formatChange(value: number | null | undefined, fallback = "+0.0%") {
+  if (!Number.isFinite(value ?? NaN) || value === null || value === undefined) return fallback;
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${value.toLocaleString(undefined, { maximumFractionDigits: 1 })}%`;
+}
+
 function formatCompactUsd(value: number | null | undefined, fallback: string) {
   if (!Number.isFinite(value ?? NaN) || !value) return fallback;
   return `$${value.toLocaleString(undefined, { notation: "compact", maximumFractionDigits: 2 })}`;
@@ -284,19 +290,19 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
   const scan = live.market.reward;
   const holderCount = live.holders.uniqueHolders ?? live.stats.latestEligibleHolders;
   const items = [
-    `CURRENT INDEX DROP ${pumpRunnerConfig.currentRunner.ticker}`,
-    `${pumpRunnerConfig.currentRunner.ticker} PRICE ${formatPrice(scan.priceUsd, "Awaiting index price")}`,
+    `CURRENT FUND BASKET ${pumpRunnerConfig.currentRunner.ticker}`,
+    `${pumpRunnerConfig.currentRunner.ticker} PRICE ${formatPrice(scan.priceUsd, "Awaiting fund price")}`,
     `TOTAL SOL VALUE DROPPED ${formatSolAmount(live.stats.totalSolValueAirdropped)}`,
     `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
     `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
     `${tokenLabel} PRICE ${formatPrice(source.priceUsd)}`,
     `NEXT AIRDROP ${live.countdown}`,
-    `INDEX ENGINE ${pumpRunnerConfig.scannerStatus}`,
+    `FUND ENGINE ${pumpRunnerConfig.scannerStatus}`,
     `TREASURY ${pumpRunnerConfig.treasuryStatus}`
   ];
 
   return (
-    <div className="runner-ticker" aria-label="Live SMI6900 market ticker">
+    <div className="runner-ticker" aria-label="Live PTF market ticker">
       <div className="runner-ticker-track">
         {[0, 1].map((copy) => (
           <div className="runner-ticker-group" key={copy}>
@@ -315,14 +321,13 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
 
 function AnimatedBackground() {
   return (
-    <div className="smi-background" aria-hidden="true">
-      <span className="smi-city-bg smi-city-bg-primary" />
-      <span className="smi-city-bg smi-city-bg-secondary" />
-      <span className="smi-aurora smi-aurora-one" />
-      <span className="smi-aurora smi-aurora-two" />
-      <span className="smi-ring smi-ring-one" />
-      <span className="smi-ring smi-ring-two" />
-      <span className="smi-watermark" />
+    <div className="ptf-background" aria-hidden="true">
+      <span className="ptf-orbit ptf-orbit-one" />
+      <span className="ptf-orbit ptf-orbit-two" />
+      <span className="ptf-float ptf-float-one">PUMP.FUN</span>
+      <span className="ptf-float ptf-float-two">$PTF</span>
+      <span className="ptf-float ptf-float-three">ROTATION</span>
+      <span className="ptf-watermark" />
     </div>
   );
 }
@@ -331,15 +336,15 @@ function RunnerNav() {
   const ca = pumpRunnerConfig.contractAddress;
   return (
     <header className="runner-nav">
-      <a className="runner-brand" href="#top" aria-label="SMI6900 home">
+      <a className="runner-brand" href="#top" aria-label="PTF home">
         <img className="runner-brand-logo" src={pumpRunnerConfig.logoSrc} alt="" />
         <span>
           <strong>{pumpRunnerConfig.name}</strong>
-          <small>The Solana Meme Index</small>
+          <small>Pump Token Fund</small>
         </span>
       </a>
       <nav className="runner-links" aria-label="Primary navigation">
-        <a href="#board">Index</a>
+        <a href="#board">Fund</a>
         <a href="#scanner">Engine</a>
         <a href="#eligibility">Holders</a>
         <a href="#drops">Receipts</a>
@@ -352,54 +357,132 @@ function RunnerNav() {
           </a>
         ) : null}
         <a className="runner-small-button runner-buy-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
-          Buy SMI6900
+          Buy PTF
         </a>
       </div>
     </header>
   );
 }
 
+type TreasuryToken = {
+  ticker: string;
+  name: string;
+  allocation: number;
+  price: string;
+  change: string;
+  logoSrc?: string;
+};
+
+function getTreasuryBasket(live: RunnerLiveData): TreasuryToken[] {
+  return [
+    {
+      ticker: pumpRunnerConfig.currentRunner.ticker,
+      name: pumpRunnerConfig.currentRunner.name,
+      allocation: 34,
+      price: formatPrice(live.market.reward.priceUsd, "Live"),
+      change: formatChange(live.market.reward.change24h, "Live"),
+      logoSrc: pumpRunnerConfig.currentRunner.logoSrc
+    },
+    { ticker: "$PUMP", name: "Pump Rotation", allocation: 16, price: "$0.0031", change: "+8.4%" },
+    { ticker: "$TROLL", name: "Meme Slot", allocation: 12, price: "$0.00084", change: "+21.2%" },
+    { ticker: "$BULL", name: "Momentum Slot", allocation: 11, price: "$0.00019", change: "+14.6%" },
+    { ticker: "$CUBE", name: "Liquidity Slot", allocation: 10, price: "$0.0012", change: "+4.9%" },
+    { ticker: "$PNUT", name: "Culture Slot", allocation: 7, price: "$0.00042", change: "-2.1%" },
+    { ticker: "$FART", name: "Flow Slot", allocation: 6, price: "$0.00068", change: "+6.9%" },
+    { ticker: "$6900", name: "Index Slot", allocation: 4, price: "$0.000069", change: "+3.3%" }
+  ];
+}
+
+function HeroMotion() {
+  const floaters = ["PUMP", "6900", "MEME", "BASKET", "ROTATE", "PTF"];
+  return (
+    <>
+      <div className="ptf-chart-field" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="ptf-particles" aria-hidden="true">
+        {Array.from({ length: 18 }).map((_, index) => (
+          <i key={index} />
+        ))}
+      </div>
+      <div className="ptf-floating-logos" aria-hidden="true">
+        {floaters.map((item) => (
+          <span key={item}>{item}</span>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function HeroStats({ live }: { live: RunnerLiveData }) {
+  const stats = [
+    ["Current Treasury Value", formatSolAmount(live.stats.totalSolValueAirdropped)],
+    ["Next Airdrop", live.countdown],
+    ["Current Basket", pumpRunnerConfig.currentRunner.ticker],
+    ["Eligible Holders", formatCount(live.stats.latestEligibleHolders, "0")],
+    ["Total Distributed", formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)],
+    ["Current Rotation", `Epoch ${formatCount(live.stats.currentEpoch, "0")}`]
+  ];
+
+  return (
+    <div className="ptf-hero-stat-grid" aria-label="PTF hero stats">
+      {stats.map(([label, value]) => (
+        <span key={label}>
+          <small>{label}</small>
+          <strong>{value}</strong>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function HeroSection({ live }: { live: RunnerLiveData }) {
   return (
     <section className="runner-hero" id="top">
+      <div className="ptf-hero-bg" aria-hidden="true" />
+      <HeroMotion />
+      <div className="runner-hero-overlay" aria-hidden="true" />
       <div className="runner-hero-copy">
+        <div className="ptf-hero-logo-shell">
+          <img className="ptf-hero-logo" src={pumpRunnerConfig.logoSrc} alt="PTF logo" />
+        </div>
         <div className="runner-live-pill">
           <span className="runner-live-dot" />
-          SMI6900 INDEX ONLINE
+          PUMP TOKEN FUND
         </div>
-        <h1>
-          THE SOLANA
-          <span>MEME INDEX.</span>
-        </h1>
+        <h1>Pump Treasury Fund</h1>
         <p className="runner-hero-subtitle">
-          SMI6900 rotates into the strongest memes on Solana.
+          Hold one token. Own the Pump.fun rotation.
         </p>
-        <p className="runner-hero-line">Hold the index. Build weight. Receive the active basket drop every epoch.</p>
+        <p className="runner-hero-line">Hold 1M+ {tokenLabel} and receive weighted token basket airdrops every 5 minutes as the fund rotates through the strongest Pump.fun tokens.</p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
           </a>
           <a className="runner-button runner-button-secondary" href="#drops">
-            View Index Drops
+            View The Fund
           </a>
         </div>
-        <div className="copy-terminal-strip" aria-label="SMI6900 index terminal preview">
-          <span>Rotating baskets</span>
-          <strong>Weighted holders</strong>
+        <div className="copy-terminal-strip" aria-label="PTF fund terminal preview">
+          <span>Hold one token</span>
+          <strong>Own the rotation</strong>
           <small>Onchain receipts</small>
         </div>
+        <HeroStats live={live} />
       </div>
 
-      <div className="runner-hero-panel" aria-label="SMI6900 live index terminal">
-        <div className="live-index-label">
+      <div className="runner-hero-panel" aria-label="PTF live fund terminal">
+        <div className="live-fund-label">
           <span className="runner-live-dot" />
-          LIVE INDEX
+          LIVE FUND
         </div>
         <div className="runner-panel-top">
           <div className="runner-panel-title">
             <img className="runner-token-logo" src={pumpRunnerConfig.currentRunner.logoSrc} alt="" />
             <div>
-              <span>CURRENT DROP</span>
+              <span>CURRENT FUND BASKET</span>
               <strong>{pumpRunnerConfig.currentRunner.ticker}</strong>
               <small>{pumpRunnerConfig.currentRunner.name}</small>
             </div>
@@ -418,7 +501,7 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
             <strong>{pumpRunnerConfig.currentRunner.mint ? compactAddress(pumpRunnerConfig.currentRunner.mint) : "Set reward mint"}</strong>
           </div>
           <div className="runner-current-row">
-            <span>Index Weight</span>
+            <span>Holder Weight</span>
             <strong>{pumpRunnerConfig.currentRunner.amountAcquired}</strong>
           </div>
         </div>
@@ -427,11 +510,11 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
           <strong>{live.countdown}</strong>
           <small>Every {pumpRunnerConfig.epochMinutes} minutes</small>
         </div>
-        <div className="copy-terminal-card" aria-label="SMI6900 live index terminal">
-          <div><span>index.size</span><strong>{pumpRunnerConfig.runnerBoard.length} assets</strong></div>
-          <div><span>active.drop</span><strong>{pumpRunnerConfig.currentRunner.ticker}</strong></div>
+        <div className="copy-terminal-card" aria-label="PTF live fund terminal">
+          <div><span>fund.size</span><strong>{pumpRunnerConfig.runnerBoard.length} assets</strong></div>
+          <div><span>active.basket</span><strong>{pumpRunnerConfig.currentRunner.ticker}</strong></div>
           <div><span>basket.route</span><strong>weighted basket</strong></div>
-          <div><span>next.drop</span><strong>{live.countdown}</strong></div>
+          <div><span>next.rotation</span><strong>{live.countdown}</strong></div>
         </div>
         <div className="runner-hero-stats">
           <span>
@@ -452,18 +535,18 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
   );
 }
 
-function IndexStrip({ live }: { live: RunnerLiveData }) {
+function FundStrip({ live }: { live: RunnerLiveData }) {
   const items = pumpRunnerConfig.runnerBoard;
 
   return (
-    <section className="index-strip" aria-label="Live SMI6900 index strip">
-      <div className="index-strip-track">
-        {[...items, ...items].map((item, index) => (
-          <a className="index-strip-card" href={item.dexScreenerUrl} key={`${item.rank}-${index}`} target="_blank" rel="noreferrer">
+    <section className="fund-strip" aria-label="Live PTF fund strip">
+      <div className="fund-strip-track">
+        {[...items, ...items].map((item, fund) => (
+          <a className="fund-strip-card" href={item.dexScreenerUrl} key={`${item.rank}-${fund}`} target="_blank" rel="noreferrer">
             <img src={item.logoSrc} alt="" loading="lazy" />
             <span>
               <strong>{item.ticker}</strong>
-              <small>{index === 0 ? formatPrice(live.market.reward.priceUsd, "Live") : item.status}</small>
+              <small>{fund === 0 ? formatPrice(live.market.reward.priceUsd, "Live") : item.status}</small>
             </span>
             <em>{item.amountAcquired}</em>
           </a>
@@ -474,62 +557,90 @@ function IndexStrip({ live }: { live: RunnerLiveData }) {
 }
 
 export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
-  const summary = pumpRunnerConfig.treasuryStatistics;
-  const liveActiveMarketCap = live.market.reward.marketCapUsd ?? live.market.reward.fdvUsd;
+  const basket = getTreasuryBasket(live);
   const activeCopy = pumpRunnerConfig.runnerBoard[0];
-  const summaryItems = [
-    ["Index assets", summary.runnersCaughtToday],
-    ["Index mode", summary.averageEntryMarketCap],
-    ["Current drop MC", formatCompactUsd(liveActiveMarketCap, summary.averageReturn)],
-    ["Current drop", summary.bestRunner],
-    ["Total distributed today", summary.totalDistributedToday]
-  ];
+  const totalAllocation = basket.reduce((sum, item) => sum + item.allocation, 0);
+  const pie = basket.reduce(
+    (segments, item, index) => {
+      const start = segments.offset;
+      const end = start + (item.allocation / totalAllocation) * 100;
+      const colors = ["#35ff78", "#b8ff3d", "#f4fff1", "#8dffa8", "#74ff93", "#d7ff60", "#ffffff", "#5aff82"];
+      segments.parts.push(`${colors[index % colors.length]} ${start}% ${end}%`);
+      segments.offset = end;
+      return segments;
+    },
+    { parts: [] as string[], offset: 0 }
+  );
+  const feedRows = live.stats.recentRewards.slice(0, 4).map((reward) => ({
+    label: "Airdrop completed",
+    value: formatTokenAmount(reward.rewardAmount, rewardSymbol, `0 ${rewardSymbol}`),
+    meta: reward.txSig ? compactAddress(reward.txSig) : statusText(reward.status)
+  }));
+  const activityRows = feedRows.length
+    ? feedRows
+    : [
+        { label: "Treasury scanning Pump.fun", value: "Live", meta: "rotation engine" },
+        { label: `Treasury buying ${pumpRunnerConfig.currentRunner.ticker}`, value: "Queued", meta: "next epoch" },
+        { label: "Airdrop route armed", value: `${formatCount(live.stats.latestEligibleHolders, "0")} holders`, meta: "eligible" }
+      ];
 
   return (
     <section className="runner-section" id="board">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Current Index</span>
-        <h2>CURRENT INDEX</h2>
-        <p>The live basket shows the current drop asset and tracked Solana meme slots feeding the index.</p>
+        <span className="runner-kicker">Live Treasury</span>
+        <h2>CURRENT TREASURY ROTATION</h2>
+        <p>The active Pump.fun basket, countdown and distribution feed in one live treasury view.</p>
       </div>
-      <div className="runner-summary-grid">
-        {summaryItems.map(([label, value]) => (
-          <div className="runner-stat-card" key={label}>
-            <span>{label}</span>
-            <strong>{value}</strong>
-          </div>
-        ))}
-      </div>
-      <div className="copy-signal-card">
-        <img src={activeCopy.logoSrc} alt="" />
-        <div>
-          <span>Active Basket Asset</span>
-          <strong>{activeCopy.token}</strong>
-          <small>{activeCopy.ticker} · {activeCopy.detectedMarketCap} · {activeCopy.status}</small>
-        </div>
-        <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
-          Chart <ExternalLink size={15} />
-        </a>
-      </div>
-      <div className="smi-index-grid" aria-label="Current SMI6900 index assets">
-        {pumpRunnerConfig.runnerBoard.map((asset) => (
-          <article className="smi-index-asset" key={`${asset.rank}-${asset.ticker}`}>
-            <img src={asset.logoSrc} alt="" loading="lazy" />
+      <div className="ptf-treasury-card">
+        <div className="ptf-treasury-main">
+          <div className="ptf-treasury-head">
             <div>
-              <span>{asset.rank}</span>
-              <strong>{asset.ticker}</strong>
-              <small>{asset.token}</small>
+              <span className="runner-kicker">Current Basket</span>
+              <h3>Pump.fun token basket</h3>
             </div>
-            <div>
-              <span>Weight</span>
-              <strong>{asset.amountAcquired}</strong>
-              <small>{asset.status}</small>
-            </div>
-            <a href={asset.dexScreenerUrl} target="_blank" rel="noreferrer" aria-label={`Open ${asset.ticker} chart`}>
-              <ExternalLink size={16} />
+            <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
+              Active chart <ExternalLink size={15} />
             </a>
-          </article>
-        ))}
+          </div>
+          <div className="ptf-basket-grid">
+            {basket.map((asset) => (
+              <article className="ptf-basket-token" key={asset.ticker}>
+                {asset.logoSrc ? <img src={asset.logoSrc} alt="" loading="lazy" /> : <span>{asset.ticker.replace("$", "").slice(0, 2)}</span>}
+                <div>
+                  <strong>{asset.ticker}</strong>
+                  <small>{asset.name}</small>
+                </div>
+                <em>{asset.allocation}%</em>
+                <b>{asset.price}</b>
+                <i className={asset.change.startsWith("-") ? "is-down" : ""}>{asset.change}</i>
+              </article>
+            ))}
+          </div>
+        </div>
+        <aside className="ptf-treasury-side">
+          <div className="ptf-countdown-card">
+            <span>5 Minute Countdown</span>
+            <strong>{live.countdown}</strong>
+            <p>When this reaches zero, the treasury rotates and eligible holders receive weighted airdrops.</p>
+          </div>
+          <div className="ptf-pie-card">
+            <span>Current Treasury Allocation</span>
+            <div className="ptf-pie" style={{ background: `conic-gradient(${pie.parts.join(", ")})` }}>
+              <small>{basket.length}</small>
+              <b>Assets</b>
+            </div>
+          </div>
+          <div className="ptf-activity-feed">
+            <span>Live Fund Activity</span>
+            {activityRows.map((row) => (
+              <div className="ptf-activity-row" key={`${row.label}-${row.value}`}>
+                <strong>{row.label}</strong>
+                <small>{row.value}</small>
+                <em>{row.meta}</em>
+              </div>
+            ))}
+          </div>
+        </aside>
       </div>
     </section>
   );
@@ -538,9 +649,9 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
 export function ScannerStatus({ live }: { live: RunnerLiveData }) {
   const selectedCopies = pumpRunnerConfig.runnerBoard.filter((runner) => /^scanned/i.test(runner.status)).length;
   const rows = [
-    ["INDEX ENGINE", "ONLINE"],
+    ["FUND ENGINE", "ONLINE"],
     ["CURRENT DROP", rewardSymbol],
-    ["INDEX ASSETS", pumpRunnerConfig.runnerBoard.length.toString()],
+    ["FUND ASSETS", pumpRunnerConfig.runnerBoard.length.toString()],
     ["ELIGIBLE HOLDERS", formatCount(live.stats.latestEligibleHolders, "0")],
     ["BASKET SLOTS", Math.max(selectedCopies, pumpRunnerConfig.runnerBoard.length).toString()],
     ["LIVE DROP EPOCHS", formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")],
@@ -550,10 +661,10 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
   return (
     <section className="runner-section" id="scanner">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Index Engine</span>
-        <h2>THE INDEX ENGINE</h2>
+        <span className="runner-kicker">Fund Engine</span>
+        <h2>THE FUND ENGINE</h2>
         <p>
-          A rotating basket built around Solana meme momentum.
+          A rotating basket built around Pump.fun token momentum.
         </p>
       </div>
       <div className="runner-scanner-layout">
@@ -572,7 +683,7 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
               <strong>{value}</strong>
             </div>
           ))}
-          <p>The exact methodology remains private so the index can rotate before the trade becomes obvious.</p>
+          <p>The exact methodology remains private so the fund can rotate before the trade becomes obvious.</p>
         </div>
       </div>
     </section>
@@ -583,8 +694,8 @@ function CopyCatOrigin() {
   return (
     <section className="runner-section runner-origin" id="origin">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Index Thesis</span>
-        <h2>THE INDEX NEVER SLEEPS.</h2>
+        <span className="runner-kicker">Fund Thesis</span>
+        <h2>THE FUND NEVER SLEEPS.</h2>
         <p>
           It scans. It rotates. It snapshots. It drops.
         </p>
@@ -592,7 +703,7 @@ function CopyCatOrigin() {
       <div className="runner-origin-grid">
         <article className="runner-info-card">
           <h3>01 · Add</h3>
-          <p>New coins, old coins, AI coins and 6900 coins can enter the basket.</p>
+          <p>New Pump.fun launches and active rotations can enter the basket.</p>
         </article>
         <article className="runner-info-card">
           <h3>02 · Weight</h3>
@@ -611,18 +722,28 @@ function HowItWorks() {
   const steps = [
     {
       label: "01",
-      title: "Assets enter the index",
-      body: "The index can add new launches, older leaders, AI rotations and 6900-coded meme assets."
+      title: "The fund scans Pump.fun",
+      body: "The fund watches Pump.fun activity, liquidity, attention and rotation strength."
     },
     {
       label: "02",
-      title: "The active basket gets bought",
-      body: "Fees can route into the current drop asset or a weighted mix of index coins."
+      title: "Strong tokens enter the basket",
+      body: "The strongest active Pump.fun tokens become eligible for the fund rotation."
     },
     {
       label: "03",
-      title: "Holders receive the drop",
-      body: `The current index reward is distributed to eligible ${tokenLabel} holders during scheduled epochs.`
+      title: `Hold 1M+ ${tokenLabel}`,
+      body: "Eligible wallets stay in the holder snapshot while the treasury rotates."
+    },
+    {
+      label: "04",
+      title: "Receive basket drops",
+      body: `Eligible holders receive weighted Pump.fun token basket drops every ${pumpRunnerConfig.epochMinutes} minutes.`
+    },
+    {
+      label: "05",
+      title: "Hold longer to build weight",
+      body: "Longer holding duration increases holder weight for future basket drops."
     }
   ];
 
@@ -630,7 +751,7 @@ function HowItWorks() {
     <section className="runner-section runner-how" id="how">
       <div className="runner-section-heading">
         <span className="runner-kicker">How It Works</span>
-      <h2>HOLD THE INDEX. WEIGH HEAVIER.</h2>
+      <h2>HOLD ONE TOKEN. OWN THE ROTATION.</h2>
       </div>
       <div className="runner-step-list">
         {steps.map((step) => (
@@ -705,7 +826,7 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
       </div>
       <div className="runner-eligibility-grid">
         <div className="runner-check-card">
-          <h3>To qualify for index airdrops, a wallet must:</h3>
+          <h3>To qualify for fund airdrops, a wallet must:</h3>
           <ul>
             <li>Hold at least {required}</li>
             <li>Be holding at the eligibility snapshot</li>
@@ -732,7 +853,7 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
               <input
                 id="wallet-lookup"
                 onChange={(event) => setLookup(event.target.value)}
-                placeholder="Paste Solana wallet"
+                placeholder="Paste wallet address"
                 type="text"
                 value={lookup}
               />
@@ -797,7 +918,7 @@ export function HoldMultiplier() {
       <div className="runner-section-heading">
         <span className="runner-kicker">Epoch Multiplier</span>
         <h2>HOLD MORE EPOCHS</h2>
-        <p>Consistent holders receive a higher index-weight multiplier the longer they stay eligible.</p>
+        <p>Consistent holders receive a higher holder-weight multiplier the longer they stay eligible.</p>
       </div>
       <div className="runner-meter-card">
         <div className="runner-distance-meter" aria-label="Seven day multiplier meter">
@@ -805,7 +926,7 @@ export function HoldMultiplier() {
           <div>
             <i style={{ width: "100%" }} />
           </div>
-          <span>7 DAY INDEX WEIGHT</span>
+          <span>7 DAY HOLDER WEIGHT</span>
         </div>
         <div className="runner-tier-grid">
           {pumpRunnerConfig.multiplierTiers.map((tier) => (
@@ -829,7 +950,7 @@ export function HolderPayoutBoard({ live }: { live: RunnerLiveData }) {
       <div className="runner-section-heading">
         <span className="runner-kicker">Wallet Payouts</span>
         <h2>EPOCH WEIGHT BOARD</h2>
-        <p>Wallet rewards ranked by index tokens received, held-epoch streak and current multiplier.</p>
+        <p>Wallet rewards ranked by fund tokens received, held-epoch streak and current multiplier.</p>
       </div>
       <div className="runner-table-wrap">
         <table className="runner-table runner-holder-payouts">
@@ -846,9 +967,9 @@ export function HolderPayoutBoard({ live }: { live: RunnerLiveData }) {
           </thead>
           <tbody>
             {rows.length ? (
-              rows.map((holder, index) => (
+              rows.map((holder, fund) => (
                 <tr key={holder.address}>
-                  <td>#{index + 1}</td>
+                  <td>#{fund + 1}</td>
                   <td>{compactAddress(holder.address)}</td>
                   <td className="runner-positive">{formatTokenAmount(holder.totalRewardEarned, rewardSymbol, `0 ${rewardSymbol}`)}</td>
                   <td>{formatCount(holder.rewardEpochs ?? 0, "0")}</td>
@@ -859,7 +980,7 @@ export function HolderPayoutBoard({ live }: { live: RunnerLiveData }) {
               ))
             ) : (
               <tr>
-                <td colSpan={7}>Payout board fills in after the first settled index drop.</td>
+                <td colSpan={7}>Payout board fills in after the first settled fund drop.</td>
               </tr>
             )}
           </tbody>
@@ -890,7 +1011,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
   const upcomingRows = [
     {
       time: live.countdown,
-      token: "Next index batch",
+      token: "Next fund batch",
       distributed: "Queued",
       wallets: `${formatCount(live.stats.latestEligibleHolders, "0")} eligible wallets`,
       signature: null,
@@ -903,13 +1024,13 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
     <section className="runner-section" id="drops">
       <div className="runner-section-heading">
         <span className="runner-kicker">Onchain Feed</span>
-        <h2>INDEX DROP LEDGER</h2>
-        <p>Each index drop stays on the record: basket asset, live market cap, amount dropped and current SOL value of the distribution.</p>
+        <h2>FUND DROP LEDGER</h2>
+        <p>Each fund drop stays on the record: basket asset, live market cap, amount dropped and current SOL value of the distribution.</p>
       </div>
       <div className="runner-drop-ledger">
         <article className="runner-drop-feature">
           <div>
-            <span>Index Drop 01</span>
+            <span>Fund Drop 01</span>
             <strong>{activeRunner.token}</strong>
             <small>{activeRunner.ticker} · {activeRunner.detectedMarketCap} · {activeRunnerScanTime}</small>
           </div>
@@ -919,7 +1040,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
         </article>
         <div className="runner-drop-metrics">
           <div>
-            <span>Index Entry</span>
+            <span>Fund Entry</span>
             <strong>{activeRunner.detectedMarketCap}</strong>
           </div>
           <div>
@@ -956,10 +1077,10 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
       </div>
       <div className="runner-feed">
         {rows.length ? (
-          rows.map((row, index) => {
+          rows.map((row, fund) => {
             const txUrl = transactionUrl(row.signature);
             return (
-              <article className="runner-feed-row" key={`${row.time}-${row.token}-${index}`}>
+              <article className="runner-feed-row" key={`${row.time}-${row.token}-${fund}`}>
                 <span>{row.time}</span>
                 <strong>{row.token}</strong>
                 <span>{row.distributed}</span>
@@ -996,7 +1117,7 @@ export function CopyHistoryChart() {
   return (
     <section className="runner-section" id="history">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Index History</span>
+        <span className="runner-kicker">Rotation History</span>
         <h2>BASKET HISTORY</h2>
       </div>
       <div className="runner-chart">
@@ -1011,7 +1132,7 @@ export function CopyHistoryChart() {
           </div>
         ))}
       </div>
-      <p className="runner-disclaimer">Past index selections do not guarantee future performance. Tokens selected by the system may lose some or all of their value.</p>
+      <p className="runner-disclaimer">Past fund selections do not guarantee future performance. Tokens selected by the system may lose some or all of their value.</p>
     </section>
   );
 }
@@ -1019,9 +1140,9 @@ export function CopyHistoryChart() {
 function FaqSection() {
   const faqs = [
     {
-      question: "What is SMI6900?",
+      question: "What is PTF?",
       answer:
-        `SMI6900 is a holder-reward meme index that can buy selected index assets and distribute them to eligible ${tokenLabel} holders.`
+        `PTF is a rotating index fund for Pump.fun tokens. It can buy selected basket assets and distribute them to eligible ${tokenLabel} holders.`
     },
     {
       question: "How many tokens must I hold?",
@@ -1029,7 +1150,7 @@ function FaqSection() {
     },
     {
       question: "How often are drops distributed?",
-      answer: `Index-token distributions are processed in scheduled epochs. The current interface is set to ${pumpRunnerConfig.epochMinutes}-minute epochs.`
+      answer: `Pump.fun token basket distributions are processed in scheduled epochs. The current interface is set to ${pumpRunnerConfig.epochMinutes}-minute epochs.`
     },
     {
       question: "What happens when I sell?",
@@ -1037,9 +1158,9 @@ function FaqSection() {
         `Selling or transferring ${tokenLabel} resets the wallet's hold multiplier. Depending on snapshot rules, it may also remove the wallet from the current distribution epoch.`
     },
     {
-      question: "Are index profits guaranteed?",
+      question: "Are fund profits guaranteed?",
       answer:
-        "No. Meme tokens are highly volatile, and index selections may decline in value. The index engine is a selection system, not a guarantee of performance."
+        "No. Pump.fun tokens are highly volatile, and fund selections may decline in value. The fund engine is a selection system, not a guarantee of performance."
     },
     {
       question: "Why is there a minimum holding requirement?",
@@ -1069,7 +1190,7 @@ function FaqSection() {
 function FinalCta() {
   return (
     <section className="runner-final-cta">
-      <h2>THE NEXT INDEX DROP IS ALREADY LOADING.</h2>
+      <h2>THE NEXT FUND ROTATION IS ALREADY LOADING.</h2>
       <p>Hold {tokenLabel} and stay eligible for every scheduled basket drop routed through the system.</p>
       <div className="runner-hero-actions">
         <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
@@ -1118,7 +1239,7 @@ function RunnerFooter() {
         <a href="#faq">Risk disclosure</a>
       </div>
       <p className="runner-risk">
-        SMI6900 is an experimental Solana meme index project. Digital assets are volatile. Verify all onchain activity independently.
+        PTF is an experimental Pump.fun token fund project. Digital assets are volatile. Verify all onchain activity independently.
       </p>
     </footer>
   );
@@ -1134,7 +1255,7 @@ export function PumpRunnerHome() {
       <RunnerNav />
       <main>
         <HeroSection live={live} />
-        <IndexStrip live={live} />
+        <FundStrip live={live} />
         <CopySignalBoard live={live} />
         <ScannerStatus live={live} />
         <CopyCatOrigin />

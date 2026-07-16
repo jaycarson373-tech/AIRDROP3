@@ -16,10 +16,10 @@ function compactAddress(address: string) {
 
 export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: MarketTickerProps) {
   const navItems = [
-    ["Index", "#board"],
+    ["Fund", "#board"],
     ["Engine", "#scanner"],
     ["Drops", "#drops"],
-    ["Proof", "#drops"],
+    ["Receipts", "#drops"],
     ["FAQ", "#faq"]
   ];
 
