@@ -131,6 +131,15 @@ input {
   }
 }
 
+@keyframes ptfHeaderBannerDrift {
+  from {
+    transform: scale(1.04) translate3d(-10px, 0, 0);
+  }
+  to {
+    transform: scale(1.07) translate3d(10px, 0, 0);
+  }
+}
+
 .runner-nav {
   align-items: center;
   background: rgba(3, 5, 0, 0.8);
@@ -200,6 +209,45 @@ input {
 .runner-links a:hover,
 .runner-footer-links a:hover {
   color: var(--runner-accent);
+}
+
+.ptf-header-banner {
+  background:
+    linear-gradient(180deg, rgba(3, 5, 0, 0.98), rgba(3, 5, 0, 0.86)),
+    #030500;
+  border-bottom: 1px solid rgba(219, 255, 0, 0.16);
+  padding: 14px max(16px, calc((100vw - 1180px) / 2));
+  position: relative;
+  z-index: 18;
+}
+
+.ptf-header-banner-frame {
+  border: 1px solid rgba(219, 255, 0, 0.22);
+  border-radius: 18px;
+  box-shadow:
+    0 0 44px rgba(159, 255, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  height: clamp(78px, 10vw, 150px);
+  overflow: hidden;
+  position: relative;
+}
+
+.ptf-header-banner-frame::after {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.66), transparent 34%, transparent 66%, rgba(0, 0, 0, 0.52));
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.ptf-header-banner img {
+  animation: ptfHeaderBannerDrift 18s ease-in-out infinite alternate;
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.04);
+  width: 100%;
 }
 
 .runner-actions,

@@ -376,6 +376,16 @@ function RunnerNav() {
   );
 }
 
+function HeaderBanner() {
+  return (
+    <section className="ptf-header-banner" aria-label="Pump Treasury Fund banner">
+      <div className="ptf-header-banner-frame">
+        <img src={pumpRunnerConfig.bannerSrc} alt="PTF Pump Treasury Fund" />
+      </div>
+    </section>
+  );
+}
+
 type TreasuryToken = {
   ticker: string;
   name: string;
@@ -1257,6 +1267,7 @@ export function PumpRunnerHome() {
       <AnimatedBackground />
       <MarketTicker live={live} />
       <RunnerNav />
+      <HeaderBanner />
       <main>
         <HeroSection live={live} />
         <FundStrip live={live} />

@@ -133,7 +133,7 @@ export const pumpRunnerConfig = {
   rewardSymbol: activeRunnerTicker,
   logoSrc: "/brand/ptf-logo.png",
   backgroundSrc: "/brand/ptf-logo.png",
-  bannerSrc: "/brand/ptf-banner.jpg",
+  bannerSrc: "/brand/ptf-header-banner.jpg",
   contractAddress,
   rewardMint,
   buyUrl: process.env.NEXT_PUBLIC_BUY_URL ?? fallbackPumpFunUrl,
