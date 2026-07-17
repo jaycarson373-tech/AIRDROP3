@@ -1911,7 +1911,7 @@ input {
     radial-gradient(circle at 18% 22%, rgba(53, 255, 120, 0.16), transparent 22rem),
     radial-gradient(circle at 78% 28%, rgba(255, 255, 255, 0.08), transparent 20rem),
     linear-gradient(180deg, rgba(2, 4, 3, 0.18), rgba(2, 4, 3, 0.78) 74%, #020403),
-    image-set(url("/brand/ptf-banner.webp") type("image/webp"), url("/brand/ptf-banner.jpg") type("image/jpeg")) center 30% / min(1420px, 98vw) auto no-repeat,
+    url("/brand/ptf-banner.jpg") center 30% / min(1420px, 98vw) auto no-repeat,
     #020403;
   overflow: hidden;
   z-index: 0;
