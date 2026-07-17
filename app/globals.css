@@ -5240,3 +5240,51 @@ th {
     padding: 0 14px;
   }
 }
+
+/* Final launch sizing: keep the PTF mark premium without swallowing the hero. */
+.ptf-hero-logo {
+  width: clamp(220px, 28vw, 360px);
+}
+
+.ca-placeholder {
+  cursor: default;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.pump-runner-page::before {
+  animation: ptfBackgroundDrift 38s ease-in-out infinite alternate;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(53, 255, 120, 0.13), transparent 34rem),
+    linear-gradient(180deg, rgba(1, 2, 1, 0.42), rgba(1, 2, 1, 0.86) 52%, #010201 100%),
+    url("/brand/ptf-banner.jpg") center 7rem / min(1500px, 140vw) auto repeat-y;
+  opacity: 0.22;
+}
+
+.runner-section-heading .eyebrow,
+.runner-stat-label,
+.ptf-treasury-label,
+.runner-card-kicker {
+  color: #6cff92;
+  letter-spacing: 0.08em;
+}
+
+@keyframes ptfBackgroundDrift {
+  from {
+    transform: scale(1.03) translate3d(-10px, -4px, 0);
+  }
+  to {
+    transform: scale(1.045) translate3d(10px, 10px, 0);
+  }
+}
+
+@media (max-width: 760px) {
+  .ptf-hero-logo {
+    width: clamp(190px, 56vw, 260px);
+  }
+
+  .pump-runner-page::before {
+    background-size: 980px auto;
+    opacity: 0.18;
+  }
+}

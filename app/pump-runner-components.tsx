@@ -401,7 +401,7 @@ function RunnerNav() {
         <a href="#drops">Receipts</a>
       </nav>
       <div className="runner-actions">
-        {ca ? <CopyCaButton address={ca} label={compactAddress(ca)} /> : null}
+        {ca ? <CopyCaButton address={ca} label={compactAddress(ca)} /> : <span className="mini-button mono ca-placeholder">CA SOON</span>}
         {pumpRunnerConfig.xUrl ? (
           <a className="runner-small-button" href={pumpRunnerConfig.xUrl} target="_blank" rel="noreferrer">
             X
