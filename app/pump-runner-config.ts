@@ -51,9 +51,9 @@ const fundBasketAssets = [
   }
 ] as const;
 
-const defaultContractAddress = "";
+const defaultContractAddress = "8Ab3XVBjvRB2p6sunVJgAiHGmwJA8hSgbs36kZFxpump";
 const defaultXUrl = "https://x.com/PTF_sol";
-const defaultDexScreenerUrl = "https://dexscreener.com/solana";
+const defaultDexScreenerUrl = `https://dexscreener.com/solana/${defaultContractAddress}`;
 
 function cleanEnv(value: string | undefined) {
   const trimmed = value?.trim();
