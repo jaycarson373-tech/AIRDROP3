@@ -381,10 +381,21 @@ function RunnerNav() {
 }
 
 function HeaderBanner() {
+  const links = [
+    { label: "DexScreener", href: pumpRunnerConfig.dexScreenerUrl },
+    { label: "Pump.fun", href: pumpRunnerConfig.pumpFunUrl },
+    { label: "Buy $PTF", href: pumpRunnerConfig.buyUrl },
+    { label: "X", href: pumpRunnerConfig.xUrl }
+  ].filter((link) => link.href);
+
   return (
-    <section className="ptf-header-banner" aria-label="Pump Treasury Fund banner">
-      <div className="ptf-header-banner-frame">
-        <img src={pumpRunnerConfig.bannerSrc} alt="PTF Pump Treasury Fund" />
+    <section className="ptf-footer-links" aria-label="PTF links">
+      <div className="ptf-footer-links-inner">
+        {links.map((link) => (
+          <a href={link.href} key={link.label} target="_blank" rel="noreferrer">
+            {link.label}
+          </a>
+        ))}
       </div>
     </section>
   );
@@ -957,14 +968,6 @@ export function HolderPayoutBoard({ live }: { live: RunnerLiveData }) {
 
 export function AirdropFeed({ live }: { live: RunnerLiveData }) {
   const [filter, setFilter] = useState("All Drops");
-  const activeRunner = pumpRunnerConfig.runnerBoard[0];
-  const activeRunnerCurrentMarketCap = formatCompactUsd(live.market.reward.marketCapUsd ?? live.market.reward.fdvUsd, activeRunner.currentMarketCap);
-  const activeRunnerScanTime = activeRunner.status.replace(/^Scanned\s+/i, "");
-  const totalRunnerDropped = live.stats.totalRewardAirdropped
-    ? formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)
-    : `0 ${rewardSymbol}`;
-  const totalSolValueDropped = formatSolAmount(live.stats.totalSolValueAirdropped);
-  const currentValueDropped = formatSolValue(live.stats.totalRewardAirdropped, live.market.reward.priceUsd, live.market.sol.priceUsd);
   const completedRows = live.stats.recentRewards.map((reward) => ({
     time: formatTime(reward.time),
     token: rewardSymbol,
@@ -990,41 +993,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
       <div className="runner-section-heading">
         <span className="runner-kicker">Onchain Feed</span>
         <h2>TREASURY DISTRIBUTION LEDGER</h2>
-        <p>Every distribution is recorded with the basket asset, market cap, token amount and current SOL value.</p>
-      </div>
-      <div className="runner-drop-ledger">
-        <article className="runner-drop-feature">
-          <div>
-            <span>Treasury Position</span>
-            <strong>{activeRunner.token}</strong>
-            <small>{activeRunner.ticker} · {activeRunner.detectedMarketCap} · {activeRunnerScanTime}</small>
-          </div>
-          <a href={activeRunner.dexScreenerUrl} target="_blank" rel="noreferrer">
-            Open chart <ExternalLink size={15} />
-          </a>
-        </article>
-        <div className="runner-drop-metrics">
-          <div>
-            <span>Current Treasury Position</span>
-            <strong>{activeRunner.detectedMarketCap}</strong>
-          </div>
-          <div>
-            <span>Current Token Market Cap</span>
-            <strong>{activeRunnerCurrentMarketCap}</strong>
-          </div>
-          <div>
-            <span>Treasury Distributed</span>
-            <strong>{totalRunnerDropped}</strong>
-          </div>
-          <div>
-            <span>Distribution SOL Value</span>
-            <strong>{totalSolValueDropped}</strong>
-          </div>
-          <div>
-            <span>Current Distribution</span>
-            <strong>{currentValueDropped}</strong>
-          </div>
-        </div>
+        <p>Onchain receipts for completed and queued treasury distributions.</p>
       </div>
       <div className="runner-tabs" role="tablist" aria-label="Airdrop feed filter">
         {["All Drops", "Completed", "Upcoming"].map((item) => (
