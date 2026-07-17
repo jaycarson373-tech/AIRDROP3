@@ -52,7 +52,7 @@ const fundBasketAssets = [
 ] as const;
 
 const defaultContractAddress = "";
-const defaultXUrl = "";
+const defaultXUrl = "https://x.com/PTF_sol";
 const defaultDexScreenerUrl = "https://dexscreener.com/solana";
 
 function cleanEnv(value: string | undefined) {
