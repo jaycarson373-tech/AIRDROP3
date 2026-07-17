@@ -116,6 +116,7 @@ export const config = {
   rewardTokenMints,
   rewardTokenSymbol: configuredRewardTokenSymbols[0] ?? process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "reward",
   rewardTokenSymbols: configuredRewardTokenSymbols,
+  rewardRotationOffset: intEnv("REWARD_ROTATION_OFFSET", 0),
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),
@@ -147,7 +148,9 @@ export function activateRewardForEpoch(epochId: string) {
   if (config.rewardMode !== "token" || config.rewardTokenMints.length <= 1) return;
   const epochMs = config.epochMinutes * 60_000;
   const epochNumber = Math.floor(Date.parse(epochId) / epochMs);
-  const index = ((epochNumber % config.rewardTokenMints.length) + config.rewardTokenMints.length) % config.rewardTokenMints.length;
+  const index =
+    (((epochNumber + config.rewardRotationOffset) % config.rewardTokenMints.length) + config.rewardTokenMints.length) %
+    config.rewardTokenMints.length;
   config.rewardTokenMint = config.rewardTokenMints[index];
   config.rewardTokenSymbol = config.rewardTokenSymbols[index] ?? `asset ${index + 1}`;
   console.log(
