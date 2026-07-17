@@ -303,7 +303,7 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
     `CURRENT FUND BASKET ${activeAsset.ticker}`,
     `${activeAsset.ticker} PRICE ${assetPrice(activeAsset, live)}`,
     `ROTATION 25% EACH`,
-    `ROUTE 1 ASSET PER EPOCH`,
+    `WEIGHTED TREASURY DROPS`,
     `TOTAL SOL VALUE DROPPED ${formatSolAmount(live.stats.totalSolValueAirdropped)}`,
     `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
     `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
@@ -766,7 +766,7 @@ function HowItWorks() {
     <section className="runner-section runner-how" id="how">
       <div className="runner-section-heading">
         <span className="runner-kicker">How It Works</span>
-      <h2>HOLD ONE TOKEN. OWN THE ROTATION.</h2>
+      <h2>THE TREASURY NEVER STOPS MOVING.</h2>
       </div>
       <div className="runner-step-list">
         {steps.map((step) => (
