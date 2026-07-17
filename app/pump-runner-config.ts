@@ -170,9 +170,9 @@ export const pumpRunnerConfig = {
     currentEpoch: "0"
   },
   treasuryStatistics: {
-    runnersCaughtToday: "4",
-    averageEntryMarketCap: "25% each",
-    averageReturn: "1 per epoch",
+    runnersCaughtToday: "1",
+    averageEntryMarketCap: "Current selection",
+    averageReturn: "Live epoch",
     bestRunner: "$ANSEM",
     totalDistributedToday: "0 SOL"
   },

@@ -4,11 +4,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ptf.fun"),
-  title: "PTF — Pump Token Fund",
-  description: "Pump Treasury Fund tracks live treasury distributions, total SOL airdropped, completed epochs, eligible holders and the current Pump.fun basket.",
+  title: "PTF — Pump Treasury Fund",
+  description: "Pump Treasury Fund tracks live treasury distributions, distributed SOL value, completed epochs, eligible holders and the current Pump.fun selection.",
   openGraph: {
-    title: "PTF — Pump Token Fund",
-    description: "The treasury behind Pump.fun. Live SOL distributed, epochs, holders and weighted 5-minute treasury drops.",
+    title: "PTF — Pump Treasury Fund",
+    description: "The treasury behind Pump.fun. Live distributed value, epochs, holders and weighted 5-minute treasury distributions.",
     url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://ptf.fun",
     siteName: "PTF",
     images: [
@@ -16,19 +16,19 @@ export const metadata: Metadata = {
         url: "https://ptf.fun/brand/og-image.png",
         width: 1200,
         height: 630,
-        alt: "PTF — Pump Token Fund"
+        alt: "PTF — Pump Treasury Fund"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "PTF — Pump Token Fund",
-    description: "Pump Treasury Fund: live SOL distributed, epochs, holders and weighted 5-minute treasury drops.",
+    title: "PTF — Pump Treasury Fund",
+    description: "Pump Treasury Fund: live distributed value, epochs, holders and weighted 5-minute treasury distributions.",
     images: [
       {
         url: "https://ptf.fun/brand/og-image.png",
-        alt: "PTF — Pump Token Fund"
+        alt: "PTF — Pump Treasury Fund"
       }
     ]
   },

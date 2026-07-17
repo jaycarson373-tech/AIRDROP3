@@ -108,10 +108,24 @@ type RunnerLiveData = {
   countdown: string;
 };
 
+type ActiveFundAsset = {
+  rank: string;
+  token: string;
+  ticker: string;
+  mint: string;
+  logoSrc: string;
+  detectedMarketCap: string;
+  currentMarketCap: string;
+  returnSinceDetection: string;
+  amountAcquired: string;
+  status: string;
+  dexScreenerUrl: string;
+};
+
 const refreshMs = 12_000;
 const tokenLabel = pumpRunnerConfig.tokenLabel;
 const sourceSymbol = pumpRunnerConfig.ticker;
-const rewardSymbol = "basket tokens";
+const rewardSymbol = pumpRunnerConfig.currentRunner.ticker;
 
 const emptyStats: StatsResponse = {
   currentEpoch: 0,
@@ -266,6 +280,15 @@ function formatSolAmount(value: number | null | undefined) {
   return `${value.toLocaleString(undefined, { maximumFractionDigits: 5 })} SOL`;
 }
 
+function displayCountdown(live: RunnerLiveData) {
+  return live.countdown === "00:00" ? "Processing distribution..." : live.countdown;
+}
+
+function displaySettledSol(value: number | null | undefined) {
+  if (!Number.isFinite(value ?? NaN) || !value) return "Awaiting first settled distribution";
+  return formatSolAmount(value);
+}
+
 function formatTime(value: string | null | undefined) {
   const date = new Date(value ?? "");
   return Number.isNaN(date.getTime()) ? "Queued" : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -287,13 +310,26 @@ function statusText(status: string) {
   return status.replace(/_/g, " ");
 }
 
-function activeFundAsset(live: RunnerLiveData) {
-  const basket = pumpRunnerConfig.runnerBoard;
-  const epoch = live.stats.currentEpoch || live.stats.totalEpochs || 0;
-  return basket[Math.abs(epoch) % basket.length] ?? basket[0];
+function activeFundAsset(live: RunnerLiveData): ActiveFundAsset {
+  const basket: readonly ActiveFundAsset[] = pumpRunnerConfig.runnerBoard;
+  const activeIndex = basket.findIndex((asset) => asset.mint === pumpRunnerConfig.rewardMint);
+  if (activeIndex >= 0) return basket[activeIndex];
+  return {
+    rank: "01",
+    token: pumpRunnerConfig.currentRunner.name,
+    ticker: pumpRunnerConfig.currentRunner.ticker,
+    mint: pumpRunnerConfig.currentRunner.mint,
+    logoSrc: pumpRunnerConfig.currentRunner.logoSrc,
+    detectedMarketCap: pumpRunnerConfig.currentRunner.detectedMarketCap,
+    currentMarketCap: pumpRunnerConfig.currentRunner.currentMarketCap,
+    returnSinceDetection: "Live",
+    amountAcquired: pumpRunnerConfig.currentRunner.amountAcquired,
+    status: pumpRunnerConfig.currentRunner.status,
+    dexScreenerUrl: pumpRunnerConfig.currentRunner.dexScreenerUrl
+  };
 }
 
-function assetPrice(asset: (typeof pumpRunnerConfig.runnerBoard)[number], live: RunnerLiveData) {
+function assetPrice(asset: ActiveFundAsset, live: RunnerLiveData) {
   const basketPrice = live.market.basket?.[asset.mint]?.priceUsd;
   if (basketPrice !== undefined) return formatPrice(basketPrice, "Live");
   return asset.mint === pumpRunnerConfig.rewardMint ? formatPrice(live.market.reward.priceUsd, "Live") : "Live";
@@ -304,15 +340,14 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
   const activeAsset = activeFundAsset(live);
   const holderCount = live.holders.uniqueHolders ?? live.stats.latestEligibleHolders;
   const items = [
-    `CURRENT FUND BASKET ${activeAsset.ticker}`,
+    `CURRENT SELECTION ${activeAsset.ticker}`,
     `${activeAsset.ticker} PRICE ${assetPrice(activeAsset, live)}`,
-    `ROTATION 25% EACH`,
-    `WEIGHTED TREASURY DROPS`,
-    `TOTAL SOL VALUE DROPPED ${formatSolAmount(live.stats.totalSolValueAirdropped)}`,
+    `WEIGHTED TREASURY DISTRIBUTIONS`,
+    `DISTRIBUTED VALUE ${formatSolAmount(live.stats.totalSolValueAirdropped)}`,
     `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
     `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
     `${tokenLabel} PRICE ${formatPrice(source.priceUsd)}`,
-    `NEXT AIRDROP ${live.countdown}`,
+    `NEXT DISTRIBUTION ${displayCountdown(live)}`,
     `FUND ENGINE ${pumpRunnerConfig.scannerStatus}`,
     `TREASURY ${pumpRunnerConfig.treasuryStatus}`
   ];
@@ -356,7 +391,7 @@ function RunnerNav() {
         <img className="runner-brand-logo" src={pumpRunnerConfig.logoSrc} alt="" />
         <span>
           <strong>{pumpRunnerConfig.name}</strong>
-          <small>Pump Token Fund</small>
+          <small>Pump Treasury Fund</small>
         </span>
       </a>
       <nav className="runner-links" aria-label="Primary navigation">
@@ -401,26 +436,6 @@ function HeaderBanner() {
   );
 }
 
-type TreasuryToken = {
-  ticker: string;
-  name: string;
-  allocation: number;
-  price: string;
-  change: string;
-  logoSrc?: string;
-};
-
-function getTreasuryBasket(live: RunnerLiveData): TreasuryToken[] {
-  return pumpRunnerConfig.runnerBoard.map((asset) => ({
-    ticker: asset.ticker,
-    name: asset.token,
-    allocation: 25,
-    price: assetPrice(asset, live),
-    change: asset.status,
-    logoSrc: asset.logoSrc
-  }));
-}
-
 function HeroMotion() {
   return (
     <>
@@ -430,9 +445,7 @@ function HeroMotion() {
         ))}
       </div>
       <div className="ptf-floating-logos" aria-hidden="true">
-        {Array.from({ length: 8 }).map((_, index) => (
-          <span className="ptf-hero-pill" key={index} />
-        ))}
+        <span className="ptf-hero-pill" />
       </div>
     </>
   );
@@ -442,8 +455,8 @@ function HeroStats({ live }: { live: RunnerLiveData }) {
   const activeAsset = activeFundAsset(live);
   const stats = [
     ["Current Selection", activeAsset.ticker],
-    ["Current Treasury Value", formatSolAmount(live.stats.totalSolValueAirdropped)],
-    ["Next Distribution", live.countdown],
+    ["Treasury Value", displaySettledSol(live.stats.totalSolValueAirdropped)],
+    ["Next Distribution", displayCountdown(live)],
     ["Eligible Holders", formatCount(live.stats.latestEligibleHolders, "0")]
   ];
 
@@ -491,18 +504,16 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
         <p className="runner-hero-subtitle">Pump Treasury Fund</p>
         <p className="runner-hero-thesis">The treasury never stops buying.</p>
         <p className="runner-hero-line">
-          Protocol fees continuously accumulate selected Pump.fun tokens.
-          <br />
-          Hold 1,000,000+ {tokenLabel}.
-          <br />
-          Receive weighted treasury distributions every 5 minutes.
+          Protocol fees continuously accumulate the strongest Pump.fun tokens.
+          <br />Hold 1,000,000+ {tokenLabel}.
+          <br />Receive weighted treasury distributions every 5 minutes.
         </p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
           </a>
-          <a className="runner-button runner-button-secondary" href="#drops">
-            View Treasury
+          <a className="runner-button runner-button-secondary" href="#board">
+            View Live Treasury
           </a>
         </div>
         <HeroStats live={live} />
@@ -533,22 +544,11 @@ function FundStrip({ live }: { live: RunnerLiveData }) {
 }
 
 export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
-  const basket = getTreasuryBasket(live);
   const activeCopy = activeFundAsset(live);
-  const totalAllocation = basket.reduce((sum, item) => sum + item.allocation, 0);
-  const pie = basket.reduce(
-    (segments, item, index) => {
-      const start = segments.offset;
-      const end = start + (item.allocation / totalAllocation) * 100;
-      const colors = ["#35ff78", "#b8ff3d", "#f4fff1", "#8dffa8", "#74ff93", "#d7ff60", "#ffffff", "#5aff82"];
-      segments.parts.push(`${colors[index % colors.length]} ${start}% ${end}%`);
-      segments.offset = end;
-      return segments;
-    },
-    { parts: [] as string[], offset: 0 }
-  );
+  const selectedPrice = assetPrice(activeCopy, live);
+  const treasuryValue = displaySettledSol(live.stats.totalSolValueAirdropped);
   const feedRows = live.stats.recentRewards.slice(0, 4).map((reward) => ({
-    label: "Airdrop completed",
+    label: "Distribution completed",
     value: formatTokenAmount(reward.rewardAmount, rewardSymbol, `0 ${rewardSymbol}`),
     meta: reward.txSig ? compactAddress(reward.txSig) : statusText(reward.status)
   }));
@@ -557,54 +557,59 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
     : [
         { label: "Treasury scanning Pump.fun", value: "Live", meta: "rotation engine" },
         { label: `Treasury buying ${activeFundAsset(live).ticker}`, value: "Queued", meta: "next epoch" },
-        { label: "Airdrop route armed", value: `${formatCount(live.stats.latestEligibleHolders, "0")} holders`, meta: "eligible" }
+        { label: "Distribution route armed", value: `${formatCount(live.stats.latestEligibleHolders, "0")} holders`, meta: "eligible" }
       ];
+  const metrics = [
+    ["Treasury Value", treasuryValue],
+    ["Next Distribution", displayCountdown(live)],
+    ["Eligible Holders", formatCount(live.stats.latestEligibleHolders, "0")],
+    ["Epoch", formatCount(live.stats.currentEpoch || live.stats.totalEpochs, "0")]
+  ];
 
   return (
     <section className="runner-section" id="board">
       <div className="runner-section-heading">
         <span className="runner-kicker">Live Treasury</span>
         <h2>CURRENT TREASURY POSITION</h2>
-        <p>A live terminal for the active basket, next distribution and holder-weight flow.</p>
+        <p>A live terminal for the current selection, next distribution and holder-weight flow.</p>
       </div>
       <div className="ptf-treasury-card">
         <div className="ptf-treasury-main">
           <div className="ptf-treasury-head">
             <div>
-              <span className="runner-kicker">Current Fund Basket</span>
-              <h3>Live Pump.fun allocation</h3>
+              <span className="runner-kicker">Current Selection</span>
+              <h3>{activeCopy.ticker}</h3>
+              <p>{activeCopy.token} · {selectedPrice} · Selected token</p>
             </div>
             <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
               Active chart <ExternalLink size={15} />
             </a>
           </div>
-          <div className="ptf-basket-grid">
-            {basket.map((asset) => (
-              <article className="ptf-basket-token" key={asset.ticker}>
-                {asset.logoSrc ? <img src={asset.logoSrc} alt="" loading="lazy" /> : <span>{asset.ticker.replace("$", "").slice(0, 2)}</span>}
-                <div>
-                  <strong>{asset.ticker}</strong>
-                  <small>{asset.name}</small>
-                </div>
-                <em>{asset.allocation}%</em>
-                <b>{asset.price}</b>
-                <i className={asset.change.startsWith("-") ? "is-down" : ""}>{asset.change}</i>
-              </article>
+          <div className="ptf-selection-focus">
+            {activeCopy.logoSrc ? <img src={activeCopy.logoSrc} alt="" loading="lazy" /> : null}
+            <div>
+              <span>Selected token</span>
+              <strong>{activeCopy.token}</strong>
+              <small>{compactAddress(activeCopy.mint)} · {activeCopy.status}</small>
+            </div>
+            <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
+              Chart <ExternalLink size={15} />
+            </a>
+          </div>
+          <div className="ptf-dashboard-metrics">
+            {metrics.map(([label, value]) => (
+              <span key={label}>
+                <small>{label}</small>
+                <strong>{value}</strong>
+              </span>
             ))}
           </div>
         </div>
         <aside className="ptf-treasury-side">
           <div className="ptf-countdown-card">
             <span>Next Treasury Distribution</span>
-            <strong>{live.countdown}</strong>
-            <p>When this reaches zero, the treasury rotates and eligible holders receive weighted distributions.</p>
-          </div>
-          <div className="ptf-pie-card">
-            <span>Current Treasury Allocation</span>
-            <div className="ptf-pie" style={{ background: `conic-gradient(${pie.parts.join(", ")})` }}>
-              <small>{basket.length}</small>
-              <b>Assets</b>
-            </div>
+            <strong>{displayCountdown(live)}</strong>
+            <p>When this reaches zero, the treasury processes the next eligible distribution.</p>
           </div>
           <div className="ptf-activity-feed">
             <span>Live Fund Activity</span>
@@ -704,7 +709,7 @@ function HowItWorks() {
     {
       label: "02",
       title: "Strong tokens enter the basket",
-      body: "The strongest active Pump.fun tokens become eligible for the fund rotation."
+      body: "The strongest active Pump.fun token becomes the current treasury selection."
     },
     {
       label: "03",
@@ -713,8 +718,8 @@ function HowItWorks() {
     },
     {
       label: "04",
-      title: "Receive basket drops",
-      body: `Eligible holders receive weighted Pump.fun token basket drops every ${pumpRunnerConfig.epochMinutes} minutes.`
+      title: "Receive distributions",
+      body: `Eligible holders receive weighted Pump.fun token distributions every ${pumpRunnerConfig.epochMinutes} minutes.`
     },
     {
       label: "05",
@@ -738,7 +743,7 @@ function HowItWorks() {
           </article>
         ))}
       </div>
-      <strong className="runner-bold-line">Hold {tokenLabel}. Stay eligible for the active basket.</strong>
+      <strong className="runner-bold-line">Hold {tokenLabel}. Stay eligible for the active selection.</strong>
     </section>
   );
 }
@@ -798,7 +803,8 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
     <section className="runner-section runner-eligibility" id="eligibility">
       <div className="runner-section-heading">
         <span className="runner-kicker">Holder Rules</span>
-        <h2>ELIGIBILITY</h2>
+        <h2>ELIGIBILITY AND WEIGHT</h2>
+        <p>A wallet must hold at least {pumpRunnerConfig.minimumHolding.toLocaleString()} {tokenLabel} at the eligibility snapshot to qualify for the next distribution.</p>
       </div>
       <div className="runner-eligibility-grid">
         <div className="runner-check-card">
@@ -877,7 +883,7 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
                     );
                   })
                 ) : (
-                  <p>No settled airdrops for this wallet yet.</p>
+                  <p>No settled distributions for this wallet yet.</p>
                 )}
               </div>
             </div>
@@ -1076,11 +1082,11 @@ function FaqSection() {
     {
       question: "What is PTF?",
       answer:
-        `PTF is Pump Treasury Fund: a rotating treasury protocol for selected Pump.fun tokens. Holders own exposure to the rotation through scheduled distributions.`
+        "PTF is the Pump Treasury Fund. Protocol fees accumulate selected Pump.fun tokens and distribute them to eligible $PTF holders every five minutes."
     },
     {
       question: "How many tokens must I hold?",
-      answer: `A wallet must hold at least ${pumpRunnerConfig.minimumHolding.toLocaleString()} ${tokenLabel} at the eligibility snapshot.`
+      answer: `A wallet must hold at least ${pumpRunnerConfig.minimumHolding.toLocaleString()} ${tokenLabel} at the eligibility snapshot to qualify for the next distribution.`
     },
     {
       question: "How often are drops distributed?",
@@ -1121,6 +1127,30 @@ function FaqSection() {
   );
 }
 
+function FinalCta() {
+  return (
+    <section className="runner-section runner-final-cta">
+      <span className="runner-kicker">THE TREASURY IS LIVE</span>
+      <h2>The treasury never stops moving.</h2>
+      <p>Hold 1,000,000+ {tokenLabel} and remain eligible for scheduled Pump.fun token distributions every five minutes.</p>
+      <div className="runner-hero-actions">
+        <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
+          Buy {tokenLabel} <ArrowRight size={18} />
+        </a>
+        <a className="runner-button runner-button-secondary" href="#drops">
+          View Drops
+        </a>
+        <a className="runner-button runner-button-secondary" href={pumpRunnerConfig.dexScreenerUrl} target="_blank" rel="noreferrer">
+          Open DexScreener
+        </a>
+      </div>
+      <p className="runner-disclaimer">
+        PTF is an experimental Pump.fun treasury protocol. Digital assets are highly volatile and may lose some or all of their value. Verify all addresses, eligibility rules, and onchain activity independently.
+      </p>
+    </section>
+  );
+}
+
 export function PumpRunnerHome() {
   const live = useRunnerLiveData();
 
@@ -1131,17 +1161,13 @@ export function PumpRunnerHome() {
       <RunnerNav />
       <main>
         <HeroSection live={live} />
-        <FundStrip live={live} />
         <CopySignalBoard live={live} />
-        <ScannerStatus live={live} />
-        <CopyCatOrigin />
         <HowItWorks />
         <EligibilityCard live={live} />
         <HoldMultiplier />
-        <HolderPayoutBoard live={live} />
         <AirdropFeed live={live} />
-        <CopyHistoryChart />
         <FaqSection />
+        <FinalCta />
       </main>
       <HeaderBanner />
     </div>
