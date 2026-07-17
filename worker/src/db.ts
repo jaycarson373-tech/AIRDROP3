@@ -10,6 +10,8 @@ export type EpochStatus = "running" | "completed" | "failed" | "skipped";
 export type PayoutMetadata = {
   normalRewardAmountRaw?: string;
   normalRewardAmount?: string;
+  rewardMint?: string;
+  rewardAsset?: string;
 };
 
 function assertNoError<T>(result: { data: T; error: unknown }, label: string): T {
@@ -107,13 +109,15 @@ export async function recordBuy(
     base_spent_lamports: baseSpentLamports,
     reward_received_raw: rewardReceivedRaw,
     reward_received: rewardReceived,
+    reward_mint: config.rewardTokenMint.toBase58(),
+    reward_asset: config.rewardTokenSymbol,
     tx_sig: txSig,
     ...(metadata?.pfpRewardLamports !== undefined ? { pfp_reward_lamports: metadata.pfpRewardLamports } : {}),
     ...(metadata?.pfpRewardTxSig !== undefined ? { pfp_reward_tx_sig: metadata.pfpRewardTxSig } : {})
   };
   const result = await supabase.from("buys").upsert(row);
-  if (result.error && metadata) {
-    warnNonFatal("record buy with PFP metadata failed; retrying without PFP metadata", result.error);
+  if (result.error) {
+    warnNonFatal("record buy with extended metadata failed; retrying minimal buy row", result.error);
     const fallback = await supabase.from("buys").upsert({
       epoch_id: epochId,
       base_spent_lamports: baseSpentLamports,
@@ -155,8 +159,15 @@ function payoutMetadataFields(metadata: PayoutMetadata | undefined, rewardAmount
     golden_bonus_reward: "0",
     golden_multiplier: 1,
     is_golden: false,
-    golden_capped: false
+    golden_capped: false,
+    reward_mint: metadata?.rewardMint ?? config.rewardTokenMint.toBase58(),
+    reward_asset: metadata?.rewardAsset ?? config.rewardTokenSymbol
   };
+}
+
+function withoutRewardIdentity<T extends Record<string, unknown>>(row: T) {
+  const { reward_mint: _rewardMint, reward_asset: _rewardAsset, ...rest } = row;
+  return rest;
 }
 
 export async function planPayout(
@@ -167,23 +178,30 @@ export async function planPayout(
   metadata?: PayoutMetadata
 ) {
   const idempotencyKey = `${epochId}:${wallet}`;
+  const row = {
+    epoch_id: epochId,
+    wallet,
+    reward_amount_raw: rewardAmountRaw,
+    reward_amount: rewardAmount,
+    ...payoutMetadataFields(metadata, rewardAmountRaw, rewardAmount),
+    idempotency_key: idempotencyKey,
+    status: "planned",
+    updated_at: new Date().toISOString()
+  };
   const result = await supabase
     .from("payouts")
-    .upsert(
-      {
-        epoch_id: epochId,
-        wallet,
-        reward_amount_raw: rewardAmountRaw,
-        reward_amount: rewardAmount,
-        ...payoutMetadataFields(metadata, rewardAmountRaw, rewardAmount),
-        idempotency_key: idempotencyKey,
-        status: "planned",
-        updated_at: new Date().toISOString()
-      },
-      { onConflict: "idempotency_key", ignoreDuplicates: true }
-    )
+    .upsert(row, { onConflict: "idempotency_key", ignoreDuplicates: true })
     .select()
     .maybeSingle();
+  if (result.error) {
+    warnNonFatal("plan payout with reward identity failed; retrying minimal payout row", result.error);
+    const fallback = await supabase
+      .from("payouts")
+      .upsert(withoutRewardIdentity(row), { onConflict: "idempotency_key", ignoreDuplicates: true })
+      .select()
+      .maybeSingle();
+    return assertNoError(fallback, "plan payout fallback");
+  }
   return assertNoError(result, "plan payout");
 }
 
@@ -194,7 +212,7 @@ export async function dryRunPayout(
   rewardAmount: string,
   metadata?: PayoutMetadata
 ) {
-  const result = await supabase.from("payouts").upsert({
+  const row = {
     epoch_id: epochId,
     wallet,
     reward_amount_raw: rewardAmountRaw,
@@ -203,7 +221,14 @@ export async function dryRunPayout(
     idempotency_key: `${epochId}:${wallet}`,
     status: "dry_run",
     updated_at: new Date().toISOString()
-  });
+  };
+  const result = await supabase.from("payouts").upsert(row);
+  if (result.error) {
+    warnNonFatal("dry-run payout with reward identity failed; retrying minimal payout row", result.error);
+    const fallback = await supabase.from("payouts").upsert(withoutRewardIdentity(row));
+    assertNoError(fallback, "dry-run payout fallback");
+    return;
+  }
   assertNoError(result, "dry-run payout");
 }
 

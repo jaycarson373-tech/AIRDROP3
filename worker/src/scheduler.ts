@@ -7,6 +7,13 @@ console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
 console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
+if (config.rewardMode === "token") {
+  console.log(
+    `Reward rotation: ${config.rewardTokenMints
+      .map((mint, index) => `${config.rewardTokenSymbols[index] ?? `asset ${index + 1}`}=${mint.toBase58()}`)
+      .join(" -> ")}`
+  );
+}
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
 console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ source tokens; wallets above ${config.maxHolderPct}% are excluded.`);
 console.log(`Reward buyback allocation: ${config.rewardBuyBps} bps of usable creator fees is available for reward-token buybacks after reserves.`);

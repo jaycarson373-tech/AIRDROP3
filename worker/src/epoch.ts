@@ -1,6 +1,6 @@
 import { claimFees } from "./claim.js";
 import { buyReward } from "./buy.js";
-import { config } from "./config.js";
+import { activateRewardForEpoch, config } from "./config.js";
 import {
   airdropRewards,
   computeAllocations,
@@ -27,6 +27,7 @@ export async function runEpoch(date = new Date()) {
 
   running = true;
   const epochId = currentEpochId(date);
+  activateRewardForEpoch(epochId);
 
   try {
     const existing = await getEpoch(epochId);

@@ -35,6 +35,25 @@ function optionalPublicKeyEnv(name: string) {
   return value ? new PublicKey(value) : null;
 }
 
+function publicKeyListEnv(name: string) {
+  const value = process.env[name];
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((mint) => mint.trim())
+    .filter(Boolean)
+    .map((mint) => new PublicKey(mint));
+}
+
+function stringListEnv(name: string) {
+  const value = process.env[name];
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function rewardModeEnv() {
   const rawValue = process.env.REWARD_MODE ?? "sol";
   const value = rawValue.toLowerCase();
@@ -74,9 +93,16 @@ function parseSecret(raw: string) {
 let cachedTreasury: Keypair | null = null;
 const rewardMode = rewardModeEnv();
 const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
-if (rewardMode === "token" && !configuredRewardTokenMint) {
-  throw new Error("Missing required env REWARD_TOKEN_MINT when REWARD_MODE=token");
+const configuredRewardTokenMints = publicKeyListEnv("REWARD_TOKEN_MINTS");
+const rewardTokenMints = configuredRewardTokenMints.length
+  ? configuredRewardTokenMints
+  : configuredRewardTokenMint
+    ? [configuredRewardTokenMint]
+    : [];
+if (rewardMode === "token" && !rewardTokenMints.length) {
+  throw new Error("Missing required env REWARD_TOKEN_MINT or REWARD_TOKEN_MINTS when REWARD_MODE=token");
 }
+const configuredRewardTokenSymbols = stringListEnv("REWARD_TOKEN_SYMBOLS");
 const configuredBagworkRewardWallet =
   optionalPublicKeyEnv("BAGWORK_REWARD_WALLET_PUBLIC_KEY") ?? optionalPublicKeyEnv("PFP_REWARD_WALLET_PUBLIC_KEY");
 const configuredBagworkRewardBps = intEnv("BAGWORK_REWARD_BPS", intEnv("PFP_REWARD_BPS", 5000));
@@ -86,7 +112,10 @@ export const config = {
   heliusRpcUrl: required("HELIUS_RPC_URL"),
   sourceTokenMint: publicKeyEnv("SOURCE_TOKEN_MINT"),
   rewardMode,
-  rewardTokenMint: configuredRewardTokenMint ?? new PublicKey("So11111111111111111111111111111111111111112"),
+  rewardTokenMint: rewardTokenMints[0] ?? new PublicKey("So11111111111111111111111111111111111111112"),
+  rewardTokenMints,
+  rewardTokenSymbol: configuredRewardTokenSymbols[0] ?? process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "reward",
+  rewardTokenSymbols: configuredRewardTokenSymbols,
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),
@@ -113,6 +142,18 @@ export const config = {
   priorityFeeSol: numberEnv("PRIORITY_FEE_SOL", 0.000001),
   minRewardRawToAirdrop: BigInt(Math.max(0, intEnv("MIN_REWARD_RAW_TO_AIRDROP", 1)))
 };
+
+export function activateRewardForEpoch(epochId: string) {
+  if (config.rewardMode !== "token" || config.rewardTokenMints.length <= 1) return;
+  const epochMs = config.epochMinutes * 60_000;
+  const epochNumber = Math.floor(Date.parse(epochId) / epochMs);
+  const index = ((epochNumber % config.rewardTokenMints.length) + config.rewardTokenMints.length) % config.rewardTokenMints.length;
+  config.rewardTokenMint = config.rewardTokenMints[index];
+  config.rewardTokenSymbol = config.rewardTokenSymbols[index] ?? `asset ${index + 1}`;
+  console.log(
+    `[${epochId}] active reward rotation ${index + 1}/${config.rewardTokenMints.length}: ${config.rewardTokenSymbol} ${config.rewardTokenMint.toBase58()}`
+  );
+}
 
 export function treasuryKeypair() {
   cachedTreasury ??= Keypair.fromSecretKey(parseSecret(config.treasuryWalletSecret));
