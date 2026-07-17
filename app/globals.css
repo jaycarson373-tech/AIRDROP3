@@ -4519,3 +4519,394 @@ th {
     font-size: 2.7rem;
   }
 }
+
+/* PTF hero replacement */
+.runner-hero {
+  isolation: isolate;
+  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  min-height: min(820px, calc(100vh - 118px));
+  overflow: hidden;
+  padding: clamp(34px, 5vw, 64px) 20px clamp(28px, 5vw, 58px);
+  position: relative;
+  text-align: center;
+}
+
+.ptf-hero-bg,
+.runner-hero-overlay,
+.ptf-chart-field,
+.ptf-floating-logos {
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.ptf-hero-bg {
+  background:
+    radial-gradient(circle at 50% 46%, rgba(52, 255, 115, 0.13), transparent 18rem),
+    radial-gradient(circle at 18% 82%, rgba(52, 255, 115, 0.11), transparent 22rem),
+    linear-gradient(rgba(50, 255, 115, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    #010201;
+  background-size: auto, auto, 48px 48px, 48px 48px, auto;
+  z-index: 0;
+}
+
+.ptf-hero-bg::before {
+  animation: ptfTerminalGrid 18s linear infinite;
+  background:
+    linear-gradient(135deg, transparent 0 42%, rgba(52, 255, 115, 0.1) 42.2% 42.8%, transparent 43% 100%),
+    repeating-linear-gradient(90deg, transparent 0 60px, rgba(52, 255, 115, 0.08) 60px 61px, transparent 61px 120px);
+  content: "";
+  inset: -20%;
+  opacity: 0.55;
+  position: absolute;
+}
+
+.runner-hero-overlay {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.54) 54%, rgba(0, 0, 0, 0.88) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.16) 48%, #010201 100%);
+  z-index: 3;
+}
+
+.ptf-chart-field {
+  display: block;
+  opacity: 0.72;
+  transform: translate3d(calc(var(--hero-x, 0px) * -0.14), calc(var(--hero-y, 0px) * -0.12), 0);
+  z-index: 1;
+}
+
+.ptf-chart-line {
+  animation: ptfChartClimb 16s linear infinite;
+  background:
+    linear-gradient(90deg, transparent 0 8%, rgba(52, 255, 115, 0.78) 8.4% 8.9%, transparent 9.3% 17%, rgba(183, 255, 198, 0.62) 17.3% 17.7%, transparent 18.1% 31%, rgba(52, 255, 115, 0.8) 31.3% 31.9%, transparent 32.3% 100%),
+    linear-gradient(90deg, transparent, rgba(52, 255, 115, 0.34), transparent);
+  bottom: 3%;
+  height: 3px;
+  left: -19%;
+  opacity: 0.34;
+  position: absolute;
+  transform: rotate(-18deg);
+  transform-origin: left bottom;
+  width: 126%;
+}
+
+.ptf-chart-2 { animation-delay: -2s; bottom: 9%; opacity: 0.26; transform: rotate(-22deg); }
+.ptf-chart-3 { animation-delay: -4s; bottom: 15%; opacity: 0.22; transform: rotate(-16deg); }
+.ptf-chart-4 { animation-delay: -6s; bottom: 22%; opacity: 0.18; transform: rotate(-24deg); }
+.ptf-chart-5 { animation-delay: -8s; bottom: 29%; opacity: 0.2; transform: rotate(-14deg); }
+.ptf-chart-6 { animation-delay: -10s; bottom: 37%; opacity: 0.14; transform: rotate(-20deg); }
+
+.ptf-chart-7,
+.ptf-chart-8,
+.ptf-chart-9,
+.ptf-chart-10,
+.ptf-chart-11,
+.ptf-chart-12 {
+  animation: ptfCandlesRise 20s linear infinite;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 22px,
+      rgba(52, 255, 115, 0.48) 22px 27px,
+      transparent 27px 38px,
+      rgba(255, 255, 255, 0.28) 38px 40px,
+      transparent 40px 58px
+    ),
+    linear-gradient(90deg, transparent, rgba(52, 255, 115, 0.22), transparent);
+  bottom: 2%;
+  height: 34%;
+  opacity: 0.16;
+  transform: rotate(-17deg);
+}
+
+.ptf-chart-8 { animation-delay: -3s; bottom: 10%; opacity: 0.13; }
+.ptf-chart-9 { animation-delay: -6s; bottom: 18%; opacity: 0.11; }
+.ptf-chart-10 { animation-delay: -9s; bottom: 27%; opacity: 0.1; }
+.ptf-chart-11 { animation-delay: -12s; bottom: 36%; opacity: 0.09; }
+.ptf-chart-12 { animation-delay: -15s; bottom: 45%; opacity: 0.08; }
+
+.ptf-floating-logos {
+  display: block;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.ptf-floating-logos span.ptf-hero-pill {
+  animation: ptfHeroPillFloat 18s ease-in-out infinite;
+  background:
+    radial-gradient(circle at 62% 25%, rgba(255, 255, 255, 0.58), transparent 0.9rem),
+    linear-gradient(135deg, #f6fff1 0 44%, #111 44% 48%, #29f36c 48% 100%);
+  border: 1px solid rgba(246, 255, 241, 0.18);
+  border-radius: 999px;
+  box-shadow:
+    0 0 32px rgba(52, 255, 115, 0.16),
+    inset 0 0 8px rgba(0, 0, 0, 0.72);
+  display: block;
+  height: var(--pill-h, 58px);
+  left: var(--pill-x, 10%);
+  opacity: var(--pill-o, 0.12);
+  position: absolute;
+  top: var(--pill-y, 20%);
+  transform: translate3d(calc(var(--hero-x, 0px) * var(--depth, 0.25)), calc(var(--hero-y, 0px) * var(--depth, 0.25)), 0) rotate(var(--pill-r, -18deg));
+  width: calc(var(--pill-h, 58px) * 0.46);
+}
+
+.ptf-floating-logos span:nth-child(1) { --pill-x: 8%; --pill-y: 18%; --pill-h: 50px; --pill-r: -24deg; --pill-o: 0.1; --depth: -0.16; animation-delay: -1s; }
+.ptf-floating-logos span:nth-child(2) { --pill-x: 18%; --pill-y: 72%; --pill-h: 76px; --pill-r: 16deg; --pill-o: 0.09; --depth: 0.28; animation-delay: -5s; }
+.ptf-floating-logos span:nth-child(3) { --pill-x: 31%; --pill-y: 14%; --pill-h: 44px; --pill-r: 34deg; --pill-o: 0.08; --depth: 0.42; animation-delay: -9s; }
+.ptf-floating-logos span:nth-child(4) { --pill-x: 68%; --pill-y: 15%; --pill-h: 62px; --pill-r: -12deg; --pill-o: 0.11; --depth: -0.34; animation-delay: -13s; }
+.ptf-floating-logos span:nth-child(5) { --pill-x: 83%; --pill-y: 34%; --pill-h: 86px; --pill-r: 24deg; --pill-o: 0.08; --depth: 0.2; animation-delay: -4s; }
+.ptf-floating-logos span:nth-child(6) { --pill-x: 76%; --pill-y: 78%; --pill-h: 54px; --pill-r: -32deg; --pill-o: 0.1; --depth: 0.48; animation-delay: -8s; }
+.ptf-floating-logos span:nth-child(7) { --pill-x: 43%; --pill-y: 84%; --pill-h: 66px; --pill-r: 9deg; --pill-o: 0.07; --depth: -0.24; animation-delay: -15s; }
+.ptf-floating-logos span:nth-child(8) { --pill-x: 91%; --pill-y: 68%; --pill-h: 42px; --pill-r: 42deg; --pill-o: 0.09; --depth: 0.36; animation-delay: -11s; }
+
+.runner-hero-copy {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  max-width: 820px;
+  position: relative;
+  text-align: center;
+  z-index: 4;
+}
+
+.ptf-hero-logo-shell {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 10px;
+  width: 100%;
+}
+
+.ptf-hero-logo {
+  filter: drop-shadow(0 0 42px rgba(52, 255, 115, 0.34)) drop-shadow(0 0 120px rgba(52, 255, 115, 0.16));
+  max-width: none;
+  width: clamp(360px, 46vw, 580px);
+}
+
+.runner-hero h1 {
+  color: #f7fff5;
+  font-size: clamp(4.2rem, 8vw, 7.4rem);
+  letter-spacing: -0.02em;
+  line-height: 0.86;
+  margin: 0;
+}
+
+.runner-hero-subtitle {
+  color: #35ff78;
+  font-size: clamp(1rem, 1.6vw, 1.32rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  margin: 8px 0 0;
+  text-transform: uppercase;
+}
+
+.runner-hero-thesis {
+  color: #f7fff5;
+  font-size: clamp(1.35rem, 2.4vw, 2.35rem);
+  font-weight: 850;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+  margin: 13px 0 0;
+}
+
+.runner-hero-line {
+  color: rgba(230, 242, 226, 0.86);
+  font-size: clamp(0.98rem, 1.18vw, 1.1rem);
+  line-height: 1.58;
+  margin: 14px auto 0;
+  max-width: 610px;
+}
+
+.runner-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.ptf-hero-stat-grid {
+  backdrop-filter: blur(18px);
+  background: rgba(1, 8, 3, 0.72);
+  border: 1px solid rgba(52, 255, 115, 0.2);
+  border-radius: 18px;
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 18px;
+  max-width: 820px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.ptf-hero-stat-grid span {
+  background: transparent;
+  border: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  box-shadow: none;
+  min-width: 0;
+  padding: 13px 16px;
+}
+
+.ptf-hero-stat-grid span:last-child {
+  border-right: 0;
+}
+
+.ptf-hero-stat-grid small {
+  color: rgba(204, 220, 199, 0.72);
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.ptf-hero-stat-grid strong {
+  color: #f7fff5;
+  display: block;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: clamp(0.78rem, 1vw, 0.96rem);
+  margin-top: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes ptfTerminalGrid {
+  from { transform: translate3d(-2%, 2%, 0); }
+  to { transform: translate3d(3%, -3%, 0); }
+}
+
+@keyframes ptfChartClimb {
+  from {
+    background-position: -260px 0, -120px 0;
+    transform: translate3d(-3%, 8%, 0) rotate(-18deg);
+  }
+  to {
+    background-position: 420px 0, 220px 0;
+    transform: translate3d(6%, -8%, 0) rotate(-18deg);
+  }
+}
+
+@keyframes ptfCandlesRise {
+  from {
+    background-position: -240px 0, -140px 0;
+    transform: translate3d(-4%, 8%, 0) rotate(-17deg);
+  }
+  to {
+    background-position: 340px 0, 180px 0;
+    transform: translate3d(7%, -9%, 0) rotate(-17deg);
+  }
+}
+
+@keyframes ptfHeroPillFloat {
+  0%, 100% {
+    margin-top: 0;
+    margin-left: 0;
+  }
+  50% {
+    margin-top: -22px;
+    margin-left: 14px;
+  }
+}
+
+@media (max-width: 760px) {
+  .runner-hero {
+    min-height: calc(100svh - 106px);
+    padding: 22px 16px 20px;
+  }
+
+  .ptf-hero-bg {
+    background-size: auto, auto, 36px 36px, 36px 36px, auto;
+  }
+
+  .ptf-chart-field {
+    opacity: 0.54;
+  }
+
+  .ptf-floating-logos span.ptf-hero-pill {
+    opacity: calc(var(--pill-o, 0.1) * 0.75);
+  }
+
+  .ptf-floating-logos span:nth-child(n + 7) {
+    display: none;
+  }
+
+  .ptf-hero-logo {
+    width: min(76vw, 360px);
+  }
+
+  .runner-hero h1 {
+    font-size: clamp(3.3rem, 18vw, 5.1rem);
+  }
+
+  .runner-hero-subtitle {
+    font-size: 0.82rem;
+    margin-top: 5px;
+  }
+
+  .runner-hero-thesis {
+    font-size: clamp(1.12rem, 5vw, 1.52rem);
+    margin-top: 9px;
+  }
+
+  .runner-hero-line {
+    font-size: 0.86rem;
+    line-height: 1.45;
+    margin-top: 9px;
+    max-width: 340px;
+  }
+
+  .runner-hero-actions {
+    gap: 9px;
+    margin-top: 13px;
+    width: min(100%, 342px);
+  }
+
+  .runner-hero-actions .runner-button {
+    min-height: 44px;
+    width: 100%;
+  }
+
+  .ptf-hero-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 12px;
+    max-width: 342px;
+  }
+
+  .ptf-hero-stat-grid span {
+    padding: 10px 11px;
+  }
+
+  .ptf-hero-stat-grid span:nth-child(2) {
+    border-right: 0;
+  }
+
+  .ptf-hero-stat-grid span:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .ptf-hero-stat-grid small {
+    font-size: 0.49rem;
+  }
+
+  .ptf-hero-stat-grid strong {
+    font-size: 0.72rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ptf-chart-line,
+  .ptf-floating-logos span.ptf-hero-pill,
+  .ptf-hero-bg::before {
+    animation: none;
+  }
+}

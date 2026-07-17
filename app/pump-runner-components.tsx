@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { CSSProperties, FormEvent, useEffect, useMemo, useState } from "react";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { CopyCaButton } from "./copy-ca-button";
 import { pumpRunnerConfig } from "./pump-runner-config";
@@ -410,16 +410,8 @@ function HeroMotion() {
   return (
     <>
       <div className="ptf-chart-field" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-        <span />
-        <span />
-      </div>
-      <div className="ptf-particles" aria-hidden="true">
-        {Array.from({ length: 18 }).map((_, index) => (
-          <i key={index} />
+        {Array.from({ length: 12 }).map((_, index) => (
+          <span className={`ptf-chart-line ptf-chart-${index + 1}`} key={index} />
         ))}
       </div>
       <div className="ptf-floating-logos" aria-hidden="true">
@@ -453,19 +445,32 @@ function HeroStats({ live }: { live: RunnerLiveData }) {
 }
 
 function HeroSection({ live }: { live: RunnerLiveData }) {
-  const activeAsset = activeFundAsset(live);
+  const [pointer, setPointer] = useState({ x: 0, y: 0 });
+  const heroStyle = {
+    "--hero-x": `${pointer.x}px`,
+    "--hero-y": `${pointer.y}px`
+  } as CSSProperties;
+
   return (
-    <section className="runner-hero" id="top">
+    <section
+      className="runner-hero"
+      id="top"
+      onPointerMove={(event) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        setPointer({
+          x: ((event.clientX - rect.left) / rect.width - 0.5) * 28,
+          y: ((event.clientY - rect.top) / rect.height - 0.5) * 22
+        });
+      }}
+      onPointerLeave={() => setPointer({ x: 0, y: 0 })}
+      style={heroStyle}
+    >
       <div className="ptf-hero-bg" aria-hidden="true" />
       <HeroMotion />
       <div className="runner-hero-overlay" aria-hidden="true" />
       <div className="runner-hero-copy">
         <div className="ptf-hero-logo-shell">
           <img className="ptf-hero-logo" src={pumpRunnerConfig.logoSrc} alt="PTF logo" />
-        </div>
-        <div className="runner-live-pill">
-          <span className="runner-live-dot" />
-          PUMP TREASURY FUND
         </div>
         <h1>PTF</h1>
         <p className="runner-hero-subtitle">Pump Treasury Fund</p>
@@ -486,65 +491,6 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
           </a>
         </div>
         <HeroStats live={live} />
-      </div>
-
-      <div className="runner-hero-panel" aria-label="PTF live fund terminal">
-        <div className="live-fund-label">
-          <span className="runner-live-dot" />
-          LIVE FUND
-        </div>
-        <div className="runner-panel-top">
-          <div className="runner-panel-title">
-            <img className="runner-token-logo" src={activeAsset.logoSrc} alt="" />
-            <div>
-              <span>CURRENT FUND BASKET</span>
-              <strong>{activeAsset.ticker}</strong>
-              <small>{activeAsset.token}</small>
-            </div>
-          </div>
-          <a className="runner-panel-link" href={activeAsset.dexScreenerUrl} target="_blank" rel="noreferrer">
-            Chart <ExternalLink size={14} />
-          </a>
-        </div>
-        <div className="runner-current-card">
-          <div className="runner-current-row">
-            <span>Status</span>
-            <strong>Active rotation</strong>
-          </div>
-          <div className="runner-current-row">
-            <span>Mint</span>
-            <strong>{activeAsset.mint ? compactAddress(activeAsset.mint) : "Set reward mint"}</strong>
-          </div>
-          <div className="runner-current-row">
-            <span>Basket Weight</span>
-            <strong>{activeAsset.amountAcquired}</strong>
-          </div>
-        </div>
-        <div className="runner-drop-card">
-          <span>NEXT AIRDROP</span>
-          <strong>{live.countdown}</strong>
-          <small>Every {pumpRunnerConfig.epochMinutes} minutes</small>
-        </div>
-        <div className="copy-terminal-card" aria-label="PTF live fund terminal">
-          <div><span>fund.size</span><strong>{pumpRunnerConfig.runnerBoard.length} assets</strong></div>
-          <div><span>active.basket</span><strong>{activeAsset.ticker}</strong></div>
-          <div><span>basket.weight</span><strong>{activeAsset.amountAcquired}</strong></div>
-          <div><span>next.rotation</span><strong>{live.countdown}</strong></div>
-        </div>
-        <div className="runner-hero-stats">
-          <span>
-            <small>Eligible</small>
-            <strong>{formatCount(live.stats.latestEligibleHolders, "0")}</strong>
-          </span>
-          <span>
-            <small>SOL Value Airdropped</small>
-            <strong>{formatSolAmount(live.stats.totalSolValueAirdropped)}</strong>
-          </span>
-          <span>
-            <small>Epoch</small>
-            <strong>{formatCount(live.stats.currentEpoch, "00")}</strong>
-          </span>
-        </div>
       </div>
     </section>
   );
