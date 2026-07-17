@@ -3607,6 +3607,333 @@ input {
   }
 }
 
+/* PTF hero protocol redesign */
+.runner-hero {
+  align-items: center;
+  display: grid;
+  gap: clamp(28px, 4vw, 54px);
+  grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.78fr);
+  min-height: min(760px, calc(100vh - 88px));
+  overflow: hidden;
+  padding-bottom: clamp(42px, 6vw, 74px);
+  padding-top: clamp(38px, 5vw, 70px);
+}
+
+.ptf-hero-bg {
+  background:
+    radial-gradient(circle at 50% 28%, rgba(53, 255, 120, 0.12), transparent 21rem),
+    linear-gradient(180deg, rgba(2, 4, 2, 0.98), rgba(0, 0, 0, 0.96));
+}
+
+.ptf-hero-bg::before {
+  animation: ptfFinancialSweep 13s linear infinite;
+  background:
+    linear-gradient(135deg, transparent 0 7%, rgba(53, 255, 120, 0.34) 7.4% 7.9%, transparent 8.3% 16%, rgba(53, 255, 120, 0.42) 16.4% 16.9%, transparent 17.3% 28%, rgba(190, 255, 201, 0.28) 28.4% 28.9%, transparent 29.3% 100%),
+    repeating-linear-gradient(90deg, transparent 0 26px, rgba(53, 255, 120, 0.18) 26px 29px, transparent 29px 42px);
+  bottom: 4%;
+  content: "";
+  height: 56%;
+  left: -12%;
+  opacity: 0.42;
+  position: absolute;
+  transform: rotate(-14deg);
+  transform-origin: left bottom;
+  width: 124%;
+}
+
+.ptf-hero-bg::after {
+  background:
+    linear-gradient(rgba(53, 255, 120, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 52% 45%, rgba(53, 255, 120, 0.1), transparent 18rem);
+  background-size: 42px 42px, 42px 42px, auto;
+  opacity: 0.62;
+}
+
+.ptf-chart-field {
+  display: block;
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: 0.64;
+  position: absolute;
+  z-index: 1;
+}
+
+.ptf-chart-field span {
+  animation: ptfChartTrace 11s linear infinite;
+  background:
+    linear-gradient(100deg, transparent 0 6%, rgba(53, 255, 120, 0.68) 6.2% 6.8%, transparent 7.2% 18%, rgba(53, 255, 120, 0.58) 18.2% 18.9%, transparent 19.4% 31%, rgba(255, 255, 255, 0.32) 31.2% 31.6%, transparent 32% 100%);
+  bottom: 10%;
+  height: 4px;
+  left: -18%;
+  opacity: 0.48;
+  position: absolute;
+  transform: rotate(-19deg);
+  width: 112%;
+}
+
+.ptf-chart-field span:nth-child(2) {
+  animation-delay: -2s;
+  bottom: 20%;
+  opacity: 0.34;
+  transform: rotate(-24deg);
+}
+
+.ptf-chart-field span:nth-child(3) {
+  animation-delay: -5s;
+  bottom: 33%;
+  opacity: 0.28;
+  transform: rotate(-16deg);
+}
+
+.ptf-chart-field span:nth-child(4),
+.ptf-chart-field span:nth-child(5),
+.ptf-chart-field span:nth-child(6) {
+  animation: ptfCandleDrift 14s linear infinite;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 24px,
+    rgba(53, 255, 120, 0.5) 24px 29px,
+    transparent 29px 38px,
+    rgba(255, 255, 255, 0.24) 38px 40px,
+    transparent 40px 54px
+  );
+  bottom: 6%;
+  height: 38%;
+  opacity: 0.18;
+  transform: rotate(-15deg);
+}
+
+.ptf-chart-field span:nth-child(5) {
+  animation-delay: -4s;
+  bottom: 17%;
+  opacity: 0.14;
+}
+
+.ptf-chart-field span:nth-child(6) {
+  animation-delay: -8s;
+  bottom: 29%;
+  opacity: 0.11;
+}
+
+.ptf-floating-logos {
+  display: none;
+}
+
+.runner-hero-overlay {
+  background:
+    radial-gradient(circle at 37% 36%, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.54) 42%, rgba(0, 0, 0, 0.9) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.32) 42%, #010201 98%);
+}
+
+.runner-hero-copy {
+  align-items: center;
+  max-width: 790px;
+  position: relative;
+  text-align: center;
+  z-index: 2;
+}
+
+.ptf-hero-logo-shell {
+  margin-bottom: clamp(10px, 2vw, 18px);
+}
+
+.ptf-hero-logo {
+  max-width: 560px;
+  width: clamp(310px, 38vw, 560px);
+}
+
+.runner-live-pill {
+  margin-bottom: 8px;
+}
+
+.runner-hero h1 {
+  color: #f7fff5;
+  font-size: clamp(4.1rem, 8vw, 7.8rem);
+  letter-spacing: -0.045em;
+  line-height: 0.84;
+  margin: 0;
+}
+
+.runner-hero-subtitle {
+  color: #35ff78;
+  font-size: clamp(1rem, 1.7vw, 1.35rem);
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  margin: 12px 0 0;
+  text-transform: uppercase;
+}
+
+.runner-hero-thesis {
+  color: #f7fff5;
+  font-size: clamp(1.45rem, 2.4vw, 2.35rem);
+  font-weight: 850;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  margin: 16px 0 0;
+}
+
+.runner-hero-line {
+  color: #c6d4c2;
+  font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+  line-height: 1.7;
+  margin-top: 16px;
+  max-width: 620px;
+}
+
+.runner-hero-actions {
+  margin-top: 22px;
+}
+
+.ptf-hero-stat-grid {
+  background: rgba(0, 0, 0, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  display: grid;
+  gap: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 22px;
+  max-width: 760px;
+  overflow: hidden;
+}
+
+.ptf-hero-stat-grid span {
+  background: transparent;
+  border: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 13px 15px;
+}
+
+.ptf-hero-stat-grid span:last-child {
+  border-right: 0;
+}
+
+.ptf-hero-stat-grid small {
+  color: #95a394;
+  font-size: 0.62rem;
+}
+
+.ptf-hero-stat-grid strong {
+  color: #f7fff5;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.96rem;
+  margin-top: 6px;
+}
+
+.runner-hero-panel {
+  position: relative;
+  z-index: 2;
+}
+
+.ptf-basket-token i {
+  display: none;
+}
+
+.ptf-header-banner {
+  border-bottom: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes ptfFinancialSweep {
+  from { background-position: 0 0, 0 0; transform: translate3d(-3%, 5%, 0) rotate(-14deg); }
+  to { background-position: 320px 0, 240px 0; transform: translate3d(6%, -6%, 0) rotate(-14deg); }
+}
+
+@keyframes ptfChartTrace {
+  from { background-position: -260px 0; transform: translate3d(-4%, 5%, 0) rotate(-19deg); }
+  to { background-position: 360px 0; transform: translate3d(7%, -6%, 0) rotate(-19deg); }
+}
+
+@keyframes ptfCandleDrift {
+  from { background-position: -240px 0; transform: translate3d(-4%, 5%, 0) rotate(-15deg); }
+  to { background-position: 260px 0; transform: translate3d(8%, -7%, 0) rotate(-15deg); }
+}
+
+@media (max-width: 760px) {
+  .runner-hero {
+    gap: 16px;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: auto;
+    padding: 24px 18px 26px;
+  }
+
+  .ptf-chart-field {
+    display: block;
+    opacity: 0.42;
+  }
+
+  .ptf-chart-field span {
+    bottom: 20%;
+    width: 150%;
+  }
+
+  .ptf-particles {
+    display: none;
+  }
+
+  .ptf-hero-logo {
+    width: min(72vw, 330px);
+  }
+
+  .runner-hero h1 {
+    font-size: clamp(4rem, 24vw, 6.4rem);
+  }
+
+  .runner-hero-subtitle {
+    font-size: 0.86rem;
+  }
+
+  .runner-hero-thesis {
+    font-size: clamp(1.35rem, 6vw, 1.85rem);
+    margin-top: 10px;
+  }
+
+  .runner-hero-line {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    margin-top: 10px;
+    max-width: 340px;
+  }
+
+  .runner-hero-actions {
+    gap: 10px;
+    margin-top: 16px;
+    width: min(100%, 342px);
+  }
+
+  .runner-hero-actions .runner-button {
+    min-height: 48px;
+    width: 100%;
+  }
+
+  .ptf-hero-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 14px;
+    max-width: 342px;
+  }
+
+  .ptf-hero-stat-grid span:nth-child(2) {
+    border-right: 0;
+  }
+
+  .ptf-hero-stat-grid span:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .ptf-hero-stat-grid small {
+    font-size: 0.56rem;
+  }
+
+  .ptf-hero-stat-grid strong {
+    font-size: 0.8rem;
+  }
+}
+
 /* PTF institutional green polish */
 .pump-runner-page {
   --runner-bg: #010201;

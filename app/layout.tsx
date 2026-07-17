@@ -5,10 +5,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ptf.fun"),
   title: "PTF — Pump Token Fund",
-  description: "Hold 1M+ $PTF and receive weighted Pump.fun token basket airdrops every 5 minutes as the fund rotates through the strongest active tokens.",
+  description: "Pump Treasury Fund tracks live treasury distributions, total SOL airdropped, completed epochs, eligible holders and the current Pump.fun basket.",
   openGraph: {
     title: "PTF — Pump Token Fund",
-    description: "Hold one token. Own the Pump.fun rotation.",
+    description: "The treasury behind Pump.fun. Live SOL distributed, epochs, holders and weighted 5-minute treasury drops.",
     url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://ptf.fun",
     siteName: "PTF",
     images: [
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "PTF — Pump Token Fund",
-    description: "Weighted Pump.fun token basket drops every 5 minutes for 1M+ $PTF holders.",
+    description: "Pump Treasury Fund: live SOL distributed, epochs, holders and weighted 5-minute treasury drops.",
     images: [
       {
         url: "https://ptf.fun/brand/og-image.png",

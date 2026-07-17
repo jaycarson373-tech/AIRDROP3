@@ -192,7 +192,7 @@ export const pumpRunnerConfig = {
     currentMarketCap: asset.route,
     returnSinceDetection: "Rotating",
     amountAcquired: asset.weight,
-    status: "1 asset per epoch",
+    status: "Active rotation",
     dexScreenerUrl: asset.dexScreenerUrl
   })) satisfies RunnerBoardRow[],
   performanceRows: [

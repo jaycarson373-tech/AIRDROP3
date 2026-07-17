@@ -413,6 +413,9 @@ function HeroMotion() {
         <span />
         <span />
         <span />
+        <span />
+        <span />
+        <span />
       </div>
       <div className="ptf-particles" aria-hidden="true">
         {Array.from({ length: 18 }).map((_, index) => (
@@ -431,12 +434,10 @@ function HeroMotion() {
 function HeroStats({ live }: { live: RunnerLiveData }) {
   const activeAsset = activeFundAsset(live);
   const stats = [
+    ["Current Selection", activeAsset.ticker],
     ["Current Treasury Value", formatSolAmount(live.stats.totalSolValueAirdropped)],
-    ["Next Airdrop", live.countdown],
-    ["Current Basket", activeAsset.ticker],
-    ["Eligible Holders", formatCount(live.stats.latestEligibleHolders, "0")],
-    ["Total Distributed", formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)],
-    ["Current Rotation", `${activeAsset.currentMarketCap}`]
+    ["Next Distribution", live.countdown],
+    ["Eligible Holders", formatCount(live.stats.latestEligibleHolders, "0")]
   ];
 
   return (
@@ -466,23 +467,23 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
           <span className="runner-live-dot" />
           PUMP TREASURY FUND
         </div>
-        <h1>Pump Treasury Fund</h1>
-        <p className="runner-hero-subtitle">
-          Hold one token. Own the Pump.fun rotation.
+        <h1>PTF</h1>
+        <p className="runner-hero-subtitle">Pump Treasury Fund</p>
+        <p className="runner-hero-thesis">The treasury never stops buying.</p>
+        <p className="runner-hero-line">
+          Protocol fees continuously accumulate selected Pump.fun tokens.
+          <br />
+          Hold 1,000,000+ {tokenLabel}.
+          <br />
+          Receive weighted treasury distributions every 5 minutes.
         </p>
-        <p className="runner-hero-line">Protocol fees continuously accumulate selected Pump.fun tokens. Hold 1M+ {tokenLabel} to receive weighted treasury distributions every 5 minutes.</p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
           </a>
           <a className="runner-button runner-button-secondary" href="#drops">
-            View The Fund
+            View Treasury
           </a>
-        </div>
-        <div className="copy-terminal-strip" aria-label="PTF fund terminal preview">
-          <span>Protocol fees accumulate</span>
-          <strong>Weighted holder distributions</strong>
-          <small>Every 5 minutes</small>
         </div>
         <HeroStats live={live} />
       </div>
@@ -508,7 +509,7 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
         <div className="runner-current-card">
           <div className="runner-current-row">
             <span>Status</span>
-            <strong>1 per epoch</strong>
+            <strong>Active rotation</strong>
           </div>
           <div className="runner-current-row">
             <span>Mint</span>
@@ -527,7 +528,7 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
         <div className="copy-terminal-card" aria-label="PTF live fund terminal">
           <div><span>fund.size</span><strong>{pumpRunnerConfig.runnerBoard.length} assets</strong></div>
           <div><span>active.basket</span><strong>{activeAsset.ticker}</strong></div>
-          <div><span>basket.route</span><strong>25% each / 1 per epoch</strong></div>
+          <div><span>basket.weight</span><strong>{activeAsset.amountAcquired}</strong></div>
           <div><span>next.rotation</span><strong>{live.countdown}</strong></div>
         </div>
         <div className="runner-hero-stats">
@@ -1209,7 +1210,6 @@ export function PumpRunnerHome() {
       <AnimatedBackground />
       <MarketTicker live={live} />
       <RunnerNav />
-      <HeaderBanner />
       <main>
         <HeroSection live={live} />
         <FundStrip live={live} />
@@ -1224,6 +1224,7 @@ export function PumpRunnerHome() {
         <CopyHistoryChart />
         <FaqSection />
       </main>
+      <HeaderBanner />
     </div>
   );
 }
