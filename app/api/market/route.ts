@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { defaultCurrentRunner } from "../../pump-runner-config";
+import { defaultCurrentRunner, pumpRunnerConfig } from "../../pump-runner-config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -46,6 +46,7 @@ type MarketPayload = {
   reward: TokenMarket;
   source: TokenMarket;
   sol: TokenMarket;
+  basket: Record<string, TokenMarket>;
   updatedAt: string;
 };
 
@@ -133,10 +134,17 @@ export async function GET() {
 
   const reward = rewardMint();
   const source = sourceMint();
-  const pairs = await fetchDexPairs([reward, source, SOL_MINT].filter(Boolean) as string[]);
+  const basketMints = pumpRunnerConfig.runnerBoard.map((asset) => asset.mint).filter(Boolean);
+  const pairs = await fetchDexPairs([reward, source, SOL_MINT, ...basketMints].filter(Boolean) as string[]);
   const rewardSymbol = reward === defaultCurrentRunner.mint
     ? defaultCurrentRunner.ticker
     : process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || defaultCurrentRunner.ticker;
+  const basket = Object.fromEntries(
+    pumpRunnerConfig.runnerBoard.map((asset) => [
+      asset.mint,
+      marketFromPair(pickPair(pairs, asset.mint), asset.ticker)
+    ])
+  );
   const payload: MarketPayload = {
     reward: marketFromPair(pickPair(pairs, reward), rewardSymbol),
     source: marketFromPair(
@@ -144,6 +152,7 @@ export async function GET() {
       process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "PTF"
     ),
     sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
+    basket,
     updatedAt: new Date().toISOString()
   };
 

@@ -53,6 +53,7 @@ type MarketResponse = {
   reward: MarketToken;
   source: MarketToken;
   sol: MarketToken;
+  basket?: Record<string, MarketToken>;
   updatedAt: string;
 };
 
@@ -129,6 +130,7 @@ const emptyMarket: MarketResponse = {
   reward: emptyMarketToken(rewardSymbol),
   source: emptyMarketToken(sourceSymbol),
   sol: emptyMarketToken("SOL"),
+  basket: {},
   updatedAt: new Date().toISOString()
 };
 
@@ -292,6 +294,8 @@ function activeFundAsset(live: RunnerLiveData) {
 }
 
 function assetPrice(asset: (typeof pumpRunnerConfig.runnerBoard)[number], live: RunnerLiveData) {
+  const basketPrice = live.market.basket?.[asset.mint]?.priceUsd;
+  if (basketPrice !== undefined) return formatPrice(basketPrice, "Live");
   return asset.mint === pumpRunnerConfig.rewardMint ? formatPrice(live.market.reward.priceUsd, "Live") : "Live";
 }
 
@@ -507,7 +511,7 @@ function FundStrip({ live }: { live: RunnerLiveData }) {
             <img src={item.logoSrc} alt="" loading="lazy" />
             <span>
               <strong>{item.ticker}</strong>
-              <small>{fund === 0 ? formatPrice(live.market.reward.priceUsd, "Live") : item.status}</small>
+              <small>{fund === 0 ? assetPrice(item, live) : item.status}</small>
             </span>
             <em>{item.amountAcquired}</em>
           </a>
