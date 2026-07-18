@@ -4,7 +4,7 @@ export const defaultCurrentRunner = {
   mint: "J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump",
   logoSrc: "/brand/triplet-logo.jpg",
   scannedMarketCap: "Active accumulation",
-  scannedAgo: "Only active fund drop",
+  scannedAgo: "AI selected runner",
   dexScreenerUrl: "https://dexscreener.com/solana/J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump"
 } as const;
 
@@ -52,7 +52,7 @@ const fundBasketAssets = [
 ] as const;
 
 const defaultContractAddress = "8Ab3XVBjvRB2p6sunVJgAiHGmwJA8hSgbs36kZFxpump";
-const defaultXUrl = "https://x.com/PTF_sol";
+const defaultXUrl = "";
 const defaultDexScreenerUrl = `https://dexscreener.com/solana/${defaultContractAddress}`;
 
 function cleanEnv(value: string | undefined) {
@@ -80,7 +80,7 @@ function cleanSocialUrl(value: string) {
   if (!value) return "";
   const lower = value.toLowerCase();
   if (!lower.includes("x.com/")) return value;
-  return /(?:ptf|pump|treasury|fund)/i.test(value) ? value : "";
+  return /(?:runner|animal|pump)/i.test(value) ? value : "";
 }
 
 const contractAddress =
@@ -96,7 +96,7 @@ const activeRunnerTicker = useDefaultCurrentRunner ? defaultCurrentRunner.ticker
 const activeRunnerLabel = activeRunnerTicker.startsWith("$") ? activeRunnerTicker : `$${activeRunnerTicker}`;
 const activeRunnerName =
   rawActiveRunnerName ||
-  (useDefaultCurrentRunner || rewardMint === defaultCurrentRunner.mint ? defaultCurrentRunner.name : `${activeRunnerTicker} Fund Asset`);
+  (useDefaultCurrentRunner || rewardMint === defaultCurrentRunner.mint ? defaultCurrentRunner.name : `${activeRunnerTicker} Runner`);
 const parsedMinimumHolding = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
 const minimumHolding = Number.isFinite(parsedMinimumHolding) && parsedMinimumHolding > 0 ? parsedMinimumHolding : 1_000_000;
 const rawActiveRunnerDexUrl = cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_DEXSCREENER_URL", "NEXT_PUBLIC_ACTIVE_RUNNER_DEXSCREENER_URL");
@@ -127,12 +127,12 @@ export type RunnerPerformanceRow = {
 };
 
 export const pumpRunnerConfig = {
-  name: "PTF",
-  ticker: "PTF",
-  tokenLabel: "$PTF",
+  name: "Runner",
+  ticker: "RUNNER",
+  tokenLabel: "$RUNNER",
   rewardSymbol: activeRunnerTicker,
-  logoSrc: "/brand/ptf-logo.png",
-  backgroundSrc: "/brand/ptf-logo.png",
+  logoSrc: "/brand/runner-logo.svg",
+  backgroundSrc: "/brand/runner-logo.svg",
   bannerSrc: "/brand/ptf-header-banner.jpg",
   contractAddress,
   rewardMint,
@@ -143,7 +143,7 @@ export const pumpRunnerConfig = {
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL ?? "",
   minimumHolding,
   epochMinutes: Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5),
-  scannerStatus: "LIVE",
+  scannerStatus: "AI SCANNING",
   treasuryStatus: "ACTIVE",
   currentRunner: {
     name: activeRunnerName,
@@ -152,8 +152,8 @@ export const pumpRunnerConfig = {
     logoSrc: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_LOGO_SRC", "NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC") || defaultCurrentRunner.logoSrc,
     dexScreenerUrl: activeRunnerDexUrl,
     detectedMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_ENTRY_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP") || defaultCurrentRunner.scannedMarketCap,
-    currentMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_CURRENT_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP") || "Live basket",
-    amountAcquired: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_AMOUNT", "NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT") || "Holder weight active",
+    currentMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_CURRENT_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP") || "Live runner",
+    amountAcquired: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_AMOUNT", "NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT") || "AI selected",
     status: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_STATUS", "NEXT_PUBLIC_ACTIVE_RUNNER_STATUS") || "Airdropping now"
   },
   marketTickerFallback: {
@@ -164,16 +164,16 @@ export const pumpRunnerConfig = {
     totalDistributed: "$0"
   },
   scannerMetrics: {
-    tokensTracked: "6,900",
-    signalsReviewed: "690",
+    tokensTracked: "LIVE",
+    signalsReviewed: "ACTIVE",
     runnersSelected: "1",
     currentEpoch: "0"
   },
   treasuryStatistics: {
     runnersCaughtToday: "1",
-    averageEntryMarketCap: "Current selection",
+    averageEntryMarketCap: "Current runner",
     averageReturn: "Live epoch",
-    bestRunner: "$ANSEM",
+    bestRunner: activeRunnerLabel,
     totalDistributedToday: "0 SOL"
   },
   multiplierTiers: [
@@ -192,7 +192,7 @@ export const pumpRunnerConfig = {
     currentMarketCap: asset.route,
     returnSinceDetection: "Rotating",
     amountAcquired: asset.weight,
-    status: "Active rotation",
+    status: "AI rotation",
     dexScreenerUrl: asset.dexScreenerUrl
   })) satisfies RunnerBoardRow[],
   performanceRows: [
@@ -201,11 +201,11 @@ export const pumpRunnerConfig = {
   scannerCards: [
     {
       title: "SCAN",
-      body: "The fund scans Pump.fun activity, attention, liquidity and rotation strength."
+      body: "The AI scanner watches animal-token momentum, liquidity, attention and rotation strength."
     },
     {
       title: "SELECT",
-      body: "The strongest eligible token enters the active fund basket."
+      body: "The strongest eligible runner enters the active rotation."
     },
     {
       title: "SNAPSHOT",
@@ -213,7 +213,7 @@ export const pumpRunnerConfig = {
     },
     {
       title: "DROP",
-      body: "Eligible holders receive the active Pump.fun basket asset with onchain receipts."
+      body: "Eligible holders receive the active runner with onchain receipts."
     }
   ]
 } as const;

@@ -2897,7 +2897,7 @@ input {
 
 .ptf-hero-bg::before {
   color: rgba(141, 255, 168, 0.055);
-  content: "PUMP.FUN    TREASURY    ROTATION    $PTF    BASKET    PUMP.FUN";
+  content: "RUNNER    AI SCANNER    ANIMAL TOKENS    $RUNNER    NEVER MISS";
   font-size: clamp(2.7rem, 7vw, 7.4rem);
 }
 
@@ -5255,10 +5255,10 @@ th {
 .pump-runner-page::before {
   animation: ptfBackgroundDrift 38s ease-in-out infinite alternate;
   background:
-    radial-gradient(circle at 50% 18%, rgba(53, 255, 120, 0.13), transparent 34rem),
-    linear-gradient(180deg, rgba(1, 2, 1, 0.42), rgba(1, 2, 1, 0.86) 52%, #010201 100%),
-    url("/brand/ptf-banner.jpg") center 7rem / min(1500px, 140vw) auto repeat-y;
-  opacity: 0.22;
+    radial-gradient(circle at 50% 18%, rgba(53, 255, 120, 0.11), transparent 34rem),
+    radial-gradient(circle at 15% 72%, rgba(53, 255, 120, 0.07), transparent 22rem),
+    linear-gradient(180deg, rgba(1, 2, 1, 0.4), rgba(1, 2, 1, 0.88) 52%, #010201 100%);
+  opacity: 0.58;
 }
 
 .runner-section-heading .eyebrow,

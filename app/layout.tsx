@@ -4,31 +4,31 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ptf.fun"),
-  title: "PTF — Pump Treasury Fund",
-  description: "Pump Treasury Fund tracks live treasury distributions, distributed SOL value, completed epochs, eligible holders and the current Pump.fun selection.",
+  title: "Runner — Never Miss a Runner",
+  description: "Runner uses an AI scanning system to find animal-token runners and distribute selected tokens to eligible holders every epoch.",
   openGraph: {
-    title: "PTF — Pump Treasury Fund",
-    description: "The treasury behind Pump.fun. Live distributed value, epochs, holders and weighted 5-minute treasury distributions.",
+    title: "Runner — Never Miss a Runner",
+    description: "AI-scanned animal-token runners, live epochs, eligible holders and onchain distributions.",
     url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://ptf.fun",
-    siteName: "PTF",
+    siteName: "Runner",
     images: [
       {
         url: "https://ptf.fun/brand/og-image.png",
         width: 1200,
         height: 630,
-        alt: "PTF — Pump Treasury Fund"
+        alt: "Runner — Never Miss a Runner"
       }
     ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "PTF — Pump Treasury Fund",
-    description: "Pump Treasury Fund: live distributed value, epochs, holders and weighted 5-minute treasury distributions.",
+    title: "Runner — Never Miss a Runner",
+    description: "AI-scanned animal-token runners, live epochs, eligible holders and onchain distributions.",
     images: [
       {
         url: "https://ptf.fun/brand/og-image.png",
-        alt: "PTF — Pump Treasury Fund"
+        alt: "Runner — Never Miss a Runner"
       }
     ]
   },

@@ -342,18 +342,18 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
   const items = [
     `CURRENT SELECTION ${activeAsset.ticker}`,
     `${activeAsset.ticker} PRICE ${assetPrice(activeAsset, live)}`,
-    `WEIGHTED TREASURY DISTRIBUTIONS`,
+    `AI RUNNER DROPS`,
     `DISTRIBUTED VALUE ${formatSolAmount(live.stats.totalSolValueAirdropped)}`,
     `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
     `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
     `${tokenLabel} PRICE ${formatPrice(source.priceUsd)}`,
     `NEXT DISTRIBUTION ${displayCountdown(live)}`,
-    `FUND ENGINE ${pumpRunnerConfig.scannerStatus}`,
-    `TREASURY ${pumpRunnerConfig.treasuryStatus}`
+    `AI SCANNER ${pumpRunnerConfig.scannerStatus}`,
+    `RUNNER VAULT ${pumpRunnerConfig.treasuryStatus}`
   ];
 
   return (
-    <div className="runner-ticker" aria-label="Live PTF market ticker">
+    <div className="runner-ticker" aria-label="Live Runner market ticker">
       <div className="runner-ticker-track">
         {[0, 1].map((copy) => (
           <div className="runner-ticker-group" key={copy}>
@@ -387,16 +387,16 @@ function RunnerNav() {
   const ca = pumpRunnerConfig.contractAddress;
   return (
     <header className="runner-nav">
-      <a className="runner-brand" href="#top" aria-label="PTF home">
+      <a className="runner-brand" href="#top" aria-label="Runner home">
         <img className="runner-brand-logo" src={pumpRunnerConfig.logoSrc} alt="" />
         <span>
           <strong>{pumpRunnerConfig.name}</strong>
-          <small>Pump Treasury Fund</small>
+          <small>Never miss a runner</small>
         </span>
       </a>
       <nav className="runner-links" aria-label="Primary navigation">
-        <a href="#board">Fund</a>
-        <a href="#scanner">Engine</a>
+        <a href="#board">Runners</a>
+        <a href="#scanner">AI Scanner</a>
         <a href="#eligibility">Holders</a>
         <a href="#drops">Receipts</a>
       </nav>
@@ -408,7 +408,7 @@ function RunnerNav() {
           </a>
         ) : null}
         <a className="runner-small-button runner-buy-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
-          Buy PTF
+          Buy RUNNER
         </a>
       </div>
     </header>
@@ -419,12 +419,12 @@ function HeaderBanner() {
   const links = [
     { label: "DexScreener", href: pumpRunnerConfig.dexScreenerUrl },
     { label: "Pump.fun", href: pumpRunnerConfig.pumpFunUrl },
-    { label: "Buy $PTF", href: pumpRunnerConfig.buyUrl },
+    { label: "Buy $RUNNER", href: pumpRunnerConfig.buyUrl },
     { label: "X", href: pumpRunnerConfig.xUrl }
   ].filter((link) => link.href);
 
   return (
-    <section className="ptf-footer-links" aria-label="PTF links">
+    <section className="ptf-footer-links" aria-label="Runner links">
       <div className="ptf-footer-links-inner">
         {links.map((link) => (
           <a href={link.href} key={link.label} target="_blank" rel="noreferrer">
@@ -454,14 +454,14 @@ function HeroMotion() {
 function HeroStats({ live }: { live: RunnerLiveData }) {
   const activeAsset = activeFundAsset(live);
   const stats = [
-    ["Current Selection", activeAsset.ticker],
-    ["Treasury Value", displaySettledSol(live.stats.totalSolValueAirdropped)],
+    ["Current Runner", activeAsset.ticker],
+    ["Runner Value", displaySettledSol(live.stats.totalSolValueAirdropped)],
     ["Next Distribution", displayCountdown(live)],
     ["Eligible Holders", formatCount(live.stats.latestEligibleHolders, "0")]
   ];
 
   return (
-    <div className="ptf-hero-stat-grid" aria-label="PTF hero stats">
+    <div className="ptf-hero-stat-grid" aria-label="Runner hero stats">
       {stats.map(([label, value]) => (
         <span key={label}>
           <small>{label}</small>
@@ -498,22 +498,22 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
       <div className="runner-hero-overlay" aria-hidden="true" />
       <div className="runner-hero-copy">
         <div className="ptf-hero-logo-shell">
-          <img className="ptf-hero-logo" src={pumpRunnerConfig.logoSrc} alt="PTF logo" />
+          <img className="ptf-hero-logo" src={pumpRunnerConfig.logoSrc} alt="Runner logo" />
         </div>
-        <h1>PTF</h1>
-        <p className="runner-hero-subtitle">Pump Treasury Fund</p>
-        <p className="runner-hero-thesis">The treasury never stops buying.</p>
+        <h1>RUNNER</h1>
+        <p className="runner-hero-subtitle">AI animal-token scanner</p>
+        <p className="runner-hero-thesis">Never miss a runner.</p>
         <p className="runner-hero-line">
-          Protocol fees continuously accumulate the strongest Pump.fun tokens.
+          Runner scans Pump.fun for animal tokens with real momentum.
           <br />Hold 1,000,000+ {tokenLabel}.
-          <br />Receive weighted treasury distributions every 5 minutes.
+          <br />Receive weighted runner drops every 5 minutes.
         </p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
           </a>
           <a className="runner-button runner-button-secondary" href="#board">
-            View Live Treasury
+            View Live Runners
           </a>
         </div>
         <HeroStats live={live} />
@@ -526,7 +526,7 @@ function FundStrip({ live }: { live: RunnerLiveData }) {
   const items = pumpRunnerConfig.runnerBoard;
 
   return (
-    <section className="fund-strip" aria-label="Live PTF fund strip">
+    <section className="fund-strip" aria-label="Live Runner strip">
       <div className="fund-strip-track">
         {[...items, ...items].map((item, fund) => (
           <a className="fund-strip-card" href={item.dexScreenerUrl} key={`${item.rank}-${fund}`} target="_blank" rel="noreferrer">
@@ -555,12 +555,12 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
   const activityRows = feedRows.length
     ? feedRows
     : [
-        { label: "Treasury scanning Pump.fun", value: "Live", meta: "rotation engine" },
-        { label: `Treasury buying ${activeFundAsset(live).ticker}`, value: "Queued", meta: "next epoch" },
+        { label: "AI scanning animal runners", value: "Live", meta: "signal engine" },
+        { label: `Runner buying ${activeFundAsset(live).ticker}`, value: "Queued", meta: "next epoch" },
         { label: "Distribution route armed", value: `${formatCount(live.stats.latestEligibleHolders, "0")} holders`, meta: "eligible" }
       ];
   const metrics = [
-    ["Treasury Value", treasuryValue],
+    ["Runner Value", treasuryValue],
     ["Next Distribution", displayCountdown(live)],
     ["Eligible Holders", formatCount(live.stats.latestEligibleHolders, "0")],
     ["Epoch", formatCount(live.stats.currentEpoch || live.stats.totalEpochs, "0")]
@@ -569,17 +569,17 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
   return (
     <section className="runner-section" id="board">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Live Treasury</span>
-        <h2>CURRENT TREASURY POSITION</h2>
-        <p>A live terminal for the current selection, next distribution and holder-weight flow.</p>
+        <span className="runner-kicker">Live Runners</span>
+        <h2>CURRENT RUNNER</h2>
+        <p>A clean terminal for the active runner, next drop and holder-weight flow.</p>
       </div>
       <div className="ptf-treasury-card">
         <div className="ptf-treasury-main">
           <div className="ptf-treasury-head">
             <div>
-              <span className="runner-kicker">Current Selection</span>
+              <span className="runner-kicker">Current Runner</span>
               <h3>{activeCopy.ticker}</h3>
-              <p>{activeCopy.token} · {selectedPrice} · Selected token</p>
+              <p>{activeCopy.token} · {selectedPrice} · AI selected</p>
             </div>
             <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
               Active chart <ExternalLink size={15} />
@@ -588,7 +588,7 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
           <div className="ptf-selection-focus">
             {activeCopy.logoSrc ? <img src={activeCopy.logoSrc} alt="" loading="lazy" /> : null}
             <div>
-              <span>Selected token</span>
+              <span>AI selected runner</span>
               <strong>{activeCopy.token}</strong>
               <small>{compactAddress(activeCopy.mint)} · {activeCopy.status}</small>
             </div>
@@ -607,12 +607,12 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
         </div>
         <aside className="ptf-treasury-side">
           <div className="ptf-countdown-card">
-            <span>Next Treasury Distribution</span>
+            <span>Next Runner Drop</span>
             <strong>{displayCountdown(live)}</strong>
-            <p>When this reaches zero, the treasury processes the next eligible distribution.</p>
+            <p>When this reaches zero, the system processes the next eligible runner drop.</p>
           </div>
           <div className="ptf-activity-feed">
-            <span>Live Fund Activity</span>
+            <span>Live Scanner Activity</span>
             {activityRows.map((row) => (
               <div className="ptf-activity-row" key={`${row.label}-${row.value}`}>
                 <strong>{row.label}</strong>
@@ -630,11 +630,11 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
 export function ScannerStatus({ live }: { live: RunnerLiveData }) {
   const selectedCopies = pumpRunnerConfig.runnerBoard.filter((runner) => /^scanned/i.test(runner.status)).length;
   const rows = [
-    ["FUND ENGINE", "ONLINE"],
+    ["AI SCANNER", "ONLINE"],
     ["CURRENT DROP", rewardSymbol],
-    ["FUND ASSETS", pumpRunnerConfig.runnerBoard.length.toString()],
+    ["RUNNERS TRACKED", pumpRunnerConfig.runnerBoard.length.toString()],
     ["ELIGIBLE HOLDERS", formatCount(live.stats.latestEligibleHolders, "0")],
-    ["BASKET SLOTS", Math.max(selectedCopies, pumpRunnerConfig.runnerBoard.length).toString()],
+    ["ANIMAL WATCHLIST", Math.max(selectedCopies, pumpRunnerConfig.runnerBoard.length).toString()],
     ["LIVE DROP EPOCHS", formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")],
     [`${rewardSymbol} AIRDROPPED`, formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)]
   ];
@@ -642,10 +642,10 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
   return (
     <section className="runner-section" id="scanner">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Fund Engine</span>
-        <h2>TREASURY ENGINE</h2>
+        <span className="runner-kicker">AI Scanner</span>
+        <h2>RUNNER ENGINE</h2>
         <p>
-          A rotating treasury basket built around Pump.fun token momentum.
+          An AI scanning system built to catch animal-token momentum before it is obvious.
         </p>
       </div>
       <div className="runner-scanner-layout">
@@ -664,7 +664,7 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
               <strong>{value}</strong>
             </div>
           ))}
-          <p>The exact methodology remains private so the fund can rotate before the trade becomes obvious.</p>
+          <p>The exact methodology remains private so Runner can catch movement before the trade becomes obvious.</p>
         </div>
       </div>
     </section>
@@ -675,16 +675,14 @@ function CopyCatOrigin() {
   return (
     <section className="runner-section runner-origin" id="origin">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Fund Thesis</span>
-        <h2>THE FUND NEVER SLEEPS.</h2>
-        <p>
-          It scans. It rotates. It snapshots. It drops.
-        </p>
+        <span className="runner-kicker">Runner Thesis</span>
+        <h2>THE AI NEVER SLEEPS.</h2>
+        <p>It scans. It spots. It snapshots. It drops.</p>
       </div>
       <div className="runner-origin-grid">
         <article className="runner-info-card">
           <h3>01 · Add</h3>
-          <p>New Pump.fun launches and active rotations can enter the basket.</p>
+          <p>New animal-token launches and active rotations can enter the watchlist.</p>
         </article>
         <article className="runner-info-card">
           <h3>02 · Weight</h3>
@@ -692,7 +690,7 @@ function CopyCatOrigin() {
         </article>
         <article className="runner-info-card">
           <h3>03 · Drop</h3>
-          <p>Eligible holders receive basket drops with onchain receipts.</p>
+          <p>Eligible holders receive runner drops with onchain receipts.</p>
         </article>
       </div>
     </section>
@@ -703,23 +701,23 @@ function HowItWorks() {
   const steps = [
     {
       label: "01",
-      title: "The fund scans Pump.fun",
-      body: "The fund watches Pump.fun activity, liquidity, attention and rotation strength."
+      title: "The AI scans Pump.fun",
+      body: "Runner watches animal-token activity, liquidity, attention and rotation strength."
     },
     {
       label: "02",
-      title: "Strong tokens enter the basket",
-      body: "The strongest active Pump.fun token becomes the current treasury selection."
+      title: "Strong animal tokens enter rotation",
+      body: "The strongest active runner becomes the current selection."
     },
     {
       label: "03",
       title: `Hold 1M+ ${tokenLabel}`,
-      body: "Eligible wallets stay in the holder snapshot while the treasury rotates."
+      body: "Eligible wallets stay in the holder snapshot while Runner rotates."
     },
     {
       label: "04",
-      title: "Receive distributions",
-      body: `Eligible holders receive weighted Pump.fun token distributions every ${pumpRunnerConfig.epochMinutes} minutes.`
+      title: "Receive runner drops",
+      body: `Eligible holders receive weighted runner distributions every ${pumpRunnerConfig.epochMinutes} minutes.`
     },
     {
       label: "05",
@@ -732,7 +730,7 @@ function HowItWorks() {
     <section className="runner-section runner-how" id="how">
       <div className="runner-section-heading">
         <span className="runner-kicker">How It Works</span>
-      <h2>THE TREASURY NEVER STOPS MOVING.</h2>
+      <h2>NEVER MISS A RUNNER.</h2>
       </div>
       <div className="runner-step-list">
         {steps.map((step) => (
@@ -743,7 +741,7 @@ function HowItWorks() {
           </article>
         ))}
       </div>
-      <strong className="runner-bold-line">Hold {tokenLabel}. Stay eligible for the active selection.</strong>
+      <strong className="runner-bold-line">Hold {tokenLabel}. Stay eligible for every runner the AI catches.</strong>
     </section>
   );
 }
@@ -808,7 +806,7 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
       </div>
       <div className="runner-eligibility-grid">
         <div className="runner-check-card">
-          <h3>To qualify for treasury distributions, a wallet must:</h3>
+          <h3>To qualify for runner drops, a wallet must:</h3>
           <ul>
             <li>Hold at least {required}</li>
             <li>Be holding at the eligibility snapshot</li>
@@ -932,7 +930,7 @@ export function HolderPayoutBoard({ live }: { live: RunnerLiveData }) {
       <div className="runner-section-heading">
         <span className="runner-kicker">Wallet Payouts</span>
         <h2>EPOCH WEIGHT BOARD</h2>
-        <p>Wallet rewards ranked by fund tokens received, held-epoch streak and current multiplier.</p>
+        <p>Wallet rewards ranked by runner tokens received, held-epoch streak and current multiplier.</p>
       </div>
       <div className="runner-table-wrap">
         <table className="runner-table runner-holder-payouts">
@@ -962,7 +960,7 @@ export function HolderPayoutBoard({ live }: { live: RunnerLiveData }) {
               ))
             ) : (
               <tr>
-                <td colSpan={7}>Payout board fills in after the first settled fund drop.</td>
+                <td colSpan={7}>Payout board fills in after the first settled runner drop.</td>
               </tr>
             )}
           </tbody>
@@ -985,7 +983,7 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
   const upcomingRows = [
     {
       time: live.countdown,
-      token: "Next treasury distribution",
+      token: "Next runner drop",
       distributed: "Queued",
       wallets: `${formatCount(live.stats.latestEligibleHolders, "0")} eligible wallets`,
       signature: null,
@@ -998,8 +996,8 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
     <section className="runner-section" id="drops">
       <div className="runner-section-heading">
         <span className="runner-kicker">Onchain Feed</span>
-        <h2>TREASURY DISTRIBUTION LEDGER</h2>
-        <p>Onchain receipts for completed and queued treasury distributions.</p>
+        <h2>RUNNER DROP LEDGER</h2>
+        <p>Onchain receipts for completed and queued runner drops.</p>
       </div>
       <div className="runner-tabs" role="tablist" aria-label="Airdrop feed filter">
         {["All Drops", "Completed", "Upcoming"].map((item) => (
@@ -1072,7 +1070,7 @@ export function CopyHistoryChart() {
           </div>
         ))}
       </div>
-      <p className="runner-disclaimer">Past fund selections do not guarantee future performance. Tokens selected by the system may lose some or all of their value.</p>
+      <p className="runner-disclaimer">Past AI selections do not guarantee future performance. Tokens selected by the system may lose some or all of their value.</p>
     </section>
   );
 }
@@ -1080,9 +1078,9 @@ export function CopyHistoryChart() {
 function FaqSection() {
   const faqs = [
     {
-      question: "What is PTF?",
+      question: "What is Runner?",
       answer:
-        "PTF is the Pump Treasury Fund. Protocol fees accumulate selected Pump.fun tokens and distribute them to eligible $PTF holders every five minutes."
+        "Runner is an AI scanning system for animal-token runners. It accumulates selected Pump.fun tokens and distributes them to eligible $RUNNER holders every five minutes."
     },
     {
       question: "How many tokens must I hold?",
@@ -1090,7 +1088,7 @@ function FaqSection() {
     },
     {
       question: "How often are drops distributed?",
-      answer: `Treasury distributions run on scheduled ${pumpRunnerConfig.epochMinutes}-minute epochs when the treasury has eligible assets after reserves.`
+      answer: `Runner drops run on scheduled ${pumpRunnerConfig.epochMinutes}-minute epochs when the vault has eligible assets after reserves.`
     },
     {
       question: "What happens when I sell?",
@@ -1100,7 +1098,7 @@ function FaqSection() {
     {
       question: "Are returns guaranteed?",
       answer:
-        "No. Pump.fun tokens are volatile. PTF is a treasury rotation system, not a promise of profit or future performance."
+        "No. Pump.fun tokens are volatile. Runner is an AI selection system, not a promise of profit or future performance."
     },
     {
       question: "Why is there a minimum holding requirement?",
@@ -1130,9 +1128,9 @@ function FaqSection() {
 function FinalCta() {
   return (
     <section className="runner-section runner-final-cta">
-      <span className="runner-kicker">THE TREASURY IS LIVE</span>
-      <h2>The treasury never stops moving.</h2>
-      <p>Hold 1,000,000+ {tokenLabel} and remain eligible for scheduled Pump.fun token distributions every five minutes.</p>
+      <span className="runner-kicker">THE SCANNER IS LIVE</span>
+      <h2>Never miss a runner.</h2>
+      <p>Hold 1,000,000+ {tokenLabel} and remain eligible for scheduled animal-token runner drops every five minutes.</p>
       <div className="runner-hero-actions">
         <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
           Buy {tokenLabel} <ArrowRight size={18} />
@@ -1145,7 +1143,7 @@ function FinalCta() {
         </a>
       </div>
       <p className="runner-disclaimer">
-        PTF is an experimental Pump.fun treasury protocol. Digital assets are highly volatile and may lose some or all of their value. Verify all addresses, eligibility rules, and onchain activity independently.
+        Runner is an experimental AI scanner for Pump.fun tokens. Digital assets are highly volatile and may lose some or all of their value. Verify all addresses, eligibility rules, and onchain activity independently.
       </p>
     </section>
   );
