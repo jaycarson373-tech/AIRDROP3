@@ -336,20 +336,14 @@ function assetPrice(asset: ActiveFundAsset, live: RunnerLiveData) {
 }
 
 export function MarketTicker({ live }: { live: RunnerLiveData }) {
-  const source = live.market.source;
   const activeAsset = activeFundAsset(live);
-  const holderCount = live.holders.uniqueHolders ?? live.stats.latestEligibleHolders;
   const items = [
-    `CURRENT SELECTION ${activeAsset.ticker}`,
-    `${activeAsset.ticker} PRICE ${assetPrice(activeAsset, live)}`,
-    `AI RUNNER DROPS`,
-    `DISTRIBUTED VALUE ${formatSolAmount(live.stats.totalSolValueAirdropped)}`,
-    `TOTAL EPOCHS ${formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")}`,
-    `TOTAL HOLDERS ${formatCount(holderCount, pumpRunnerConfig.marketTickerFallback.holderCount)}`,
-    `${tokenLabel} PRICE ${formatPrice(source.priceUsd)}`,
-    `NEXT DISTRIBUTION ${displayCountdown(live)}`,
-    `AI SCANNER ${pumpRunnerConfig.scannerStatus}`,
-    `RUNNER VAULT ${pumpRunnerConfig.treasuryStatus}`
+    `CURRENT RUNNER ${activeAsset.ticker}`,
+    `MOMENTUM ${pumpRunnerConfig.scannerStatus}`,
+    `NEXT DROP ${displayCountdown(live)}`,
+    `CURRENT EPOCH ${formatCount(live.stats.currentEpoch || live.stats.totalEpochs, "0")}`,
+    `ELIGIBLE HOLDERS ${formatCount(live.stats.latestEligibleHolders, "0")}`,
+    `TOTAL DISTRIBUTED ${formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)}`
   ];
 
   return (
@@ -371,16 +365,7 @@ export function MarketTicker({ live }: { live: RunnerLiveData }) {
 }
 
 function AnimatedBackground() {
-  return (
-    <div className="ptf-background" aria-hidden="true">
-      <span className="ptf-orbit ptf-orbit-one" />
-      <span className="ptf-orbit ptf-orbit-two" />
-      {Array.from({ length: 12 }).map((_, index) => (
-        <span className="ptf-floating-pill" key={index} />
-      ))}
-      <span className="ptf-watermark" />
-    </div>
-  );
+  return <div className="runner-terminal-background" aria-hidden="true" />;
 }
 
 function RunnerNav() {
@@ -391,12 +376,11 @@ function RunnerNav() {
         <img className="runner-brand-logo" src={pumpRunnerConfig.logoSrc} alt="" />
         <span>
           <strong>{pumpRunnerConfig.name}</strong>
-          <small>Never miss a runner</small>
         </span>
       </a>
       <nav className="runner-links" aria-label="Primary navigation">
-        <a href="#board">Runners</a>
-        <a href="#scanner">AI Scanner</a>
+        <a href="#board">Current Runner</a>
+        <a href="#momentum">Momentum</a>
         <a href="#eligibility">Holders</a>
         <a href="#drops">Receipts</a>
       </nav>
@@ -444,9 +428,7 @@ function HeroMotion() {
           <span className={`ptf-chart-line ptf-chart-${index + 1}`} key={index} />
         ))}
       </div>
-      <div className="ptf-floating-logos" aria-hidden="true">
-        <span className="ptf-hero-pill" />
-      </div>
+      <span className="runner-scan-sweep" aria-hidden="true" />
     </>
   );
 }
@@ -455,9 +437,9 @@ function HeroStats({ live }: { live: RunnerLiveData }) {
   const activeAsset = activeFundAsset(live);
   const stats = [
     ["Current Runner", activeAsset.ticker],
-    ["Runner Value", displaySettledSol(live.stats.totalSolValueAirdropped)],
-    ["Next Distribution", displayCountdown(live)],
-    ["Eligible Holders", formatCount(live.stats.latestEligibleHolders, "0")]
+    ["Next Drop", displayCountdown(live)],
+    ["Current Epoch", formatCount(live.stats.currentEpoch || live.stats.totalEpochs, "0")],
+    ["Momentum", pumpRunnerConfig.scannerStatus]
   ];
 
   return (
@@ -500,22 +482,20 @@ function HeroSection({ live }: { live: RunnerLiveData }) {
         <div className="ptf-hero-logo-shell">
           <img className="ptf-hero-logo" src={pumpRunnerConfig.logoSrc} alt="Runner logo" />
         </div>
-        <h1>RUNNER</h1>
-        <p className="runner-hero-subtitle">AI animal-token scanner</p>
-        <p className="runner-hero-thesis">Never miss a runner.</p>
+        <p className="runner-hero-subtitle"><i aria-hidden="true" /> LIVE MOMENTUM PROTOCOL</p>
+        <h1>Own the runner<br />instead of chasing it.</h1>
         <p className="runner-hero-line">
-          Runner scans Pump.fun for animal tokens with real momentum.
-          <br />Hold 1,000,000+ {tokenLabel}.
-          <br />Receive weighted runner drops every 5 minutes.
+          Runner tracks the market, identifies the strongest token gaining momentum, and distributes weighted drops to eligible {tokenLabel} holders.
         </p>
         <div className="runner-hero-actions">
           <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
             Buy {tokenLabel} <ArrowRight size={18} />
           </a>
           <a className="runner-button runner-button-secondary" href="#board">
-            View Live Runners
+            View Current Runner
           </a>
         </div>
+        <p className="runner-hero-eligibility">Hold {pumpRunnerConfig.minimumHolding.toLocaleString()}+ {tokenLabel} to become eligible.</p>
         <HeroStats live={live} />
       </div>
     </section>
@@ -545,8 +525,8 @@ function FundStrip({ live }: { live: RunnerLiveData }) {
 
 export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
   const activeCopy = activeFundAsset(live);
+  const market = live.market.reward;
   const selectedPrice = assetPrice(activeCopy, live);
-  const treasuryValue = displaySettledSol(live.stats.totalSolValueAirdropped);
   const feedRows = live.stats.recentRewards.slice(0, 4).map((reward) => ({
     label: "Distribution completed",
     value: formatTokenAmount(reward.rewardAmount, rewardSymbol, `0 ${rewardSymbol}`),
@@ -554,14 +534,12 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
   }));
   const activityRows = feedRows.length
     ? feedRows
-    : [
-        { label: "AI scanning animal runners", value: "Live", meta: "signal engine" },
-        { label: `Runner buying ${activeFundAsset(live).ticker}`, value: "Queued", meta: "next epoch" },
-        { label: "Distribution route armed", value: `${formatCount(live.stats.latestEligibleHolders, "0")} holders`, meta: "eligible" }
-      ];
+    : [{ label: "Awaiting the next settled receipt", value: "Live data only", meta: "No distribution recorded yet" }];
   const metrics = [
-    ["Runner Value", treasuryValue],
-    ["Next Distribution", displayCountdown(live)],
+    ["Price", selectedPrice],
+    ["Market Cap", formatCompactUsd(market.marketCapUsd ?? market.fdvUsd, "Unavailable")],
+    ["Liquidity", formatCompactUsd(market.liquidityUsd, "Unavailable")],
+    ["24H Volume", formatCompactUsd(market.volume24hUsd, "Unavailable")],
     ["Eligible Holders", formatCount(live.stats.latestEligibleHolders, "0")],
     ["Epoch", formatCount(live.stats.currentEpoch || live.stats.totalEpochs, "0")]
   ];
@@ -569,9 +547,9 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
   return (
     <section className="runner-section" id="board">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Live Runners</span>
+        <span className="runner-kicker">Live Momentum</span>
         <h2>CURRENT RUNNER</h2>
-        <p>A clean terminal for the active runner, next drop and holder-weight flow.</p>
+        <p>The strongest token currently selected by Runner.</p>
       </div>
       <div className="ptf-treasury-card">
         <div className="ptf-treasury-main">
@@ -579,7 +557,7 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
             <div>
               <span className="runner-kicker">Current Runner</span>
               <h3>{activeCopy.ticker}</h3>
-              <p>{activeCopy.token} · {selectedPrice} · AI selected</p>
+              <p>{activeCopy.token} · Selected by Runner</p>
             </div>
             <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
               Active chart <ExternalLink size={15} />
@@ -588,13 +566,15 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
           <div className="ptf-selection-focus">
             {activeCopy.logoSrc ? <img src={activeCopy.logoSrc} alt="" loading="lazy" /> : null}
             <div>
-              <span>AI selected runner</span>
+              <span>Active selection</span>
               <strong>{activeCopy.token}</strong>
               <small>{compactAddress(activeCopy.mint)} · {activeCopy.status}</small>
             </div>
-            <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">
-              Chart <ExternalLink size={15} />
-            </a>
+            <div className="runner-selection-actions">
+              <a href={activeCopy.dexScreenerUrl} target="_blank" rel="noreferrer">Chart <ExternalLink size={15} /></a>
+              <CopyCaButton address={activeCopy.mint} label="Copy CA" />
+              <a href={`https://pump.fun/coin/${activeCopy.mint}`} target="_blank" rel="noreferrer">Pump.fun <ExternalLink size={15} /></a>
+            </div>
           </div>
           <div className="ptf-dashboard-metrics">
             {metrics.map(([label, value]) => (
@@ -607,12 +587,12 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
         </div>
         <aside className="ptf-treasury-side">
           <div className="ptf-countdown-card">
-            <span>Next Runner Drop</span>
+            <span>Next Holder Drop</span>
             <strong>{displayCountdown(live)}</strong>
-            <p>When this reaches zero, the system processes the next eligible runner drop.</p>
+            <p>Weighted by eligible holdings at the next snapshot.</p>
           </div>
           <div className="ptf-activity-feed">
-            <span>Live Scanner Activity</span>
+            <span>Live Protocol Activity</span>
             {activityRows.map((row) => (
               <div className="ptf-activity-row" key={`${row.label}-${row.value}`}>
                 <strong>{row.label}</strong>
@@ -628,25 +608,21 @@ export function CopySignalBoard({ live }: { live: RunnerLiveData }) {
 }
 
 export function ScannerStatus({ live }: { live: RunnerLiveData }) {
-  const selectedCopies = pumpRunnerConfig.runnerBoard.filter((runner) => /^scanned/i.test(runner.status)).length;
   const rows = [
-    ["AI SCANNER", "ONLINE"],
-    ["CURRENT DROP", rewardSymbol],
-    ["RUNNERS TRACKED", pumpRunnerConfig.runnerBoard.length.toString()],
+    ["MOMENTUM ENGINE", "ONLINE"],
+    ["CURRENT SELECTION", rewardSymbol],
+    ["MOMENTUM STATUS", pumpRunnerConfig.scannerStatus],
     ["ELIGIBLE HOLDERS", formatCount(live.stats.latestEligibleHolders, "0")],
-    ["ANIMAL WATCHLIST", Math.max(selectedCopies, pumpRunnerConfig.runnerBoard.length).toString()],
-    ["LIVE DROP EPOCHS", formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")],
-    [`${rewardSymbol} AIRDROPPED`, formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)]
+    ["CURRENT EPOCH", formatCount(live.stats.totalEpochs || live.stats.currentEpoch, "0")],
+    ["TOTAL DISTRIBUTED", formatTokenAmount(live.stats.totalRewardAirdropped, rewardSymbol, `0 ${rewardSymbol}`)]
   ];
 
   return (
-    <section className="runner-section" id="scanner">
+    <section className="runner-section" id="momentum">
       <div className="runner-section-heading">
-        <span className="runner-kicker">AI Scanner</span>
-        <h2>RUNNER ENGINE</h2>
-        <p>
-          An AI scanning system built to catch animal-token momentum before it is obvious.
-        </p>
+        <span className="runner-kicker">Live Market Signals</span>
+        <h2>MOMENTUM ENGINE</h2>
+        <p>Runner tracks liquidity, volume, holder growth, price action, token age, and market velocity to identify the strongest live opportunity.</p>
       </div>
       <div className="runner-scanner-layout">
         <div className="runner-card-grid">
@@ -664,7 +640,7 @@ export function ScannerStatus({ live }: { live: RunnerLiveData }) {
               <strong>{value}</strong>
             </div>
           ))}
-          <p>The exact methodology remains private so Runner can catch movement before the trade becomes obvious.</p>
+          <p>Tracking launches. Measuring momentum. Filtering weak liquidity. Ranking candidates. Selection active.</p>
         </div>
       </div>
     </section>
@@ -676,13 +652,13 @@ function CopyCatOrigin() {
     <section className="runner-section runner-origin" id="origin">
       <div className="runner-section-heading">
         <span className="runner-kicker">Runner Thesis</span>
-        <h2>THE AI NEVER SLEEPS.</h2>
-        <p>It scans. It spots. It snapshots. It drops.</p>
+        <h2>MOMENTUM NEVER SLEEPS.</h2>
+        <p>Track. Rank. Select. Distribute.</p>
       </div>
       <div className="runner-origin-grid">
         <article className="runner-info-card">
           <h3>01 · Add</h3>
-          <p>New animal-token launches and active rotations can enter the watchlist.</p>
+          <p>New launches and active rotations can enter the watchlist.</p>
         </article>
         <article className="runner-info-card">
           <h3>02 · Weight</h3>
@@ -701,28 +677,18 @@ function HowItWorks() {
   const steps = [
     {
       label: "01",
-      title: "The AI scans Pump.fun",
-      body: "Runner watches animal-token activity, liquidity, attention and rotation strength."
+      title: "Runner tracks the market",
+      body: "Live tokens are ranked by momentum, liquidity, volume, holder growth, and market strength."
     },
     {
       label: "02",
-      title: "Strong animal tokens enter rotation",
-      body: "The strongest active runner becomes the current selection."
+      title: "The strongest runner is selected",
+      body: "Runner rotates into the token showing the strongest live setup."
     },
     {
       label: "03",
-      title: `Hold 1M+ ${tokenLabel}`,
-      body: "Eligible wallets stay in the holder snapshot while Runner rotates."
-    },
-    {
-      label: "04",
-      title: "Receive runner drops",
-      body: `Eligible holders receive weighted runner distributions every ${pumpRunnerConfig.epochMinutes} minutes.`
-    },
-    {
-      label: "05",
-      title: "Hold longer to build weight",
-      body: "Longer holding duration increases holder weight for future basket drops."
+      title: "Eligible holders receive the drop",
+      body: `Hold at least ${pumpRunnerConfig.minimumHolding.toLocaleString()} ${tokenLabel}. Your share is weighted by your eligible balance at the snapshot.`
     }
   ];
 
@@ -730,7 +696,7 @@ function HowItWorks() {
     <section className="runner-section runner-how" id="how">
       <div className="runner-section-heading">
         <span className="runner-kicker">How It Works</span>
-      <h2>NEVER MISS A RUNNER.</h2>
+      <h2>HOW RUNNER WORKS</h2>
       </div>
       <div className="runner-step-list">
         {steps.map((step) => (
@@ -741,7 +707,7 @@ function HowItWorks() {
           </article>
         ))}
       </div>
-      <strong className="runner-bold-line">Hold {tokenLabel}. Stay eligible for every runner the AI catches.</strong>
+      <strong className="runner-bold-line">Selections and holder drops operate on {pumpRunnerConfig.epochMinutes}-minute epochs.</strong>
     </section>
   );
 }
@@ -801,8 +767,8 @@ export function EligibilityCard({ live }: { live: RunnerLiveData }) {
     <section className="runner-section runner-eligibility" id="eligibility">
       <div className="runner-section-heading">
         <span className="runner-kicker">Holder Rules</span>
-        <h2>ELIGIBILITY AND WEIGHT</h2>
-        <p>A wallet must hold at least {pumpRunnerConfig.minimumHolding.toLocaleString()} {tokenLabel} at the eligibility snapshot to qualify for the next distribution.</p>
+        <h2>HOLD RUNNER. RECEIVE THE RUNNERS.</h2>
+        <p>Eligible holders receive weighted token drops as Runner rotates through the strongest opportunities in the market.</p>
       </div>
       <div className="runner-eligibility-grid">
         <div className="runner-check-card">
@@ -995,9 +961,9 @@ export function AirdropFeed({ live }: { live: RunnerLiveData }) {
   return (
     <section className="runner-section" id="drops">
       <div className="runner-section-heading">
-        <span className="runner-kicker">Onchain Feed</span>
-        <h2>RUNNER DROP LEDGER</h2>
-        <p>Onchain receipts for completed and queued runner drops.</p>
+        <span className="runner-kicker">Onchain Activity</span>
+        <h2>PUBLIC RECEIPTS</h2>
+        <p>Selections, treasury activity, and holder distributions are publicly verifiable.</p>
       </div>
       <div className="runner-tabs" role="tablist" aria-label="Airdrop feed filter">
         {["All Drops", "Completed", "Upcoming"].map((item) => (
@@ -1070,7 +1036,7 @@ export function CopyHistoryChart() {
           </div>
         ))}
       </div>
-      <p className="runner-disclaimer">Past AI selections do not guarantee future performance. Tokens selected by the system may lose some or all of their value.</p>
+      <p className="runner-disclaimer">Past selections do not guarantee future performance. Tokens selected by the system may lose some or all of their value.</p>
     </section>
   );
 }
@@ -1080,7 +1046,7 @@ function FaqSection() {
     {
       question: "What is Runner?",
       answer:
-        "Runner is an AI scanning system for animal-token runners. It accumulates selected Pump.fun tokens and distributes them to eligible $RUNNER holders every five minutes."
+        "Runner is a live momentum protocol that tracks the market, selects the strongest opportunity, and distributes that token to eligible $RUNNER holders."
     },
     {
       question: "How many tokens must I hold?",
@@ -1098,7 +1064,7 @@ function FaqSection() {
     {
       question: "Are returns guaranteed?",
       answer:
-        "No. Pump.fun tokens are volatile. Runner is an AI selection system, not a promise of profit or future performance."
+        "No. Pump.fun tokens are volatile. Runner selects live opportunities; it does not promise profit or future performance."
     },
     {
       question: "Why is there a minimum holding requirement?",
@@ -1128,9 +1094,9 @@ function FaqSection() {
 function FinalCta() {
   return (
     <section className="runner-section runner-final-cta">
-      <span className="runner-kicker">THE SCANNER IS LIVE</span>
-      <h2>Never miss a runner.</h2>
-      <p>Hold 1,000,000+ {tokenLabel} and remain eligible for scheduled animal-token runner drops every five minutes.</p>
+      <span className="runner-kicker">MOMENTUM IS LIVE</span>
+      <h2>Never miss a runner again.</h2>
+      <p>Own the runner instead of chasing it. Hold {pumpRunnerConfig.minimumHolding.toLocaleString()}+ {tokenLabel} and stay eligible for weighted token drops.</p>
       <div className="runner-hero-actions">
         <a className="runner-button" href={pumpRunnerConfig.buyUrl} target="_blank" rel="noreferrer">
           Buy {tokenLabel} <ArrowRight size={18} />
@@ -1143,7 +1109,7 @@ function FinalCta() {
         </a>
       </div>
       <p className="runner-disclaimer">
-        Runner is an experimental AI scanner for Pump.fun tokens. Digital assets are highly volatile and may lose some or all of their value. Verify all addresses, eligibility rules, and onchain activity independently.
+        Runner is an experimental momentum protocol for Pump.fun tokens. Digital assets are highly volatile and may lose some or all of their value. Verify all addresses, eligibility rules, and onchain activity independently.
       </p>
     </section>
   );
@@ -1160,6 +1126,7 @@ export function PumpRunnerHome() {
       <main>
         <HeroSection live={live} />
         <CopySignalBoard live={live} />
+        <ScannerStatus live={live} />
         <HowItWorks />
         <EligibilityCard live={live} />
         <HoldMultiplier />

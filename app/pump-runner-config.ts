@@ -4,52 +4,9 @@ export const defaultCurrentRunner = {
   mint: "J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump",
   logoSrc: "/brand/triplet-logo.jpg",
   scannedMarketCap: "Active accumulation",
-  scannedAgo: "AI selected runner",
+  scannedAgo: "Selected by Runner",
   dexScreenerUrl: "https://dexscreener.com/solana/J8PSdNP3QewKq2Z1JJJFDMaqF7KcaiJhR7gbr5KZpump"
 } as const;
-
-const fundBasketAssets = [
-  {
-    rank: "01",
-    name: "ANSEM",
-    ticker: "$ANSEM",
-    mint: "9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump",
-    logoSrc: "/brand/ansem-logo.jpg",
-    weight: "25%",
-    route: "Epoch 1 of 4",
-    dexScreenerUrl: "https://dexscreener.com/solana/9cRCn9rGT8V2imeM2BaKs13yhMEais3ruM3rPvTGpump"
-  },
-  {
-    rank: "02",
-    name: "TROLL",
-    ticker: "$TROLL",
-    mint: "5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2",
-    logoSrc: "/brand/troll-logo.jpg",
-    weight: "25%",
-    route: "Epoch 2 of 4",
-    dexScreenerUrl: "https://dexscreener.com/solana/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2"
-  },
-  {
-    rank: "03",
-    name: "KINS",
-    ticker: "$KINS",
-    mint: "Tqj8yFmagrg7oorpQkVGYR52r96RFTamvWfth9bpump",
-    logoSrc: "/brand/kins-logo.jpg",
-    weight: "25%",
-    route: "Epoch 3 of 4",
-    dexScreenerUrl: "https://dexscreener.com/solana/Tqj8yFmagrg7oorpQkVGYR52r96RFTamvWfth9bpump"
-  },
-  {
-    rank: "04",
-    name: "TripleT",
-    ticker: "$TripleT",
-    mint: defaultCurrentRunner.mint,
-    logoSrc: defaultCurrentRunner.logoSrc,
-    weight: "25%",
-    route: "Epoch 4 of 4",
-    dexScreenerUrl: defaultCurrentRunner.dexScreenerUrl
-  }
-] as const;
 
 const defaultContractAddress = "8Ab3XVBjvRB2p6sunVJgAiHGmwJA8hSgbs36kZFxpump";
 const defaultXUrl = "";
@@ -131,9 +88,9 @@ export const pumpRunnerConfig = {
   ticker: "RUNNER",
   tokenLabel: "$RUNNER",
   rewardSymbol: activeRunnerTicker,
-  logoSrc: "/brand/runner-logo.svg",
-  backgroundSrc: "/brand/runner-logo.svg",
-  bannerSrc: "/brand/ptf-header-banner.jpg",
+  logoSrc: "/brand/runner-logo.jpg",
+  backgroundSrc: "/brand/runner-logo.jpg",
+  bannerSrc: "/brand/og-image.jpg",
   contractAddress,
   rewardMint,
   buyUrl: process.env.NEXT_PUBLIC_BUY_URL ?? fallbackPumpFunUrl,
@@ -143,7 +100,7 @@ export const pumpRunnerConfig = {
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL ?? "",
   minimumHolding,
   epochMinutes: Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5),
-  scannerStatus: "AI SCANNING",
+  scannerStatus: "RISING",
   treasuryStatus: "ACTIVE",
   currentRunner: {
     name: activeRunnerName,
@@ -153,8 +110,8 @@ export const pumpRunnerConfig = {
     dexScreenerUrl: activeRunnerDexUrl,
     detectedMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_ENTRY_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP") || defaultCurrentRunner.scannedMarketCap,
     currentMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_CURRENT_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_CURRENT_MCAP") || "Live runner",
-    amountAcquired: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_AMOUNT", "NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT") || "AI selected",
-    status: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_STATUS", "NEXT_PUBLIC_ACTIVE_RUNNER_STATUS") || "Airdropping now"
+    amountAcquired: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_AMOUNT", "NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT") || "Selected by Runner",
+    status: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_STATUS", "NEXT_PUBLIC_ACTIVE_RUNNER_STATUS") || "Active selection"
   },
   marketTickerFallback: {
     price: "$0.00006900",
@@ -165,16 +122,9 @@ export const pumpRunnerConfig = {
   },
   scannerMetrics: {
     tokensTracked: "LIVE",
-    signalsReviewed: "ACTIVE",
+    signalsReviewed: "TRACKING",
     runnersSelected: "1",
     currentEpoch: "0"
-  },
-  treasuryStatistics: {
-    runnersCaughtToday: "1",
-    averageEntryMarketCap: "Current runner",
-    averageReturn: "Live epoch",
-    bestRunner: activeRunnerLabel,
-    totalDistributedToday: "0 SOL"
   },
   multiplierTiers: [
     { label: "Under 24 hours", multiplier: "1.00x", progress: 12 },
@@ -182,34 +132,36 @@ export const pumpRunnerConfig = {
     { label: "3-7 days", multiplier: "1.50x", progress: 68 },
     { label: "7+ days", multiplier: "2.00x", progress: 100 }
   ],
-  runnerBoard: fundBasketAssets.map((asset) => ({
-    rank: asset.rank,
-    token: asset.name,
-    ticker: asset.ticker,
-    mint: asset.mint,
-    logoSrc: asset.logoSrc,
-    detectedMarketCap: asset.weight,
-    currentMarketCap: asset.route,
-    returnSinceDetection: "Rotating",
-    amountAcquired: asset.weight,
-    status: "AI rotation",
-    dexScreenerUrl: asset.dexScreenerUrl
-  })) satisfies RunnerBoardRow[],
+  runnerBoard: [
+    {
+      rank: "01",
+      token: activeRunnerName,
+      ticker: activeRunnerLabel,
+      mint: rewardMint,
+      logoSrc: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_LOGO_SRC", "NEXT_PUBLIC_ACTIVE_RUNNER_LOGO_SRC") || defaultCurrentRunner.logoSrc,
+      detectedMarketCap: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_ENTRY_MCAP", "NEXT_PUBLIC_ACTIVE_RUNNER_ENTRY_MCAP") || "Unavailable",
+      currentMarketCap: "Live market data",
+      returnSinceDetection: "Active",
+      amountAcquired: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_AMOUNT", "NEXT_PUBLIC_ACTIVE_RUNNER_AMOUNT") || "Awaiting settled buy",
+      status: cleanFirstEnv("NEXT_PUBLIC_ACTIVE_INDEX_STATUS", "NEXT_PUBLIC_ACTIVE_RUNNER_STATUS") || "Active selection",
+      dexScreenerUrl: activeRunnerDexUrl
+    }
+  ] satisfies RunnerBoardRow[],
   performanceRows: [
     { ticker: activeRunnerLabel, entryMarketCap: 1, currentMarketCap: 1, changePercent: 0 }
   ] satisfies RunnerPerformanceRow[],
   scannerCards: [
     {
       title: "SCAN",
-      body: "The AI scanner watches animal-token momentum, liquidity, attention and rotation strength."
+      body: "Runner tracks liquidity, volume, holder growth, price action, token age and market velocity."
     },
     {
       title: "SELECT",
-      body: "The strongest eligible runner enters the active rotation."
+      body: "The strongest live setup becomes the active selection."
     },
     {
       title: "SNAPSHOT",
-      body: "Holder weight is calculated every epoch from balance and holding streak."
+      body: "Holder weight is calculated from each eligible balance at the epoch snapshot."
     },
     {
       title: "DROP",

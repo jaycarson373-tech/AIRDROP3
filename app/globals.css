@@ -2897,7 +2897,7 @@ input {
 
 .ptf-hero-bg::before {
   color: rgba(141, 255, 168, 0.055);
-  content: "RUNNER    AI SCANNER    ANIMAL TOKENS    $RUNNER    NEVER MISS";
+  content: "RUNNER    MOMENTUM LIVE    CURRENT SELECTION    $RUNNER";
   font-size: clamp(2.7rem, 7vw, 7.4rem);
 }
 
