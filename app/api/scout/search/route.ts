@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { listScoutSignals, validateAccessToken } from "../../../../lib/scout";
+import { enrichScoutSignalsWithLiveMarket, listScoutSignals, validateAccessToken } from "../../../../lib/scout";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,7 +16,8 @@ export async function GET(request: NextRequest) {
   const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim() ?? "";
   const premium = Boolean(await validateAccessToken(token).catch(() => null));
   try {
-    const signals = await listScoutSignals({ premium, limit: 100 });
+    const recordedSignals = await listScoutSignals({ premium, limit: 100 });
+    const signals = await enrichScoutSignalsWithLiveMarket(recordedSignals).catch(() => recordedSignals);
     const lower = query.toLowerCase();
     const cap = moneyLimit(query);
     const since = lower.includes("last hour")

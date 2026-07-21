@@ -3,6 +3,7 @@ import {
   getActiveScoutSignal,
   getScoutSettings,
   discoverLiveScoutSignals,
+  enrichScoutSignalsWithLiveMarket,
   ingestScoutSignal,
   listScoutEvents,
   listScoutSignals,
@@ -29,11 +30,19 @@ export async function GET(request: NextRequest) {
       getScoutSettings(),
       listScoutEvents(30, premium)
     ]);
+    const combined = active && !signals.some((signal) => signal.id === active.id)
+      ? [active, ...signals]
+      : signals;
+    const liveSignals = await enrichScoutSignalsWithLiveMarket(combined).catch((error) => {
+      console.warn("Runner live market enrichment failed", error);
+      return combined;
+    });
+    const liveById = new Map(liveSignals.map((signal) => [signal.id, signal]));
     return NextResponse.json({
       access: premium ? "premium" : "public",
       publicDelaySeconds: Number(settings.public_signal_delay_seconds ?? 60),
-      active,
-      signals,
+      active: active ? liveById.get(active.id) ?? active : null,
+      signals: signals.map((signal) => liveById.get(signal.id) ?? signal),
       events
     });
   } catch (error) {

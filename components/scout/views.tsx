@@ -37,18 +37,31 @@ function SignalStatus({ signal }: { signal: ScoutSignal }) {
   return <StatusBadge label={signal.status} tone={tone} />;
 }
 
+function signalMetric(signal: ScoutSignal, key: string) {
+  const raw = signal.metrics?.[key];
+  if (raw === null || raw === undefined || raw === "") return null;
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : null;
+}
+
+function marketCapPerformance(signal: ScoutSignal) {
+  const current = signalMetric(signal, "currentMarketCapUsd");
+  if (!signal.market_cap_usd || current === null) return null;
+  return ((current / signal.market_cap_usd) - 1) * 100;
+}
+
 function SignalTable({ signals, compact = false }: { signals: ScoutSignal[]; compact?: boolean }) {
   if (!signals.length) return <EmptyState title="No runner signals yet" body="The first verified market signal will appear here when Runner detects it." />;
   return (
     <div className="scout-table-wrap">
       <table className="scout-table">
-        <thead><tr><th>Token</th><th>Momentum Score</th><th>Market cap</th><th>Liquidity</th>{compact ? null : <th>24h volume</th>}<th>Detected</th><th>Status</th><th aria-label="Chart" /></tr></thead>
+        <thead><tr><th>Token</th><th>Score</th><th>MC at scan</th><th>Current MC</th>{compact ? null : <th>Since scan</th>}<th>Scan time</th><th>Status</th><th aria-label="Chart" /></tr></thead>
         <tbody>{signals.map((signal) => (
           <tr key={signal.id} className={signal.status === "active" ? "is-active" : ""}>
             <td><div className="scout-table-token"><SignalMark signal={signal} /><span><strong>${signal.symbol}</strong><small>{signal.name}</small></span></div></td>
             <td><strong>{signal.scout_score === null ? "--" : `${signal.scout_score}/100`}</strong></td>
-            <td>{formatMoney(signal.market_cap_usd)}</td><td>{formatMoney(signal.liquidity_usd)}</td>
-            {compact ? null : <td>{formatMoney(signal.volume_24h_usd)}</td>}
+            <td>{formatMoney(signal.market_cap_usd)}</td><td>{formatMoney(signalMetric(signal, "currentMarketCapUsd"))}</td>
+            {compact ? null : <td className={(marketCapPerformance(signal) ?? 0) > 0 ? "is-positive" : (marketCapPerformance(signal) ?? 0) < 0 ? "is-negative" : ""}>{formatPercent(marketCapPerformance(signal))}</td>}
             <td>{formatTime(signal.detected_at)}</td><td><SignalStatus signal={signal} /></td>
             <td><a className="scout-icon-link" href={`https://dexscreener.com/solana/${signal.mint}`} target="_blank" rel="noreferrer" aria-label={`Open ${signal.symbol} chart`}><ExternalLink size={15} /></a></td>
           </tr>
@@ -64,7 +77,7 @@ export function SignalsView() {
   const rows = filter === "all" ? signals.signals : signals.signals.filter((signal) => signal.status === filter || (filter === "archived" && ["passed", "rejected", "archived"].includes(signal.status)));
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Signal record" title="Every detected runner." body="Review detected tokens, momentum scores, current targets, and past signals." />
+      <PageHeading eyebrow="Runner scan ledger" title="Every verified scan." body="Compare market cap at the scan with live current market cap and performance since the call." />
       <div className="scout-filter-bar"><Filter size={16} />{(["all", "active", "queued", "archived"] as const).map((value) => <button className={filter === value ? "is-active" : ""} type="button" onClick={() => setFilter(value)} key={value}>{value}</button>)}<span>{rows.length} records</span></div>
       <section className="scout-panel scout-panel--table">{state === "loading" ? <Skeleton rows={6} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : <SignalTable signals={rows} />}</section>
       <div className="scout-page-note"><ShieldCheck size={17} /><p>Momentum Score reflects the market adapters currently connected to the protocol. It is a ranking signal, not a promise of future performance.</p></div>

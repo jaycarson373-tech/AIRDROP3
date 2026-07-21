@@ -19,7 +19,9 @@ import type { ScoutSignal } from "./types";
 import { Metric, StatusBadge } from "./ui";
 
 function numericMetric(signal: ScoutSignal, key: string) {
-  const value = Number(signal.metrics?.[key]);
+  const raw = signal.metrics?.[key];
+  if (raw === null || raw === undefined || raw === "") return null;
+  const value = Number(raw);
   return Number.isFinite(value) ? value : null;
 }
 
@@ -56,13 +58,6 @@ function verifiedConfidence(signal: ScoutSignal | null) {
   if (!signal) return null;
   const value = firstNumericMetric(signal, ["confidence", "confidenceScore", "confidence_score"]);
   return value === null ? null : Math.max(0, Math.min(100, value));
-}
-
-function formatTokenAge(seconds: number | null | undefined) {
-  if (seconds === null || seconds === undefined || !Number.isFinite(seconds)) return "Unavailable";
-  if (seconds < 60 * 60) return `${Math.max(1, Math.floor(seconds / 60))}m`;
-  if (seconds < 24 * 60 * 60) return `${Math.floor(seconds / 3600)}h`;
-  return `${Math.floor(seconds / 86400)}d`;
 }
 
 function SignalIdentity({ signal }: { signal: ScoutSignal }) {
@@ -109,6 +104,11 @@ function CurrentSignalPanel({ signal }: { signal: ScoutSignal | null }) {
     );
   }
 
+  const currentMarketCap = numericMetric(signal, "currentMarketCapUsd");
+  const marketCapChange = signal.market_cap_usd && currentMarketCap !== null
+    ? ((currentMarketCap / signal.market_cap_usd) - 1) * 100
+    : null;
+
   return (
     <section className="scout-panel scout-panel--signal">
       <div className="scout-panel__head">
@@ -128,14 +128,14 @@ function CurrentSignalPanel({ signal }: { signal: ScoutSignal | null }) {
       </div>
 
       <div className="scout-metric-grid scout-metric-grid--four">
-        <Metric label="Price" value={signal.price_usd === null ? "Unavailable" : `$${signal.price_usd.toPrecision(5)}`} />
-        <Metric label="Market cap" value={formatMoney(signal.market_cap_usd)} />
-        <Metric label="Liquidity" value={formatMoney(signal.liquidity_usd)} />
-        <Metric label="24h volume" value={formatMoney(signal.volume_24h_usd)} />
-        <Metric label="Token age" value={formatTokenAge(signal.token_age_seconds)} />
+        <Metric label="Price at scan" value={signal.price_usd === null ? "Unavailable" : `$${signal.price_usd.toPrecision(5)}`} />
+        <Metric label="MC at scan" value={formatMoney(signal.market_cap_usd)} />
+        <Metric label="Current MC" value={formatMoney(currentMarketCap)} />
+        <Metric label="Since scan" value={formatPercent(marketCapChange)} />
+        <Metric label="Liquidity at scan" value={formatMoney(signal.liquidity_usd)} />
         <Metric label="Confidence" value={verifiedConfidence(signal) === null ? "Unavailable" : `${verifiedConfidence(signal)}%`} />
         <Metric label="Current score" value={signal.scout_score === null ? "--" : `${signal.scout_score}/100`} />
-        <Metric label="Status" value="Signal verified" />
+        <Metric label="Scan time" value={formatTime(signal.detected_at)} />
       </div>
 
       <div className="scout-signal-reason">
@@ -296,7 +296,6 @@ export function ScoutTerminalView() {
     { label: "Smart Wallets", connected: signals.active ? firstNumericMetric(signals.active, ["smartWalletScore", "smart_wallet_score"]) !== null : false },
     { label: "AI Narrative", connected: signals.active ? firstNumericMetric(signals.active, ["narrativeScore", "narrative_score"]) !== null : false }
   ];
-  const connectedInputCount = scannerInputs.filter((input) => input.connected).length;
   const idleStream = ["SEARCHING...", "WATCHING LIVE MARKET FEED...", "AWAITING VERIFIED SIGNAL...", "NO AUTHENTICATED RUNNER DETECTED."];
   const tapeItems = signals.active
     ? [
@@ -420,7 +419,7 @@ export function ScoutTerminalView() {
           {state === "loading" ? <div className="runner-terminal-state"><i /><strong>INDEXING</strong><span>CONNECTING MARKET FEEDS</span></div> : null}
         </div>
         <div className="scout-live-strip">
-          <Metric label="Scanner Inputs" value={signals.active ? `${connectedInputCount}/4 verified` : "Awaiting target"} detail="Volume · Attention · Wallets · AI" />
+          <Metric label="Scans Recorded" value={signals.signals.length.toLocaleString()} detail="Verified scan ledger" />
           <Metric label="Current Runner" value={signals.active ? activeSymbol : "No verified target"} detail={signals.active?.name ?? "Scanner remains online"} />
           <Metric label="Momentum" value={signals.active?.scout_score === null || signals.active?.scout_score === undefined ? "Awaiting authenticated signal" : `${signals.active.scout_score}/100`} detail={signals.active ? "Verified signal" : "No score published"} />
           <div className="runner-next-distribution"><Metric label={signals.active ? "Next Runner Airdrop" : "Next Scan"} value={countdown.label} detail="Five-minute cycle" /></div>

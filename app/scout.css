@@ -1278,6 +1278,8 @@
 .scout-table tbody tr:last-child td { border-bottom: 0; }
 .scout-table tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
 .scout-table tr.is-active { background: rgba(69, 240, 162, 0.035); }
+.scout-table td.is-positive { color: var(--scout-green); }
+.scout-table td.is-negative { color: var(--scout-risk); }
 
 .scout-table-token {
   display: flex;

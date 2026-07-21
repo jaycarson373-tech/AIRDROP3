@@ -30,26 +30,16 @@ function TopTicker() {
   const { signals, stats, state } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const active = signals.active;
-  const connectedInputs = active
-    ? [
-        active.volume_24h_usd,
-        active.metrics.smartWalletScore ?? active.metrics.smart_wallet_score,
-        active.metrics.attentionScore ?? active.metrics.attention_score,
-        active.metrics.narrativeScore ?? active.metrics.narrative_score
-      ].filter((value) => value !== null && value !== undefined).length
-    : 0;
   const metrics = [
     ["LIVE", state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
     ["CURRENT RUNNER", active ? `$${active.symbol}` : "NO VERIFIED TARGET"],
     [active ? "NEXT AIRDROP" : "NEXT SCAN", countdown.label],
     ["MARKET STATUS", "OPEN 24/7"],
     ["SCANNER", active ? "SIGNAL VERIFIED" : state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "SCANNING"],
-    ["RPC", "STATUS UNAVAILABLE"],
     ["NETWORK", "SOLANA"],
     ["MOMENTUM", active?.scout_score === null || active?.scout_score === undefined ? "AWAITING AUTHENTICATED SIGNAL" : `${active.scout_score}/100`],
-    ["MARKET CAP", formatMoney(active?.market_cap_usd)],
-    ["SIGNALS RANKED", active ? signals.signals.length.toLocaleString() : "NO VERIFIED SIGNALS"],
-    ["SCANNER INPUTS", active ? `${connectedInputs}/4 VERIFIED` : "AWAITING TARGET"],
+    ["MC AT SCAN", formatMoney(active?.market_cap_usd)],
+    ["SCANS RECORDED", signals.signals.length.toLocaleString()],
     ["SCAN CYCLE", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "--"]
   ];
 

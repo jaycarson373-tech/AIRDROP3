@@ -1,20 +1,17 @@
-# Scout
+# Runner
 
-Scout is a Solana attention-intelligence platform and transparent holder-distribution protocol.
+Runner records verified momentum scans and powers five-minute token distributions for eligible RUNNER holders.
 
-It records authenticated token signals, enriches them with connected market data, ranks them with explainable factors, releases qualified-holder access before the public feed, and can hand the active signal to the existing five-minute treasury worker.
+Each recorded call keeps its market cap at scan time. The site reads current market cap from DexScreener so the scan ledger can show live performance without overwriting the original snapshot.
 
 ## Product surfaces
 
-- `/terminal` - live signal desk and explainable Scout Score
-- `/runners` - released signal database
-- `/search` - structured natural-language search over recorded signals
-- `/performance` - selection history without invented returns
+- `/terminal` - live Runner terminal and scanner output
+- `/runners` - complete verified scan ledger
+- `/search` - search recorded Runner scans
+- `/performance` - scan history without invented returns
 - `/airdrop-history` - settled epoch and transaction receipts
-- `/api` - API pilot documentation
-- `/pricing` - product tiers; billing is not yet connected
-- `/docs` - Telegram, access, and protocol documentation
-- `/admin` - authenticated signal and policy controls
+- `/docs` - scanner, multiplier, and distribution rules
 
 ## Holder rules
 
@@ -24,22 +21,21 @@ It records authenticated token signals, enriches them with connected market data
 - A balance decrease resets the epoch streak and multiplier to `1.00x`
 - A wallet becomes eligible again whenever its balance returns above the threshold
 
-## Signal handoff
+## Manual scan workflow
 
-Scout accepts signals only through an authenticated admin request or an allowlisted Telegram source. Automatic activation is deterministic and uses configured score, liquidity, active-time, and score-margin floors. An administrator can explicitly activate a verified signal.
+Run `supabase/manual_runner_scan_setup.sql` once in Supabase SQL Editor. For every new call, record the token name, symbol, Solana mint, market cap at scan, scan time with timezone, and whether it is the current active Runner. Momentum score and selection notes are optional.
 
-When `SCOUT_DYNAMIC_SELECTION_ENABLED=true`, the active Scout signal becomes the reward mint at the start of the next epoch. Leave this disabled until the Scout migration has run and an active signal has been verified.
+When `SCOUT_DYNAMIC_SELECTION_ENABLED=true`, the active Runner becomes the reward mint at the start of the next epoch. Leave this disabled until the scan setup has run and an active signal has been verified.
 
 ## Safe launch order
 
 1. Rotate any credential that has ever been pasted into chat, logs, or screenshots.
 2. Keep `CLAIM_ENABLED`, `BUY_ENABLED`, `AIRDROP_ENABLED`, and `SCOUT_DYNAMIC_SELECTION_ENABLED` false.
-3. Run `supabase/migrations/007_scout_platform.sql`.
-4. Run `supabase/reset_scout_launch.sql` if this database contains data from an earlier project.
-5. Configure the Scout source mint, Supabase, RPC, Telegram, and treasury secrets.
-6. Submit the first verified runner and confirm it appears in `/admin`, `/terminal`, and `/api/scout/signals`.
-7. Enable dynamic selection and run a controlled dry epoch with treasury gates still off.
-8. Fund reserves, then enable claim, buy, and airdrop gates in a monitored deployment.
+3. Run `supabase/manual_runner_scan_setup.sql`.
+4. Configure the Runner source mint, Supabase, RPC, and treasury secrets.
+5. Record the first verified Runner and confirm it appears in `/runners`, `/terminal`, and `/api/scout/signals`.
+6. Enable dynamic selection and run a controlled dry epoch with treasury gates still off.
+7. Fund reserves, then enable claim, buy, and airdrop gates in a monitored deployment.
 
 The Railway configuration intentionally starts with a kill switch. Replace its start command with `npm run worker:start` only after the launch checklist is complete.
 

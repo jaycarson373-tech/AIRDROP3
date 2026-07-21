@@ -154,6 +154,12 @@ function finite(value: unknown) {
   return Number.isFinite(number) ? number : 0;
 }
 
+function nullableFinite(value: unknown) {
+  if (value === null || value === undefined || value === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
 function firstEnv(...names: string[]) {
   for (const name of names) {
     const value = process.env[name]?.trim();
@@ -314,6 +320,50 @@ export async function listScoutSignals(options: { premium?: boolean; limit?: num
     {},
     { requireServiceRole: options.premium }
   );
+}
+
+export async function enrichScoutSignalsWithLiveMarket(signals: ScoutSignal[]) {
+  if (!signals.length) return signals;
+
+  const mints = Array.from(new Set(signals.map((signal) => signal.mint).filter(Boolean)));
+  const chunks: string[][] = [];
+  for (let index = 0; index < mints.length; index += 30) chunks.push(mints.slice(index, index + 30));
+
+  const responses = await Promise.all(
+    chunks.map(async (chunk) => {
+      const response = await fetch(`https://api.dexscreener.com/tokens/v1/solana/${chunk.join(",")}`, {
+        headers: { Accept: "application/json" },
+        cache: "no-store"
+      });
+      if (!response.ok) throw new Error(`Live market request failed (${response.status})`);
+      const payload = (await response.json()) as DexPair[];
+      return Array.isArray(payload) ? payload : [];
+    })
+  );
+
+  const bestPairByMint = new Map<string, DexPair>();
+  for (const pair of responses.flat()) {
+    const mint = pair.baseToken?.address;
+    if (!mint || !mints.includes(mint)) continue;
+    const current = bestPairByMint.get(mint);
+    if (!current || finite(pair.liquidity?.usd) > finite(current.liquidity?.usd)) bestPairByMint.set(mint, pair);
+  }
+
+  const updatedAt = new Date().toISOString();
+  return signals.map((signal) => {
+    const pair = bestPairByMint.get(signal.mint);
+    return {
+      ...signal,
+      metrics: {
+        ...signal.metrics,
+        currentMarketCapUsd: pair ? nullableFinite(pair.marketCap ?? pair.fdv) : null,
+        currentPriceUsd: pair ? nullableFinite(pair.priceUsd) : null,
+        currentLiquidityUsd: pair ? nullableFinite(pair.liquidity?.usd) : null,
+        currentVolume24hUsd: pair ? nullableFinite(pair.volume?.h24) : null,
+        marketDataUpdatedAt: pair ? updatedAt : null
+      }
+    } satisfies ScoutSignal;
+  });
 }
 
 export async function getActiveScoutSignal(options: { premium?: boolean } = {}) {
