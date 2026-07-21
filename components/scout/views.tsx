@@ -151,7 +151,7 @@ export function ApiView() {
   const endpoint = "/api/scout/v1/runners";
   return (
     <div className="scout-page scout-page--narrow">
-      <PageHeading eyebrow="Runner API" title="Momentum intelligence for products." body="Bring released Runner signals and historical rankings into communities, research workflows, bots, and internal tools." />
+      <PageHeading eyebrow="Runner API" title="Runner signals for teams and systems." body="Bring released Runner signals and historical rankings into communities, research workflows, bots, and internal tools." />
       <section className="scout-api-hero">
         <div><StatusBadge label="Pilot access" tone="queued" /><h2>One endpoint. Structured runner intelligence.</h2><p>API keys are issued by Runner. Public clients never receive Supabase credentials or treasury permissions.</p></div>
         <pre><code>curl -H &quot;x-scout-api-key: $RUNNER_KEY&quot; {endpoint}</code></pre>
