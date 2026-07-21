@@ -65,7 +65,7 @@ function TopTicker() {
 
 function Header() {
   const pathname = usePathname();
-  const { signals, accessToken, accessBusy, accessError, unlockScout, clearAccess } = useScout();
+  const { signals, wallet, accessToken, accessBusy, accessError, unlockScout, clearAccess } = useScout();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -112,7 +112,7 @@ function Header() {
           </button>
           <button className="scout-access-button" type="button" onClick={accessToken ? clearAccess : unlockScout} disabled={accessBusy}>
             {accessToken ? <LogOut size={16} /> : <KeyRound size={16} />}
-            <span>{accessToken ? "Exit Pro" : accessBusy ? "Verifying" : "Runner Pro"}</span>
+            <span>{accessToken ? (wallet ? shortAddress(wallet.wallet) : "Disconnect") : accessBusy ? "Connecting" : "Connect wallet"}</span>
           </button>
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
@@ -135,7 +135,7 @@ function Header() {
         </div>
       ) : null}
 
-      {signals.access === "premium" ? <span className="scout-access-ribbon">RUNNER ACCESS ACTIVE</span> : null}
+      {signals.access === "premium" ? <span className="scout-access-ribbon">WALLET VERIFIED</span> : null}
     </header>
   );
 }

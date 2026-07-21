@@ -170,7 +170,7 @@ export function ApiView() {
 export function PricingView() {
   const plans = [
     { name: "Public", price: "$0", detail: "The released Runner feed, delayed by one minute.", items: ["Public terminal", "Released signal history", "Public receipts"], action: "Open terminal", href: "/terminal", featured: false },
-    { name: "Runner Pro", price: `Hold ${formatToken(scoutPublicConfig.minimumHolding, "RUNNER")}`, detail: "Immediate intelligence for qualified token holders.", items: ["Immediate signals", "Advanced signal search", "Watchlists", "Holder distributions"], action: "Verify access", href: "/#access", featured: true },
+    { name: "Runner Pro", price: `Hold ${formatToken(scoutPublicConfig.minimumHolding, "RUNNER")}`, detail: "Immediate intelligence for qualified token holders.", items: ["Immediate signals", "Advanced signal search", "Watchlists", "Holder distributions"], action: "Open terminal", href: "/", featured: true },
     { name: "Runner API", price: "Pilot", detail: "Structured momentum data for teams and communities.", items: ["API credentials", "Historical signals", "Telegram group alerts", "Configurable filters"], action: "Read API docs", href: "/api", featured: false }
   ];
   return (

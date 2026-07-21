@@ -4,19 +4,13 @@ import Link from "next/link";
 import {
   Activity,
   ArrowRight,
-  Bot,
-  CheckCircle2,
   CircleDollarSign,
   Clock3,
   ExternalLink,
   Gauge,
-  KeyRound,
   Radio,
-  Search,
-  ShieldCheck,
   Terminal
 } from "lucide-react";
-import { useState } from "react";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { formatMoney, formatPercent, formatTime, formatToken } from "./format";
 import { useCountdown } from "./hooks";
@@ -45,6 +39,19 @@ function scoreFactors(signal: ScoutSignal) {
     { label: "Smart wallets", value: "Adapter pending", connected: false },
     { label: "Telegram velocity", value: "Adapter pending", connected: false }
   ];
+}
+
+function confidenceScore(signal: ScoutSignal | null) {
+  if (!signal) return null;
+  const connected = [
+    signal.scout_score,
+    signal.price_usd,
+    signal.market_cap_usd,
+    signal.liquidity_usd,
+    signal.volume_24h_usd,
+    signal.holder_count
+  ].filter((value) => value !== null && value !== undefined).length;
+  return Math.round((connected / 6) * 100);
 }
 
 function SignalIdentity({ signal }: { signal: ScoutSignal }) {
@@ -180,92 +187,26 @@ function ActivityFeed() {
   );
 }
 
-function AccessPanel() {
-  const { wallet, accessToken, accessBusy, unlockScout, lookupWallet } = useScout();
-  const [address, setAddress] = useState("");
-  const eligibility = wallet?.eligible ? "Eligible" : wallet ? "Below threshold" : "Wallet not checked";
+function WalletStatusPanel() {
+  const { wallet, stats, clearAccess } = useScout();
+  const countdown = useCountdown(stats.nextDropTime);
+
+  if (!wallet) return null;
 
   return (
-    <section className="scout-access-section" id="access">
-      <div className="scout-section-heading">
-        <span className="scout-kicker">Runner access</span>
-        <h2>Hold $RUNNER. Receive the runners.</h2>
-        <p>Eligible holders receive weighted token drops as Runner rotates through the strongest opportunities in the market.</p>
+    <section className="scout-panel scout-wallet-status">
+      <div className="scout-wallet-status__head">
+        <div><span className="scout-kicker">Wallet status</span><strong>{shortAddress(wallet.wallet, 7, 5)}</strong></div>
+        <StatusBadge label={wallet.eligible ? "Eligible" : "Below threshold"} tone={wallet.eligible ? "live" : "muted"} />
       </div>
-      <div className="scout-access-layout">
-        <div className="scout-panel scout-panel--access">
-          <div className="scout-access-tier"><KeyRound size={19} /><span>Runner Pro</span><strong>{formatToken(scoutPublicConfig.minimumHolding, "RUNNER")}</strong></div>
-          <ul className="scout-check-list">
-            <li><CheckCircle2 size={16} /> Current runner access</li>
-            <li><CheckCircle2 size={16} /> Momentum terminal access</li>
-            <li><CheckCircle2 size={16} /> Holder distributions</li>
-            <li><CheckCircle2 size={16} /> Watchlists and history</li>
-          </ul>
-          <button className="scout-button scout-button--primary" type="button" onClick={unlockScout} disabled={accessBusy || Boolean(accessToken)}>
-            {accessToken ? "Runner Pro unlocked" : accessBusy ? "Verifying wallet" : "Verify holder access"}
-          </button>
-        </div>
-        <div className="scout-panel scout-panel--lookup">
-          <span className="scout-label">Public wallet lookup</span>
-          <h3>Check eligibility</h3>
-          <form onSubmit={(event) => { event.preventDefault(); if (address.trim()) void lookupWallet(address.trim()); }}>
-            <input value={address} onChange={(event) => setAddress(event.target.value)} placeholder="Solana wallet address" aria-label="Solana wallet address" />
-            <button className="scout-icon-button" type="submit" aria-label="Look up wallet"><ArrowRight size={18} /></button>
-          </form>
-          <div className="scout-wallet-result">
-            <Metric label="Status" value={eligibility} />
-            <Metric label="Balance" value={wallet ? formatToken(wallet.sourceBalance, "RUNNER") : "—"} />
-            <Metric label="Epoch streak" value={wallet ? wallet.currentStreak.toLocaleString() : "—"} />
-            <Metric label="Current weight" value={wallet?.multiplierBps ? `${(wallet.multiplierBps / 10_000).toFixed(2)}x` : "—"} />
-          </div>
-          <p className="scout-note">A balance decrease resets the epoch bonus to 1.00x. Eligibility returns whenever the wallet holds at least {formatToken(scoutPublicConfig.minimumHolding, "RUNNER")}.</p>
-        </div>
+      <div className="scout-wallet-status__grid">
+        <Metric label="Eligibility" value={wallet.eligible ? "Eligible" : "Below threshold"} />
+        <Metric label="Current Weight" value={wallet.multiplierBps ? `${(wallet.multiplierBps / 10_000).toFixed(2)}x` : "Indexing"} />
+        <Metric label="Epoch Streak" value={wallet.currentStreak.toLocaleString()} />
+        <Metric label="Next Distribution" value={countdown.label} />
+        <Metric label="Connected Wallet" value={shortAddress(wallet.wallet, 5, 4)} detail={wallet.wallet} />
       </div>
-    </section>
-  );
-}
-
-function ProductRail() {
-  const products = [
-    { icon: Radio, label: "Current Runner", detail: "Live selection and transparent scoring", href: "/terminal" },
-    { icon: Search, label: "Momentum", detail: "Query the complete Runner signal record", href: "/search" },
-    { icon: Bot, label: "Telegram", detail: "Alerts for communities without the noise", href: "/docs#telegram" },
-    { icon: KeyRound, label: "API", detail: "Selections and history for products and funds", href: "/api" }
-  ];
-  return (
-    <section className="scout-products">
-      <div className="scout-section-heading scout-section-heading--inline">
-        <div><span className="scout-kicker">Momentum layer</span><h2>Built to stay open.</h2></div>
-        <p>Runner turns live market momentum into a queryable record, a community alert layer, and a deterministic distribution input.</p>
-      </div>
-      <div className="scout-product-grid">
-        {products.map(({ icon: Icon, ...product }) => (
-          <Link href={product.href} key={product.label}>
-            <Icon size={20} />
-            <strong>{product.label}</strong>
-            <span>{product.detail}</span>
-            <ArrowRight size={16} />
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Mechanics() {
-  const steps = [
-    ["01", "Track", "Runner ranks live tokens by momentum, liquidity, volume, holder growth, and market strength."],
-    ["02", "Lock", "The strongest runner becomes the active selection."],
-    ["03", "Drop", "Eligible holders receive a weighted share at the snapshot."],
-    ["04", "Verify", "Selections, buys, and settled payouts remain auditable onchain."]
-  ];
-  return (
-    <section className="scout-mechanics">
-      <div className="scout-section-heading"><span className="scout-kicker">How Runner works</span><h2>Momentum, made accountable.</h2></div>
-      <div className="scout-step-grid">
-        {steps.map(([index, title, body]) => <div key={index}><span>{index}</span><strong>{title}</strong><p>{body}</p></div>)}
-      </div>
-      <p className="scout-disclosure"><ShieldCheck size={17} /> Selections and holder drops operate on five-minute epochs. Public users can inspect activity; only an authorized Runner source can queue a new active mint.</p>
+      <button className="scout-wallet-status__disconnect" type="button" onClick={clearAccess}>Disconnect</button>
     </section>
   );
 }
@@ -274,10 +215,10 @@ export function ScoutTerminalView() {
   const { signals, stats, state, error, refresh, lastUpdated } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const activeSymbol = signals.active ? `$${signals.active.symbol}` : "AWAITING";
-  const scannerSymbols = [
-    "$DOG", "$CAT", "$BULL", "$PONKE", "$PNUT", "$TRIPLET",
-    "$GOAT", "$MEW", "$WIF", "$ANSEM", "$TROLL", "$KINS"
-  ];
+  const rankedSignals = [...signals.signals]
+    .sort((left, right) => (right.scout_score ?? -1) - (left.scout_score ?? -1))
+    .slice(0, 6);
+  const activeConfidence = confidenceScore(signals.active);
 
   return (
     <>
@@ -292,9 +233,12 @@ export function ScoutTerminalView() {
           <span className="runner-volume-bars" />
           <span className="runner-radar-sweep" />
         </div>
+        <div className="runner-brand-masthead"><img src="/brand/runner-banner.jpg" alt="Runner" /></div>
         <div className="scout-hero__copy">
-          <StatusBadge label={signals.active ? "Scanner online" : "Scanner online"} />
-          <img className="runner-hero__logo" src="/brand/runner-logo.jpg" alt="Runner" />
+          <div className="runner-hero__statusline">
+            <StatusBadge label="Scanner online" />
+            <span>{signals.access === "premium" ? "REAL-TIME FEED" : `PUBLIC FEED · ${signals.publicDelaySeconds}S DELAY`}</span>
+          </div>
           <p className="scout-eyebrow">Live momentum terminal</p>
           <h1>Own the runner.<br /><span>Don't chase it.</span></h1>
           <p className="scout-hero__body">Runner continuously scans the market, identifies the strongest momentum token, and distributes weighted airdrops to eligible $RUNNER holders every 5 minutes.</p>
@@ -305,20 +249,35 @@ export function ScoutTerminalView() {
           <div className="scout-terminal-bar"><span><i /> MOMENTUM SCANNER ONLINE</span><small>{lastUpdated ? `UPDATED ${formatTime(lastUpdated.toISOString())}` : "CONNECTING"}</small></div>
           <div className="runner-scanner-console" aria-label="Momentum Scanner">
             <div className="runner-scanner-console__head">
-              <span>SCANNING</span>
-              <strong>{activeSymbol}</strong>
+              <span>SCANNING MARKET <i className="runner-cursor" aria-hidden="true" /></span>
+              <strong>{rankedSignals.length ? `${rankedSignals.length} SIGNALS RANKED` : "INDEXING"}</strong>
             </div>
-            <div className="runner-symbol-stream" aria-hidden="true">
-              {scannerSymbols.map((symbol, index) => (
-                <span className={signals.active?.symbol && symbol === `$${signals.active.symbol}` ? "is-active" : ""} style={{ animationDelay: `${index * 120}ms` }} key={`${symbol}-${index}`}>
-                  {symbol}
+            <div className="runner-symbol-stream" aria-label="Ranked momentum signals">
+              {(rankedSignals.length ? rankedSignals : Array.from({ length: 6 }, () => null)).map((signal, index) => (
+                <span className={signal?.id === signals.active?.id ? "is-active" : ""} style={{ animationDelay: `${index * 110}ms` }} key={signal?.id ?? `indexing-${index}`}>
+                  {signal ? `$${signal.symbol}` : "INDEXING"}
                 </span>
               ))}
             </div>
+            <div className="runner-ranking-table">
+              <div className="runner-ranking-table__head"><span>Rank</span><span>Signal</span><span>Momentum</span><span>Confidence</span></div>
+              {(rankedSignals.length ? rankedSignals : Array.from({ length: 4 }, () => null)).slice(0, 4).map((signal, index) => {
+                const score = signal?.scout_score ?? null;
+                const confidence = confidenceScore(signal);
+                return (
+                  <div className={signal?.id === signals.active?.id ? "is-locked" : ""} key={signal?.id ?? `rank-${index}`}>
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <strong>{signal ? `$${signal.symbol}` : "—"}</strong>
+                    <span className="runner-rank-score"><i><b style={{ width: `${score ?? 0}%` }} /></i><em>{score ?? "…"}</em></span>
+                    <span>{confidence === null ? "INDEXING" : `${confidence}%`}</span>
+                  </div>
+                );
+              })}
+            </div>
             <div className="runner-lock-panel">
-              <span>TARGET ACQUIRED</span>
+              <span>{signals.active ? "TARGET ACQUIRED" : "SEEKING TARGET"}</span>
               <strong>{activeSymbol}</strong>
-              <small>{signals.active ? "Promoted to Current Runner" : "Awaiting authenticated signal"}</small>
+              <small>{signals.active ? `LOCKED · ${activeConfidence ?? 0}% CONFIDENCE` : "AWAITING AUTHENTICATED SIGNAL"}</small>
             </div>
             <div className="runner-scanner-metrics">
               <Metric label="Current Runner" value={activeSymbol} detail={signals.active?.name} />
@@ -327,12 +286,12 @@ export function ScoutTerminalView() {
               <Metric label="Next Drop" value={countdown.label} />
             </div>
           </div>
-          {state === "loading" ? <Skeleton rows={5} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : <CurrentSignalPanel signal={signals.active} />}
+          {state === "loading" ? <Skeleton rows={2} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : null}
           {state === "stale" && error ? <p className="scout-stale-note">Live refresh delayed. Showing the last verified data.</p> : null}
         </div>
         <div className="scout-live-strip">
-          <Metric label="Current Runner" value={activeSymbol} detail={signals.active?.name} />
-          <Metric label="Momentum" value={signals.active?.scout_score === null || signals.active?.scout_score === undefined ? "Scanning" : `${signals.active.scout_score}/100`} />
+          <Metric label="Indexed Signals" value={signals.signals.length.toLocaleString()} detail="Connected market feed" />
+          <Metric label="Current Epoch" value={stats.currentEpoch.toLocaleString()} detail="Five-minute cycle" />
           <Metric label="Next Drop" value={countdown.label} detail="Live epoch timer" />
           <Metric label="Eligible Holders" value={stats.latestEligibleHolders.toLocaleString()} detail={`Minimum ${formatToken(scoutPublicConfig.minimumHolding, "RUNNER")}`} />
         </div>
@@ -340,10 +299,11 @@ export function ScoutTerminalView() {
 
       <section className="scout-terminal-section" id="terminal">
         <div className="scout-section-heading scout-section-heading--inline">
-          <div><span className="scout-kicker">Runner Terminal</span><h2>The momentum market, live.</h2></div>
-          <p>Real connected metrics only. Missing adapters stay marked unavailable until they are integrated.</p>
+          <div><span className="scout-kicker">Runner Terminal</span><h2>Live market state</h2></div>
+          <p>Connected metrics only. Missing adapters remain explicitly unavailable.</p>
         </div>
         <div className="scout-terminal-grid">
+          <WalletStatusPanel />
           <CurrentSignalPanel signal={signals.active} />
           <ScorePanel signal={signals.active} />
           <ActivityFeed />
@@ -357,18 +317,6 @@ export function ScoutTerminalView() {
             </div>
             <Link className="scout-text-link" href="/airdrop-history">Open public receipts <ArrowRight size={15} /></Link>
           </section>
-        </div>
-      </section>
-
-      <ProductRail />
-      <Mechanics />
-      <AccessPanel />
-
-      <section className="scout-final-cta">
-        <div><span className="scout-kicker">Momentum terminal</span><h2>Own the runner. Don't chase it.</h2><p>Use the live terminal, unlock the early feed, or bring Runner alerts into your community.</p></div>
-        <div className="scout-final-cta__actions">
-          <Link className="scout-button scout-button--primary" href="/terminal">Open terminal <ArrowRight size={17} /></Link>
-          <Link className="scout-button scout-button--secondary" href="/docs#telegram">Add Telegram bot <Bot size={17} /></Link>
         </div>
       </section>
     </>

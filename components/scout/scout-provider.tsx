@@ -134,6 +134,11 @@ export function ScoutProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    const savedWallet = window.localStorage.getItem("runner_wallet_address");
+    if (savedWallet) void lookupWallet(savedWallet);
+  }, [lookupWallet]);
+
   const unlockScout = useCallback(async () => {
     setAccessBusy(true);
     setAccessError(null);
@@ -141,6 +146,7 @@ export function ScoutProvider({ children }: { children: React.ReactNode }) {
       if (!window.solana) throw new Error("A Solana wallet extension is required");
       const connection = await window.solana.connect();
       const address = connection.publicKey.toString();
+      window.localStorage.setItem("runner_wallet_address", address);
       await lookupWallet(address);
       const challenge = await json<{ id: string; message: string }>("/api/scout/access/challenge", {
         method: "POST",
@@ -168,6 +174,7 @@ export function ScoutProvider({ children }: { children: React.ReactNode }) {
 
   const clearAccess = useCallback(() => {
     window.localStorage.removeItem("scout_access_token");
+    window.localStorage.removeItem("runner_wallet_address");
     setAccessToken("");
     setWallet(null);
   }, []);
