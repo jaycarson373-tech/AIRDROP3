@@ -1,7 +1,22 @@
 import type { Metadata } from "next";
+import { IBM_Plex_Mono, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { ScoutShell } from "../components/scout/scout-shell";
 import "./globals.css";
 import "./scout.css";
+
+const terminalFont = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-runner-terminal",
+  display: "swap"
+});
+
+const displayFont = IBM_Plex_Sans_Condensed({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-runner-display",
+  display: "swap"
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
   ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL
@@ -38,7 +53,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${terminalFont.variable} ${displayFont.variable}`}>
         <ScoutShell>{children}</ScoutShell>
       </body>
     </html>
