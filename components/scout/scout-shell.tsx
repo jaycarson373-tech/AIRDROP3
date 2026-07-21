@@ -33,7 +33,7 @@ function TopTicker() {
   const metrics = [
     ["LIVE", state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
     ["CURRENT RUNNER", active ? `$${active.symbol}` : "NO VERIFIED TARGET"],
-    [active ? "NEXT AIRDROP" : "NEXT SCAN", countdown.label],
+    ["NEXT UPDATE", countdown.label],
     ["MARKET STATUS", "OPEN 24/7"],
     ["SCANNER", active ? "SIGNAL VERIFIED" : state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "SCANNING"],
     ["NETWORK", "SOLANA"],

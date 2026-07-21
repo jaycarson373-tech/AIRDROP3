@@ -306,7 +306,7 @@ export function ScoutTerminalView() {
           score: signal.scout_score === null ? "SCORE UNAVAILABLE" : `${signal.scout_score}/100`,
           status: signal.id === signals.active?.id ? "TARGET LOCKED" : signal.status.toUpperCase()
         })),
-        { id: "cycle", symbol: "NEXT RUNNER AIRDROP", score: countdown.label, status: stats.currentEpoch > 0 ? `CYCLE ${stats.currentEpoch}` : "CYCLE UNAVAILABLE" },
+        { id: "cycle", symbol: "NEXT MOMENTUM UPDATE", score: countdown.label, status: stats.currentEpoch > 0 ? `CYCLE ${stats.currentEpoch}` : "CYCLE UNAVAILABLE" },
         { id: "scanner", symbol: "RUNNER", score: signals.access === "premium" ? "REAL TIME" : `${signals.publicDelaySeconds}S DELAY`, status: "SCANNING" }
       ]
     : [
@@ -346,9 +346,9 @@ export function ScoutTerminalView() {
             <StatusBadge label={state === "loading" ? "Scanner starting" : reconnecting ? "Scanner reconnecting" : "Scanner online"} />
             <span>{signals.active ? (signals.access === "premium" ? "REAL-TIME VERIFIED FEED" : `VERIFIED FEED · ${signals.publicDelaySeconds}S DELAY`) : state === "loading" ? "CONNECTING MARKET FEED" : reconnecting ? "MARKET FEED STATUS UNAVAILABLE" : "WATCHING LIVE MARKET FEED"}</span>
           </div>
-          <p className="scout-eyebrow">Five-minute Runner airdrops · Custom aggregate scanner</p>
+          <p className="scout-eyebrow">LIVE MOMENTUM · UPDATED EVERY FIVE MINUTES</p>
           <h1>Never miss a<br /><span>runner again.</span></h1>
-          <p className="scout-hero__body">Every five minutes, Runner airdrops the strongest verified market Runner to eligible holders with {scoutPublicConfig.minimumHolding.toLocaleString()}+ $RUNNER. Every selection comes from our custom aggregate scanner.</p>
+          <p className="scout-hero__body">Runner's custom aggregate scanner continuously ranks live market momentum and locks onto the strongest verified Runner. Eligible wallets holding {scoutPublicConfig.minimumHolding.toLocaleString()}+ $RUNNER receive the selected Runner every five minutes.</p>
           <div className="runner-hero-mechanism" aria-label="Runner distribution mechanism">
             <span><small>Holder minimum</small><strong>{scoutPublicConfig.minimumHolding.toLocaleString()}+ $RUNNER</strong></span>
             <span><small>Distribution cycle</small><strong>Every 5 minutes</strong></span>
@@ -358,7 +358,7 @@ export function ScoutTerminalView() {
             <Link href="/runners">View all scans <ArrowRight size={13} /></Link>
             <Link href="/terminal">Open Runner Terminal <ArrowRight size={13} /></Link>
           </nav>
-          <p className="scout-hero__delay"><Clock3 size={15} /> THE MARKET NEVER STOPS. NEITHER DO WE.</p>
+          <p className="scout-hero__delay"><Clock3 size={15} /> OWN THE RUNNER. DON'T CHASE IT. · THE MARKET NEVER STOPS. NEITHER DO WE.</p>
         </div>
         <div className="scout-hero__terminal runner-scanner-panel">
           <div className="scout-terminal-bar"><span><i /> MOMENTUM SCANNER {scannerStatus}</span><small>{lastUpdated ? `UPDATED ${formatClock(lastUpdated)}` : "INITIALIZING"}</small></div>
