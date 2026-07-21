@@ -11,6 +11,7 @@ import {
   Radio,
   Terminal
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { formatMoney, formatPercent, formatTime, formatToken } from "./format";
 import { useCountdown } from "./hooks";
@@ -213,16 +214,40 @@ function WalletStatusPanel() {
 
 export function ScoutTerminalView() {
   const { signals, stats, state, error, refresh, lastUpdated } = useScout();
+  const [treadmillBoost, setTreadmillBoost] = useState(false);
+  const previousActiveId = useRef<string | null | undefined>(undefined);
   const countdown = useCountdown(stats.nextDropTime);
   const activeSymbol = signals.active ? `$${signals.active.symbol}` : "AWAITING";
   const rankedSignals = [...signals.signals]
     .sort((left, right) => (right.scout_score ?? -1) - (left.scout_score ?? -1))
     .slice(0, 6);
   const activeConfidence = confidenceScore(signals.active);
+  const scannerQueue = rankedSignals.length ? rankedSignals : Array.from({ length: 6 }, () => null);
+  const tapeItems = [
+    ...rankedSignals.map((signal) => ({
+      id: signal.id,
+      symbol: `$${signal.symbol}`,
+      score: signal.scout_score === null ? "INDEXING" : `${signal.scout_score}/100`,
+      status: signal.id === signals.active?.id ? "TARGET LOCKED" : signal.status.toUpperCase()
+    })),
+    { id: "distribution", symbol: "NEXT DISTRIBUTION", score: countdown.label, status: `EPOCH ${stats.currentEpoch}` },
+    { id: "scanner", symbol: "RUNNER", score: signals.access === "premium" ? "REAL TIME" : `${signals.publicDelaySeconds}S DELAY`, status: "SCANNING" }
+  ];
+
+  useEffect(() => {
+    const nextActiveId = signals.active?.id ?? null;
+    const previous = previousActiveId.current;
+    previousActiveId.current = nextActiveId;
+    if (previous === undefined || !nextActiveId || nextActiveId === previous) return;
+    setTreadmillBoost(true);
+    const timeout = window.setTimeout(() => setTreadmillBoost(false), 1800);
+    return () => window.clearTimeout(timeout);
+  }, [signals.active?.id]);
 
   return (
     <>
-      <section className="scout-hero runner-hero">
+      <section className={`scout-hero runner-hero${treadmillBoost ? " is-runner-boost" : ""}`}>
+        <div className="runner-treadmill" aria-hidden="true" />
         <div className="runner-market-grid" aria-hidden="true">
           <span className="runner-chart-line runner-chart-line--1" />
           <span className="runner-chart-line runner-chart-line--2" />
@@ -252,12 +277,14 @@ export function ScoutTerminalView() {
               <span>SCANNING MARKET <i className="runner-cursor" aria-hidden="true" /></span>
               <strong>{rankedSignals.length ? `${rankedSignals.length} SIGNALS RANKED` : "INDEXING"}</strong>
             </div>
-            <div className="runner-symbol-stream" aria-label="Ranked momentum signals">
-              {(rankedSignals.length ? rankedSignals : Array.from({ length: 6 }, () => null)).map((signal, index) => (
-                <span className={signal?.id === signals.active?.id ? "is-active" : ""} style={{ animationDelay: `${index * 110}ms` }} key={signal?.id ?? `indexing-${index}`}>
-                  {signal ? `$${signal.symbol}` : "INDEXING"}
-                </span>
-              ))}
+            <div className="runner-symbol-stream" aria-hidden="true">
+              <div className="runner-symbol-stream__track">
+                {[...scannerQueue, ...scannerQueue].map((signal, index) => (
+                  <span className={signal?.id === signals.active?.id ? "is-active" : ""} key={`${signal?.id ?? "indexing"}-${index}`}>
+                    {signal ? `$${signal.symbol}` : "INDEXING"}
+                  </span>
+                ))}
+              </div>
             </div>
             <div className="runner-ranking-table">
               <div className="runner-ranking-table__head"><span>Rank</span><span>Signal</span><span>Momentum</span><span>Confidence</span></div>
@@ -274,7 +301,7 @@ export function ScoutTerminalView() {
                 );
               })}
             </div>
-            <div className="runner-lock-panel">
+            <div className={`runner-lock-panel ${signals.active ? "is-acquired" : "is-seeking"}`}>
               <span>{signals.active ? "TARGET ACQUIRED" : "SEEKING TARGET"}</span>
               <strong>{activeSymbol}</strong>
               <small>{signals.active ? `LOCKED · ${activeConfidence ?? 0}% CONFIDENCE` : "AWAITING AUTHENTICATED SIGNAL"}</small>
@@ -292,8 +319,15 @@ export function ScoutTerminalView() {
         <div className="scout-live-strip">
           <Metric label="Indexed Signals" value={signals.signals.length.toLocaleString()} detail="Connected market feed" />
           <Metric label="Current Epoch" value={stats.currentEpoch.toLocaleString()} detail="Five-minute cycle" />
-          <Metric label="Next Drop" value={countdown.label} detail="Live epoch timer" />
+          <div className="runner-next-distribution"><Metric label="Next Distribution" value={countdown.label} detail="Live epoch timer" /></div>
           <Metric label="Eligible Holders" value={stats.latestEligibleHolders.toLocaleString()} detail={`Minimum ${formatToken(scoutPublicConfig.minimumHolding, "RUNNER")}`} />
+        </div>
+        <div className="runner-hero-tape" aria-label="Live Runner market tape">
+          <div className="runner-hero-tape__track">
+            {[...tapeItems, ...tapeItems, ...tapeItems, ...tapeItems].map((item, index) => (
+              <span key={`${item.id}-${index}`}><i />{item.symbol}<strong>{item.score}</strong><em>{item.status}</em></span>
+            ))}
+          </div>
         </div>
       </section>
 

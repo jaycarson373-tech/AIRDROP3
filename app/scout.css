@@ -16,7 +16,7 @@
 
 .scout-background {
   position: fixed;
-  inset: 0;
+  inset: -80px;
   z-index: 0;
   pointer-events: none;
   background-image:
@@ -24,6 +24,8 @@
     linear-gradient(90deg, rgba(255, 255, 255, 0.032) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: linear-gradient(to bottom, #000, transparent 92%);
+  transform: translate3d(0, var(--runner-parallax-y, 0px), 0);
+  will-change: transform;
 }
 
 .scout-background::before {
@@ -1467,6 +1469,27 @@
   padding: 44px 0 28px;
 }
 
+.runner-treadmill {
+  position: absolute;
+  z-index: -1;
+  right: -10%;
+  bottom: 2%;
+  left: -10%;
+  height: 48%;
+  opacity: .075;
+  background-image:
+    linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px);
+  background-size: 62px 34px;
+  mask-image: linear-gradient(to bottom, transparent, #000 32%, #000 82%, transparent);
+  transform: perspective(560px) rotateX(61deg);
+  transform-origin: 50% 100%;
+  animation: runner-treadmill-motion 28s linear infinite;
+  will-change: background-position;
+}
+
+.runner-hero.is-runner-boost .runner-treadmill { animation-duration: 5.5s; }
+
 .runner-hero::before {
   display: none;
 }
@@ -1663,6 +1686,19 @@
   text-transform: uppercase;
 }
 
+.runner-scanner-console__head > span::before,
+.runner-lock-panel.is-acquired > span::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--scout-green);
+  vertical-align: 1px;
+  animation: runner-status-pulse 1.8s ease-in-out infinite;
+}
+
 .runner-cursor {
   display: inline-block;
   width: 6px;
@@ -1679,22 +1715,33 @@
 }
 
 .runner-symbol-stream {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 5px;
+  display: block;
+  height: 55px;
   margin: 12px 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+}
+
+.runner-symbol-stream__track {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  animation: runner-symbol-conveyor 11s linear infinite;
+  will-change: transform;
 }
 
 .runner-symbol-stream span {
   min-width: 0;
+  height: 25px;
   padding: 7px 5px;
   border: 1px solid rgba(255,255,255,.1);
   background: rgba(255,255,255,.025);
   color: var(--scout-muted);
   font: 700 11px/1 var(--scout-mono);
   text-align: center;
-  animation: runner-symbol-scan 2.6s ease-in-out infinite;
 }
+
+.runner-hero.is-runner-boost .runner-symbol-stream__track { animation-duration: 3.2s; }
 
 .runner-ranking-table {
   margin: 0 0 12px;
@@ -1830,9 +1877,28 @@
 }
 
 .scout-terminal-grid > .scout-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   border: 0;
   border-radius: 0;
   box-shadow: none;
+}
+
+.scout-terminal-grid > .scout-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: .055;
+  background: repeating-linear-gradient(90deg, transparent 0 42px, rgba(255,255,255,.62) 43px 45px, transparent 46px 86px);
+  animation: runner-panel-lines 22s linear infinite;
+  will-change: background-position;
+}
+
+.scout-terminal-grid > .scout-panel > * {
+  position: relative;
+  z-index: 1;
 }
 
 .scout-terminal-grid > .scout-panel--signal,
@@ -1896,9 +1962,116 @@
 
 .scout-live-strip .scout-metric { min-height: 66px; }
 
+.runner-next-distribution {
+  position: relative;
+  overflow: hidden;
+  background: #090d10;
+}
+
+.runner-next-distribution::before,
+.scout-countdown-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .07;
+  background: repeating-linear-gradient(110deg, transparent 0 20px, rgba(140,255,114,.65) 21px 23px, transparent 24px 43px);
+  background-size: 56px 100%;
+  animation: runner-progress-conveyor 12s linear infinite;
+  will-change: background-position;
+}
+
+.runner-next-distribution .scout-metric {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  background: transparent;
+}
+
+.scout-countdown-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.scout-countdown-panel::before { z-index: 0; opacity: .05; }
+.scout-countdown-panel > * { position: relative; z-index: 1; }
+
+.runner-hero-tape {
+  grid-column: 1 / -1;
+  height: 32px;
+  overflow: hidden;
+  border: 1px solid var(--scout-line);
+  background: rgba(4,6,8,.94);
+  font: 600 9px/1 var(--scout-mono);
+  letter-spacing: .025em;
+  text-transform: uppercase;
+}
+
+.runner-hero-tape__track {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  height: 100%;
+  align-items: center;
+  gap: 28px;
+  padding: 0 20px;
+  animation: runner-hero-tape-motion 34s linear infinite;
+  will-change: transform;
+}
+
+.runner-hero-tape__track span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--scout-muted);
+  white-space: nowrap;
+}
+
+.runner-hero-tape__track i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--scout-green);
+  animation: runner-status-pulse 2.2s ease-in-out infinite;
+}
+
+.runner-hero-tape__track strong { color: var(--scout-text); font-weight: 600; }
+.runner-hero-tape__track em { color: var(--scout-green); font-style: normal; }
+.runner-hero.is-runner-boost .runner-hero-tape__track { animation-duration: 10s; }
+
 @keyframes runner-chart-drift {
   from { transform: translate3d(0, 0, 0) scaleY(1); }
   to { transform: translate3d(36px, -18px, 0) scaleY(1.04); }
+}
+
+@keyframes runner-treadmill-motion {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 0, -620px 0; }
+}
+
+@keyframes runner-panel-lines {
+  from { background-position: 0 0; }
+  to { background-position: -860px 0; }
+}
+
+@keyframes runner-symbol-conveyor {
+  from { transform: translateY(0); }
+  to { transform: translateY(calc(-50% - 2.5px)); }
+}
+
+@keyframes runner-progress-conveyor {
+  from { background-position: 0 0; }
+  to { background-position: -560px 0; }
+}
+
+@keyframes runner-hero-tape-motion {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes runner-status-pulse {
+  0%, 100% { opacity: .42; }
+  50% { opacity: 1; }
 }
 
 @keyframes runner-scan-sweep {

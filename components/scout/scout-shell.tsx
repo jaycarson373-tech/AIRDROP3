@@ -14,7 +14,7 @@ import {
   Search,
   X
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { formatMoney, formatToken } from "./format";
 import { useCountdown } from "./hooks";
@@ -164,8 +164,28 @@ function Footer() {
 }
 
 function ShellContent({ children }: { children: React.ReactNode }) {
+  const appRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let frame = 0;
+    const updateParallax = () => {
+      frame = 0;
+      appRef.current?.style.setProperty("--runner-parallax-y", `${-Math.min(window.scrollY * 0.045, 72)}px`);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateParallax);
+    };
+    updateParallax();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
   return (
-    <div className="scout-app">
+    <div className="scout-app" ref={appRef}>
       <div className="scout-background" aria-hidden="true">
         <i /><i /><i />
       </div>
