@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getActiveScoutSignal,
   getScoutSettings,
+  discoverLiveScoutSignals,
   ingestScoutSignal,
   listScoutEvents,
   listScoutSignals,
@@ -37,7 +38,19 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Runner signals GET failed", error);
-    return NextResponse.json({ error: "Runner signal data is unavailable" }, { status: 503 });
+    try {
+      const signals = await discoverLiveScoutSignals(Number(request.nextUrl.searchParams.get("limit") ?? 40));
+      return NextResponse.json({
+        access: "public",
+        publicDelaySeconds: 0,
+        active: signals[0] ?? null,
+        signals,
+        events: []
+      });
+    } catch (liveError) {
+      console.error("Runner live scanner fallback failed", liveError);
+      return NextResponse.json({ error: "Runner scanner is reconnecting" }, { status: 503 });
+    }
   }
 }
 

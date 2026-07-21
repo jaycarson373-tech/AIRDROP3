@@ -38,6 +38,17 @@ export function formatTime(value: string | null | undefined) {
   }).format(time);
 }
 
+export function formatClock(value: string | Date | null | undefined) {
+  const time = value instanceof Date ? value.getTime() : Date.parse(value ?? "");
+  if (!Number.isFinite(time)) return "--:--:--";
+  return new Intl.DateTimeFormat(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  }).format(time);
+}
+
 export function relativeTime(value: string | null | undefined) {
   const time = Date.parse(value ?? "");
   if (!Number.isFinite(time)) return "Unavailable";

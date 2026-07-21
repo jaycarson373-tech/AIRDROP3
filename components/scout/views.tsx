@@ -1,15 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import {
-  ArrowRight,
-  Check,
-  Code2,
-  Copy,
   ExternalLink,
   Filter,
-  KeyRound,
-  LockKeyhole,
   Radio,
   Search,
   Send,
@@ -19,10 +12,10 @@ import {
 } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
-import { formatMoney, formatPercent, formatTime, formatToken, shortWallet } from "./format";
+import { formatClock, formatMoney, formatPercent, formatTime, formatToken, shortWallet } from "./format";
 import { useCountdown } from "./hooks";
 import { useScout } from "./scout-provider";
-import { HolderMultiplierPanel, WalletStatusPanel } from "./terminal-view";
+import { ActivityFeed, HolderMultiplierPanel } from "./terminal-view";
 import type { ScoutSignal } from "./types";
 import { EmptyState, ErrorState, Metric, Skeleton, StatusBadge } from "./ui";
 
@@ -87,7 +80,6 @@ type SearchPayload = {
 };
 
 export function SearchView() {
-  const { accessToken, signals, unlockScout } = useScout();
   const [query, setQuery] = useState("");
   const [result, setResult] = useState<SearchPayload | null>(null);
   const [busy, setBusy] = useState(false);
@@ -98,7 +90,7 @@ export function SearchView() {
     if (!query.trim()) return;
     setBusy(true); setError("");
     try {
-      const response = await fetch(`/api/scout/search?q=${encodeURIComponent(query.trim())}`, { headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined });
+      const response = await fetch(`/api/scout/search?q=${encodeURIComponent(query.trim())}`);
       const payload = await response.json() as SearchPayload;
       if (!response.ok) throw new Error(payload.error || "Search failed");
       setResult(payload);
@@ -108,12 +100,11 @@ export function SearchView() {
 
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Runner Search" title="Search the signal record." body="Filter Runner's recorded signals by token, market cap, status, momentum, or detection time." action={<StatusBadge label={signals.access === "premium" ? "Runner Pro" : "Public data"} tone={signals.access === "premium" ? "live" : "muted"} />} />
+      <PageHeading eyebrow="Runner Search" title="Search the signal record." body="Filter Runner's recorded signals by token, market cap, status, momentum, or detection time." action={<StatusBadge label="Public data" tone="muted" />} />
       <form className="scout-search-form" onSubmit={search}><Search size={21} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Show me runners under $500k detected today" aria-label="Search Runner signals" /><button className="scout-button scout-button--primary" type="submit" disabled={busy}>{busy ? "Searching" : "Search"}</button></form>
       <div className="scout-query-examples">{["Runners under $500k", "Signals detected in the last hour", "Active signals", "Rising tokens today"].map((example) => <button type="button" onClick={() => setQuery(example)} key={example}>{example}</button>)}</div>
       {error ? <ErrorState message={error} /> : null}
       {result ? <section className="scout-panel scout-panel--table"><div className="scout-search-interpretation"><span>Applied filters</span><strong>{result.interpretedAs.maximumMarketCapUsd ? `Cap below ${formatMoney(result.interpretedAs.maximumMarketCapUsd)}` : "Any market cap"}</strong><strong>{result.interpretedAs.detectedSince ? `Since ${formatTime(result.interpretedAs.detectedSince)}` : "Any time"}</strong><strong>{result.interpretedAs.positiveMomentumOnly ? "Positive momentum" : "Any momentum"}</strong></div><SignalTable signals={result.results} compact /></section> : <EmptyState title="Search Runner" body="Search by market cap, time, status, token, or momentum. Every result comes from Runner's recorded signal data." />}
-      {!accessToken ? <div className="scout-upgrade-bar"><LockKeyhole size={18} /><div><strong>Signals release publicly after one minute.</strong><p>Verify a qualifying wallet for the immediate feed.</p></div><button type="button" onClick={unlockScout}>Unlock Runner Pro <ArrowRight size={15} /></button></div> : null}
     </div>
   );
 }
@@ -147,54 +138,17 @@ export function ReceiptsView() {
   );
 }
 
-export function ApiView() {
-  const [copied, setCopied] = useState(false);
-  const endpoint = "/api/scout/v1/runners";
-  return (
-    <div className="scout-page scout-page--narrow">
-      <PageHeading eyebrow="Runner API" title="Use Runner data through the API." body="Fetch current and historical Runner signals for bots, dashboards, alerts, and research tools." />
-      <section className="scout-api-hero">
-        <div><StatusBadge label="Pilot access" tone="queued" /><h2>Fetch current and historical Runner signals.</h2><p>Use a Runner-issued API key. Public clients never receive database credentials or treasury permissions.</p></div>
-        <pre><code>curl -H &quot;x-scout-api-key: $RUNNER_KEY&quot; {endpoint}</code></pre>
-        <button type="button" onClick={async () => { await navigator.clipboard.writeText(endpoint); setCopied(true); window.setTimeout(() => setCopied(false), 1200); }}>{copied ? <Check size={15} /> : <Copy size={15} />}{copied ? "Copied" : "Copy endpoint"}</button>
-      </section>
-      <div className="scout-doc-grid">
-        <article><Code2 size={20} /><h3>Signal data</h3><p>Read current and historical signals with scores, market data, risk flags, and timestamps.</p></article>
-        <article><Search size={20} /><h3>Search signals</h3><p>Filter by token, market cap, status, momentum, or detection time.</p></article>
-        <article><ShieldCheck size={20} /><h3>Protected access</h3><p>Keys are hashed, can expire, and only grant specific read permissions. Treasury routes stay separate.</p></article>
-      </div>
-      <div className="scout-page-note"><KeyRound size={17} /><p>API access is currently a managed pilot. Self-serve keys and billing are not live yet.</p></div>
-    </div>
-  );
-}
-
-export function PricingView() {
-  const plans = [
-    { name: "Public", price: "$0", detail: "The released Runner feed, delayed by one minute.", items: ["Public terminal", "Released signal history", "Public receipts"], action: "Open terminal", href: "/terminal", featured: false },
-    { name: "Runner Pro", price: `Hold ${formatToken(scoutPublicConfig.minimumHolding, "RUNNER")}`, detail: "Immediate Runner signals for eligible holders.", items: ["Real-time scanner", "Advanced signal search", "Watchlists", "Holder multiplier"], action: "Open terminal", href: "/", featured: true },
-    { name: "Runner API", price: "Pilot", detail: "Runner signal data for bots and dashboards.", items: ["API credentials", "Historical signals", "Telegram alerts", "Configurable filters"], action: "Read API docs", href: "/api", featured: false }
-  ];
-  return (
-    <div className="scout-page">
-      <PageHeading eyebrow="Access" title="Choose how you access Runner." body="The public feed has a one-minute delay. Eligible holders receive immediate signals. API access is in pilot." />
-      <div className="scout-pricing-grid">{plans.map((plan) => <article className={plan.featured ? "is-featured" : ""} key={plan.name}><span className="scout-kicker">{plan.name}</span><h2>{plan.price}</h2><p>{plan.detail}</p><ul>{plan.items.map((item) => <li key={item}><Check size={15} />{item}</li>)}</ul><Link className={`scout-button ${plan.featured ? "scout-button--primary" : "scout-button--secondary"}`} href={plan.href}>{plan.action}<ArrowRight size={16} /></Link></article>)}</div>
-      <p className="scout-note">Paid subscriptions and self-serve API access are not live yet. Only the access shown above is available.</p>
-    </div>
-  );
-}
-
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How Runner finds and ranks momentum." body="See how signals enter the scanner, how scores are calculated, and how holder access works." />
+      <PageHeading eyebrow="Documentation" title="How Runner scans and airdrops momentum." body="See how the custom aggregator ranks signals, selects the current Runner, and powers each five-minute distribution cycle." />
       <div className="scout-doc-layout">
-        <aside><a href="#lifecycle">Signal lifecycle</a><a href="#score">Momentum Score</a><a href="#access">Holder Multiplier</a><a href="#telegram">Telegram</a><a href="#treasury">Treasury</a></aside>
+        <aside><a href="#lifecycle">Signal lifecycle</a><a href="#score">Momentum Score</a><a href="#access">Holder Multiplier</a><a href="#treasury">Treasury</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Signal lifecycle</h2><p>A verified source submits a Solana mint. Runner reads the connected market data, calculates its Momentum Score, ranks it, and records the result. The strongest qualified signal can become the current Runner at the next five-minute cycle. Eligible holders see it immediately; the public feed follows after the configured delay.</p></section>
-          <section id="score"><span className="scout-kicker">02</span><h2>Momentum Score</h2><p>The current implementation scores available DexScreener liquidity, volume velocity, recent buy share, one-hour price action, and token age. Holder growth, X, Telegram, narrative, and smart-wallet adapters remain visibly unavailable until connected. The score is never a guarantee.</p></section>
-          <section id="access"><span className="scout-kicker">03</span><h2>Holder Multiplier</h2><p>Hold at least {formatToken(scoutPublicConfig.minimumHolding, "RUNNER")} to unlock Runner Pro. The distribution multiplier starts at 1.00x, reaches 1.25x after one day, 1.50x after three days, and 2.00x after seven days of continuous holding. Each eligible five-minute cycle builds the streak. Any balance decrease resets the streak and multiplier to 1.00x; falling below the minimum pauses eligibility.</p></section>
-          <section id="telegram"><span className="scout-kicker">04</span><h2>Telegram bot</h2><p>Commands include <code>/runner</code>, <code>/top</code>, <code>/new</code>, <code>/search</code>, <code>/scan</code>, <code>/watch</code>, <code>/unwatch</code>, <code>/performance</code>, and <code>/help</code>. Group alerts can filter by minimum score and maximum market cap. Only allow-listed source channels or administrators can submit treasury signals.</p><pre><code>POST /api/scout/telegram{"\n"}x-telegram-bot-api-secret-token: $TELEGRAM_WEBHOOK_SECRET</code></pre></section>
-          <section id="treasury"><span className="scout-kicker">05</span><h2>Treasury boundary</h2><p>When dynamic selection is enabled, the current Runner can enter the reward-token purchase process. Signal selection is verified and repeatable. Treasury actions remain separate from public signal data and holder access.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Signal lifecycle</h2><p>A verified source submits a Solana mint. Runner reads the connected market data, calculates its Momentum Score, ranks it, and records the result. The strongest qualified signal can become the current Runner at the next five-minute cycle and then appears in the public feed.</p></section>
+          <section id="score"><span className="scout-kicker">02</span><h2>Momentum Score</h2><p>Runner's custom aggregator ranks liquidity, volume velocity, recent buy pressure, market attention, one-hour price action, and token age. Smart-wallet and AI narrative inputs are built into the scanner interface and remain clearly marked as connecting until their live feeds are attached. The score is a ranking signal, not a guarantee.</p></section>
+          <section id="access"><span className="scout-kicker">03</span><h2>Holder Multiplier</h2><p>Hold at least {formatToken(scoutPublicConfig.minimumHolding, "RUNNER")} to qualify. The distribution multiplier starts at 1.00x, reaches 1.25x after one day, 1.50x after three days, and 2.00x after seven days of continuous holding. Each eligible five-minute cycle builds the streak. Any balance decrease resets the streak and multiplier to 1.00x; falling below the minimum pauses eligibility.</p></section>
+          <section id="treasury"><span className="scout-kicker">04</span><h2>Treasury boundary</h2><p>When dynamic selection is enabled, the current Runner enters the reward-token purchase process. Signal selection is verified and repeatable. Treasury actions remain separate from public signal data and holder eligibility.</p></section>
         </div>
       </div>
     </div>
@@ -241,14 +195,24 @@ export function TerminalPageView() {
   const factors = active ? [["Liquidity", formatMoney(active.liquidity_usd)], ["24h volume", formatMoney(active.volume_24h_usd)], ["1h movement", formatPercent(Number(active.metrics.change1h ?? Number.NaN))], ["Token age", active.token_age_seconds ? `${Math.max(1, Math.round(active.token_age_seconds / 60))}m` : "Unavailable"]] : [];
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Runner Terminal" title="Track the current Runner." body="See the selected token, Momentum Score, market inputs, and scanner timeline in one view." action={<StatusBadge label={signals.access === "premium" ? "Runner Pro" : "Public feed"} tone={signals.access === "premium" ? "live" : "muted"} />} />
-        {state === "loading" ? <Skeleton rows={7} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : <div className="scout-desk-layout">
-        <WalletStatusPanel />
-        <section className="scout-panel scout-desk-primary"><div className="scout-terminal-bar"><span><i /> ACTIVE MOMENTUM SIGNAL</span><small>{active ? formatTime(active.detected_at) : "LISTENING"}</small></div>{active ? <><div className="scout-desk-token"><SignalMark signal={active} /><div><span>Current runner</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "—"}<small>/100</small></strong></div><div className="scout-desk-factors">{factors.map(([label, value]) => <Metric label={label} value={value} key={label} />)}</div><div className="scout-panel__footer"><span>{shortAddress(active.mint)}</span><a href={`https://dexscreener.com/solana/${active.mint}`} target="_blank" rel="noreferrer">Chart <ExternalLink size={14} /></a></div></> : <EmptyState title="Awaiting first Runner signal" body="The scanner is online and waiting for its first verified market signal." />}</section>
-        <section className="scout-panel scout-countdown-panel"><span className="scout-kicker">Next five-minute cycle</span><strong>{countdown.label}</strong><p>{countdown.processing ? "The current cycle is processing. The timer resumes at the next confirmed boundary." : "Runner reranks the market and carries the current signal into the next distribution cycle."}</p><i><span style={{ width: `${countdown.progress * 100}%` }} /></i></section>
-        <HolderMultiplierPanel />
-        <section className="scout-panel scout-panel--feed"><div className="scout-panel__head"><div><span className="scout-kicker">Public timeline</span><h2>Signal events</h2></div><Radio size={20} /></div>{signals.events.length ? <div className="scout-event-list">{signals.events.slice(0, 12).map((event) => <div className="scout-event" key={event.id}><span className="scout-event__rail" /><div><strong>{event.event_type.replaceAll("_", " ")}</strong><p>{formatTime(event.created_at)}</p></div></div>)}</div> : <EmptyState title="No events recorded" body="The first signal lifecycle will appear here." />}</section>
-      </div>}
+      <PageHeading eyebrow="Runner Terminal" title="Track the current Runner." body="The custom aggregator ranks market momentum and selects the runner entering the next five-minute airdrop." action={<StatusBadge label="Live scanner" tone="live" />} />
+      {state === "loading" ? <div className="runner-terminal-state"><i /><strong>INDEXING</strong><span>CONNECTING MARKET FEEDS</span></div> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : (
+        <div className="scout-desk-layout">
+          <section className="scout-panel scout-desk-primary">
+            <div className="scout-terminal-bar"><span><i /> ACTIVE MOMENTUM SIGNAL</span><small>{active ? formatClock(active.detected_at) : "SEEKING TARGET"}</small></div>
+            {active ? (
+              <>
+                <div className="scout-desk-token"><SignalMark signal={active} /><div><span>Current runner</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "—"}<small>/100</small></strong></div>
+                <div className="scout-desk-factors">{factors.map(([label, value]) => <Metric label={label} value={value} key={label} />)}</div>
+                <div className="scout-panel__footer"><span>{shortAddress(active.mint)}</span><a href={`https://dexscreener.com/solana/${active.mint}`} target="_blank" rel="noreferrer">Chart <ExternalLink size={14} /></a></div>
+              </>
+            ) : <EmptyState title="NO VERIFIED TARGET" body="Scanner remains online. Waiting for authenticated momentum signal." />}
+          </section>
+          <section className="scout-panel scout-countdown-panel"><span className="scout-kicker">Next Runner airdrop</span><strong>{countdown.label}</strong><p>{countdown.processing ? "The current airdrop cycle is processing. The timer resumes at the next confirmed boundary." : "Runner reranks the market and carries the strongest signal into the next five-minute airdrop."}</p><i><span style={{ width: `${countdown.progress * 100}%` }} /></i></section>
+          <HolderMultiplierPanel />
+          <ActivityFeed />
+        </div>
+      )}
     </div>
   );
 }

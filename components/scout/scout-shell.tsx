@@ -4,14 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpen,
-  Bot,
   Check,
   Copy,
   ExternalLink,
-  KeyRound,
-  LogOut,
   Menu,
-  Search,
   X
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -23,13 +19,10 @@ import { ScoutProvider, useScout } from "./scout-provider";
 const primaryNav = [
   { href: "/terminal", label: "Current Runner" },
   { href: "/runners", label: "Signals" },
-  { href: "/pricing", label: "Holders" },
   { href: "/airdrop-history", label: "Receipts" }
 ];
 
 const productNav = [
-  { href: "/api", label: "API", icon: KeyRound },
-  { href: "/pricing", label: "Pricing", icon: Bot },
   { href: "/docs", label: "Docs", icon: BookOpen }
 ];
 
@@ -37,22 +30,34 @@ function TopTicker() {
   const { signals, stats } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const active = signals.active;
+  const connectedInputs = active
+    ? [
+        active.volume_24h_usd,
+        active.metrics.smartWalletScore ?? active.metrics.smart_wallet_score,
+        active.metrics.attentionScore ?? active.metrics.attention_score,
+        active.metrics.narrativeScore ?? active.metrics.narrative_score
+      ].filter((value) => value !== null && value !== undefined).length
+    : 0;
   const metrics = [
-    ["LIVE", "ONLINE"],
+    ["LIVE", active ? "CONNECTED" : "INDEXING"],
     ["CURRENT RUNNER", active ? `$${active.symbol}` : "AWAITING"],
-    ["NEXT UPDATE", countdown.label],
+    ["NEXT AIRDROP", countdown.label],
+    ["MARKET STATUS", "OPEN 24/7"],
+    ["SCANNER", active ? "ONLINE" : "SEEKING"],
+    ["RPC", active ? "CONNECTED" : "CONNECTING"],
+    ["NETWORK", "SOLANA"],
     ["MOMENTUM", active?.scout_score === null || active?.scout_score === undefined ? "SCANNING" : `${active.scout_score}/100`],
     ["MARKET CAP", formatMoney(active?.market_cap_usd)],
     ["SIGNALS RANKED", signals.signals.length.toLocaleString()],
-    ["FEED", signals.access === "premium" ? "REAL TIME" : `${signals.publicDelaySeconds}S DELAY`],
+    ["SCANNER INPUTS", `${connectedInputs}/4 LIVE`],
     ["SCAN CYCLE", `#${stats.currentEpoch.toLocaleString()}`]
   ];
 
   return (
     <div className="scout-ticker" aria-label="Live Runner metrics">
       <div className="scout-ticker__track">
-        {metrics.map(([label, value]) => (
-          <span className="scout-ticker__item" key={label}>
+        {[...metrics, ...metrics].map(([label, value], index) => (
+          <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
             <i aria-hidden="true" />
             <span>{label}</span>
             <strong>{value}</strong>
@@ -65,7 +70,6 @@ function TopTicker() {
 
 function Header() {
   const pathname = usePathname();
-  const { signals, wallet, accessToken, accessBusy, accessError, unlockScout, clearAccess } = useScout();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -110,17 +114,11 @@ function Header() {
             {copied ? <Check size={15} /> : <Copy size={15} />}
             <span>{shortAddress(scoutPublicConfig.contractAddress)}</span>
           </button>
-          <button className="scout-access-button" type="button" onClick={accessToken ? clearAccess : unlockScout} disabled={accessBusy}>
-            {accessToken ? <LogOut size={16} /> : <KeyRound size={16} />}
-            <span>{accessToken ? (wallet ? shortAddress(wallet.wallet) : "Disconnect") : accessBusy ? "Connecting" : "Connect wallet"}</span>
-          </button>
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
-
-      {accessError ? <div className="scout-header__notice">{accessError}</div> : null}
 
       {open ? (
         <div className="scout-mobile-nav">
@@ -134,8 +132,6 @@ function Header() {
           ) : null}
         </div>
       ) : null}
-
-      {signals.access === "premium" ? <span className="scout-access-ribbon">WALLET VERIFIED</span> : null}
     </header>
   );
 }
@@ -202,22 +198,5 @@ export function ScoutShell({ children }: { children: React.ReactNode }) {
     <ScoutProvider>
       <ShellContent>{children}</ShellContent>
     </ScoutProvider>
-  );
-}
-
-export function ScoutActionLinks() {
-  return (
-    <div className="scout-action-links">
-      <Link className="scout-button scout-button--primary" href="/terminal">
-        Open Live Terminal <Search size={17} />
-      </Link>
-      {scoutPublicConfig.buyUrl ? (
-        <a className="scout-button scout-button--secondary" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
-          Buy $RUNNER <ExternalLink size={17} />
-        </a>
-      ) : (
-        <span className="scout-button scout-button--disabled">$RUNNER access pending</span>
-      )}
-    </div>
   );
 }

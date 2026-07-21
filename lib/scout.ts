@@ -51,6 +51,14 @@ export type DexPair = {
   pairCreatedAt?: number | null;
 };
 
+type DexTokenProfile = {
+  chainId?: string;
+  tokenAddress?: string;
+  url?: string;
+  description?: string | null;
+  links?: Array<{ type?: string; label?: string; url?: string }> | null;
+};
+
 export type SignalInput = {
   mint: string;
   name?: string;
@@ -206,6 +214,94 @@ export function scoreDexPair(pair: DexPair | null) {
     riskFlags,
     metrics: { liquidity, volume24h: volume, change1h: change, buys1h: buys, sells1h: sells, ageMinutes }
   };
+}
+
+export async function discoverLiveScoutSignals(limit = 24): Promise<ScoutSignal[]> {
+  const profileResponse = await fetch("https://api.dexscreener.com/token-profiles/latest/v1", {
+    headers: { Accept: "application/json" },
+    cache: "no-store"
+  });
+  if (!profileResponse.ok) throw new Error(`Live scanner profile request failed (${profileResponse.status})`);
+
+  const profilePayload = (await profileResponse.json()) as DexTokenProfile[] | DexTokenProfile;
+  const profiles = (Array.isArray(profilePayload) ? profilePayload : [profilePayload])
+    .filter((profile) => profile.chainId === "solana" && validateSolanaMint(profile.tokenAddress ?? ""));
+  const uniqueProfiles = Array.from(new Map(profiles.map((profile) => [profile.tokenAddress, profile])).values()).slice(0, 30);
+  const addresses = uniqueProfiles.map((profile) => profile.tokenAddress).filter((address): address is string => Boolean(address));
+  if (!addresses.length) return [];
+
+  const pairResponse = await fetch(`https://api.dexscreener.com/tokens/v1/solana/${addresses.join(",")}`, {
+    headers: { Accept: "application/json" },
+    cache: "no-store"
+  });
+  if (!pairResponse.ok) throw new Error(`Live scanner market request failed (${pairResponse.status})`);
+  const pairs = (await pairResponse.json()) as DexPair[];
+  if (!Array.isArray(pairs)) return [];
+
+  const addressSet = new Set(addresses);
+  const bestPairByMint = new Map<string, DexPair>();
+  for (const pair of pairs) {
+    const mint = pair.baseToken?.address;
+    if (!mint || !addressSet.has(mint)) continue;
+    const current = bestPairByMint.get(mint);
+    if (!current || finite(pair.liquidity?.usd) > finite(current.liquidity?.usd)) bestPairByMint.set(mint, pair);
+  }
+
+  const now = new Date().toISOString();
+  const ranked = [...bestPairByMint.entries()]
+    .map(([mint, pair]) => {
+      const scoring = scoreDexPair(pair);
+      const buys = finite(pair.txns?.h1?.buys);
+      const sells = finite(pair.txns?.h1?.sells);
+      const velocity = finite(scoring.metrics.volume24h) / Math.max(1, finite(scoring.metrics.liquidity));
+      const attentionScore = Math.round(Math.min(100, Math.log10(1 + buys + sells) * 24 + Math.min(40, velocity * 10)));
+      const profile = uniqueProfiles.find((item) => item.tokenAddress === mint);
+      const tokenAgeSeconds = pair.pairCreatedAt ? Math.max(0, Math.floor((Date.now() - pair.pairCreatedAt) / 1000)) : null;
+      return {
+        id: `live-${mint}`,
+        chain: "solana",
+        mint,
+        name: pair.baseToken?.name || "Unresolved token",
+        symbol: pair.baseToken?.symbol || "TBD",
+        source: "runner-live-aggregator",
+        source_url: pair.url ?? profile?.url ?? null,
+        status: "queued" as ScoutSignalStatus,
+        scout_score: scoring.score,
+        price_usd: pair.priceUsd ? finite(pair.priceUsd) : null,
+        market_cap_usd: pair.marketCap ?? pair.fdv ?? null,
+        liquidity_usd: pair.liquidity?.usd ?? null,
+        volume_24h_usd: pair.volume?.h24 ?? null,
+        holder_count: null,
+        token_age_seconds: tokenAgeSeconds,
+        metrics: {
+          ...scoring.metrics,
+          attentionScore,
+          smartWalletScore: null,
+          narrativeScore: null,
+          narrativeContextAvailable: Boolean(profile?.description || profile?.links?.length)
+        },
+        reasons: scoring.reasons,
+        risk_flags: scoring.riskFlags,
+        selection_reason: null,
+        detected_at: now,
+        selected_at: null,
+        public_at: now,
+        retired_at: null,
+        created_at: now,
+        updated_at: now
+      } satisfies ScoutSignal;
+    })
+    .sort((left, right) => (right.scout_score ?? -1) - (left.scout_score ?? -1))
+    .slice(0, Math.min(30, Math.max(1, limit)));
+
+  return ranked.map((signal, index) => index === 0
+    ? {
+        ...signal,
+        status: "active",
+        selected_at: now,
+        selection_reason: "Highest Momentum Score in the current five-minute market scan."
+      }
+    : signal);
 }
 
 function pairToken(pair: DexPair | null, mint: string) {

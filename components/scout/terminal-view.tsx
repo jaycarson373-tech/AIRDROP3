@@ -11,17 +11,23 @@ import {
   Terminal
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { shortAddress } from "../../lib/scout-public";
-import { formatMoney, formatPercent, formatTime, formatToken } from "./format";
+import { formatClock, formatMoney, formatPercent, formatTime } from "./format";
 import { useCountdown } from "./hooks";
-import { ScoutActionLinks } from "./scout-shell";
 import { useScout } from "./scout-provider";
 import type { ScoutSignal } from "./types";
-import { EmptyState, ErrorState, Metric, Skeleton, StatusBadge } from "./ui";
+import { Metric, StatusBadge } from "./ui";
 
 function numericMetric(signal: ScoutSignal, key: string) {
   const value = Number(signal.metrics?.[key]);
   return Number.isFinite(value) ? value : null;
+}
+
+function firstNumericMetric(signal: ScoutSignal, keys: string[]) {
+  for (const key of keys) {
+    const value = numericMetric(signal, key);
+    if (value !== null) return value;
+  }
+  return null;
 }
 
 function scoreFactors(signal: ScoutSignal) {
@@ -29,15 +35,19 @@ function scoreFactors(signal: ScoutSignal) {
   const sells = numericMetric(signal, "sells1h");
   const totalTrades = (buys ?? 0) + (sells ?? 0);
   const buyShare = totalTrades > 0 ? (buys ?? 0) / totalTrades : null;
+  const volumeVelocity = signal.liquidity_usd && signal.volume_24h_usd ? signal.volume_24h_usd / signal.liquidity_usd : null;
+  const attention = firstNumericMetric(signal, ["attentionScore", "attention_score"]);
+  const smartWallets = firstNumericMetric(signal, ["smartWalletScore", "smart_wallet_score"]);
+  const narrative = firstNumericMetric(signal, ["narrativeScore", "narrative_score"]);
   return [
     { label: "Liquidity", value: formatMoney(signal.liquidity_usd), connected: signal.liquidity_usd !== null },
     { label: "24h volume", value: formatMoney(signal.volume_24h_usd), connected: signal.volume_24h_usd !== null },
-    { label: "1h price action", value: formatPercent(numericMetric(signal, "change1h")), connected: numericMetric(signal, "change1h") !== null },
-    { label: "Recent buy share", value: buyShare === null ? "Unavailable" : formatPercent(buyShare * 100), connected: buyShare !== null },
-    { label: "Holder growth", value: signal.holder_count === null ? "Adapter pending" : signal.holder_count.toLocaleString(), connected: signal.holder_count !== null },
-    { label: "Social velocity", value: "Adapter pending", connected: false },
-    { label: "Smart wallets", value: "Adapter pending", connected: false },
-    { label: "Telegram velocity", value: "Adapter pending", connected: false }
+    { label: "Volume velocity", value: volumeVelocity === null ? "Indexing" : `${volumeVelocity.toFixed(2)}x`, connected: volumeVelocity !== null },
+    { label: "Recent buy pressure", value: buyShare === null ? "Indexing" : formatPercent(buyShare * 100), connected: buyShare !== null },
+    { label: "Market attention", value: attention === null ? "Feed connecting" : `${attention}/100`, connected: attention !== null },
+    { label: "Smart-wallet activity", value: smartWallets === null ? "Feed connecting" : `${smartWallets}/100`, connected: smartWallets !== null },
+    { label: "AI narrative", value: narrative === null ? "Feed connecting" : `${narrative}/100`, connected: narrative !== null },
+    { label: "1h price action", value: formatPercent(numericMetric(signal, "change1h")), connected: numericMetric(signal, "change1h") !== null }
   ];
 }
 
@@ -52,34 +62,6 @@ function confidenceScore(signal: ScoutSignal | null) {
     signal.holder_count
   ].filter((value) => value !== null && value !== undefined).length;
   return Math.round((connected / 6) * 100);
-}
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const MULTIPLIER_MILESTONES = [
-  { afterMs: DAY_MS, multiplierBps: 12_500 },
-  { afterMs: 3 * DAY_MS, multiplierBps: 15_000 },
-  { afterMs: 7 * DAY_MS, multiplierBps: 20_000 }
-];
-
-function multiplierLabel(multiplierBps: number | null) {
-  return multiplierBps ? `${(multiplierBps / 10_000).toFixed(2)}x` : "Indexing";
-}
-
-function milestoneLabel(eligibleSince: string | null, eligible: boolean) {
-  if (!eligible) return { label: "Starts when eligible", progress: 0 };
-  const sinceMs = Date.parse(eligibleSince ?? "");
-  if (!Number.isFinite(sinceMs)) return { label: "Waiting for first cycle", progress: 0 };
-  const heldMs = Math.max(0, Date.now() - sinceMs);
-  const next = MULTIPLIER_MILESTONES.find((milestone) => heldMs < milestone.afterMs);
-  if (!next) return { label: "2.00x maximum reached", progress: 100 };
-  const remainingMs = next.afterMs - heldMs;
-  const remaining = remainingMs < DAY_MS
-    ? `${Math.max(1, Math.ceil(remainingMs / (60 * 60 * 1000)))}h`
-    : `${Math.max(1, Math.ceil(remainingMs / DAY_MS))}d`;
-  return {
-    label: `${remaining} to ${(next.multiplierBps / 10_000).toFixed(2)}x`,
-    progress: Math.min(100, (heldMs / (7 * DAY_MS)) * 100)
-  };
 }
 
 function SignalIdentity({ signal }: { signal: ScoutSignal }) {
@@ -103,14 +85,14 @@ function CurrentSignalPanel({ signal }: { signal: ScoutSignal | null }) {
     return (
       <section className="scout-panel scout-panel--signal scout-panel--empty">
         <div className="scout-panel__head">
-          <div><span className="scout-kicker">Current Runner</span><h2>Awaiting target</h2></div>
-          <StatusBadge label="Monitoring" tone="queued" />
+          <div><span className="scout-kicker">Current Runner</span><h2>NO VERIFIED TARGET</h2></div>
+          <StatusBadge label="Scanner online" tone="queued" />
         </div>
-        <EmptyState
-          title="No active runner yet"
-          body="Runner is online and ranking verified market signals. The strongest signal appears here when the scanner locks on."
-        />
-        <div className="scout-signal-placeholder" aria-hidden="true"><i /><i /><i /><i /><i /></div>
+        <div className="runner-no-target" role="status">
+          <span><time>{formatClock(new Date())}</time><strong>ONLINE</strong><em>SCANNER REMAINS ONLINE</em></span>
+          <span><time>{formatClock(new Date())}</time><strong>INDEXING</strong><em>RANKING VERIFIED MARKET INPUTS</em></span>
+          <span><time>{formatClock(new Date())}</time><strong>SEEKING TARGET</strong><em>WAITING FOR AUTHENTICATED MOMENTUM SIGNAL</em></span>
+        </div>
       </section>
     );
   }
@@ -119,7 +101,7 @@ function CurrentSignalPanel({ signal }: { signal: ScoutSignal | null }) {
     <section className="scout-panel scout-panel--signal">
       <div className="scout-panel__head">
         <SignalIdentity signal={signal} />
-        <StatusBadge label="Target acquired" />
+        <StatusBadge label="Signal verified" />
       </div>
 
       <div className="scout-signal-score">
@@ -150,7 +132,7 @@ function CurrentSignalPanel({ signal }: { signal: ScoutSignal | null }) {
 
       <div className="scout-panel__footer">
         <span><Clock3 size={15} /> Selected {formatTime(signal.selected_at ?? signal.detected_at)}</span>
-        <span><Radio size={15} /> Next scan cycle {countdown.label}</span>
+        <span><Radio size={15} /> Next Runner airdrop {countdown.label}</span>
         <a href={`https://dexscreener.com/solana/${signal.mint}`} target="_blank" rel="noreferrer">
           Open chart <ExternalLink size={14} />
         </a>
@@ -177,72 +159,59 @@ function ScorePanel({ signal }: { signal: ScoutSignal | null }) {
           ))}
         </div>
       ) : (
-        <EmptyState title="Factors pending" body="Score factors appear as soon as Runner locks onto a verified market signal." />
+        <div className="runner-factor-states" role="status">
+          {["VOLUME", "BUY PRESSURE", "MARKET ATTENTION", "SMART WALLETS", "AI NARRATIVE"].map((label, index) => (
+            <span key={label}><small>{label}</small><strong>{index < 2 ? "INDEXING" : "CONNECTING"}</strong></span>
+          ))}
+        </div>
       )}
-      <p className="scout-note">Runner ranks connected market data only. Any unavailable input stays clearly marked as pending.</p>
+      <p className="scout-note">Volume and market activity are live. Smart-wallet and AI narrative feeds remain clearly marked until connected.</p>
     </section>
   );
 }
 
-function ActivityFeed() {
-  const { signals } = useScout();
+export function ActivityFeed() {
+  const { signals, stats, lastUpdated } = useScout();
+  const countdown = useCountdown(stats.nextDropTime);
+  const updatedAt = lastUpdated ?? new Date();
+  const liveLines = [
+    { time: formatClock(updatedAt), status: "LIVE", output: "SCANNER ONLINE" },
+    { time: formatClock(updatedAt), status: "CONNECTED", output: "NETWORK SOLANA" },
+    ...signals.signals.slice(0, 5).flatMap((signal) => [
+      { time: formatClock(signal.updated_at), status: "SCANNING", output: `$${signal.symbol}` },
+      { time: formatClock(signal.updated_at), status: "MOMENTUM", output: signal.scout_score === null ? "INDEXING" : `${signal.scout_score}/100` }
+    ]),
+    ...(signals.active ? [
+      { time: formatClock(signals.active.updated_at), status: "SIGNAL VERIFIED", output: `$${signals.active.symbol}` },
+      { time: formatClock(signals.active.selected_at ?? signals.active.updated_at), status: "LOCKED", output: `TARGET $${signals.active.symbol}` }
+    ] : [
+      { time: formatClock(updatedAt), status: "SEEKING TARGET", output: "NO VERIFIED SIGNAL" }
+    ]),
+    { time: formatClock(updatedAt), status: "NEXT AIRDROP", output: countdown.label }
+  ];
+  const eventLines = signals.events.slice(0, 5).map((event) => {
+    const joined = Array.isArray(event.signal) ? event.signal[0] : event.signal;
+    return {
+      time: formatClock(event.created_at),
+      status: event.event_type.replaceAll("_", " ").toUpperCase(),
+      output: joined ? `$${joined.symbol}` : "RUNNER PROTOCOL"
+    };
+  });
+  const lines = [...liveLines, ...eventLines].slice(0, 16);
   return (
     <section className="scout-panel scout-panel--feed">
       <div className="scout-panel__head">
         <div><span className="scout-kicker">Live tape</span><h2>Scanner feed</h2></div>
         <Activity size={21} aria-hidden="true" />
       </div>
-      {signals.events.length ? (
-        <div className="scout-event-list">
-          {signals.events.slice(0, 8).map((event) => {
-            const joined = Array.isArray(event.signal) ? event.signal[0] : event.signal;
-            return (
-              <div className="scout-event" key={event.id}>
-                <span className="scout-event__rail" aria-hidden="true" />
-                <div>
-                  <strong>{event.event_type.replaceAll("_", " ")}</strong>
-                  <p>{joined ? `$${joined.symbol} · ${shortAddress(joined.mint)}` : "Runner protocol"}</p>
-                </div>
-                <time>{formatTime(event.created_at)}</time>
-              </div>
-            );
-          })}
+      <div className="runner-terminal-log" aria-label="Live market scanner log">
+        <div className="runner-terminal-log__track">
+          {[...lines, ...lines].map((line, index) => (
+            <span aria-hidden={index >= lines.length} key={`${line.time}-${line.status}-${index}`}>
+              <time>{line.time}</time><strong>{line.status}</strong><em>{line.output}</em>
+            </span>
+          ))}
         </div>
-      ) : (
-        <EmptyState title="Feed is listening" body="New detections, ranking changes, target locks, and public releases will appear here." />
-      )}
-    </section>
-  );
-}
-
-export function WalletStatusPanel() {
-  const { wallet, stats, clearAccess } = useScout();
-  const countdown = useCountdown(stats.nextDropTime);
-
-  if (!wallet) return null;
-
-  const multiplier = multiplierLabel(wallet.multiplierBps);
-  const milestone = milestoneLabel(wallet.eligibleSince, wallet.eligible);
-
-  return (
-    <section className="scout-panel scout-holder-status">
-      <div className="scout-holder-status__head">
-        <div><span className="scout-kicker">Holder Status</span><h2>{shortAddress(wallet.wallet, 7, 5)}</h2></div>
-        <StatusBadge label={wallet.eligible ? "Eligible" : "Below threshold"} tone={wallet.eligible ? "live" : "muted"} />
-        <button className="scout-wallet-status__disconnect" type="button" onClick={clearAccess}>Disconnect</button>
-      </div>
-      <div className="scout-holder-status__grid">
-        <Metric label="Wallet Status" value="Connected" detail={shortAddress(wallet.wallet, 5, 4)} />
-        <Metric label="Current Multiplier" value={multiplier} detail="Never-sold hold boost" />
-        <Metric label="Holding Streak" value={`${wallet.currentStreak.toLocaleString()} cycles`} detail="Consecutive eligible cycles" />
-        <Metric label="Current Distribution Weight" value={wallet.multiplierBps ? `${multiplier} base` : "Indexing"} detail="Multiplier applied each cycle" />
-        <Metric label="Next Distribution" value={countdown.label} />
-        <Metric label="Eligibility Status" value={wallet.eligible ? "Eligible" : "Below threshold"} detail={`${formatToken(wallet.sourceBalance, "RUNNER")} held`} />
-      </div>
-      <div className="scout-holder-milestone">
-        <div><span>Eligible since</span><strong>{wallet.eligibleSince ? formatTime(wallet.eligibleSince) : "Not active"}</strong></div>
-        <div><span>Next multiplier milestone</span><strong>{milestone.label}</strong></div>
-        <i aria-label={`Multiplier milestone progress ${Math.round(milestone.progress)} percent`}><span style={{ width: `${milestone.progress}%` }} /></i>
       </div>
     </section>
   );
@@ -272,7 +241,7 @@ export function HolderMultiplierPanel() {
 }
 
 export function ScoutTerminalView() {
-  const { signals, stats, state, error, refresh, lastUpdated } = useScout();
+  const { signals, stats, state, lastUpdated } = useScout();
   const [treadmillBoost, setTreadmillBoost] = useState(false);
   const previousActiveId = useRef<string | null | undefined>(undefined);
   const countdown = useCountdown(stats.nextDropTime);
@@ -281,6 +250,13 @@ export function ScoutTerminalView() {
     .sort((left, right) => (right.scout_score ?? -1) - (left.scout_score ?? -1))
     .slice(0, 6);
   const activeConfidence = confidenceScore(signals.active);
+  const scannerInputs = [
+    { label: "Volume", connected: signals.active?.volume_24h_usd !== null && signals.active?.volume_24h_usd !== undefined },
+    { label: "Attention", connected: signals.active ? firstNumericMetric(signals.active, ["attentionScore", "attention_score"]) !== null : false },
+    { label: "Smart Wallets", connected: signals.active ? firstNumericMetric(signals.active, ["smartWalletScore", "smart_wallet_score"]) !== null : false },
+    { label: "AI Narrative", connected: signals.active ? firstNumericMetric(signals.active, ["narrativeScore", "narrative_score"]) !== null : false }
+  ];
+  const connectedInputCount = scannerInputs.filter((input) => input.connected).length;
   const scannerQueue = rankedSignals.length ? rankedSignals : Array.from({ length: 6 }, () => null);
   const tapeItems = [
     ...rankedSignals.map((signal) => ({
@@ -289,7 +265,7 @@ export function ScoutTerminalView() {
       score: signal.scout_score === null ? "INDEXING" : `${signal.scout_score}/100`,
       status: signal.id === signals.active?.id ? "TARGET LOCKED" : signal.status.toUpperCase()
     })),
-    { id: "cycle", symbol: "NEXT MARKET UPDATE", score: countdown.label, status: `CYCLE ${stats.currentEpoch}` },
+    { id: "cycle", symbol: "NEXT RUNNER AIRDROP", score: countdown.label, status: `CYCLE ${stats.currentEpoch}` },
     { id: "scanner", symbol: "RUNNER", score: signals.access === "premium" ? "REAL TIME" : `${signals.publicDelaySeconds}S DELAY`, status: "SCANNING" }
   ];
 
@@ -323,14 +299,13 @@ export function ScoutTerminalView() {
             <StatusBadge label="Scanner online" />
             <span>{signals.access === "premium" ? "REAL-TIME FEED" : `PUBLIC FEED · ${signals.publicDelaySeconds}S DELAY`}</span>
           </div>
-          <p className="scout-eyebrow">Live momentum. Updated every five minutes.</p>
+          <p className="scout-eyebrow">Custom aggregator · Five-minute Runner airdrops</p>
           <h1>Never miss a<br /><span>runner again.</span></h1>
-          <p className="scout-hero__body">Runner continuously scans, ranks, and locks onto the market's strongest momentum signal—so you can own the runner instead of chasing it.</p>
-          <ScoutActionLinks />
+          <p className="scout-hero__body">Every five minutes, Runner's custom aggregator scans market activity, ranks the strongest momentum signal, and airdrops that runner to eligible holders.</p>
           <p className="scout-hero__delay"><Clock3 size={15} /> THE MARKET NEVER STOPS. NEITHER DO WE.</p>
         </div>
         <div className="scout-hero__terminal runner-scanner-panel">
-          <div className="scout-terminal-bar"><span><i /> MOMENTUM SCANNER ONLINE</span><small>{lastUpdated ? `UPDATED ${formatTime(lastUpdated.toISOString())}` : "CONNECTING"}</small></div>
+          <div className="scout-terminal-bar"><span><i /> MOMENTUM SCANNER ONLINE</span><small>{lastUpdated ? `UPDATED ${formatClock(lastUpdated)}` : "INDEXING"}</small></div>
           <div className="runner-scanner-console" aria-label="Momentum Scanner">
             <div className="runner-scanner-console__head">
               <span>SCANNING MARKET <i className="runner-cursor" aria-hidden="true" /></span>
@@ -338,6 +313,13 @@ export function ScoutTerminalView() {
             </div>
             <div className="runner-scan-pipeline" aria-label="Scanner pipeline">
               <span>DISCOVER</span><i>→</i><span>SCORE</span><i>→</i><span>RANK</span><i>→</i><span>LOCK</span>
+            </div>
+            <div className="runner-scanner-inputs" aria-label="Aggregator data inputs">
+              {scannerInputs.map((input) => (
+                <span className={input.connected ? "is-live" : "is-connecting"} key={input.label}>
+                  <small>{input.label}</small><strong>{input.connected ? "LIVE" : "CONNECTING"}</strong>
+                </span>
+              ))}
             </div>
             <div className="runner-symbol-stream" aria-hidden="true">
               <div className="runner-symbol-stream__track">
@@ -366,23 +348,22 @@ export function ScoutTerminalView() {
             <div className={`runner-lock-panel ${signals.active ? "is-acquired" : "is-seeking"}`}>
               <span>{signals.active ? "TARGET ACQUIRED" : "SEEKING TARGET"}</span>
               <strong>{activeSymbol}</strong>
-              <small>{signals.active ? `LOCKED · ${activeConfidence ?? 0}% CONFIDENCE` : "AWAITING VERIFIED SIGNAL"}</small>
+              <small>{signals.active ? `AUTHENTICATED · SIGNAL VERIFIED · ${activeConfidence ?? 0}% CONFIDENCE` : "NO VERIFIED SIGNAL"}</small>
             </div>
             <div className="runner-scanner-metrics">
               <Metric label="Current Runner" value={activeSymbol} detail={signals.active?.name} />
               <Metric label="Momentum" value={signals.active?.scout_score === null || signals.active?.scout_score === undefined ? "Scanning" : `${signals.active.scout_score}/100`} />
               <Metric label="Scan Cycle" value={`#${stats.currentEpoch.toLocaleString()}`} />
-              <Metric label="Next Update" value={countdown.label} />
+              <Metric label="Next Airdrop" value={countdown.label} />
             </div>
           </div>
-          {state === "loading" ? <Skeleton rows={2} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : null}
-          {state === "stale" && error ? <p className="scout-stale-note">Live refresh delayed. Showing the last verified data.</p> : null}
+          {state === "loading" ? <div className="runner-terminal-state"><i /><strong>INDEXING</strong><span>CONNECTING MARKET FEEDS</span></div> : null}
         </div>
         <div className="scout-live-strip">
-          <Metric label="Signals Ranked" value={signals.signals.length.toLocaleString()} detail="Live market set" />
+          <Metric label="Scanner Inputs" value={`${connectedInputCount}/4 live`} detail="Volume · Attention · Wallets · AI" />
           <Metric label="Current Runner" value={activeSymbol} detail={signals.active?.name ?? "Scanner seeking target"} />
           <Metric label="Momentum Score" value={signals.active?.scout_score === null || signals.active?.scout_score === undefined ? "Scanning" : `${signals.active.scout_score}/100`} detail="Strongest verified signal" />
-          <div className="runner-next-distribution"><Metric label="Next Market Update" value={countdown.label} detail="Five-minute cycle" /></div>
+          <div className="runner-next-distribution"><Metric label="Next Runner Airdrop" value={countdown.label} detail="Five-minute cycle" /></div>
         </div>
         <div className="runner-hero-tape" aria-label="Live Runner market tape">
           <div className="runner-hero-tape__track">
@@ -395,11 +376,10 @@ export function ScoutTerminalView() {
 
       <section className="scout-terminal-section" id="terminal">
         <div className="scout-section-heading scout-section-heading--inline">
-          <div><span className="scout-kicker">Runner Terminal</span><h2>Own the runner. Don't chase it.</h2></div>
-          <p>The scanner leads. Holder rewards strengthen long-term access and distribution weight.</p>
+          <div><span className="scout-kicker">Runner Terminal</span><h2>Scan. Rank. Lock. Airdrop.</h2></div>
+          <p>The custom aggregator finds the strongest runner and moves it into the next five-minute distribution cycle.</p>
         </div>
         <div className="scout-terminal-grid">
-          <WalletStatusPanel />
           <CurrentSignalPanel signal={signals.active} />
           <ScorePanel signal={signals.active} />
           <ActivityFeed />
