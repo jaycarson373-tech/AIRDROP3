@@ -23,7 +23,7 @@ Each recorded call keeps its market cap at scan time. The site reads current mar
 
 ## Manual scan workflow
 
-Run `supabase/manual_runner_scan_setup.sql` once in Supabase SQL Editor. For every new call, record the token name, symbol, Solana mint, market cap at scan, scan time with timezone, and whether it is the current active Runner. Momentum score and selection notes are optional.
+Run `supabase/manual_runner_scan_setup.sql` once in Supabase SQL Editor. For every new call, copy `supabase/record_runner_scan.sql`, replace its six values, and run the transaction. Record the token name, symbol, Solana mint, market cap at scan, scan time with timezone, and selection note.
 
 When `SCOUT_DYNAMIC_SELECTION_ENABLED=true`, the active Runner becomes the reward mint at the start of the next epoch. Leave this disabled until the scan setup has run and an active signal has been verified.
 

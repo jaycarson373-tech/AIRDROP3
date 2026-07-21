@@ -91,89 +91,6 @@ set value = excluded.value,
     description = excluded.description,
     updated_at = now();
 
--- One safe command for recording a scan. Market cap is the snapshot at scan time.
--- The website obtains current market cap live from DexScreener by mint address.
-create or replace function public.record_runner_scan(
-  p_mint text,
-  p_name text,
-  p_symbol text,
-  p_market_cap_usd numeric,
-  p_detected_at timestamptz default now(),
-  p_status text default 'active',
-  p_scout_score numeric default null,
-  p_selection_reason text default null
-)
-returns public.scout_signals
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  recorded public.scout_signals;
-begin
-  if p_mint is null or btrim(p_mint) = '' then
-    raise exception 'Mint is required';
-  end if;
-  if p_name is null or btrim(p_name) = '' then
-    raise exception 'Token name is required';
-  end if;
-  if p_symbol is null or btrim(p_symbol) = '' then
-    raise exception 'Token symbol is required';
-  end if;
-  if p_market_cap_usd is null or p_market_cap_usd < 0 then
-    raise exception 'Market cap at scan must be zero or greater';
-  end if;
-  if p_status not in ('active', 'passed', 'archived') then
-    raise exception 'Manual scan status must be active, passed, or archived';
-  end if;
-  if p_scout_score is not null and (p_scout_score < 0 or p_scout_score > 100) then
-    raise exception 'Scout score must be between 0 and 100';
-  end if;
-
-  if p_status = 'active' then
-    update public.scout_signals
-    set status = 'passed', retired_at = p_detected_at, updated_at = now()
-    where status = 'active' and mint <> btrim(p_mint);
-  end if;
-
-  insert into public.scout_signals (
-    chain, mint, name, symbol, source, source_url, status, scout_score,
-    market_cap_usd, selection_reason, detected_at, selected_at, public_at,
-    retired_at, updated_at
-  ) values (
-    'solana', btrim(p_mint), btrim(p_name), upper(btrim(p_symbol)), 'manual',
-    'https://dexscreener.com/solana/' || btrim(p_mint), p_status, p_scout_score,
-    p_market_cap_usd, p_selection_reason, p_detected_at,
-    case when p_status = 'active' then p_detected_at else null end,
-    p_detected_at, null, now()
-  )
-  on conflict (mint) do update set
-    name = excluded.name,
-    symbol = excluded.symbol,
-    source = excluded.source,
-    source_url = excluded.source_url,
-    status = excluded.status,
-    scout_score = excluded.scout_score,
-    market_cap_usd = excluded.market_cap_usd,
-    selection_reason = excluded.selection_reason,
-    detected_at = excluded.detected_at,
-    selected_at = excluded.selected_at,
-    public_at = excluded.public_at,
-    retired_at = excluded.retired_at,
-    updated_at = now()
-  returning * into recorded;
-
-  insert into public.scout_signal_events (signal_id, event_type, payload)
-  values (
-    recorded.id,
-    case when p_status = 'active' then 'target_locked' else 'scan_recorded' end,
-    jsonb_build_object('market_cap_at_scan_usd', p_market_cap_usd, 'source', 'manual')
-  );
-
-  return recorded;
-end;
-$$;
-
 alter table public.scout_signals enable row level security;
 alter table public.scout_signal_events enable row level security;
 alter table public.scout_settings enable row level security;
@@ -203,18 +120,5 @@ create policy "public reads scout settings"
 grant select on public.scout_signals, public.scout_signal_events, public.scout_settings to anon, authenticated;
 grant all on public.scout_signals, public.scout_signal_events, public.scout_settings to service_role;
 grant usage, select on all sequences in schema public to service_role;
-revoke all on function public.record_runner_scan(text, text, text, numeric, timestamptz, text, numeric, text) from public, anon, authenticated;
-grant execute on function public.record_runner_scan(text, text, text, numeric, timestamptz, text, numeric, text) to service_role;
 
--- EXAMPLE: replace the values, then run only this SELECT for each new scan.
--- Use 'active' for the current Runner or 'passed' for a historical call.
--- select public.record_runner_scan(
---   'SOLANA_MINT_ADDRESS',
---   'Token Name',
---   'SYMBOL',
---   125000,
---   '2026-07-21 14:04:00-04',
---   'active',
---   null,
---   'Manual verified Runner scan'
--- );
+-- Setup complete. Use record_runner_scan.sql for each new active Runner.
