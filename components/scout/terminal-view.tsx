@@ -11,6 +11,7 @@ import {
   Terminal
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { scoutPublicConfig } from "../../lib/scout-public";
 import { formatClock, formatMoney, formatPercent, formatTime } from "./format";
 import { useCountdown } from "./hooks";
 import { useScout } from "./scout-provider";
@@ -345,9 +346,18 @@ export function ScoutTerminalView() {
             <StatusBadge label={state === "loading" ? "Scanner starting" : reconnecting ? "Scanner reconnecting" : "Scanner online"} />
             <span>{signals.active ? (signals.access === "premium" ? "REAL-TIME VERIFIED FEED" : `VERIFIED FEED · ${signals.publicDelaySeconds}S DELAY`) : state === "loading" ? "CONNECTING MARKET FEED" : reconnecting ? "MARKET FEED STATUS UNAVAILABLE" : "WATCHING LIVE MARKET FEED"}</span>
           </div>
-          <p className="scout-eyebrow">Custom aggregator · Five-minute Runner airdrops</p>
+          <p className="scout-eyebrow">Five-minute Runner airdrops · Custom aggregate scanner</p>
           <h1>Never miss a<br /><span>runner again.</span></h1>
-          <p className="scout-hero__body">Every five minutes, Runner's custom aggregator scans market activity, ranks the strongest momentum signal, and airdrops that runner to eligible holders.</p>
+          <p className="scout-hero__body">Every five minutes, Runner airdrops the strongest verified market Runner to eligible holders with {scoutPublicConfig.minimumHolding.toLocaleString()}+ $RUNNER. Every selection comes from our custom aggregate scanner.</p>
+          <div className="runner-hero-mechanism" aria-label="Runner distribution mechanism">
+            <span><small>Holder minimum</small><strong>{scoutPublicConfig.minimumHolding.toLocaleString()}+ $RUNNER</strong></span>
+            <span><small>Distribution cycle</small><strong>Every 5 minutes</strong></span>
+            <span><small>Runner selection</small><strong>Aggregate scanner</strong></span>
+          </div>
+          <nav className="runner-hero-links" aria-label="Runner scanner links">
+            <Link href="/runners">View all scans <ArrowRight size={13} /></Link>
+            <Link href="/terminal">Open Runner Terminal <ArrowRight size={13} /></Link>
+          </nav>
           <p className="scout-hero__delay"><Clock3 size={15} /> THE MARKET NEVER STOPS. NEITHER DO WE.</p>
         </div>
         <div className="scout-hero__terminal runner-scanner-panel">
@@ -426,8 +436,8 @@ export function ScoutTerminalView() {
 
       <section className="scout-terminal-section" id="terminal">
         <div className="scout-section-heading scout-section-heading--inline">
-          <div><span className="scout-kicker">Runner Terminal</span><h2>Scan. Rank. Lock. Airdrop.</h2></div>
-          <p>The custom aggregator finds the strongest runner and moves it into the next five-minute distribution cycle.</p>
+          <div><span className="scout-kicker">Runner Terminal</span><h2>Every verified scan. One live terminal.</h2></div>
+          <p>Review the complete scan record, then monitor the current Runner as the aggregate scanner ranks, verifies, and locks each signal.</p>
         </div>
         <div className="scout-terminal-grid">
           <CurrentSignalPanel signal={signals.active} />

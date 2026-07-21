@@ -16,7 +16,7 @@ Scout is live.
 
 See where attention is moving before it becomes obvious.
 
-Hold 2.5M+ $SCOUT for Full Scout access and eligibility in the five-minute holder distribution rail.
+Hold 1M+ $RUNNER for eligibility in the five-minute holder distribution rail.
 
 ### Thread outline
 
@@ -51,7 +51,7 @@ Supported commands: `/runner`, `/top`, `/new`, `/search`, `/scan`, `/watch`, `/u
 - [ ] Scout migration applied
 - [ ] Old launch data reset
 - [ ] Source mint and public links verified
-- [ ] 2.5M eligibility displayed by site and worker
+- [ ] 1M eligibility displayed by site and worker
 - [ ] Five-minute epoch displayed by site and worker
 - [ ] First signal queued and reviewed
 - [ ] Premium/public one-minute release delay tested

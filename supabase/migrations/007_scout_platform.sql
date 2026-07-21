@@ -57,7 +57,7 @@ create table if not exists public.scout_settings (
 );
 
 insert into public.scout_settings (key, value, description) values
-  ('eligibility_minimum', '2500000', 'Minimum SCOUT balance for premium access and holder distributions.'),
+  ('eligibility_minimum', '1000000', 'Minimum RUNNER balance for holder distributions.'),
   ('public_signal_delay_seconds', '60', 'Delay before a premium signal becomes public.'),
   ('distribution_bps', '6000', 'Target share of protocol revenue reserved for holder distributions.'),
   ('protocol_reserve_bps', '4000', 'Target share reserved for buybacks, burns, operations, and growth.'),

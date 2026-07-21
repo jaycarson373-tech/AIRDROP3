@@ -18,7 +18,7 @@ It records authenticated token signals, enriches them with connected market data
 
 ## Holder rules
 
-- Minimum balance: `2,500,000 SCOUT`
+- Minimum balance: `1,000,000 RUNNER`
 - Epoch cadence: five minutes
 - Wallets above `MAX_HOLDER_PCT` are excluded
 - A balance decrease resets the epoch streak and multiplier to `1.00x`

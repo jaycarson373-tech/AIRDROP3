@@ -1,5 +1,7 @@
 .scout-app {
   position: relative;
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   overflow: clip;
   background:
@@ -2259,7 +2261,7 @@
 }
 
 .runner-brand-masthead {
-  height: 88px;
+  height: clamp(96px, 10vw, 128px);
   border-color: rgba(255,255,255,.1);
 }
 
@@ -2267,6 +2269,57 @@
 .runner-hero .scout-eyebrow { margin: 12px 0 7px; font-size: 9px; letter-spacing: .05em; }
 .runner-hero h1 { max-width: 470px; font-size: clamp(38px, 4.1vw, 56px); line-height: .94; }
 .runner-hero .scout-hero__body { max-width: 470px; margin-top: 12px; font-size: 12px; line-height: 1.52; }
+.runner-hero-mechanism {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 12px;
+  border: 1px solid var(--scout-line);
+  background: rgba(4,6,8,.72);
+}
+.runner-hero-mechanism > span {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 8px;
+  border-right: 1px solid var(--scout-line);
+}
+.runner-hero-mechanism > span:last-child { border-right: 0; }
+.runner-hero-mechanism small {
+  overflow: hidden;
+  color: var(--scout-muted);
+  font: 600 7px/1 var(--scout-mono);
+  letter-spacing: .055em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.runner-hero-mechanism strong {
+  overflow: hidden;
+  color: var(--scout-text);
+  font: 650 9px/1.2 var(--scout-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.runner-hero-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  margin-top: 8px;
+}
+.runner-hero-links a {
+  display: inline-flex;
+  min-height: 29px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 9px;
+  border: 1px solid var(--scout-line);
+  color: var(--scout-green);
+  font: 650 8px/1 var(--scout-mono);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.runner-hero-links a:hover { border-color: var(--scout-line-green); background: rgba(140,255,114,.035); }
 .runner-hero .scout-action-links { margin-top: 15px; gap: 6px; }
 .runner-hero .scout-hero__delay { margin-top: 9px; font: 550 8px/1.35 var(--scout-mono); letter-spacing: .05em; }
 
@@ -2568,14 +2621,21 @@
 
   .scout-hero {
     grid-template-columns: minmax(0, 1fr);
+    width: min(calc(100% - 24px), 680px);
+    max-width: 100%;
     min-height: auto;
     gap: 14px;
     padding: 24px 0 20px;
+    overflow: hidden;
   }
+  .scout-hero__copy,
+  .scout-hero__terminal,
+  .runner-scanner-panel,
+  .runner-brand-masthead { width: 100%; max-width: 100%; min-width: 0; }
   .scout-hero::before { top: 220px; right: -260px; }
   .scout-hero__scan { bottom: 180px; mask-image: linear-gradient(to right, #000, transparent); }
   .scout-hero h1 { max-width: 620px; font-size: clamp(38px, 9vw, 52px); }
-  .scout-hero__body { font-size: 12px; }
+  .scout-hero__body { max-width: 100%; overflow-wrap: anywhere; font-size: 12px; }
   .scout-live-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   .scout-section-heading--inline { display: block; }
@@ -2713,6 +2773,13 @@
   .runner-brand-masthead { height: 64px; }
 
   .runner-hero__statusline { align-items: flex-start; flex-direction: column; gap: 7px; }
+  .runner-hero-mechanism { grid-template-columns: 1fr; }
+  .runner-hero-mechanism > span { border-right: 0; border-bottom: 1px solid var(--scout-line); }
+  .runner-hero-mechanism > span:last-child { border-bottom: 0; }
+  .runner-hero-links { display: grid; grid-template-columns: 1fr; }
+  .runner-hero-links a { width: 100%; }
+  .runner-hero h1 { max-width: 100%; font-size: clamp(34px, 12vw, 44px); overflow-wrap: normal; }
+  .runner-brand-masthead img { object-position: center; }
 
   .runner-hero__logo {
     width: clamp(170px, 64vw, 250px);

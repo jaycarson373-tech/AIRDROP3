@@ -20,13 +20,19 @@
 }
 
 html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background: var(--scout-bg);
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
   min-width: 320px;
+  overflow-x: hidden;
   background: var(--scout-bg);
   color: var(--scout-text);
   font-family: var(--scout-mono);
