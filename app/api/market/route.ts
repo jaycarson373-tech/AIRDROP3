@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { defaultCurrentRunner, pumpRunnerConfig } from "../../pump-runner-config";
+import { getActiveScoutSignal } from "../../../lib/scout";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -51,7 +51,6 @@ type MarketPayload = {
 };
 
 const SOL_MINT = "So11111111111111111111111111111111111111112";
-const DEFAULT_SOURCE_MINT = "8ZG2jEdmEp5t31aikFFHJrYU4JxJjUGRTjxEpPSipump";
 const CACHE_MS = 15_000;
 
 let cache: { expiresAt: number; payload: MarketPayload } | null = null;
@@ -65,14 +64,13 @@ function cleanAddress(value: string | undefined | null) {
   return trimmed || null;
 }
 
-function rewardMint() {
-  const configured = cleanAddress(env("REWARD_TOKEN_MINT"));
-  return configured || defaultCurrentRunner.mint;
+function rewardMint(activeMint: string | null) {
+  if (process.env.SCOUT_DYNAMIC_SELECTION_ENABLED === "true" && activeMint) return activeMint;
+  return cleanAddress(env("REWARD_TOKEN_MINT")) ?? activeMint;
 }
 
 function sourceMint() {
-  const configured = cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA"));
-  return configured === DEFAULT_SOURCE_MINT ? configured : cleanAddress(DEFAULT_SOURCE_MINT);
+  return cleanAddress(env("SOURCE_TOKEN_MINT")) ?? cleanAddress(env("CA"));
 }
 
 function sameAddress(a: string | undefined, b: string) {
@@ -132,19 +130,14 @@ export async function GET() {
     return NextResponse.json(cache.payload);
   }
 
-  const reward = rewardMint();
+  const active = await getActiveScoutSignal({ premium: true }).catch(() => null);
+  const reward = rewardMint(active?.mint ?? null);
   const source = sourceMint();
-  const basketMints = pumpRunnerConfig.runnerBoard.map((asset) => asset.mint).filter(Boolean);
-  const pairs = await fetchDexPairs([reward, source, SOL_MINT, ...basketMints].filter(Boolean) as string[]);
-  const rewardSymbol = reward === defaultCurrentRunner.mint
-    ? defaultCurrentRunner.ticker
-    : process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || defaultCurrentRunner.ticker;
-  const basket = Object.fromEntries(
-    pumpRunnerConfig.runnerBoard.map((asset) => [
-      asset.mint,
-      marketFromPair(pickPair(pairs, asset.mint), asset.ticker)
-    ])
-  );
+  const pairs = await fetchDexPairs([reward, source, SOL_MINT].filter(Boolean) as string[]);
+  const rewardSymbol =
+    (active && active.mint === reward ? active.symbol : null) ||
+    process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() ||
+    "SIGNAL";
   const payload: MarketPayload = {
     reward: marketFromPair(pickPair(pairs, reward), rewardSymbol),
     source: marketFromPair(
@@ -152,7 +145,7 @@ export async function GET() {
       process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "RUNNER"
     ),
     sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
-    basket,
+    basket: reward ? { [reward]: marketFromPair(pickPair(pairs, reward), rewardSymbol) } : {},
     updatedAt: new Date().toISOString()
   };
 

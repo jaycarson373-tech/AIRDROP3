@@ -120,13 +120,14 @@ export const config = {
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),
+  scoutDynamicSelectionEnabled: boolEnv("SCOUT_DYNAMIC_SELECTION_ENABLED", false),
 
   claimEnabled: boolEnv("CLAIM_ENABLED", false),
   buyEnabled: boolEnv("BUY_ENABLED", false),
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
 
   epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 5)),
-  eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),
+  eligibilityMin: numberEnv("ELIGIBILITY_MIN", 2_500_000),
   maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 150)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 4),
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
@@ -156,6 +157,11 @@ export function activateRewardForEpoch(epochId: string) {
   console.log(
     `[${epochId}] active reward rotation ${index + 1}/${config.rewardTokenMints.length}: ${config.rewardTokenSymbol} ${config.rewardTokenMint.toBase58()}`
   );
+}
+
+export function activateRewardMint(mint: PublicKey, symbol: string) {
+  config.rewardTokenMint = mint;
+  config.rewardTokenSymbol = symbol.replace(/^\$/, "") || "SCOUT signal";
 }
 
 export function treasuryKeypair() {

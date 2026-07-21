@@ -70,28 +70,23 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
     const currentByWallet = new Map(currentHolders.map((holder) => [holder.wallet, holder]));
     const updates: Record<string, unknown>[] = [];
     const eligible: Holder[] = [];
-    const permanentlyRemoved = new Set<string>();
-
     for (const state of states) {
-      if (state.permanently_ineligible) {
-        permanentlyRemoved.add(state.wallet);
-        continue;
-      }
+      // Eligible wallets are handled in the second pass so each wallet is
+      // written once and a sell can reset its streak without excluding it.
+      if (eligibleByWallet.has(state.wallet)) continue;
 
       const current = currentByWallet.get(state.wallet);
-      const previousRaw = parseRaw(state.source_balance_raw);
-
       const droppedBelowThreshold = !current || current.uiBalance < config.eligibilityMin;
-      const soldAnyAmount = current ? current.rawBalance < previousRaw : true;
 
-      if (droppedBelowThreshold || soldAnyAmount) {
+      if (droppedBelowThreshold) {
         updates.push({
           wallet: state.wallet,
           source_balance: current?.uiBalance.toString() ?? state.source_balance ?? "0",
           source_balance_raw: current?.rawBalance.toString() ?? state.source_balance_raw ?? "0",
           highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
-          permanently_ineligible: true,
-          ineligible_reason: soldAnyAmount ? "balance_decreased" : "dropped_below_threshold",
+          eligible_since: null,
+          permanently_ineligible: false,
+          ineligible_reason: "dropped_below_threshold",
           ineligible_at: now,
           last_seen_at: now,
           last_epoch_id: epochId,
@@ -99,8 +94,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
           current_streak_epochs: 0,
           current_multiplier_bps: 10_000
         });
-        permanentlyRemoved.add(state.wallet);
-      } else if (!eligibleByWallet.has(state.wallet)) {
+      } else {
         updates.push({
           wallet: state.wallet,
           source_balance: current.uiBalance.toString(),
@@ -123,7 +117,6 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
 
     for (const holder of eligibleHolders) {
       const existing = stateByWallet.get(holder.wallet);
-      if (permanentlyRemoved.has(holder.wallet) || existing?.permanently_ineligible) continue;
 
       const previousRaw = parseRaw(existing?.source_balance_raw);
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
@@ -135,16 +128,17 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
           source_balance: holder.uiBalance.toString(),
           source_balance_raw: holder.rawBalance.toString(),
           highest_source_balance_raw: highestRaw > holder.rawBalance ? highestRaw.toString() : holder.rawBalance.toString(),
-          permanently_ineligible: true,
-          ineligible_reason: "balance_decreased",
-          ineligible_at: now,
+          eligible_since: now,
+          permanently_ineligible: false,
+          ineligible_reason: null,
+          ineligible_at: null,
           last_seen_at: now,
           last_epoch_id: epochId,
           updated_at: now,
           current_streak_epochs: 0,
           current_multiplier_bps: 10_000
         });
-        permanentlyRemoved.add(holder.wallet);
+        eligible.push({ ...holder, eligibleSince: now, holdMultiplierBps: 10_000 });
         continue;
       }
 
@@ -174,10 +168,11 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
 
     await upsertHolderStates(updates);
 
-    const removed = eligibleHolders.length - eligible.length;
-    if (removed > 0) {
-      console.log(`[${epochId}] holder-state removed ${removed} permanently ineligible holders`);
-    }
+    const reset = eligibleHolders.filter((holder) => {
+      const previous = stateByWallet.get(holder.wallet);
+      return previous ? holder.rawBalance < parseRaw(previous.source_balance_raw) : false;
+    }).length;
+    if (reset > 0) console.log(`[${epochId}] holder-state reset ${reset} balance-decrease streaks to 1.00x`);
     return eligible;
   } catch (error) {
     if (isMissingHolderStateTable(error)) {

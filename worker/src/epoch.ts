@@ -10,6 +10,7 @@ import {
 import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
 import { applyHolderState } from "./holder-state.js";
 import { currentEpochId } from "./time.js";
+import { activateScoutSignalForEpoch } from "./scout.js";
 import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
@@ -30,13 +31,14 @@ export async function runEpoch(date = new Date()) {
   activateRewardForEpoch(epochId);
 
   try {
+    const scoutSignal = await activateScoutSignalForEpoch(epochId);
     const existing = await getEpoch(epochId);
     if (existing?.status === "completed") {
       console.log(`[${epochId}] already completed, skipping`);
       return;
     }
 
-    await startEpoch(epochId);
+    await startEpoch(epochId, scoutSignal?.id ?? null);
     const claim = await claimFees(epochId);
     const claimedLamports = BigInt(claim.amountClaimed || "0");
     if (claimedLamports <= 0n) {

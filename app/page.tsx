@@ -1,5 +1,5 @@
-import { PumpRunnerHome } from "./pump-runner-components";
+import { ScoutTerminalView } from "../components/scout/terminal-view";
 
 export default function Page() {
-  return <PumpRunnerHome />;
+  return <ScoutTerminalView />;
 }

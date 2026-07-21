@@ -83,8 +83,8 @@ function multiplierBps(holder: HolderStateRow | null) {
 }
 
 function minimumHolding() {
-  const parsed = Number(process.env.ELIGIBILITY_MIN ?? process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1_000_000;
+  const parsed = Number(process.env.ELIGIBILITY_MIN ?? process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 2_500_000);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 2_500_000;
 }
 
 function dropSolValue(payout: PayoutRow, buy: BuyRow | undefined) {

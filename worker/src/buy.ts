@@ -168,7 +168,7 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}PTF fund buy: usable=${usableLamports}, holder airdrop path=${amount} lamports (${rewardBuyBps} bps), bagwork path=${pfpRewardLamports} lamports (${bagworkBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Scout signal buy: usable=${usableLamports}, holder distribution=${amount} lamports (${rewardBuyBps} bps), protocol reserve path=${pfpRewardLamports} lamports (${bagworkBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
   );
   console.log(
     `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`

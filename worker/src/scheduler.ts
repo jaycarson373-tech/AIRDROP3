@@ -2,7 +2,7 @@ import { runEpoch } from "./epoch.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
 
-console.log(`PTF worker started. Schedule: every ${config.epochMinutes} minutes.`);
+console.log(`Scout worker started. Schedule: every ${config.epochMinutes} minutes.`);
 console.log(
   `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
 );
@@ -15,8 +15,9 @@ if (config.rewardMode === "token") {
   );
 }
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
+console.log(`Scout dynamic selection: ${config.scoutDynamicSelectionEnabled ? "enabled" : "disabled"}`);
 console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ source tokens; wallets above ${config.maxHolderPct}% are excluded.`);
-console.log(`Reward buyback allocation: ${config.rewardBuyBps} bps of usable creator fees is available for reward-token buybacks after reserves.`);
+console.log(`Scout distribution allocation: ${config.rewardBuyBps} bps of usable creator fees is available for the active signal token after reserves.`);
 if (config.pfpRewardWallet && config.pfpRewardBps > 0) {
   console.log(
     `Bagworking split: ${config.pfpRewardBps} bps routes to ${config.pfpRewardWallet.toBase58()}; remaining buy allocation goes to holder airdrops.`

@@ -1,76 +1,52 @@
-# PTF
+# Scout
 
-Source token: `$PTF`
-Reward rail: rotating Pump.fun fund assets
+Scout is a Solana attention-intelligence platform and transparent holder-distribution protocol.
 
-PTF is a holder reward Pump.fun token fund. One coin can be the current active drop while new and older Pump.fun assets are continuously added to the fund basket. Fees can buy configured fund assets, then airdrop the resulting rewards to eligible `$PTF` holders with epoch-based hold weighting.
+It records authenticated token signals, enriches them with connected market data, ranks them with explainable factors, releases qualified-holder access before the public feed, and can hand the active signal to the existing five-minute treasury worker.
 
-## Current Launch Values
+## Product surfaces
 
-```bash
-NEXT_PUBLIC_PROJECT_NAME="PTF"
-NEXT_PUBLIC_SOURCE_SYMBOL="PTF"
-NEXT_PUBLIC_SOURCE_TOKEN_MINT="<PTF_SOURCE_TOKEN_MINT>"
-NEXT_PUBLIC_REWARD_SYMBOL="<CURRENT_FUND_DROP_SYMBOL>"
-NEXT_PUBLIC_REWARD_TOKEN_MINT="<CURRENT_FUND_DROP_MINT>"
-NEXT_PUBLIC_CA="<PTF_SOURCE_TOKEN_MINT>"
-NEXT_PUBLIC_X_URL="https://x.com/PTF_sol"
-NEXT_PUBLIC_DEXSCREENER_URL="https://dexscreener.com/solana/<PTF_SOURCE_TOKEN_MINT>"
-NEXT_PUBLIC_EPOCH_MINUTES="5"
-NEXT_PUBLIC_ELIGIBILITY_MIN="1000000"
-```
+- `/terminal` - live signal desk and explainable Scout Score
+- `/runners` - released signal database
+- `/search` - structured natural-language search over recorded signals
+- `/performance` - selection history without invented returns
+- `/airdrop-history` - settled epoch and transaction receipts
+- `/api` - API pilot documentation
+- `/pricing` - product tiers; billing is not yet connected
+- `/docs` - Telegram, access, and protocol documentation
+- `/admin` - authenticated signal and policy controls
 
-## Flow
+## Holder rules
 
-Every scheduled epoch:
+- Minimum balance: `2,500,000 SCOUT`
+- Epoch cadence: five minutes
+- Wallets above `MAX_HOLDER_PCT` are excluded
+- A balance decrease resets the epoch streak and multiplier to `1.00x`
+- A wallet becomes eligible again whenever its balance returns above the threshold
 
-1. Claim creator fees to the treasury wallet.
-2. Buy the configured current fund asset with the configured reward budget.
-3. Snapshot `$PTF` holders with at least `ELIGIBILITY_MIN`.
-4. Exclude treasury, pool addresses, explicit exclusions, and wallets above `MAX_HOLDER_PCT`.
-5. Apply hold multipliers and smaller-wallet weighting.
-6. Airdrop the configured reward token directly to selected wallets.
-7. Store epochs, snapshots, buys, payouts, and receipts in Supabase for the site.
+## Signal handoff
 
-## Launch Reset Query
+Scout accepts signals only through an authenticated admin request or an allowlisted Telegram source. Automatic activation is deterministic and uses configured score, liquidity, active-time, and score-margin floors. An administrator can explicitly activate a verified signal.
 
-Run this in Supabase when you need to clear the old launch data:
+When `SCOUT_DYNAMIC_SELECTION_ENABLED=true`, the active Scout signal becomes the reward mint at the start of the next epoch. Leave this disabled until the Scout migration has run and an active signal has been verified.
 
-```sql
-begin;
+## Safe launch order
 
-do $$
-declare
-  t text;
-begin
-  foreach t in array array['payouts','snapshots','buys','claims','epochs','holder_states']
-  loop
-    if to_regclass('public.' || t) is not null then
-      execute format('truncate table public.%I restart identity cascade', t);
-    end if;
-  end loop;
-end $$;
+1. Rotate any credential that has ever been pasted into chat, logs, or screenshots.
+2. Keep `CLAIM_ENABLED`, `BUY_ENABLED`, `AIRDROP_ENABLED`, and `SCOUT_DYNAMIC_SELECTION_ENABLED` false.
+3. Run `supabase/migrations/007_scout_platform.sql`.
+4. Run `supabase/reset_scout_launch.sql` if this database contains data from an earlier project.
+5. Configure the Scout source mint, Supabase, RPC, Telegram, and treasury secrets.
+6. Submit the first verified runner and confirm it appears in `/admin`, `/terminal`, and `/api/scout/signals`.
+7. Enable dynamic selection and run a controlled dry epoch with treasury gates still off.
+8. Fund reserves, then enable claim, buy, and airdrop gates in a monitored deployment.
 
-commit;
-```
+The Railway configuration intentionally starts with a kill switch. Replace its start command with `npm run worker:start` only after the launch checklist is complete.
 
-## Railway Essentials
+## Verification
 
 ```bash
-REWARD_MODE="token"
-CLAIM_ENABLED="true"
-BUY_ENABLED="true"
-AIRDROP_ENABLED="true"
-SOURCE_TOKEN_MINT="<PTF_SOURCE_TOKEN_MINT>"
-REWARD_TOKEN_MINT="<CURRENT_FUND_DROP_MINT>"
-EPOCH_MINUTES="5"
-ELIGIBILITY_MIN="1000000"
-MAX_HOLDER_PCT="4"
-REWARD_BUY_BPS="10000"
-AIRDROP_REWARD_BPS="10000"
-SWAP_BALANCE_BPS="10000"
-MIN_SOL_RESERVE="0.3"
-AIRDROP_SOL_RESERVE="0.05"
+npm run check
 ```
 
-Never expose `SUPABASE_SERVICE_ROLE` or `TREASURY_WALLET_SECRET` through `NEXT_PUBLIC_`.
+Never expose `SUPABASE_SERVICE_ROLE`, `SCOUT_ADMIN_SECRET`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, or `TREASURY_WALLET_SECRET` through a `NEXT_PUBLIC_` variable.

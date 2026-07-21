@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { AppPolish } from "./app-polish";
+import { ScoutShell } from "../components/scout/scout-shell";
 import "./globals.css";
-import "./runner-terminal.css";
+import "./scout.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
   ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL
@@ -10,51 +10,36 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Runner — Own the Runner",
-  description: "Runner follows market momentum, identifies the strongest live opportunity, and distributes weighted token drops to eligible $RUNNER holders.",
+  title: {
+    default: "Runner — Momentum Terminal",
+    template: "%s | Runner"
+  },
+  description: "Runner continuously scans the market, identifies the strongest momentum token, and distributes weighted airdrops to eligible $RUNNER holders every 5 minutes.",
+  applicationName: "Runner",
+  keywords: ["Runner", "Pump.fun", "momentum terminal", "Solana", "market scanner", "holder airdrops"],
   openGraph: {
-    title: "Runner — Own the Runner",
-    description: "Live momentum, one active runner, weighted holder drops, and public onchain receipts.",
+    title: "Runner — Momentum Terminal",
+    description: "Own the runner. Don't chase it. A live market terminal for the strongest momentum token.",
     url: siteUrl,
     siteName: "Runner",
-    images: [
-      {
-        url: "/brand/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Runner — Own the runner instead of chasing it"
-      }
-    ],
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Runner — Own the Runner",
-    description: "Live momentum, one active runner, weighted holder drops, and public onchain receipts.",
-    images: [
-      {
-        url: "/brand/og-image.jpg",
-        alt: "Runner — Own the runner instead of chasing it"
-      }
-    ]
+    title: "Runner — Momentum Terminal",
+    description: "Own the runner. Don't chase it."
   },
   icons: {
-    icon: [
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
-      { url: "/brand/runner-logo.jpg", type: "image/jpeg" }
-    ],
-    apple: "/apple-touch-icon.png"
-  }
+    icon: "/icon.jpg"
+  },
+  robots: { index: true, follow: true }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body>
-        <AppPolish />
-        {children}
+        <ScoutShell>{children}</ScoutShell>
       </body>
     </html>
   );

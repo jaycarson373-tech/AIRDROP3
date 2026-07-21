@@ -1,5 +1,5 @@
-import { IneligibleClient } from "./ineligible-client";
+import { redirect } from "next/navigation";
 
 export default function IneligiblePage() {
-  return <IneligibleClient />;
+  redirect("/#access");
 }

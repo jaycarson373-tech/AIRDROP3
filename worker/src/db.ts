@@ -28,12 +28,20 @@ export async function getEpoch(epochId: string) {
   return assertNoError(result, "get epoch");
 }
 
-export async function startEpoch(epochId: string) {
+export async function startEpoch(epochId: string, scoutSignalId?: string | null) {
   const result = await supabase
     .from("epochs")
-    .upsert({ epoch_id: epochId, status: "running", started_at: new Date().toISOString() })
+    .upsert({ epoch_id: epochId, status: "running", started_at: new Date().toISOString(), scout_signal_id: scoutSignalId ?? null })
     .select()
     .single();
+  if (result.error && JSON.stringify(result.error).includes("scout_signal_id")) {
+    const fallback = await supabase
+      .from("epochs")
+      .upsert({ epoch_id: epochId, status: "running", started_at: new Date().toISOString() })
+      .select()
+      .single();
+    return assertNoError(fallback, "start epoch fallback");
+  }
   return assertNoError(result, "start epoch");
 }
 
