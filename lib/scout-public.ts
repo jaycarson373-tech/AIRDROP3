@@ -1,3 +1,6 @@
+const RUNNER_CA = "EWdDQyqHoUaSd93MwCpCaYygEPpF8deqLU87Cq5Bpump";
+const RUNNER_X_URL = "https://x.com/RunnerPumpFun";
+
 export const scoutPublicConfig = {
   name: "Runner",
   ticker: "RUNNER",
@@ -5,7 +8,7 @@ export const scoutPublicConfig = {
   contractAddress:
     process.env.NEXT_PUBLIC_CA?.trim() ||
     process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
-    "",
+    RUNNER_CA,
   minimumHolding: (() => {
     const parsed = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 1_000_000;
@@ -22,18 +25,14 @@ export const scoutPublicConfig = {
     );
     return Number.isFinite(parsed) && parsed >= 0 ? parsed : 60;
   })(),
-  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "",
+  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || RUNNER_X_URL,
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
   buyUrl:
     process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
-    (process.env.NEXT_PUBLIC_CA?.trim()
-      ? `https://pump.fun/coin/${process.env.NEXT_PUBLIC_CA.trim()}`
-      : ""),
+    `https://pump.fun/coin/${RUNNER_CA}`,
   dexScreenerUrl:
     process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() ||
-    (process.env.NEXT_PUBLIC_CA?.trim()
-      ? `https://dexscreener.com/solana/${process.env.NEXT_PUBLIC_CA.trim()}`
-      : "")
+    `https://dexscreener.com/solana/${RUNNER_CA}`
 } as const;
 
 export function shortAddress(value: string, head = 5, tail = 5) {
