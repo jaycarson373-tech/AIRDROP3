@@ -22,7 +22,7 @@ import { ScoutProvider, useScout } from "./scout-provider";
 
 const primaryNav = [
   { href: "/terminal", label: "Current Runner" },
-  { href: "/runners", label: "Momentum" },
+  { href: "/runners", label: "Signals" },
   { href: "/pricing", label: "Holders" },
   { href: "/airdrop-history", label: "Receipts" }
 ];
@@ -40,12 +40,12 @@ function TopTicker() {
   const metrics = [
     ["LIVE", "ONLINE"],
     ["CURRENT RUNNER", active ? `$${active.symbol}` : "AWAITING"],
-    ["NEXT DROP", countdown.label],
+    ["NEXT UPDATE", countdown.label],
     ["MOMENTUM", active?.scout_score === null || active?.scout_score === undefined ? "SCANNING" : `${active.scout_score}/100`],
     ["MARKET CAP", formatMoney(active?.market_cap_usd)],
-    ["ELIGIBLE", stats.latestEligibleHolders.toLocaleString()],
-    ["TOTAL DROPPED", formatToken(stats.totalRewardAirdropped, active?.symbol ?? "")],
-    ["EPOCH", stats.totalEpochs.toLocaleString()]
+    ["SIGNALS RANKED", signals.signals.length.toLocaleString()],
+    ["FEED", signals.access === "premium" ? "REAL TIME" : `${signals.publicDelaySeconds}S DELAY`],
+    ["SCAN CYCLE", `#${stats.currentEpoch.toLocaleString()}`]
   ];
 
   return (
@@ -208,16 +208,16 @@ export function ScoutShell({ children }: { children: React.ReactNode }) {
 export function ScoutActionLinks() {
   return (
     <div className="scout-action-links">
+      <Link className="scout-button scout-button--primary" href="/terminal">
+        Open Live Terminal <Search size={17} />
+      </Link>
       {scoutPublicConfig.buyUrl ? (
-        <a className="scout-button scout-button--primary" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
+        <a className="scout-button scout-button--secondary" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
           Buy $RUNNER <ExternalLink size={17} />
         </a>
       ) : (
-        <span className="scout-button scout-button--disabled">Buy link pending</span>
+        <span className="scout-button scout-button--disabled">$RUNNER access pending</span>
       )}
-      <Link className="scout-button scout-button--secondary" href="/terminal">
-        View Current Runner <Search size={17} />
-      </Link>
     </div>
   );
 }

@@ -29,12 +29,12 @@ export const metadata: Metadata = {
     default: "Runner — Momentum Terminal",
     template: "%s | Runner"
   },
-  description: "Runner continuously scans the market, identifies the strongest momentum token, and distributes weighted airdrops to eligible $RUNNER holders every 5 minutes.",
+  description: "Never miss a runner again. Runner continuously scans, ranks, and locks onto the market's strongest momentum signal.",
   applicationName: "Runner",
-  keywords: ["Runner", "Pump.fun", "momentum terminal", "Solana", "market scanner", "holder airdrops"],
+  keywords: ["Runner", "Pump.fun", "momentum terminal", "Solana", "market scanner", "momentum signals"],
   openGraph: {
     title: "Runner — Momentum Terminal",
-    description: "Own the runner. Don't chase it. A live market terminal for the strongest momentum token.",
+    description: "Never miss a runner again. Own the runner. Don't chase it.",
     url: siteUrl,
     siteName: "Runner",
     type: "website"
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Runner — Momentum Terminal",
-    description: "Own the runner. Don't chase it."
+    description: "Never miss a runner again. Own the runner. Don't chase it."
   },
   icons: {
     icon: "/icon.jpg"

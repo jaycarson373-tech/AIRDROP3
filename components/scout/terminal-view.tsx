@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   Activity,
   ArrowRight,
-  CircleDollarSign,
   Clock3,
   ExternalLink,
   Gauge,
@@ -12,7 +11,7 @@ import {
   Terminal
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
+import { shortAddress } from "../../lib/scout-public";
 import { formatMoney, formatPercent, formatTime, formatToken } from "./format";
 import { useCountdown } from "./hooks";
 import { ScoutActionLinks } from "./scout-shell";
@@ -55,6 +54,34 @@ function confidenceScore(signal: ScoutSignal | null) {
   return Math.round((connected / 6) * 100);
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+const MULTIPLIER_MILESTONES = [
+  { afterMs: DAY_MS, multiplierBps: 12_500 },
+  { afterMs: 3 * DAY_MS, multiplierBps: 15_000 },
+  { afterMs: 7 * DAY_MS, multiplierBps: 20_000 }
+];
+
+function multiplierLabel(multiplierBps: number | null) {
+  return multiplierBps ? `${(multiplierBps / 10_000).toFixed(2)}x` : "Indexing";
+}
+
+function milestoneLabel(eligibleSince: string | null, eligible: boolean) {
+  if (!eligible) return { label: "Starts when eligible", progress: 0 };
+  const sinceMs = Date.parse(eligibleSince ?? "");
+  if (!Number.isFinite(sinceMs)) return { label: "Waiting for first cycle", progress: 0 };
+  const heldMs = Math.max(0, Date.now() - sinceMs);
+  const next = MULTIPLIER_MILESTONES.find((milestone) => heldMs < milestone.afterMs);
+  if (!next) return { label: "2.00x maximum reached", progress: 100 };
+  const remainingMs = next.afterMs - heldMs;
+  const remaining = remainingMs < DAY_MS
+    ? `${Math.max(1, Math.ceil(remainingMs / (60 * 60 * 1000)))}h`
+    : `${Math.max(1, Math.ceil(remainingMs / DAY_MS))}d`;
+  return {
+    label: `${remaining} to ${(next.multiplierBps / 10_000).toFixed(2)}x`,
+    progress: Math.min(100, (heldMs / (7 * DAY_MS)) * 100)
+  };
+}
+
 function SignalIdentity({ signal }: { signal: ScoutSignal }) {
   return (
     <div className="scout-signal-identity">
@@ -81,7 +108,7 @@ function CurrentSignalPanel({ signal }: { signal: ScoutSignal | null }) {
         </div>
         <EmptyState
           title="No active runner yet"
-          body="Runner is online. The strongest authenticated momentum signal will populate this terminal and become eligible for the next drop."
+          body="Runner is online and ranking verified market signals. The strongest signal appears here when the scanner locks on."
         />
         <div className="scout-signal-placeholder" aria-hidden="true"><i /><i /><i /><i /><i /></div>
       </section>
@@ -123,7 +150,7 @@ function CurrentSignalPanel({ signal }: { signal: ScoutSignal | null }) {
 
       <div className="scout-panel__footer">
         <span><Clock3 size={15} /> Selected {formatTime(signal.selected_at ?? signal.detected_at)}</span>
-        <span><Radio size={15} /> Next drop {countdown.label}</span>
+        <span><Radio size={15} /> Next scan cycle {countdown.label}</span>
         <a href={`https://dexscreener.com/solana/${signal.mint}`} target="_blank" rel="noreferrer">
           Open chart <ExternalLink size={14} />
         </a>
@@ -150,9 +177,9 @@ function ScorePanel({ signal }: { signal: ScoutSignal | null }) {
           ))}
         </div>
       ) : (
-        <EmptyState title="Factors pending" body="Score factors appear as soon as Runner locks onto an authenticated token signal." />
+        <EmptyState title="Factors pending" body="Score factors appear as soon as Runner locks onto a verified market signal." />
       )}
-      <p className="scout-note">Scores use connected market data only. Missing social, holder, and smart-wallet adapters are never replaced with invented values.</p>
+      <p className="scout-note">Runner ranks connected market data only. Any unavailable input stays clearly marked as pending.</p>
     </section>
   );
 }
@@ -182,32 +209,64 @@ function ActivityFeed() {
           })}
         </div>
       ) : (
-        <EmptyState title="Feed is listening" body="Signal detections, selections, public releases, and holder drops will appear here." />
+        <EmptyState title="Feed is listening" body="New detections, ranking changes, target locks, and public releases will appear here." />
       )}
     </section>
   );
 }
 
-function WalletStatusPanel() {
+export function WalletStatusPanel() {
   const { wallet, stats, clearAccess } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
 
   if (!wallet) return null;
 
+  const multiplier = multiplierLabel(wallet.multiplierBps);
+  const milestone = milestoneLabel(wallet.eligibleSince, wallet.eligible);
+
   return (
-    <section className="scout-panel scout-wallet-status">
-      <div className="scout-wallet-status__head">
-        <div><span className="scout-kicker">Wallet status</span><strong>{shortAddress(wallet.wallet, 7, 5)}</strong></div>
+    <section className="scout-panel scout-holder-status">
+      <div className="scout-holder-status__head">
+        <div><span className="scout-kicker">Holder Status</span><h2>{shortAddress(wallet.wallet, 7, 5)}</h2></div>
         <StatusBadge label={wallet.eligible ? "Eligible" : "Below threshold"} tone={wallet.eligible ? "live" : "muted"} />
+        <button className="scout-wallet-status__disconnect" type="button" onClick={clearAccess}>Disconnect</button>
       </div>
-      <div className="scout-wallet-status__grid">
-        <Metric label="Eligibility" value={wallet.eligible ? "Eligible" : "Below threshold"} />
-        <Metric label="Current Weight" value={wallet.multiplierBps ? `${(wallet.multiplierBps / 10_000).toFixed(2)}x` : "Indexing"} />
-        <Metric label="Epoch Streak" value={wallet.currentStreak.toLocaleString()} />
+      <div className="scout-holder-status__grid">
+        <Metric label="Wallet Status" value="Connected" detail={shortAddress(wallet.wallet, 5, 4)} />
+        <Metric label="Current Multiplier" value={multiplier} detail="Never-sold hold boost" />
+        <Metric label="Holding Streak" value={`${wallet.currentStreak.toLocaleString()} cycles`} detail="Consecutive eligible cycles" />
+        <Metric label="Current Distribution Weight" value={wallet.multiplierBps ? `${multiplier} base` : "Indexing"} detail="Multiplier applied each cycle" />
         <Metric label="Next Distribution" value={countdown.label} />
-        <Metric label="Connected Wallet" value={shortAddress(wallet.wallet, 5, 4)} detail={wallet.wallet} />
+        <Metric label="Eligibility Status" value={wallet.eligible ? "Eligible" : "Below threshold"} detail={`${formatToken(wallet.sourceBalance, "RUNNER")} held`} />
       </div>
-      <button className="scout-wallet-status__disconnect" type="button" onClick={clearAccess}>Disconnect</button>
+      <div className="scout-holder-milestone">
+        <div><span>Eligible since</span><strong>{wallet.eligibleSince ? formatTime(wallet.eligibleSince) : "Not active"}</strong></div>
+        <div><span>Next multiplier milestone</span><strong>{milestone.label}</strong></div>
+        <i aria-label={`Multiplier milestone progress ${Math.round(milestone.progress)} percent`}><span style={{ width: `${milestone.progress}%` }} /></i>
+      </div>
+    </section>
+  );
+}
+
+export function HolderMultiplierPanel() {
+  const { stats } = useScout();
+  return (
+    <section className="scout-panel scout-panel--protocol scout-multiplier-panel">
+      <div className="scout-panel__head">
+        <div><span className="scout-kicker">Holder Multiplier</span><h2>Hold longer. Increase your weight.</h2></div>
+        <span className="runner-average-multiplier">AVG {stats.averageMultiplier === null ? "—" : `${stats.averageMultiplier.toFixed(2)}x`}</span>
+      </div>
+      <div className="runner-multiplier-tiers" aria-label="Runner multiplier milestones">
+        <span><small>START</small><strong>1.00x</strong></span>
+        <span><small>1 DAY</small><strong>1.25x</strong></span>
+        <span><small>3 DAYS</small><strong>1.50x</strong></span>
+        <span><small>7 DAYS</small><strong>2.00x</strong></span>
+      </div>
+      <div className="runner-multiplier-flow" aria-label="How the Holder Multiplier works">
+        <span>Hold longer</span><i>→</i><span>Multiplier increases</span><i>→</i><span>Distribution weight grows</span><i>→</i><span>Receive larger distributions</span>
+      </div>
+      <p className="scout-note">Every consecutive eligible cycle builds the streak. Any balance decrease resets the hold multiplier to 1.00x. The multiplier scales distribution weight at each five-minute cycle.</p>
+      <Link className="scout-text-link" href="/docs#access">View multiplier rules <ArrowRight size={15} /></Link>
     </section>
   );
 }
@@ -230,7 +289,7 @@ export function ScoutTerminalView() {
       score: signal.scout_score === null ? "INDEXING" : `${signal.scout_score}/100`,
       status: signal.id === signals.active?.id ? "TARGET LOCKED" : signal.status.toUpperCase()
     })),
-    { id: "distribution", symbol: "NEXT DISTRIBUTION", score: countdown.label, status: `EPOCH ${stats.currentEpoch}` },
+    { id: "cycle", symbol: "NEXT MARKET UPDATE", score: countdown.label, status: `CYCLE ${stats.currentEpoch}` },
     { id: "scanner", symbol: "RUNNER", score: signals.access === "premium" ? "REAL TIME" : `${signals.publicDelaySeconds}S DELAY`, status: "SCANNING" }
   ];
 
@@ -264,11 +323,11 @@ export function ScoutTerminalView() {
             <StatusBadge label="Scanner online" />
             <span>{signals.access === "premium" ? "REAL-TIME FEED" : `PUBLIC FEED · ${signals.publicDelaySeconds}S DELAY`}</span>
           </div>
-          <p className="scout-eyebrow">Live momentum terminal</p>
-          <h1>Own the runner.<br /><span>Don't chase it.</span></h1>
-          <p className="scout-hero__body">Runner continuously scans the market, identifies the strongest momentum token, and distributes weighted airdrops to eligible $RUNNER holders every 5 minutes.</p>
+          <p className="scout-eyebrow">Live momentum. Updated every five minutes.</p>
+          <h1>Never miss a<br /><span>runner again.</span></h1>
+          <p className="scout-hero__body">Runner continuously scans, ranks, and locks onto the market's strongest momentum signal—so you can own the runner instead of chasing it.</p>
           <ScoutActionLinks />
-          <p className="scout-hero__delay"><Clock3 size={15} /> Hold {formatToken(scoutPublicConfig.minimumHolding, "RUNNER")} to become eligible.</p>
+          <p className="scout-hero__delay"><Clock3 size={15} /> THE MARKET NEVER STOPS. NEITHER DO WE.</p>
         </div>
         <div className="scout-hero__terminal runner-scanner-panel">
           <div className="scout-terminal-bar"><span><i /> MOMENTUM SCANNER ONLINE</span><small>{lastUpdated ? `UPDATED ${formatTime(lastUpdated.toISOString())}` : "CONNECTING"}</small></div>
@@ -276,6 +335,9 @@ export function ScoutTerminalView() {
             <div className="runner-scanner-console__head">
               <span>SCANNING MARKET <i className="runner-cursor" aria-hidden="true" /></span>
               <strong>{rankedSignals.length ? `${rankedSignals.length} SIGNALS RANKED` : "INDEXING"}</strong>
+            </div>
+            <div className="runner-scan-pipeline" aria-label="Scanner pipeline">
+              <span>DISCOVER</span><i>→</i><span>SCORE</span><i>→</i><span>RANK</span><i>→</i><span>LOCK</span>
             </div>
             <div className="runner-symbol-stream" aria-hidden="true">
               <div className="runner-symbol-stream__track">
@@ -304,23 +366,23 @@ export function ScoutTerminalView() {
             <div className={`runner-lock-panel ${signals.active ? "is-acquired" : "is-seeking"}`}>
               <span>{signals.active ? "TARGET ACQUIRED" : "SEEKING TARGET"}</span>
               <strong>{activeSymbol}</strong>
-              <small>{signals.active ? `LOCKED · ${activeConfidence ?? 0}% CONFIDENCE` : "AWAITING AUTHENTICATED SIGNAL"}</small>
+              <small>{signals.active ? `LOCKED · ${activeConfidence ?? 0}% CONFIDENCE` : "AWAITING VERIFIED SIGNAL"}</small>
             </div>
             <div className="runner-scanner-metrics">
               <Metric label="Current Runner" value={activeSymbol} detail={signals.active?.name} />
               <Metric label="Momentum" value={signals.active?.scout_score === null || signals.active?.scout_score === undefined ? "Scanning" : `${signals.active.scout_score}/100`} />
-              <Metric label="Epoch" value={stats.currentEpoch.toLocaleString()} />
-              <Metric label="Next Drop" value={countdown.label} />
+              <Metric label="Scan Cycle" value={`#${stats.currentEpoch.toLocaleString()}`} />
+              <Metric label="Next Update" value={countdown.label} />
             </div>
           </div>
           {state === "loading" ? <Skeleton rows={2} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : null}
           {state === "stale" && error ? <p className="scout-stale-note">Live refresh delayed. Showing the last verified data.</p> : null}
         </div>
         <div className="scout-live-strip">
-          <Metric label="Indexed Signals" value={signals.signals.length.toLocaleString()} detail="Connected market feed" />
-          <Metric label="Current Epoch" value={stats.currentEpoch.toLocaleString()} detail="Five-minute cycle" />
-          <div className="runner-next-distribution"><Metric label="Next Distribution" value={countdown.label} detail="Live epoch timer" /></div>
-          <Metric label="Eligible Holders" value={stats.latestEligibleHolders.toLocaleString()} detail={`Minimum ${formatToken(scoutPublicConfig.minimumHolding, "RUNNER")}`} />
+          <Metric label="Signals Ranked" value={signals.signals.length.toLocaleString()} detail="Live market set" />
+          <Metric label="Current Runner" value={activeSymbol} detail={signals.active?.name ?? "Scanner seeking target"} />
+          <Metric label="Momentum Score" value={signals.active?.scout_score === null || signals.active?.scout_score === undefined ? "Scanning" : `${signals.active.scout_score}/100`} detail="Strongest verified signal" />
+          <div className="runner-next-distribution"><Metric label="Next Market Update" value={countdown.label} detail="Five-minute cycle" /></div>
         </div>
         <div className="runner-hero-tape" aria-label="Live Runner market tape">
           <div className="runner-hero-tape__track">
@@ -333,24 +395,15 @@ export function ScoutTerminalView() {
 
       <section className="scout-terminal-section" id="terminal">
         <div className="scout-section-heading scout-section-heading--inline">
-          <div><span className="scout-kicker">Runner Terminal</span><h2>Live market state</h2></div>
-          <p>Connected metrics only. Missing adapters remain explicitly unavailable.</p>
+          <div><span className="scout-kicker">Runner Terminal</span><h2>Own the runner. Don't chase it.</h2></div>
+          <p>The scanner leads. Holder rewards strengthen long-term access and distribution weight.</p>
         </div>
         <div className="scout-terminal-grid">
           <WalletStatusPanel />
           <CurrentSignalPanel signal={signals.active} />
           <ScorePanel signal={signals.active} />
           <ActivityFeed />
-          <section className="scout-panel scout-panel--protocol">
-            <div className="scout-panel__head"><div><span className="scout-kicker">Airdrop rail</span><h2>Distribution state</h2></div><CircleDollarSign size={21} /></div>
-            <div className="scout-metric-grid">
-              <Metric label="Epoch" value={stats.currentEpoch.toLocaleString()} />
-              <Metric label="Eligible" value={stats.latestEligibleHolders.toLocaleString()} />
-              <Metric label="Distributed" value={formatToken(stats.totalRewardAirdropped, signals.active?.symbol ?? "tokens")} />
-              <Metric label="SOL value" value={`${stats.totalSolValueAirdropped.toFixed(4)} SOL`} />
-            </div>
-            <Link className="scout-text-link" href="/airdrop-history">Open public receipts <ArrowRight size={15} /></Link>
-          </section>
+          <HolderMultiplierPanel />
         </div>
       </section>
     </>
