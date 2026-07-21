@@ -25,7 +25,8 @@
   background-size: 48px 48px;
   mask-image: linear-gradient(to bottom, #000, transparent 92%);
   transform: translate3d(0, var(--runner-parallax-y, 0px), 0);
-  will-change: transform;
+  animation: runner-site-grid-conveyor 46s linear infinite;
+  will-change: transform, background-position;
 }
 
 .scout-background::before {
@@ -38,6 +39,22 @@
   background-size: auto, 100% 8px;
   opacity: 0.42;
   animation: runner-radar-drift 12s linear infinite;
+}
+
+.scout-background::after {
+  content: "";
+  position: absolute;
+  inset: 24% -12% -18%;
+  opacity: .055;
+  background-image:
+    linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px);
+  background-size: 76px 38px;
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 80%, transparent);
+  transform: perspective(720px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  animation: runner-global-belt-conveyor 34s linear infinite;
+  will-change: background-position;
 }
 
 .scout-background > i {
@@ -1909,7 +1926,7 @@
 .runner-multiplier-tiers {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1px;
   margin-top: 14px;
   overflow: hidden;
@@ -2044,6 +2061,16 @@
 @keyframes runner-treadmill-motion {
   from { background-position: 0 0, 0 0; }
   to { background-position: 0 0, -620px 0; }
+}
+
+@keyframes runner-site-grid-conveyor {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 0, -768px 0; }
+}
+
+@keyframes runner-global-belt-conveyor {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 0, -1216px 0; }
 }
 
 @keyframes runner-panel-lines {
@@ -2479,6 +2506,25 @@
 .scout-doc-content h2 { font: 650 18px/1.1 var(--scout-mono); }
 .scout-doc-content p { font-size: 10px; line-height: 1.6; }
 .scout-footer { padding: 20px 0 26px; }
+
+/* Continuous low-opacity conveyor motion across every application surface. */
+.scout-panel,
+.scout-doc-content section {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 72px,
+    rgba(255,255,255,.018) 73px 74px,
+    transparent 75px 146px
+  );
+  background-size: 146px 100%;
+  animation: runner-panel-surface-conveyor 38s linear infinite;
+  will-change: background-position;
+}
+
+@keyframes runner-panel-surface-conveyor {
+  from { background-position: 0 0; }
+  to { background-position: -876px 0; }
+}
 
 @keyframes runner-log-scroll {
   from { transform: translateY(0); }

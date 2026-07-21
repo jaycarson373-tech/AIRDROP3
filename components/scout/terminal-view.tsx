@@ -256,19 +256,20 @@ export function HolderMultiplierPanel() {
   return (
     <section className="scout-panel scout-panel--protocol scout-multiplier-panel">
       <div className="scout-panel__head">
-        <div><span className="scout-kicker">Holder Multiplier</span><h2>Hold longer. Increase your weight.</h2></div>
+        <div><span className="scout-kicker">Holder Multiplier</span><h2>Hold longer. Scale to 10x.</h2></div>
         <span className="runner-average-multiplier">AVG {stats.averageMultiplier === null ? "—" : `${stats.averageMultiplier.toFixed(2)}x`}</span>
       </div>
       <div className="runner-multiplier-tiers" aria-label="Runner multiplier milestones">
         <span><small>START</small><strong>1.00x</strong></span>
-        <span><small>1 DAY</small><strong>1.25x</strong></span>
-        <span><small>3 DAYS</small><strong>1.50x</strong></span>
-        <span><small>7 DAYS</small><strong>2.00x</strong></span>
+        <span><small>1 DAY</small><strong>1.50x</strong></span>
+        <span><small>3 DAYS</small><strong>2.00x</strong></span>
+        <span><small>7 DAYS</small><strong>5.00x</strong></span>
+        <span><small>30 DAYS</small><strong>10.00x</strong></span>
       </div>
       <div className="runner-multiplier-flow" aria-label="How the Holder Multiplier works">
         <span>Hold longer</span><i>→</i><span>Multiplier increases</span><i>→</i><span>Distribution weight grows</span><i>→</i><span>Receive larger distributions</span>
       </div>
-      <p className="scout-note">Every consecutive eligible cycle builds the streak. Any balance decrease resets the hold multiplier to 1.00x. The multiplier scales distribution weight at each five-minute cycle.</p>
+      <p className="scout-note">Continuous holding reaches 1.50x after one day, 2.00x after three days, 5.00x after seven days, and 10.00x after 30 days. Any balance decrease resets the hold multiplier to 1.00x. The multiplier scales distribution weight at each five-minute cycle.</p>
       <Link className="scout-text-link" href="/docs#access">View multiplier rules <ArrowRight size={15} /></Link>
     </section>
   );
