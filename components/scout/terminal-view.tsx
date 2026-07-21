@@ -15,6 +15,7 @@ import { scoutPublicConfig } from "../../lib/scout-public";
 import { formatClock, formatMoney, formatPercent, formatTime } from "./format";
 import { useCountdown } from "./hooks";
 import { useScout } from "./scout-provider";
+import { SignalLogo } from "./signal-logo";
 import type { ScoutSignal } from "./types";
 import { Metric, StatusBadge } from "./ui";
 
@@ -63,7 +64,7 @@ function verifiedConfidence(signal: ScoutSignal | null) {
 function SignalIdentity({ signal }: { signal: ScoutSignal }) {
   return (
     <div className="scout-signal-identity">
-      <span className="scout-token-mark" aria-hidden="true">{signal.symbol.slice(0, 2).toUpperCase()}</span>
+      <SignalLogo signal={signal} />
       <div>
         <span className="scout-label">Current Runner</span>
         <h2>${signal.symbol}</h2>

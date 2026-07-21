@@ -16,6 +16,7 @@ import { formatClock, formatMoney, formatPercent, formatTime, formatToken, short
 import { useCountdown } from "./hooks";
 import { useScout } from "./scout-provider";
 import { ActivityFeed, HolderMultiplierPanel } from "./terminal-view";
+import { SignalLogo } from "./signal-logo";
 import type { ScoutSignal } from "./types";
 import { EmptyState, ErrorState, Metric, Skeleton, StatusBadge } from "./ui";
 
@@ -29,7 +30,7 @@ function PageHeading({ eyebrow, title, body, action }: { eyebrow: string; title:
 }
 
 function SignalMark({ signal }: { signal: ScoutSignal }) {
-  return <span className="scout-token-mark scout-token-mark--small" aria-hidden="true">{signal.symbol.slice(0, 2).toUpperCase()}</span>;
+  return <SignalLogo signal={signal} small />;
 }
 
 function SignalStatus({ signal }: { signal: ScoutSignal }) {

@@ -575,6 +575,13 @@
   font-size: 10px;
 }
 
+.scout-token-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .scout-signal-identity h2,
 .scout-desk-token h2 {
   margin: 3px 0 0;

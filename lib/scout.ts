@@ -49,6 +49,7 @@ export type DexPair = {
   marketCap?: number | null;
   fdv?: number | null;
   pairCreatedAt?: number | null;
+  info?: { imageUrl?: string | null } | null;
 };
 
 type DexTokenProfile = {
@@ -285,7 +286,8 @@ export async function discoverLiveScoutSignals(limit = 24): Promise<ScoutSignal[
           attentionScore,
           smartWalletScore: null,
           narrativeScore: null,
-          narrativeContextAvailable: Boolean(profile?.description || profile?.links?.length)
+          narrativeContextAvailable: Boolean(profile?.description || profile?.links?.length),
+          imageUrl: pair.info?.imageUrl ?? null
         },
         reasons: scoring.reasons,
         risk_flags: scoring.riskFlags,
@@ -360,6 +362,7 @@ export async function enrichScoutSignalsWithLiveMarket(signals: ScoutSignal[]) {
         currentPriceUsd: pair ? nullableFinite(pair.priceUsd) : null,
         currentLiquidityUsd: pair ? nullableFinite(pair.liquidity?.usd) : null,
         currentVolume24hUsd: pair ? nullableFinite(pair.volume?.h24) : null,
+        imageUrl: pair?.info?.imageUrl ?? signal.metrics.imageUrl ?? null,
         marketDataUpdatedAt: pair ? updatedAt : null
       }
     } satisfies ScoutSignal;
@@ -461,7 +464,7 @@ export async function ingestScoutSignal(input: SignalInput) {
     liquidity_usd: pair?.liquidity?.usd ?? null,
     volume_24h_usd: pair?.volume?.h24 ?? null,
     token_age_seconds: pair?.pairCreatedAt ? Math.max(0, Math.floor((Date.now() - pair.pairCreatedAt) / 1000)) : null,
-    metrics: scoring.metrics,
+    metrics: { ...scoring.metrics, imageUrl: pair?.info?.imageUrl ?? null },
     reasons: scoring.reasons,
     risk_flags: scoring.riskFlags,
     public_at: existing?.public_at ?? new Date(Date.now() + publicDelaySeconds * 1000).toISOString(),
