@@ -1710,11 +1710,14 @@
   min-width: 0;
   height: 25px;
   padding: 7px 5px;
+  overflow: hidden;
   border: 1px solid rgba(255,255,255,.1);
   background: rgba(255,255,255,.025);
   color: var(--scout-muted);
   font: 700 11px/1 var(--scout-mono);
   text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .runner-hero.is-runner-boost .runner-symbol-stream__track { animation-duration: 3.2s; }
@@ -1741,6 +1744,13 @@
 .runner-ranking-table > div:not(.runner-ranking-table__head) { color: var(--scout-muted); }
 .runner-ranking-table > div.is-locked { background: rgba(140,255,114,.045); color: var(--scout-text); }
 .runner-ranking-table strong { color: var(--scout-text); font-size: 10px; }
+.runner-ranking-table > .runner-ranking-empty {
+  color: var(--scout-muted);
+}
+.runner-ranking-empty span:last-child {
+  line-height: 1.25;
+  white-space: normal;
+}
 
 .runner-rank-score {
   display: grid;
@@ -2325,6 +2335,59 @@
   background: #050708;
 }
 
+.runner-idle-metrics {
+  margin-top: 10px;
+}
+
+.runner-no-target-copy {
+  margin-top: 10px;
+  padding: 10px;
+  border-left: 1px solid var(--scout-line-green);
+  background: #050708;
+}
+
+.runner-no-target-copy strong {
+  color: var(--scout-text);
+  font: 650 10px/1.2 var(--scout-mono);
+}
+
+.runner-no-target-copy p {
+  margin: 5px 0 0;
+  color: var(--scout-muted);
+  font: 450 9px/1.5 var(--scout-mono);
+}
+
+.runner-scanner-idle {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid var(--scout-line);
+  background: #050708;
+  font-family: var(--scout-mono);
+}
+
+.runner-scanner-idle strong {
+  color: var(--scout-green);
+  font-size: 11px;
+}
+
+.runner-scanner-idle span {
+  color: var(--scout-text);
+  font-size: 9px;
+}
+
+.runner-scanner-idle small {
+  color: var(--scout-muted);
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.runner-terminal-empty .scout-desk-factors {
+  margin-top: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .runner-no-target > span {
   display: grid;
   grid-template-columns: 72px 128px minmax(0, 1fr);
@@ -2568,6 +2631,7 @@
   .scout-metric-grid,
   .scout-overview-grid,
   .scout-desk-factors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .runner-terminal-empty .scout-desk-factors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .scout-metric { min-height: 70px; padding: 11px; }
   .scout-metric strong { font-size: 14px; }
   .scout-panel__footer a { margin-left: 0; }

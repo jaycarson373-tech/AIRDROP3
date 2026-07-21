@@ -27,7 +27,7 @@ const productNav = [
 ];
 
 function TopTicker() {
-  const { signals, stats } = useScout();
+  const { signals, stats, state } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const active = signals.active;
   const connectedInputs = active
@@ -39,18 +39,18 @@ function TopTicker() {
       ].filter((value) => value !== null && value !== undefined).length
     : 0;
   const metrics = [
-    ["LIVE", active ? "CONNECTED" : "INDEXING"],
-    ["CURRENT RUNNER", active ? `$${active.symbol}` : "AWAITING"],
-    ["NEXT AIRDROP", countdown.label],
+    ["LIVE", state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
+    ["CURRENT RUNNER", active ? `$${active.symbol}` : "NO VERIFIED TARGET"],
+    [active ? "NEXT AIRDROP" : "NEXT SCAN", countdown.label],
     ["MARKET STATUS", "OPEN 24/7"],
-    ["SCANNER", active ? "ONLINE" : "SEEKING"],
-    ["RPC", active ? "CONNECTED" : "CONNECTING"],
+    ["SCANNER", active ? "SIGNAL VERIFIED" : state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "SCANNING"],
+    ["RPC", "STATUS UNAVAILABLE"],
     ["NETWORK", "SOLANA"],
-    ["MOMENTUM", active?.scout_score === null || active?.scout_score === undefined ? "SCANNING" : `${active.scout_score}/100`],
+    ["MOMENTUM", active?.scout_score === null || active?.scout_score === undefined ? "AWAITING AUTHENTICATED SIGNAL" : `${active.scout_score}/100`],
     ["MARKET CAP", formatMoney(active?.market_cap_usd)],
-    ["SIGNALS RANKED", signals.signals.length.toLocaleString()],
-    ["SCANNER INPUTS", `${connectedInputs}/4 LIVE`],
-    ["SCAN CYCLE", `#${stats.currentEpoch.toLocaleString()}`]
+    ["SIGNALS RANKED", active ? signals.signals.length.toLocaleString() : "NO VERIFIED SIGNALS"],
+    ["SCANNER INPUTS", active ? `${connectedInputs}/4 VERIFIED` : "AWAITING TARGET"],
+    ["SCAN CYCLE", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "--"]
   ];
 
   return (

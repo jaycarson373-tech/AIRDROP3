@@ -249,6 +249,7 @@ export async function discoverLiveScoutSignals(limit = 24): Promise<ScoutSignal[
 
   const now = new Date().toISOString();
   const ranked = [...bestPairByMint.entries()]
+    .filter(([, pair]) => Boolean(pair.baseToken?.name?.trim() && pair.baseToken?.symbol?.trim()))
     .map(([mint, pair]) => {
       const scoring = scoreDexPair(pair);
       const buys = finite(pair.txns?.h1?.buys);
@@ -261,8 +262,8 @@ export async function discoverLiveScoutSignals(limit = 24): Promise<ScoutSignal[
         id: `live-${mint}`,
         chain: "solana",
         mint,
-        name: pair.baseToken?.name || "Unresolved token",
-        symbol: pair.baseToken?.symbol || "TBD",
+        name: pair.baseToken!.name!.trim(),
+        symbol: pair.baseToken!.symbol!.trim(),
         source: "runner-live-aggregator",
         source_url: pair.url ?? profile?.url ?? null,
         status: "queued" as ScoutSignalStatus,
@@ -294,14 +295,7 @@ export async function discoverLiveScoutSignals(limit = 24): Promise<ScoutSignal[
     .sort((left, right) => (right.scout_score ?? -1) - (left.scout_score ?? -1))
     .slice(0, Math.min(30, Math.max(1, limit)));
 
-  return ranked.map((signal, index) => index === 0
-    ? {
-        ...signal,
-        status: "active",
-        selected_at: now,
-        selection_reason: "Highest Momentum Score in the current five-minute market scan."
-      }
-    : signal);
+  return ranked;
 }
 
 function pairToken(pair: DexPair | null, mint: string) {
@@ -396,11 +390,16 @@ export async function ingestScoutSignal(input: SignalInput) {
     { requireServiceRole: true }
   );
   const existing = existingRows[0] ?? null;
+  const resolvedName = input.name?.trim() || token?.name?.trim();
+  const resolvedSymbol = (input.symbol?.trim() || token?.symbol?.trim())?.replace(/^\$/, "");
+  if (!resolvedName || !resolvedSymbol) {
+    throw new Error("Verified token identity is unavailable; signal was not ingested");
+  }
   const row = {
     mint,
     chain: "solana",
-    name: input.name || token?.name || "Unresolved token",
-    symbol: (input.symbol || token?.symbol || "TBD").replace(/^\$/, ""),
+    name: resolvedName,
+    symbol: resolvedSymbol,
     source: input.source ?? "admin",
     source_chat_id: input.sourceChatId ?? null,
     source_message_id: input.sourceMessageId ?? null,

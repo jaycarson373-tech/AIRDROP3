@@ -39,12 +39,12 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Runner signals GET failed", error);
     try {
-      const signals = await discoverLiveScoutSignals(Number(request.nextUrl.searchParams.get("limit") ?? 40));
+      await discoverLiveScoutSignals(Number(request.nextUrl.searchParams.get("limit") ?? 40));
       return NextResponse.json({
         access: "public",
         publicDelaySeconds: 0,
-        active: signals[0] ?? null,
-        signals,
+        active: null,
+        signals: [],
         events: []
       });
     } catch (liveError) {

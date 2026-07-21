@@ -46,7 +46,7 @@ function SignalTable({ signals, compact = false }: { signals: ScoutSignal[]; com
         <tbody>{signals.map((signal) => (
           <tr key={signal.id} className={signal.status === "active" ? "is-active" : ""}>
             <td><div className="scout-table-token"><SignalMark signal={signal} /><span><strong>${signal.symbol}</strong><small>{signal.name}</small></span></div></td>
-            <td><strong>{signal.scout_score === null ? "Indexing" : `${signal.scout_score}/100`}</strong></td>
+            <td><strong>{signal.scout_score === null ? "--" : `${signal.scout_score}/100`}</strong></td>
             <td>{formatMoney(signal.market_cap_usd)}</td><td>{formatMoney(signal.liquidity_usd)}</td>
             {compact ? null : <td>{formatMoney(signal.volume_24h_usd)}</td>}
             <td>{formatTime(signal.detected_at)}</td><td><SignalStatus signal={signal} /></td>
@@ -117,7 +117,7 @@ export function PerformanceView() {
   return (
     <div className="scout-page">
       <PageHeading eyebrow="Signal history" title="What Runner found and when." body="Review recorded signals and scores exactly as they were published. No backfilled winners." />
-      <div className="scout-overview-grid"><Metric label="Signals recorded" value={completed.length.toLocaleString()} /><Metric label="Active now" value={signals.active ? `$${signals.active.symbol}` : "Waiting"} /><Metric label="Average Momentum Score" value={averageScore === null ? "Awaiting data" : averageScore.toFixed(1)} /><Metric label="Public delay" value={`${signals.publicDelaySeconds}s`} /></div>
+      <div className="scout-overview-grid"><Metric label="Signals recorded" value={completed.length.toLocaleString()} /><Metric label="Active now" value={signals.active ? `$${signals.active.symbol}` : "No verified target"} /><Metric label="Average Momentum Score" value={averageScore === null ? "Awaiting verified data" : averageScore.toFixed(1)} /><Metric label="Public delay" value={`${signals.publicDelaySeconds}s`} /></div>
       <section className="scout-panel scout-panel--table"><SignalTable signals={completed} /></section>
       <div className="scout-page-note"><ShieldCheck size={17} /><p>Past Runner signals do not guarantee future performance. Token prices can fall rapidly and liquidity can disappear.</p></div>
     </div>
@@ -192,23 +192,37 @@ export function TerminalPageView() {
   const { signals, stats, state, error, refresh } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const active = signals.active;
-  const factors = active ? [["Liquidity", formatMoney(active.liquidity_usd)], ["24h volume", formatMoney(active.volume_24h_usd)], ["1h movement", formatPercent(Number(active.metrics.change1h ?? Number.NaN))], ["Token age", active.token_age_seconds ? `${Math.max(1, Math.round(active.token_age_seconds / 60))}m` : "Unavailable"]] : [];
+  const factors = active ? [["Liquidity", formatMoney(active.liquidity_usd)], ["24h volume", formatMoney(active.volume_24h_usd)], ["1h movement", formatPercent(Number(active.metrics.change1h ?? Number.NaN))], ["Token age", active.token_age_seconds === null ? "Unavailable" : `${Math.max(1, Math.round(active.token_age_seconds / 60))}m`]] : [];
   return (
     <div className="scout-page">
       <PageHeading eyebrow="Runner Terminal" title="Track the current Runner." body="The custom aggregator ranks market momentum and selects the runner entering the next five-minute airdrop." action={<StatusBadge label="Live scanner" tone="live" />} />
       {state === "loading" ? <div className="runner-terminal-state"><i /><strong>INDEXING</strong><span>CONNECTING MARKET FEEDS</span></div> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : (
         <div className="scout-desk-layout">
           <section className="scout-panel scout-desk-primary">
-            <div className="scout-terminal-bar"><span><i /> ACTIVE MOMENTUM SIGNAL</span><small>{active ? formatClock(active.detected_at) : "SEEKING TARGET"}</small></div>
+            <div className="scout-terminal-bar"><span><i /> {active ? "ACTIVE MOMENTUM SIGNAL" : "MOMENTUM SCANNER ONLINE"}</span><small>{active ? formatClock(active.detected_at) : "SCANNING MARKET"}</small></div>
             {active ? (
               <>
-                <div className="scout-desk-token"><SignalMark signal={active} /><div><span>Current runner</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "—"}<small>/100</small></strong></div>
+                <div className="scout-desk-token"><SignalMark signal={active} /><div><span>Current runner</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "--"}{active.scout_score === null ? null : <small>/100</small>}</strong></div>
                 <div className="scout-desk-factors">{factors.map(([label, value]) => <Metric label={label} value={value} key={label} />)}</div>
                 <div className="scout-panel__footer"><span>{shortAddress(active.mint)}</span><a href={`https://dexscreener.com/solana/${active.mint}`} target="_blank" rel="noreferrer">Chart <ExternalLink size={14} /></a></div>
               </>
-            ) : <EmptyState title="NO VERIFIED TARGET" body="Scanner remains online. Waiting for authenticated momentum signal." />}
+            ) : (
+              <div className="runner-terminal-empty" role="status">
+                <div className="scout-desk-factors">
+                  <Metric label="Current Runner" value="No verified target" />
+                  <Metric label="Status" value="Scanning..." />
+                  <Metric label="Confidence" value="Awaiting first scan" />
+                  <Metric label="Momentum" value="Awaiting authenticated signal" />
+                  <Metric label="Liquidity" value="Unavailable" />
+                  <Metric label="24h Volume" value="Unavailable" />
+                  <Metric label="Token Age" value="Awaiting target" />
+                  <Metric label="Current Score" value="--" />
+                </div>
+                <div className="runner-no-target-copy"><strong>No verified runner yet.</strong><p>Runner continuously scans the market. The first authenticated momentum signal will appear here.</p></div>
+              </div>
+            )}
           </section>
-          <section className="scout-panel scout-countdown-panel"><span className="scout-kicker">Next Runner airdrop</span><strong>{countdown.label}</strong><p>{countdown.processing ? "The current airdrop cycle is processing. The timer resumes at the next confirmed boundary." : "Runner reranks the market and carries the strongest signal into the next five-minute airdrop."}</p><i><span style={{ width: `${countdown.progress * 100}%` }} /></i></section>
+          <section className="scout-panel scout-countdown-panel"><span className="scout-kicker">{active ? "Next Runner airdrop" : "Next scan"}</span><strong>{countdown.label}</strong><p>{active ? (countdown.processing ? "The current airdrop cycle is processing. The timer resumes at the next confirmed boundary." : "Runner reranks the market and carries the verified signal into the next five-minute airdrop.") : "Scanner remains online and continues indexing the market for an authenticated momentum signal."}</p><i><span style={{ width: `${countdown.progress * 100}%` }} /></i></section>
           <HolderMultiplierPanel />
           <ActivityFeed />
         </div>
