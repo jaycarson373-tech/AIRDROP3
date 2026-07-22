@@ -113,7 +113,7 @@ export function ScoutProvider({ children }: { children: React.ReactNode }) {
       setState((current) =>
         current === "loaded" || current === "empty" || current === "stale" ? "stale" : "error"
       );
-      setError(nextError instanceof Error ? nextError.message : "Runner data is unavailable");
+      setError(nextError instanceof Error ? nextError.message : "RI6900 data is unavailable");
     }
   }, [accessToken]);
 
@@ -166,7 +166,7 @@ export function ScoutProvider({ children }: { children: React.ReactNode }) {
       window.localStorage.setItem("scout_access_token", session.token);
       setAccessToken(session.token);
     } catch (nextError) {
-      setAccessError(nextError instanceof Error ? nextError.message : "Runner access could not be verified");
+      setAccessError(nextError instanceof Error ? nextError.message : "RI6900 access could not be verified");
     } finally {
       setAccessBusy(false);
     }

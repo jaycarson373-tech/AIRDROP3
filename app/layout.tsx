@@ -32,23 +32,23 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Runner — Momentum Terminal",
-    template: "%s | Runner"
+    default: "Runner Index 6900 — Persistence, Indexed",
+    template: "%s | Runner Index 6900"
   },
-  description: "Runner's custom aggregator scans market momentum and airdrops the strongest runner to eligible holders every five minutes.",
-  applicationName: "Runner",
-  keywords: ["Runner", "Pump.fun", "momentum terminal", "Solana", "market scanner", "momentum signals"],
+  description: "RI6900 converts verified hold time into distribution weight, recalculated every five minutes.",
+  applicationName: "Runner Index 6900",
+  keywords: ["Runner Index 6900", "RI6900 Protocol", "RI6900", "Pump.fun", "holder rewards", "Solana"],
   openGraph: {
-    title: "Runner — Momentum Terminal",
-    description: "A custom momentum scanner. The strongest runner airdropped every five minutes.",
+    title: "Runner Index 6900 — Persistence, Indexed",
+    description: "A continuous holder index with multiplier-weighted RI6900 distributions every five minutes.",
     url: siteUrl,
-    siteName: "Runner",
+    siteName: "Runner Index 6900",
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "Runner — Momentum Terminal",
-    description: "A custom momentum scanner. The strongest runner airdropped every five minutes."
+    title: "Runner Index 6900 — Persistence, Indexed",
+    description: "A continuous holder index with multiplier-weighted RI6900 distributions every five minutes."
   },
   icons: {
     icon: "/icon.jpg"

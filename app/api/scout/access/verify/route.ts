@@ -44,7 +44,7 @@ function validWalletSignature(wallet: string, message: string, signature: string
 
 async function tokenBalance(wallet: string) {
   const mint = validateSolanaMint(sourceMint());
-  if (!mint) throw new Error("RUNNER token mint is not configured");
+  if (!mint) throw new Error("RI6900 token mint is not configured");
   const connection = new Connection(rpcUrl(), "confirmed");
   const accounts = await connection.getParsedTokenAccountsByOwner(new PublicKey(wallet), { mint: new PublicKey(mint) });
   return accounts.value.reduce((sum, account) => {
@@ -69,13 +69,13 @@ export async function POST(request: NextRequest) {
     const balance = await tokenBalance(body.wallet);
     const minimum = eligibilityMinimum();
     if (balance < minimum) {
-      return NextResponse.json({ error: "Wallet is below the Runner access threshold", balance, minimum }, { status: 403 });
+      return NextResponse.json({ error: "Wallet is below the RI6900 access threshold", balance, minimum }, { status: 403 });
     }
     const session = await createAccessSession(body.wallet, balance);
     await markChallengeUsed(challenge.id);
     return NextResponse.json({ ...session, wallet: body.wallet, balance, minimum });
   } catch (error) {
-    console.error("Runner access verification failed", error);
+    console.error("RI6900 access verification failed", error);
     return NextResponse.json({ error: error instanceof Error ? error.message : "Verification failed" }, { status: 400 });
   }
 }

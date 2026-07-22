@@ -16,7 +16,7 @@ Scout is live.
 
 See where attention is moving before it becomes obvious.
 
-Hold 1M+ $RUNNER for eligibility in the five-minute holder distribution rail.
+Hold 1M+ $RI6900 for eligibility in the five-minute holder distribution rail.
 
 ### Thread outline
 

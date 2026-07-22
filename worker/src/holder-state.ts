@@ -15,6 +15,10 @@ type HolderStateRow = {
 };
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const FIFTEEN_MIN_MS = 15 * 60 * 1000;
+const HOUR_MS = 60 * 60 * 1000;
+const FOUR_HOUR_MS = 4 * HOUR_MS;
+const TWELVE_HOUR_MS = 12 * HOUR_MS;
 const THREE_DAY_MS = 3 * DAY_MS;
 const SEVEN_DAY_MS = 7 * DAY_MS;
 const THIRTY_DAY_MS = 30 * DAY_MS;
@@ -37,10 +41,14 @@ function holderMultiplierBps(eligibleSince: string | null, nowMs: number) {
   if (!Number.isFinite(sinceMs)) return 10_000;
 
   const heldMs = Math.max(0, nowMs - sinceMs);
-  if (heldMs >= THIRTY_DAY_MS) return 100_000;
-  if (heldMs >= SEVEN_DAY_MS) return 50_000;
-  if (heldMs >= THREE_DAY_MS) return 20_000;
-  if (heldMs >= DAY_MS) return 15_000;
+  if (heldMs >= THIRTY_DAY_MS) return 250_000;
+  if (heldMs >= SEVEN_DAY_MS) return 100_000;
+  if (heldMs >= THREE_DAY_MS) return 50_000;
+  if (heldMs >= DAY_MS) return 30_000;
+  if (heldMs >= TWELVE_HOUR_MS) return 25_000;
+  if (heldMs >= FOUR_HOUR_MS) return 20_000;
+  if (heldMs >= HOUR_MS) return 15_000;
+  if (heldMs >= FIFTEEN_MIN_MS) return 12_000;
   return 10_000;
 }
 
@@ -74,13 +82,32 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
     const eligible: Holder[] = [];
     for (const state of states) {
       // Eligible wallets are handled in the second pass so each wallet is
-      // written once and a sell can reset its streak without excluding it.
+      // written once.
       if (eligibleByWallet.has(state.wallet)) continue;
 
       const current = currentByWallet.get(state.wallet);
+      const previousRaw = parseRaw(state.source_balance_raw);
+      const currentRaw = current?.rawBalance ?? 0n;
+      const soldAnyAmount = previousRaw > 0n && currentRaw < previousRaw;
       const droppedBelowThreshold = !current || current.uiBalance < config.eligibilityMin;
 
-      if (droppedBelowThreshold) {
+      if (state.permanently_ineligible || soldAnyAmount) {
+        updates.push({
+          wallet: state.wallet,
+          source_balance: current?.uiBalance.toString() ?? state.source_balance ?? "0",
+          source_balance_raw: current?.rawBalance.toString() ?? state.source_balance_raw ?? "0",
+          highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
+          eligible_since: null,
+          permanently_ineligible: true,
+          ineligible_reason: state.permanently_ineligible ? state.ineligible_reason ?? "balance_decreased" : "balance_decreased",
+          ineligible_at: now,
+          last_seen_at: now,
+          last_epoch_id: epochId,
+          updated_at: now,
+          current_streak_epochs: 0,
+          current_multiplier_bps: 10_000
+        });
+      } else if (droppedBelowThreshold) {
         updates.push({
           wallet: state.wallet,
           source_balance: current?.uiBalance.toString() ?? state.source_balance ?? "0",
@@ -124,23 +151,22 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
       const soldAnyAmount = existing && holder.rawBalance < previousRaw;
 
-      if (soldAnyAmount) {
+      if (existing?.permanently_ineligible || soldAnyAmount) {
         updates.push({
           wallet: holder.wallet,
           source_balance: holder.uiBalance.toString(),
           source_balance_raw: holder.rawBalance.toString(),
           highest_source_balance_raw: highestRaw > holder.rawBalance ? highestRaw.toString() : holder.rawBalance.toString(),
-          eligible_since: now,
-          permanently_ineligible: false,
-          ineligible_reason: null,
-          ineligible_at: null,
+          eligible_since: null,
+          permanently_ineligible: true,
+          ineligible_reason: existing?.permanently_ineligible ? existing.ineligible_reason ?? "balance_decreased" : "balance_decreased",
+          ineligible_at: now,
           last_seen_at: now,
           last_epoch_id: epochId,
           updated_at: now,
           current_streak_epochs: 0,
           current_multiplier_bps: 10_000
         });
-        eligible.push({ ...holder, eligibleSince: now, holdMultiplierBps: 10_000 });
         continue;
       }
 
@@ -174,7 +200,7 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const previous = stateByWallet.get(holder.wallet);
       return previous ? holder.rawBalance < parseRaw(previous.source_balance_raw) : false;
     }).length;
-    if (reset > 0) console.log(`[${epochId}] holder-state reset ${reset} balance-decrease streaks to 1.00x`);
+    if (reset > 0) console.log(`[${epochId}] holder-state marked ${reset} balance-decrease wallets permanently ineligible`);
     return eligible;
   } catch (error) {
     if (isMissingHolderStateTable(error)) {

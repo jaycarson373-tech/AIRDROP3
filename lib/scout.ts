@@ -85,7 +85,7 @@ async function supabaseRequest<T>(
   options: { requireServiceRole?: boolean } = {}
 ): Promise<T> {
   const config = supabaseConfig(options.requireServiceRole);
-  if (!config) throw new Error("Runner database is not configured");
+  if (!config) throw new Error("RI6900 database is not configured");
   const response = await fetch(`${config.url}/rest/v1/${path}`, {
     ...init,
     headers: {
@@ -98,7 +98,7 @@ async function supabaseRequest<T>(
   });
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    throw new Error(`Runner database request failed (${response.status}): ${detail.slice(0, 400)}`);
+    throw new Error(`RI6900 database request failed (${response.status}): ${detail.slice(0, 400)}`);
   }
   if (response.status === 204) return undefined as T;
   const text = await response.text();
@@ -507,7 +507,7 @@ export async function ingestScoutSignal(input: SignalInput) {
   if (!shouldActivate) return { signal, activated: false, current };
   const activated = await activateScoutSignal(
     signal.id,
-    input.forceActivate ? "Administrator override" : current ? `Score advantage ${scoreAdvantage}` : "First active Runner signal"
+    input.forceActivate ? "Administrator override" : current ? `Score advantage ${scoreAdvantage}` : "First active RI6900 component"
   );
   return { signal: activated, activated: true, current };
 }
@@ -532,7 +532,7 @@ export async function createAccessChallenge(wallet: string) {
   if (!normalized) throw new Error("Invalid Solana wallet");
   const nonce = randomBytes(18).toString("base64url");
   const expiresAt = new Date(Date.now() + 10 * 60_000).toISOString();
-  const message = `Runner access\nWallet: ${normalized}\nNonce: ${nonce}\nExpires: ${expiresAt}`;
+  const message = `RI6900 access\nWallet: ${normalized}\nNonce: ${nonce}\nExpires: ${expiresAt}`;
   const rows = await supabaseRequest<{ id: string; wallet: string; nonce: string; message: string; expires_at: string }[]>(
     "scout_access_challenges",
     {
@@ -782,7 +782,7 @@ export function formatSignalTelegram(signal: ScoutSignal, premium: boolean) {
   const escape = (value: string) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
   const reasons = signal.reasons.length ? signal.reasons.map((reason) => `• ${escape(reason)}`).join("\n") : "• Market data is still indexing";
   return [
-    `<b>${premium ? "RUNNER EARLY SIGNAL" : "RUNNER PUBLIC SIGNAL"}</b>`,
+    `<b>${premium ? "RI6900 EARLY COMPONENT" : "RI6900 PUBLIC COMPONENT"}</b>`,
     `<b>$${escape(signal.symbol)}</b> · ${escape(signal.name)}`,
     `Momentum Score: <b>${score}</b>`,
     `Market cap: ${marketCap}`,

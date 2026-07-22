@@ -64,6 +64,10 @@ function toNumber(value: unknown) {
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const FIFTEEN_MIN_MS = 15 * 60 * 1000;
+const HOUR_MS = 60 * 60 * 1000;
+const FOUR_HOUR_MS = 4 * HOUR_MS;
+const TWELVE_HOUR_MS = 12 * HOUR_MS;
 const THREE_DAY_MS = 3 * DAY_MS;
 const SEVEN_DAY_MS = 7 * DAY_MS;
 const THIRTY_DAY_MS = 30 * DAY_MS;
@@ -72,10 +76,14 @@ function fallbackMultiplierBps(eligibleSince: string | null) {
   const sinceMs = Date.parse(eligibleSince ?? "");
   if (!Number.isFinite(sinceMs)) return 10_000;
   const heldMs = Math.max(0, Date.now() - sinceMs);
-  if (heldMs >= THIRTY_DAY_MS) return 100_000;
-  if (heldMs >= SEVEN_DAY_MS) return 50_000;
-  if (heldMs >= THREE_DAY_MS) return 20_000;
-  if (heldMs >= DAY_MS) return 15_000;
+  if (heldMs >= THIRTY_DAY_MS) return 250_000;
+  if (heldMs >= SEVEN_DAY_MS) return 100_000;
+  if (heldMs >= THREE_DAY_MS) return 50_000;
+  if (heldMs >= DAY_MS) return 30_000;
+  if (heldMs >= TWELVE_HOUR_MS) return 25_000;
+  if (heldMs >= FOUR_HOUR_MS) return 20_000;
+  if (heldMs >= HOUR_MS) return 15_000;
+  if (heldMs >= FIFTEEN_MIN_MS) return 12_000;
   return 10_000;
 }
 

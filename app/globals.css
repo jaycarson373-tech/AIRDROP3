@@ -1,16 +1,16 @@
 :root {
   color-scheme: dark;
-  --scout-bg: #050505;
-  --scout-surface: #090909;
-  --scout-surface-strong: #111111;
-  --scout-text: #f7f7f2;
-  --scout-muted: #8e8e88;
-  --scout-green: #8cff72;
-  --scout-cyan: #f5f5ee;
-  --scout-amber: #d8d8cf;
+  --scout-bg: #030404;
+  --scout-surface: #080a0b;
+  --scout-surface-strong: #101315;
+  --scout-text: #f1f3f2;
+  --scout-muted: #8e9699;
+  --scout-green: #c7ff00;
+  --scout-cyan: #e4e8e9;
+  --scout-amber: #cbd0d2;
   --scout-risk: #ff7979;
   --scout-line: rgba(255, 255, 255, 0.13);
-  --scout-line-green: rgba(140, 255, 114, 0.32);
+  --scout-line-green: rgba(199, 255, 0, 0.34);
   --scout-mono: var(--font-runner-terminal), "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
   --scout-display: var(--font-runner-display), "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
 }

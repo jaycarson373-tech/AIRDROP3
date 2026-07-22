@@ -6,7 +6,7 @@
   overflow: clip;
   background:
     radial-gradient(circle at 72% 8%, rgba(255, 255, 255, 0.04), transparent 24rem),
-    radial-gradient(circle at 10% 28%, rgba(140, 255, 114, 0.045), transparent 30rem),
+    radial-gradient(circle at 10% 28%, rgba(199, 255, 0, 0.045), transparent 30rem),
     var(--scout-bg);
   letter-spacing: -0.012em;
 }
@@ -36,7 +36,7 @@
   position: absolute;
   inset: 0;
   background:
-    conic-gradient(from 20deg at 78% 18%, transparent 0 72deg, rgba(140, 255, 114, 0.08) 74deg 76deg, transparent 78deg 360deg),
+    conic-gradient(from 20deg at 78% 18%, transparent 0 72deg, rgba(199, 255, 0, 0.08) 74deg 76deg, transparent 78deg 360deg),
     linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.018) 49%, transparent 50%);
   background-size: auto, 100% 8px;
   opacity: 0.42;
@@ -1483,7 +1483,7 @@
   background:
     linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px),
-    radial-gradient(circle at 28% 78%, rgba(140, 255, 114, 0.08), transparent 24rem);
+    radial-gradient(circle at 28% 78%, rgba(199, 255, 0, 0.08), transparent 24rem);
   background-size: 44px 44px, 44px 44px, auto;
   mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
 }
@@ -1492,7 +1492,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(140, 255, 114, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, rgba(199, 255, 0, 0.08), transparent);
   transform: translateX(-100%);
   animation: runner-scan-sweep 7.5s linear infinite;
 }
@@ -1528,9 +1528,9 @@
 
 .runner-chart-line::before {
   background:
-    linear-gradient(18deg, transparent 0 14%, rgba(140, 255, 114, 0.55) 14.4% 14.8%, transparent 15.2% 100%),
+    linear-gradient(18deg, transparent 0 14%, rgba(199, 255, 0, 0.55) 14.4% 14.8%, transparent 15.2% 100%),
     linear-gradient(24deg, transparent 0 31%, rgba(255, 255, 255, 0.28) 31.3% 31.65%, transparent 32% 100%),
-    linear-gradient(31deg, transparent 0 53%, rgba(140, 255, 114, 0.44) 53.2% 53.6%, transparent 53.9% 100%),
+    linear-gradient(31deg, transparent 0 53%, rgba(199, 255, 0, 0.44) 53.2% 53.6%, transparent 53.9% 100%),
     linear-gradient(38deg, transparent 0 75%, rgba(255, 255, 255, 0.2) 75.2% 75.55%, transparent 75.9% 100%);
 }
 
@@ -1539,7 +1539,7 @@
   height: 62%;
   bottom: 0;
   background:
-    repeating-linear-gradient(90deg, transparent 0 18px, rgba(140, 255, 114, 0.28) 19px 22px, transparent 23px 35px),
+    repeating-linear-gradient(90deg, transparent 0 18px, rgba(199, 255, 0, 0.28) 19px 22px, transparent 23px 35px),
     linear-gradient(24deg, transparent 0 44%, rgba(255, 255, 255, 0.18) 44.3% 44.7%, transparent 45% 100%);
   mask-image: linear-gradient(to top, #000, transparent 76%);
 }
@@ -1558,8 +1558,8 @@
   height: 28%;
   opacity: 0.22;
   background:
-    repeating-linear-gradient(90deg, rgba(140, 255, 114, 0.1) 0 10px, transparent 10px 18px),
-    linear-gradient(to top, rgba(140, 255, 114, 0.42), transparent 85%);
+    repeating-linear-gradient(90deg, rgba(199, 255, 0, 0.1) 0 10px, transparent 10px 18px),
+    linear-gradient(to top, rgba(199, 255, 0, 0.42), transparent 85%);
   mask-image: linear-gradient(18deg, transparent 0 27%, #000 27.2% 100%);
   animation: runner-volume-breathe 4.5s ease-in-out infinite;
 }
@@ -1573,7 +1573,7 @@
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 50%;
   opacity: 0.38;
-  background: conic-gradient(from 0deg, rgba(140, 255, 114, 0.12), transparent 48deg 360deg);
+  background: conic-gradient(from 0deg, rgba(199, 255, 0, 0.12), transparent 48deg 360deg);
   mask-image: radial-gradient(circle, transparent 0 32%, #000 33%, #000 34%, transparent 35%, transparent 53%, #000 54%, #000 55%, transparent 56%, transparent 100%);
   animation: scout-spin 16s linear infinite;
 }
@@ -1593,6 +1593,20 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
+}
+
+.runner-brand-masthead--text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  color: var(--scout-text);
+  font-family: var(--scout-display);
+  font-size: clamp(32px, 6vw, 78px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-shadow: 0 0 34px rgba(199, 255, 0, 0.34);
 }
 
 .runner-hero__statusline {
@@ -1620,8 +1634,8 @@
 .runner-scanner-panel {
   display: grid;
   gap: 0;
-  border-right: 1px solid rgba(140, 255, 114, .16);
-  border-bottom: 1px solid rgba(140, 255, 114, .16);
+  border-right: 1px solid rgba(199, 255, 0, .16);
+  border-bottom: 1px solid rgba(199, 255, 0, .16);
 }
 
 .runner-scanner-console {
@@ -1641,7 +1655,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent, rgba(140, 255, 114, 0.09), transparent);
+  background: linear-gradient(to bottom, transparent, rgba(199, 255, 0, 0.09), transparent);
   transform: translateY(-100%);
   animation: runner-terminal-scan 4.2s linear infinite;
 }
@@ -1770,7 +1784,7 @@
 .runner-ranking-table > div:last-child { border-bottom: 0; }
 .runner-ranking-table__head { min-height: 27px; color: var(--scout-muted); text-transform: uppercase; }
 .runner-ranking-table > div:not(.runner-ranking-table__head) { color: var(--scout-muted); }
-.runner-ranking-table > div.is-locked { background: rgba(140,255,114,.045); color: var(--scout-text); }
+.runner-ranking-table > div.is-locked { background: rgba(199, 255, 0,.045); color: var(--scout-text); }
 .runner-ranking-table strong { color: var(--scout-text); font-size: 10px; }
 .runner-ranking-table > .runner-ranking-empty {
   color: var(--scout-muted);
@@ -1805,7 +1819,7 @@
 .runner-symbol-stream span.is-active {
   border-color: var(--scout-line-green);
   color: var(--scout-green);
-  box-shadow: inset 0 0 16px rgba(140,255,114,.08);
+  box-shadow: inset 0 0 16px rgba(199, 255, 0,.08);
 }
 
 .runner-lock-panel {
@@ -1814,7 +1828,7 @@
   padding: 14px;
   overflow: hidden;
   border: 1px solid var(--scout-line-green);
-  background: rgba(140, 255, 114, 0.045);
+  background: rgba(199, 255, 0, 0.045);
 }
 
 .runner-lock-panel::after {
@@ -1823,7 +1837,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(140,255,114,.62);
+  background: rgba(199, 255, 0,.62);
   animation: runner-lock-scan 2.8s linear infinite;
 }
 
@@ -1999,7 +2013,7 @@
   position: absolute;
   inset: 0;
   opacity: .07;
-  background: repeating-linear-gradient(110deg, transparent 0 20px, rgba(140,255,114,.65) 21px 23px, transparent 24px 43px);
+  background: repeating-linear-gradient(110deg, transparent 0 20px, rgba(199, 255, 0,.65) 21px 23px, transparent 24px 43px);
   background-size: 56px 100%;
   animation: runner-progress-conveyor 12s linear infinite;
   will-change: background-position;
@@ -2328,7 +2342,7 @@
   letter-spacing: .04em;
   text-transform: uppercase;
 }
-.runner-hero-links a:hover { border-color: var(--scout-line-green); background: rgba(140,255,114,.035); }
+.runner-hero-links a:hover { border-color: var(--scout-line-green); background: rgba(199, 255, 0,.035); }
 .runner-hero .scout-action-links { margin-top: 15px; gap: 6px; }
 .runner-hero .scout-hero__delay { margin-top: 9px; font: 550 8px/1.35 var(--scout-mono); letter-spacing: .05em; }
 
@@ -2339,7 +2353,7 @@
   letter-spacing: .05em;
 }
 
-.runner-scanner-panel { border-color: rgba(140,255,114,.12); }
+.runner-scanner-panel { border-color: rgba(199, 255, 0,.12); }
 .runner-scanner-console { padding: 9px; background-size: 24px 24px, 24px 24px, auto; }
 .runner-scanner-console__head span,
 .runner-lock-panel span { font-size: 9px; }
@@ -2384,7 +2398,7 @@
 .runner-ranking-table > div:not(.runner-ranking-table__head) { min-height: 25px; padding-inline: 7px; font-size: 8px; }
 .runner-ranking-table__head { min-height: 23px; }
 .runner-ranking-table strong { font-size: 9px; }
-.runner-lock-panel { padding: 9px; border-color: rgba(140,255,114,.24); }
+.runner-lock-panel { padding: 9px; border-color: rgba(199, 255, 0,.24); }
 .runner-lock-panel strong { font-size: 14px; }
 .runner-lock-panel small { font-size: 8px; }
 .runner-scanner-metrics { margin-top: 8px; }
@@ -2841,6 +2855,139 @@
 @keyframes scout-ticker-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-48%); }
+}
+
+/* RI6900 brand system: graphite, brushed silver, and restrained index lime. */
+.scout-brand__mark {
+  overflow: hidden;
+  border-color: rgba(223, 228, 230, .38);
+  border-radius: 50%;
+  background: #020303;
+  box-shadow: inset 0 0 0 1px rgba(199, 255, 0, .12);
+}
+
+.scout-brand strong,
+.scout-footer__brand strong {
+  color: #f2f4f3;
+  font-family: var(--scout-display);
+  font-weight: 700;
+  letter-spacing: .055em;
+}
+
+.scout-brand small {
+  color: #9ba2a4;
+  letter-spacing: .065em;
+}
+
+.ri-brand-masthead {
+  position: relative;
+  display: flex;
+  height: clamp(118px, 13vw, 160px);
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 3vw, 42px);
+  padding: 14px clamp(20px, 4vw, 58px);
+  border-color: rgba(225, 230, 232, .18);
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, .045), transparent 34% 66%, rgba(199, 255, 0, .035)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 4px),
+    #030404;
+}
+
+.ri-brand-masthead::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(199, 255, 0, .82), transparent);
+}
+
+.ri-brand-masthead > img {
+  width: clamp(88px, 10vw, 132px);
+  height: clamp(88px, 10vw, 132px);
+  flex: 0 0 auto;
+  border: 1px solid rgba(231, 235, 236, .72);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 14px 44px rgba(0,0,0,.5), 0 0 0 4px rgba(255,255,255,.035);
+}
+
+.ri-brand-masthead > div {
+  display: grid;
+  min-width: 0;
+  align-content: center;
+}
+
+.ri-brand-masthead span,
+.ri-brand-masthead small {
+  font-family: var(--scout-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.ri-brand-masthead span {
+  color: #c1c6c8;
+  font-size: clamp(11px, 1.15vw, 15px);
+  font-weight: 600;
+}
+
+.ri-brand-masthead strong {
+  margin: -2px 0;
+  color: #f2f4f3;
+  font-family: var(--scout-display);
+  font-size: clamp(50px, 7.2vw, 94px);
+  font-style: italic;
+  font-weight: 700;
+  line-height: .86;
+  letter-spacing: -.035em;
+  text-shadow: 3px 3px 0 rgba(0,0,0,.9);
+}
+
+.ri-brand-masthead small {
+  color: var(--scout-green);
+  font-size: clamp(7px, .75vw, 10px);
+  font-weight: 650;
+}
+
+.runner-hero h1 span {
+  color: var(--scout-green);
+}
+
+.scout-panel,
+.runner-scanner-panel {
+  border-color: rgba(216, 221, 223, .13);
+}
+
+.scout-terminal-bar {
+  background: linear-gradient(90deg, rgba(199, 255, 0, .055), transparent 42%), #050708;
+}
+
+@media (max-width: 760px) {
+  .ri-brand-masthead {
+    height: clamp(88px, 20vw, 112px);
+    gap: 14px;
+    justify-content: flex-start;
+    padding: 10px 14px;
+  }
+
+  .ri-brand-masthead > img {
+    width: clamp(68px, 17vw, 88px);
+    height: clamp(68px, 17vw, 88px);
+  }
+
+  .ri-brand-masthead strong { font-size: clamp(38px, 11vw, 58px); }
+  .ri-brand-masthead span { font-size: 9px; }
+  .ri-brand-masthead small { font-size: 6px; letter-spacing: .09em; }
+}
+
+@media (max-width: 430px) {
+  .scout-brand strong { font-size: 12px; letter-spacing: .035em; }
+  .ri-brand-masthead { height: 82px; }
+  .ri-brand-masthead > img { width: 62px; height: 62px; }
+  .ri-brand-masthead strong { font-size: 38px; }
+  .ri-brand-masthead small { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

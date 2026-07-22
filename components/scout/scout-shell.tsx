@@ -17,8 +17,8 @@ import { useCountdown } from "./hooks";
 import { ScoutProvider, useScout } from "./scout-provider";
 
 const primaryNav = [
-  { href: "/terminal", label: "Current Runner" },
-  { href: "/runners", label: "Signals" },
+  { href: "/terminal", label: "Live Index" },
+  { href: "/runners", label: "Components" },
   { href: "/airdrop-history", label: "Receipts" }
 ];
 
@@ -32,19 +32,17 @@ function TopTicker() {
   const active = signals.active;
   const metrics = [
     ["LIVE", state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
-    ["CURRENT RUNNER", active ? `$${active.symbol}` : "NO VERIFIED TARGET"],
-    ["NEXT UPDATE", countdown.label],
-    ["MARKET STATUS", "OPEN 24/7"],
-    ["SCANNER", active ? "SIGNAL VERIFIED" : state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "SCANNING"],
-    ["NETWORK", "SOLANA"],
-    ["MOMENTUM", active?.scout_score === null || active?.scout_score === undefined ? "AWAITING AUTHENTICATED SIGNAL" : `${active.scout_score}/100`],
-    ["MC AT SCAN", formatMoney(active?.market_cap_usd)],
-    ["SCANS RECORDED", signals.signals.length.toLocaleString()],
-    ["SCAN CYCLE", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "--"]
+    ["REWARD TOKEN", "$RI6900"],
+    ["NEXT REBALANCE", countdown.label],
+    ["INDEX STATUS", active ? "COMPONENT ACTIVE" : "CALCULATING"],
+    ["ELIGIBLE HOLDERS", stats.latestEligibleHolders.toLocaleString()],
+    ["TOTAL DISTRIBUTED", formatToken(stats.totalRewardAirdropped, "RI6900")],
+    ["EPOCH", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "--"],
+    ["CAMPAIGNS", signals.signals.length.toLocaleString()]
   ];
 
   return (
-    <div className="scout-ticker" aria-label="Live Runner metrics">
+    <div className="scout-ticker" aria-label="Runner Index 6900 metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -75,13 +73,13 @@ function Header() {
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/terminal" aria-label="Runner terminal">
+        <Link className="scout-brand" href="/terminal" aria-label="Runner Index 6900 terminal">
           <span className="scout-brand__mark" aria-hidden="true">
-            <img src="/brand/runner-logo.jpg" alt="" />
+            <img src="/brand/ri6900-emblem.jpg" alt="" />
           </span>
           <span>
-            <strong>RUNNER</strong>
-            <small>Momentum terminal</small>
+            <strong>RUNNER INDEX 6900</strong>
+            <small>RI6900 // HOLDER INDEX</small>
           </span>
         </Link>
 
@@ -99,7 +97,7 @@ function Header() {
             type="button"
             onClick={copyContract}
             disabled={!scoutPublicConfig.contractAddress}
-            title={scoutPublicConfig.contractAddress || "RUNNER contract pending"}
+            title={scoutPublicConfig.contractAddress || "RI6900 contract pending"}
           >
             {copied ? <Check size={15} /> : <Copy size={15} />}
             <span>{shortAddress(scoutPublicConfig.contractAddress)}</span>
@@ -117,7 +115,7 @@ function Header() {
           ))}
           {scoutPublicConfig.buyUrl ? (
             <a href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
-              Buy $RUNNER <ExternalLink size={15} />
+              Buy $RI6900 <ExternalLink size={15} />
             </a>
           ) : null}
         </div>
@@ -130,10 +128,10 @@ function Footer() {
   return (
     <footer className="scout-footer">
       <div className="scout-footer__brand">
-        <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/runner-logo.jpg" alt="" /></span>
+        <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/ri6900-emblem.jpg" alt="" /></span>
         <div>
-          <strong>RUNNER</strong>
-          <p>Own the runner. Don't chase it.</p>
+          <strong>RUNNER INDEX 6900</strong>
+          <p>Persistence, indexed.</p>
         </div>
       </div>
       <nav aria-label="Product links">
@@ -143,7 +141,7 @@ function Footer() {
         {scoutPublicConfig.xUrl ? <a href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer">X <ExternalLink size={13} /></a> : null}
       </nav>
       <p className="scout-footer__risk">
-        Runner surfaces market momentum and experimental token distributions. Digital assets are volatile. Verify every address and onchain transaction independently.
+        Runner Index 6900 is an experimental holder-reward protocol. Digital assets are volatile. Verify every address, eligibility rule, and onchain transaction independently.
       </p>
     </footer>
   );

@@ -1,4 +1,4 @@
--- RUNNER manual scan ledger
+-- RI6900 manual component ledger
 -- Paste this entire file into Supabase SQL Editor and click Run.
 -- It is idempotent: running it again does not delete recorded scans.
 
@@ -84,8 +84,8 @@ create table if not exists public.scout_settings (
 );
 
 insert into public.scout_settings (key, value, description) values
-  ('eligibility_minimum', '1000000', 'Minimum RUNNER balance for holder distributions.'),
-  ('public_signal_delay_seconds', '0', 'Manual Runner scans are published immediately.')
+  ('eligibility_minimum', '1000000', 'Minimum RI6900 balance for holder distributions.'),
+  ('public_signal_delay_seconds', '0', 'Manual RI6900 components are published immediately.')
 on conflict (key) do update
 set value = excluded.value,
     description = excluded.description,
