@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
       results
     });
   } catch (error) {
-    console.error("RI6900 search failed", error);
+    console.error("BUFFETTCOIN search failed", error);
     return NextResponse.json({ error: "Search is temporarily unavailable", results: [] }, { status: 503 });
   }
 }

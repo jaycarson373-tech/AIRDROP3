@@ -1180,6 +1180,18 @@
 
 .scout-footer nav a:hover { color: var(--scout-green); }
 
+.scout-footer__banner {
+  grid-column: 1 / -1;
+  order: 10;
+  width: 100%;
+  max-height: 240px;
+  border: 1px solid rgba(236, 220, 177, 0.22);
+  border-radius: 10px;
+  object-fit: cover;
+  object-position: center;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.36);
+}
+
 .scout-footer__risk {
   grid-column: 1 / -1;
   max-width: 900px;
@@ -2670,6 +2682,7 @@
   .scout-final-cta { display: block; padding: 28px; }
   .scout-final-cta__actions { margin-top: 24px; }
   .scout-footer { grid-template-columns: 1fr; }
+  .scout-footer__banner { max-height: 150px; border-radius: 8px; }
   .scout-footer nav { justify-content: flex-start; }
   .scout-footer__risk { grid-column: auto; }
 
@@ -2996,5 +3009,274 @@
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* Buffettcoin holding-company polish */
+.scout-app {
+  --scout-bg: #050504;
+  --scout-surface: #0b0a08;
+  --scout-surface-strong: #15120d;
+  --scout-text: #f5f0e6;
+  --scout-muted: #a99f8d;
+  --scout-green: #d9b765;
+  --scout-cyan: #f2ead8;
+  --scout-amber: #d9b765;
+  --scout-line: rgba(236, 220, 177, 0.16);
+  --scout-line-green: rgba(217, 183, 101, 0.34);
+  background:
+    radial-gradient(circle at 75% 8%, rgba(217, 183, 101, 0.08), transparent 28rem),
+    radial-gradient(circle at 12% 30%, rgba(245, 240, 230, 0.035), transparent 30rem),
+    linear-gradient(180deg, #050504 0%, #0b0906 48%, #050504 100%);
+  color: var(--scout-text);
+}
+
+.scout-background {
+  opacity: 0.58;
+  background-image:
+    linear-gradient(rgba(236, 220, 177, 0.024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 220, 177, 0.024) 1px, transparent 1px);
+}
+
+.scout-background::before {
+  opacity: 0.2;
+  background:
+    conic-gradient(from 20deg at 80% 18%, transparent 0 72deg, rgba(217, 183, 101, 0.055) 74deg 76deg, transparent 78deg 360deg),
+    linear-gradient(to bottom, transparent 0%, rgba(236, 220, 177, 0.012) 49%, transparent 50%);
+  background-size: auto, 100% 10px;
+}
+
+.scout-background::after {
+  opacity: 0.022;
+}
+
+.scout-ticker,
+.scout-header,
+.scout-terminal-bar {
+  background: rgba(6, 5, 4, 0.94);
+  border-color: rgba(236, 220, 177, 0.14);
+}
+
+.scout-ticker__item {
+  color: #9d927f;
+}
+
+.scout-ticker__item strong,
+.scout-terminal-bar span,
+.scout-kicker,
+.scout-label,
+.scout-eyebrow,
+.runner-hero-links a,
+.runner-hero-tape__track em {
+  color: #d9b765;
+}
+
+.scout-ticker__item i,
+.scout-terminal-bar i,
+.scout-status__dot {
+  background: #d9b765;
+  box-shadow: 0 0 10px rgba(217, 183, 101, 0.32);
+}
+
+.scout-brand__mark {
+  border-color: rgba(236, 220, 177, 0.42);
+  background: #050504;
+  box-shadow: 0 0 0 1px rgba(217, 183, 101, 0.1), 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.scout-brand strong,
+.scout-footer__brand strong {
+  color: #fff7e8;
+  font-family: var(--scout-display);
+  letter-spacing: 0.035em;
+}
+
+.scout-brand small,
+.scout-footer__brand p,
+.scout-nav a,
+.scout-section-heading p {
+  color: #9f9687;
+}
+
+.scout-nav a.is-active,
+.scout-nav a:hover {
+  color: #fff7e8;
+  background: rgba(217, 183, 101, 0.07);
+}
+
+.scout-ca-button,
+.scout-icon-link,
+.scout-menu-button,
+.scout-icon-button {
+  border-color: rgba(236, 220, 177, 0.18);
+  background: rgba(255, 247, 232, 0.035);
+  color: #f5f0e6;
+}
+
+.runner-brand-masthead.ri-brand-masthead {
+  border-color: rgba(236, 220, 177, 0.18);
+  background:
+    linear-gradient(110deg, rgba(217, 183, 101, 0.08), transparent 34% 66%, rgba(255, 247, 232, 0.035)),
+    repeating-linear-gradient(0deg, rgba(236, 220, 177, 0.018) 0 1px, transparent 1px 5px),
+    #040302;
+}
+
+.ri-brand-masthead::after {
+  background: linear-gradient(90deg, transparent, rgba(217, 183, 101, 0.85), transparent);
+}
+
+.ri-brand-masthead > img {
+  border-color: rgba(255, 247, 232, 0.6);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.52), 0 0 34px rgba(217, 183, 101, 0.12);
+}
+
+.ri-brand-masthead span,
+.ri-brand-masthead small {
+  color: #d9b765;
+}
+
+.ri-brand-masthead strong {
+  color: #fff7e8;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.86);
+}
+
+.runner-market-grid {
+  border-color: rgba(236, 220, 177, 0.035);
+  background:
+    linear-gradient(rgba(236, 220, 177, 0.021) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 220, 177, 0.021) 1px, transparent 1px),
+    radial-gradient(circle at 28% 78%, rgba(217, 183, 101, 0.07), transparent 24rem);
+}
+
+.runner-market-grid::before {
+  background: linear-gradient(90deg, transparent, rgba(217, 183, 101, 0.055), transparent);
+}
+
+.runner-chart-line,
+.runner-volume-bars,
+.runner-radar-sweep {
+  opacity: 0.15;
+  filter: saturate(0.55);
+}
+
+.runner-hero .scout-eyebrow {
+  color: #d9b765;
+  letter-spacing: 0.11em;
+}
+
+.runner-hero h1 {
+  max-width: 540px;
+  color: #fff7e8;
+  font-family: var(--scout-display);
+  font-size: clamp(42px, 4.6vw, 68px);
+  font-weight: 760;
+  line-height: 0.98;
+  letter-spacing: -0.018em;
+}
+
+.runner-hero h1 span {
+  color: #d9b765;
+}
+
+.runner-hero .scout-hero__body {
+  max-width: 560px;
+  color: #c7bead;
+  font-family: var(--scout-display);
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.62;
+}
+
+.runner-hero-mechanism,
+.scout-live-strip,
+.scout-panel,
+.runner-scanner-console,
+.runner-lock-panel,
+.scout-metric-grid,
+.runner-scanner-inputs,
+.runner-ranking-table {
+  border-color: rgba(236, 220, 177, 0.16);
+  background-color: rgba(10, 8, 6, 0.82);
+}
+
+.runner-hero-mechanism strong,
+.scout-metric strong,
+.runner-lock-panel strong,
+.runner-ranking-table strong,
+.scout-panel__head h2,
+.scout-section-heading h2 {
+  color: #fff7e8;
+}
+
+.runner-hero-mechanism small,
+.scout-metric__detail,
+.runner-lock-panel small,
+.runner-ranking-table__head,
+.scout-note {
+  color: #a99f8d;
+}
+
+.scout-button--primary {
+  background: linear-gradient(135deg, #d9b765, #fff2c3);
+  color: #0b0906;
+  box-shadow: 0 12px 30px rgba(217, 183, 101, 0.12);
+}
+
+.scout-button--primary:hover {
+  box-shadow: 0 14px 34px rgba(217, 183, 101, 0.2);
+}
+
+.scout-button--secondary {
+  border-color: rgba(236, 220, 177, 0.22);
+  background: rgba(255, 247, 232, 0.035);
+  color: #fff7e8;
+}
+
+.scout-button--secondary:hover,
+.runner-hero-links a:hover {
+  border-color: rgba(217, 183, 101, 0.5);
+  background: rgba(217, 183, 101, 0.075);
+}
+
+.runner-scanner-console::before {
+  background: linear-gradient(to bottom, transparent, rgba(217, 183, 101, 0.06), transparent);
+}
+
+.runner-scan-pipeline span,
+.runner-scanner-inputs > span,
+.scout-metric,
+.runner-ranking-table > div:not(.runner-ranking-table__head) {
+  background: rgba(6, 5, 4, 0.86);
+}
+
+.runner-rank-score i b,
+.scout-score-track i,
+.scout-countdown-panel > i span {
+  background: linear-gradient(90deg, #7a6434, #d9b765, #fff2c3);
+}
+
+@media (max-width: 920px) {
+  .runner-hero {
+    gap: 20px;
+    padding-top: 26px;
+  }
+
+  .runner-hero .scout-hero__body {
+    font-family: var(--scout-display);
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 430px) {
+  .runner-hero h1 {
+    font-size: clamp(35px, 11vw, 44px);
+  }
+
+  .runner-hero .scout-hero__body {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .ri-brand-masthead strong {
+    font-size: 34px;
   }
 }

@@ -43,11 +43,11 @@ function watchOwner(message: TelegramMessage) {
 }
 
 function shortSignalList(signals: Awaited<ReturnType<typeof listScoutSignals>>, heading: string) {
-  if (!signals.length) return `<b>${heading}</b>\nNo released RI6900 components yet.`;
+  if (!signals.length) return `<b>${heading}</b>\nNo released BUFFETTCOIN basket assets yet.`;
   return [
     `<b>${heading}</b>`,
     ...signals.slice(0, 8).map((signal, index) => {
-      const score = signal.scout_score === null ? "indexing" : `${signal.scout_score}/100`;
+      const score = signal.scout_score === null ? "calculating" : `${signal.scout_score}/100`;
       return `${index + 1}. <b>$${signal.symbol}</b> · ${score} · ${signal.status}`;
     })
   ].join("\n");
@@ -57,15 +57,15 @@ async function runCommand(message: TelegramMessage, name: string, args: string, 
   const chatId = String(message.chat.id);
   if (name === "runner") {
     const active = await getActiveScoutSignal({ premium });
-    return active ? formatSignalTelegram(active, premium) : "<b>RUNNER INDEX 6900</b>\nCalculating the first verified component.";
+    return active ? formatSignalTelegram(active, premium) : "<b>BUFFETTCOIN</b>\nCalculating the first verified basket asset.";
   }
   if (name === "top") {
     const signals = (await listScoutSignals({ premium, limit: 30 }))
       .sort((a, b) => Number(b.scout_score ?? -1) - Number(a.scout_score ?? -1));
-    return shortSignalList(signals, "TOP RI6900 POOLS");
+    return shortSignalList(signals, "TOP BUFFETTCOIN POOLS");
   }
   if (name === "new") {
-    return shortSignalList(await listScoutSignals({ premium, limit: 8 }), "NEW RI6900 POOLS");
+    return shortSignalList(await listScoutSignals({ premium, limit: 8 }), "NEW BUFFETTCOIN POOLS");
   }
   if (name === "search") {
     const signals = await listScoutSignals({ premium, limit: 60 });
@@ -87,11 +87,11 @@ async function runCommand(message: TelegramMessage, name: string, args: string, 
   }
   if (name === "performance") {
     const signals = (await listScoutSignals({ premium, limit: 20 })).filter((signal) => signal.selected_at);
-    return shortSignalList(signals, "RI6900 COMPONENT HISTORY");
+    return shortSignalList(signals, "BUFFETTCOIN BASKET HISTORY");
   }
   if (name === "help") {
     return [
-      "<b>RI6900 COMMANDS</b>",
+      "<b>BUFFETTCOIN COMMANDS</b>",
       "/runner · active signal",
       "/top · highest scores",
       "/new · latest signals",
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Index Telegram webhook failed", error);
+    console.error("Buffettcoin Telegram webhook failed", error);
     return NextResponse.json({ ok: true });
   }
 }

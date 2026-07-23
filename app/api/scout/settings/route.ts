@@ -19,7 +19,7 @@ export async function GET() {
   try {
     return NextResponse.json(await getScoutSettings());
   } catch {
-    return NextResponse.json({ error: "RI6900 settings are unavailable" }, { status: 503 });
+    return NextResponse.json({ error: "BUFFETTCOIN settings are unavailable" }, { status: 503 });
   }
 }
 

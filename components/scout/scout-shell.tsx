@@ -17,8 +17,8 @@ import { useCountdown } from "./hooks";
 import { ScoutProvider, useScout } from "./scout-provider";
 
 const primaryNav = [
-  { href: "/terminal", label: "Live Index" },
-  { href: "/runners", label: "Components" },
+  { href: "/terminal", label: "Ledger" },
+  { href: "/runners", label: "Holdings" },
   { href: "/airdrop-history", label: "Receipts" }
 ];
 
@@ -32,17 +32,17 @@ function TopTicker() {
   const active = signals.active;
   const metrics = [
     ["LIVE", state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
-    ["REWARD TOKEN", "$RI6900"],
-    ["NEXT REBALANCE", countdown.label],
-    ["INDEX STATUS", active ? "COMPONENT ACTIVE" : "CALCULATING"],
+    ["BASKET", scoutPublicConfig.basketLabel],
+    ["NEXT DISTRIBUTION", countdown.label],
+    ["BASKET STATUS", active ? "ASSET ACTIVE" : "AAPL.x / BRK.Bx"],
     ["ELIGIBLE HOLDERS", stats.latestEligibleHolders.toLocaleString()],
-    ["TOTAL DISTRIBUTED", formatToken(stats.totalRewardAirdropped, "RI6900")],
+    ["TOTAL DISTRIBUTED", formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)],
     ["EPOCH", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "--"],
-    ["CAMPAIGNS", signals.signals.length.toLocaleString()]
+    ["BASKET ASSETS", scoutPublicConfig.basketAssets.join(" + ")]
   ];
 
   return (
-    <div className="scout-ticker" aria-label="Runner Index 6900 metrics">
+    <div className="scout-ticker" aria-label="Buffettcoin metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -73,13 +73,13 @@ function Header() {
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/terminal" aria-label="Runner Index 6900 terminal">
+        <Link className="scout-brand" href="/terminal" aria-label="Buffettcoin terminal">
           <span className="scout-brand__mark" aria-hidden="true">
-            <img src="/brand/ri6900-emblem.jpg" alt="" />
+            <img src="/brand/buffettcoin-mark.png" alt="" />
           </span>
           <span>
-            <strong>RUNNER INDEX 6900</strong>
-            <small>RI6900 // HOLDER INDEX</small>
+            <strong>BUFFETTCOIN</strong>
+            <small>APPLE + BERKSHIRE REWARDS</small>
           </span>
         </Link>
 
@@ -97,7 +97,7 @@ function Header() {
             type="button"
             onClick={copyContract}
             disabled={!scoutPublicConfig.contractAddress}
-            title={scoutPublicConfig.contractAddress || "RI6900 contract pending"}
+            title={scoutPublicConfig.contractAddress || "BUFFETTCOIN contract pending"}
           >
             {copied ? <Check size={15} /> : <Copy size={15} />}
             <span>{shortAddress(scoutPublicConfig.contractAddress)}</span>
@@ -115,7 +115,7 @@ function Header() {
           ))}
           {scoutPublicConfig.buyUrl ? (
             <a href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
-              Buy $RI6900 <ExternalLink size={15} />
+              Buy $BUFFETT <ExternalLink size={15} />
             </a>
           ) : null}
         </div>
@@ -128,12 +128,13 @@ function Footer() {
   return (
     <footer className="scout-footer">
       <div className="scout-footer__brand">
-        <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/ri6900-emblem.jpg" alt="" /></span>
+        <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/buffettcoin-mark.png" alt="" /></span>
         <div>
-          <strong>RUNNER INDEX 6900</strong>
-          <p>Persistence, indexed.</p>
+          <strong>BUFFETTCOIN</strong>
+          <p>Shareholder-style rewards, verified onchain.</p>
         </div>
       </div>
+      <img className="scout-footer__banner" src="/brand/buffettcoin-banner.png" alt="Buffettcoin - Own Buffett's portfolio" />
       <nav aria-label="Product links">
         {productNav.map(({ href, label, icon: Icon }) => (
           <Link href={href} key={href}><Icon size={14} /> {label}</Link>
@@ -141,7 +142,7 @@ function Footer() {
         {scoutPublicConfig.xUrl ? <a href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer">X <ExternalLink size={13} /></a> : null}
       </nav>
       <p className="scout-footer__risk">
-        Runner Index 6900 is an experimental holder-reward protocol. Digital assets are volatile. Verify every address, eligibility rule, and onchain transaction independently.
+        Buffettcoin is an experimental holder-reward protocol inspired by public Buffett-style holdings. Digital assets are volatile. Verify every address, eligibility rule, and onchain transaction independently.
       </p>
     </footer>
   );

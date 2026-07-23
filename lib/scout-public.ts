@@ -1,14 +1,16 @@
-const RI6900_CA = "EWdDQyqHoUaSd93MwCpCaYygEPpF8deqLU87Cq5Bpump";
-const RI6900_X_URL = "https://x.com/RunnerPumpFun";
+const BUFFETTCOIN_CA = "";
+const BUFFETTCOIN_X_URL = "https://x.com/i/communities/2029250283063394361";
+const configuredCa = process.env.NEXT_PUBLIC_CA?.trim() || BUFFETTCOIN_CA;
 
 export const scoutPublicConfig = {
-  name: "Runner Index 6900",
-  ticker: "RI6900",
-  tokenLabel: "$RI6900",
+  name: "Buffettcoin",
+  ticker: "BUFFETT",
+  tokenLabel: "$BUFFETT",
+  rewardSymbol: process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "AAPL.x/BRK.Bx",
+  basketLabel: "50% AAPL.x / 50% BRK.Bx",
+  basketAssets: ["AAPL.x", "BRK.Bx"],
   contractAddress:
-    process.env.NEXT_PUBLIC_CA?.trim() ||
-    process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim() ||
-    RI6900_CA,
+    configuredCa,
   minimumHolding: (() => {
     const parsed = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 1_000_000;
@@ -25,14 +27,14 @@ export const scoutPublicConfig = {
     );
     return Number.isFinite(parsed) && parsed >= 0 ? parsed : 60;
   })(),
-  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || RI6900_X_URL,
+  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || BUFFETTCOIN_X_URL,
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
   buyUrl:
     process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
-    `https://pump.fun/coin/${RI6900_CA}`,
+    (configuredCa ? `https://pump.fun/coin/${configuredCa}` : ""),
   dexScreenerUrl:
     process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() ||
-    `https://dexscreener.com/solana/${RI6900_CA}`
+    (configuredCa ? `https://dexscreener.com/solana/${configuredCa}` : "")
 } as const;
 
 export function shortAddress(value: string, head = 5, tail = 5) {

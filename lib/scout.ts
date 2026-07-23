@@ -85,7 +85,7 @@ async function supabaseRequest<T>(
   options: { requireServiceRole?: boolean } = {}
 ): Promise<T> {
   const config = supabaseConfig(options.requireServiceRole);
-  if (!config) throw new Error("RI6900 database is not configured");
+  if (!config) throw new Error("BUFFETTCOIN database is not configured");
   const response = await fetch(`${config.url}/rest/v1/${path}`, {
     ...init,
     headers: {
@@ -98,7 +98,7 @@ async function supabaseRequest<T>(
   });
   if (!response.ok) {
     const detail = await response.text().catch(() => "");
-    throw new Error(`RI6900 database request failed (${response.status}): ${detail.slice(0, 400)}`);
+    throw new Error(`BUFFETTCOIN database request failed (${response.status}): ${detail.slice(0, 400)}`);
   }
   if (response.status === 204) return undefined as T;
   const text = await response.text();
@@ -178,8 +178,8 @@ export function scoreDexPair(pair: DexPair | null) {
   if (!pair) {
     return {
       score: null,
-      reasons: ["Market data is still indexing"],
-      riskFlags: ["No indexed liquidity data"],
+      reasons: ["Market data is still loading"],
+      riskFlags: ["No live liquidity data"],
       metrics: {}
     };
   }
@@ -195,7 +195,7 @@ export function scoreDexPair(pair: DexPair | null) {
   const riskFlags: string[] = [];
 
   score += Math.min(25, Math.log10(Math.max(1, liquidity)) * 5);
-  if (liquidity >= 25_000) reasons.push("Healthy indexed liquidity");
+  if (liquidity >= 25_000) reasons.push("Healthy liquidity");
   if (liquidity > 0 && liquidity < 5_000) riskFlags.push("Thin liquidity");
 
   const velocity = liquidity > 0 ? volume / liquidity : 0;
@@ -507,7 +507,7 @@ export async function ingestScoutSignal(input: SignalInput) {
   if (!shouldActivate) return { signal, activated: false, current };
   const activated = await activateScoutSignal(
     signal.id,
-    input.forceActivate ? "Administrator override" : current ? `Score advantage ${scoreAdvantage}` : "First active RI6900 component"
+    input.forceActivate ? "Administrator override" : current ? `Score advantage ${scoreAdvantage}` : "First active BUFFETTCOIN basket asset"
   );
   return { signal: activated, activated: true, current };
 }
@@ -532,7 +532,7 @@ export async function createAccessChallenge(wallet: string) {
   if (!normalized) throw new Error("Invalid Solana wallet");
   const nonce = randomBytes(18).toString("base64url");
   const expiresAt = new Date(Date.now() + 10 * 60_000).toISOString();
-  const message = `RI6900 access\nWallet: ${normalized}\nNonce: ${nonce}\nExpires: ${expiresAt}`;
+  const message = `BUFFETTCOIN access\nWallet: ${normalized}\nNonce: ${nonce}\nExpires: ${expiresAt}`;
   const rows = await supabaseRequest<{ id: string; wallet: string; nonce: string; message: string; expires_at: string }[]>(
     "scout_access_challenges",
     {
@@ -776,13 +776,13 @@ export async function sendTelegramMessage(chatId: string, text: string) {
 }
 
 export function formatSignalTelegram(signal: ScoutSignal, premium: boolean) {
-  const score = signal.scout_score === null ? "Indexing" : `${signal.scout_score}/100`;
-  const marketCap = signal.market_cap_usd ? `$${Math.round(signal.market_cap_usd).toLocaleString()}` : "Indexing";
-  const liquidity = signal.liquidity_usd ? `$${Math.round(signal.liquidity_usd).toLocaleString()}` : "Indexing";
+  const score = signal.scout_score === null ? "Calculating" : `${signal.scout_score}/100`;
+  const marketCap = signal.market_cap_usd ? `$${Math.round(signal.market_cap_usd).toLocaleString()}` : "Calculating";
+  const liquidity = signal.liquidity_usd ? `$${Math.round(signal.liquidity_usd).toLocaleString()}` : "Calculating";
   const escape = (value: string) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-  const reasons = signal.reasons.length ? signal.reasons.map((reason) => `• ${escape(reason)}`).join("\n") : "• Market data is still indexing";
+  const reasons = signal.reasons.length ? signal.reasons.map((reason) => `• ${escape(reason)}`).join("\n") : "• Market data is still loading";
   return [
-    `<b>${premium ? "RI6900 EARLY COMPONENT" : "RI6900 PUBLIC COMPONENT"}</b>`,
+    `<b>${premium ? "BUFFETTCOIN EARLY BASKET ASSET" : "BUFFETTCOIN PUBLIC BASKET ASSET"}</b>`,
     `<b>$${escape(signal.symbol)}</b> · ${escape(signal.name)}`,
     `Momentum Score: <b>${score}</b>`,
     `Market cap: ${marketCap}`,

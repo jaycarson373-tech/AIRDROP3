@@ -52,11 +52,11 @@ function marketCapPerformance(signal: ScoutSignal) {
 }
 
 function SignalTable({ signals, compact = false }: { signals: ScoutSignal[]; compact?: boolean }) {
-  if (!signals.length) return <EmptyState title="No index components yet" body="The first verified RI6900 component will appear here once it is recorded." />;
+  if (!signals.length) return <EmptyState title="No basket assets yet" body="The first settled AAPL.x or BRK.Bx basket record will appear here once it is recorded." />;
   return (
     <div className="scout-table-wrap">
       <table className="scout-table">
-        <thead><tr><th>Token</th><th>Score</th><th>Entry MC</th><th>Current MC</th>{compact ? null : <th>Since entry</th>}<th>Entry time</th><th>Status</th><th aria-label="Chart" /></tr></thead>
+        <thead><tr><th>Asset</th><th>Score</th><th>Entry MC</th><th>Current MC</th>{compact ? null : <th>Since entry</th>}<th>Entry time</th><th>Status</th><th aria-label="Chart" /></tr></thead>
         <tbody>{signals.map((signal) => (
           <tr key={signal.id} className={signal.status === "active" ? "is-active" : ""}>
             <td><div className="scout-table-token"><SignalMark signal={signal} /><span><strong>${signal.symbol}</strong><small>{signal.name}</small></span></div></td>
@@ -78,10 +78,10 @@ export function SignalsView() {
   const rows = filter === "all" ? signals.signals : signals.signals.filter((signal) => signal.status === filter || (filter === "archived" && ["passed", "rejected", "archived"].includes(signal.status)));
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="RI6900 component ledger" title="Every verified index component." body="Track component entry data, current values, index scores, status, and the distributions tied to each record." />
+      <PageHeading eyebrow="Buffett basket ledger" title="Apple and Berkshire receipts." body="Track basket assets, current values, basket scores, status, and the distributions tied to each record." />
       <div className="scout-filter-bar"><Filter size={16} />{(["all", "active", "queued", "archived"] as const).map((value) => <button className={filter === value ? "is-active" : ""} type="button" onClick={() => setFilter(value)} key={value}>{value}</button>)}<span>{rows.length} records</span></div>
       <section className="scout-panel scout-panel--table">{state === "loading" ? <Skeleton rows={6} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : <SignalTable signals={rows} />}</section>
-      <div className="scout-page-note"><ShieldCheck size={17} /><p>RI6900 Index Score reflects verified market and holder data currently connected to the protocol. It is an informational weighting signal, not a promise of future performance.</p></div>
+      <div className="scout-page-note"><ShieldCheck size={17} /><p>Buffettcoin basket data reflects verified market and holder data currently connected to the protocol. It is informational, not a promise of future performance.</p></div>
     </div>
   );
 }
@@ -114,11 +114,11 @@ export function SearchView() {
 
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Index Search" title="Search the component ledger." body="Filter RI6900 components by token, market cap, status, or index time." action={<StatusBadge label="Public data" tone="muted" />} />
-      <form className="scout-search-form" onSubmit={search}><Search size={21} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Show active components under $500k" aria-label="Search index components" /><button className="scout-button scout-button--primary" type="submit" disabled={busy}>{busy ? "Searching" : "Search"}</button></form>
-      <div className="scout-query-examples">{["Components under $500k", "Indexed in the last hour", "Active components", "Rising tokens today"].map((example) => <button type="button" onClick={() => setQuery(example)} key={example}>{example}</button>)}</div>
+      <PageHeading eyebrow="Basket Search" title="Search the basket ledger." body="Filter Buffettcoin basket assets by token, market cap, status, or record time." action={<StatusBadge label="Public data" tone="muted" />} />
+      <form className="scout-search-form" onSubmit={search}><Search size={21} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Show active basket assets" aria-label="Search basket assets" /><button className="scout-button scout-button--primary" type="submit" disabled={busy}>{busy ? "Searching" : "Search"}</button></form>
+      <div className="scout-query-examples">{["AAPL.x records", "BRK.Bx records", "Active basket assets", "Recorded in the last hour"].map((example) => <button type="button" onClick={() => setQuery(example)} key={example}>{example}</button>)}</div>
       {error ? <ErrorState message={error} /> : null}
-      {result ? <section className="scout-panel scout-panel--table"><div className="scout-search-interpretation"><span>Applied filters</span><strong>{result.interpretedAs.maximumMarketCapUsd ? `Cap below ${formatMoney(result.interpretedAs.maximumMarketCapUsd)}` : "Any market cap"}</strong><strong>{result.interpretedAs.detectedSince ? `Since ${formatTime(result.interpretedAs.detectedSince)}` : "Any time"}</strong><strong>{result.interpretedAs.positiveMomentumOnly ? "Positive performance" : "Any performance"}</strong></div><SignalTable signals={result.results} compact /></section> : <EmptyState title="Search index components" body="Search by market cap, time, status, or token. Every result comes from the verified RI6900 ledger." />}
+      {result ? <section className="scout-panel scout-panel--table"><div className="scout-search-interpretation"><span>Applied filters</span><strong>{result.interpretedAs.maximumMarketCapUsd ? `Cap below ${formatMoney(result.interpretedAs.maximumMarketCapUsd)}` : "Any market cap"}</strong><strong>{result.interpretedAs.detectedSince ? `Since ${formatTime(result.interpretedAs.detectedSince)}` : "Any time"}</strong><strong>{result.interpretedAs.positiveMomentumOnly ? "Positive performance" : "Any performance"}</strong></div><SignalTable signals={result.results} compact /></section> : <EmptyState title="Search basket assets" body="Search by market cap, time, status, or token. Every result comes from the verified Buffettcoin ledger." />}
     </div>
   );
 }
@@ -130,10 +130,10 @@ export function PerformanceView() {
   const averageScore = scored.length ? scored.reduce((sum, signal) => sum + Number(signal.scout_score), 0) / scored.length : null;
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Index history" title="RI6900 records." body="Review verified components and their scores exactly as published. No backfilled winners." />
-      <div className="scout-overview-grid"><Metric label="Components recorded" value={completed.length.toLocaleString()} /><Metric label="Active now" value={signals.active ? `$${signals.active.symbol}` : "Calculating"} /><Metric label="Average Index Score" value={averageScore === null ? "Awaiting verified data" : averageScore.toFixed(1)} /><Metric label="Public delay" value={`${signals.publicDelaySeconds}s`} /></div>
+      <PageHeading eyebrow="Basket history" title="Buffettcoin records." body="Review verified AAPL.x / BRK.Bx records exactly as published. No backfilled winners." />
+      <div className="scout-overview-grid"><Metric label="Basket records" value={completed.length.toLocaleString()} /><Metric label="Active now" value={signals.active ? `$${signals.active.symbol}` : "Calculating"} /><Metric label="Average Basket Score" value={averageScore === null ? "Awaiting verified data" : averageScore.toFixed(1)} /><Metric label="Public delay" value={`${signals.publicDelaySeconds}s`} /></div>
       <section className="scout-panel scout-panel--table"><SignalTable signals={completed} /></section>
-      <div className="scout-page-note"><ShieldCheck size={17} /><p>Past index components do not guarantee future performance. Token prices can fall rapidly and liquidity can disappear.</p></div>
+      <div className="scout-page-note"><ShieldCheck size={17} /><p>Past basket records do not guarantee future performance. Tokenized assets and digital tokens can move rapidly.</p></div>
     </div>
   );
 }
@@ -143,11 +143,11 @@ export function ReceiptsView() {
   return (
     <div className="scout-page">
       <PageHeading eyebrow="Onchain receipts" title="Verify every distribution." body="Each settled holder payout links back to its recorded cycle and transaction." />
-      <div className="scout-overview-grid"><Metric label="Settled epochs" value={stats.totalEpochs.toLocaleString()} /><Metric label="RI6900 distributed" value={formatToken(stats.totalRewardAirdropped, signals.active?.symbol ?? "RI6900")} /><Metric label="SOL value distributed" value={`${stats.totalSolValueAirdropped.toFixed(4)} SOL`} /><Metric label="Eligible holders" value={stats.latestEligibleHolders.toLocaleString()} /></div>
+      <div className="scout-overview-grid"><Metric label="Settled epochs" value={stats.totalEpochs.toLocaleString()} /><Metric label="Basket distributed" value={formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)} /><Metric label="SOL value distributed" value={`${stats.totalSolValueAirdropped.toFixed(4)} SOL`} /><Metric label="Eligible holders" value={stats.latestEligibleHolders.toLocaleString()} /></div>
       <section className="scout-panel scout-panel--table"><div className="scout-panel__head"><div><span className="scout-kicker">Epoch history</span><h2>Settled distributions</h2></div><Radio size={20} /></div>
-        {state === "loading" ? <Skeleton rows={5} /> : stats.roundHistory.length ? <div className="scout-table-wrap"><table className="scout-table"><thead><tr><th>Epoch</th><th>Started</th><th>Eligible</th><th>Bought</th><th>Distributed</th><th>SOL value</th><th>Status</th><th>Transaction</th></tr></thead><tbody>{stats.roundHistory.map((row) => <tr key={`${row.epoch}-${row.startedAt}`}><td>#{row.epoch}</td><td>{formatTime(row.startedAt)}</td><td>{row.eligibleCount.toLocaleString()}</td><td>{formatToken(row.rewardBought, signals.active?.symbol ?? "RI6900")}</td><td>{formatToken(row.distributedPump, signals.active?.symbol ?? "RI6900")}</td><td>{row.solValueAirdropped.toFixed(4)} SOL</td><td><StatusBadge label={row.status} /></td><td>{row.txSig ? <a className="scout-icon-link" href={`https://solscan.io/tx/${row.txSig}`} target="_blank" rel="noreferrer"><ExternalLink size={15} /></a> : "Pending"}</td></tr>)}</tbody></table></div> : <EmptyState title="Awaiting first settled distribution" body="Epochs appear here only after holder payouts are recorded as settled." />}
+        {state === "loading" ? <Skeleton rows={5} /> : stats.roundHistory.length ? <div className="scout-table-wrap"><table className="scout-table"><thead><tr><th>Epoch</th><th>Started</th><th>Eligible</th><th>Bought</th><th>Distributed</th><th>SOL value</th><th>Status</th><th>Transaction</th></tr></thead><tbody>{stats.roundHistory.map((row) => <tr key={`${row.epoch}-${row.startedAt}`}><td>#{row.epoch}</td><td>{formatTime(row.startedAt)}</td><td>{row.eligibleCount.toLocaleString()}</td><td>{formatToken(row.rewardBought, scoutPublicConfig.rewardSymbol)}</td><td>{formatToken(row.distributedPump, scoutPublicConfig.rewardSymbol)}</td><td>{row.solValueAirdropped.toFixed(4)} SOL</td><td><StatusBadge label={row.status} /></td><td>{row.txSig ? <a className="scout-icon-link" href={`https://solscan.io/tx/${row.txSig}`} target="_blank" rel="noreferrer"><ExternalLink size={15} /></a> : "Pending"}</td></tr>)}</tbody></table></div> : <EmptyState title="Awaiting first settled distribution" body="Epochs appear here only after holder payouts are recorded as settled." />}
       </section>
-      <section className="scout-panel scout-panel--table"><div className="scout-panel__head"><div><span className="scout-kicker">Wallet feed</span><h2>Recent payouts</h2></div><Users size={20} /></div>{stats.recentRewards.length ? <div className="scout-table-wrap"><table className="scout-table"><thead><tr><th>Wallet</th><th>Epoch</th><th>Amount</th><th>Time</th><th>Status</th><th>Receipt</th></tr></thead><tbody>{stats.recentRewards.map((row, index) => <tr key={`${row.wallet}-${row.epoch}-${index}`}><td>{shortWallet(row.wallet)}</td><td>#{row.epoch}</td><td>{formatToken(row.rewardAmount, signals.active?.symbol ?? "RI6900")}</td><td>{formatTime(row.time)}</td><td>{row.status}</td><td>{row.txSig ? <a className="scout-icon-link" href={`https://solscan.io/tx/${row.txSig}`} target="_blank" rel="noreferrer"><ExternalLink size={15} /></a> : "Pending"}</td></tr>)}</tbody></table></div> : <EmptyState title="No settled wallet payouts" body="Individual wallet receipts will populate after the first completed RI6900 distribution." />}</section>
+      <section className="scout-panel scout-panel--table"><div className="scout-panel__head"><div><span className="scout-kicker">Wallet feed</span><h2>Recent payouts</h2></div><Users size={20} /></div>{stats.recentRewards.length ? <div className="scout-table-wrap"><table className="scout-table"><thead><tr><th>Wallet</th><th>Epoch</th><th>Amount</th><th>Time</th><th>Status</th><th>Receipt</th></tr></thead><tbody>{stats.recentRewards.map((row, index) => <tr key={`${row.wallet}-${row.epoch}-${index}`}><td>{shortWallet(row.wallet)}</td><td>#{row.epoch}</td><td>{formatToken(row.rewardAmount, scoutPublicConfig.rewardSymbol)}</td><td>{formatTime(row.time)}</td><td>{row.status}</td><td>{row.txSig ? <a className="scout-icon-link" href={`https://solscan.io/tx/${row.txSig}`} target="_blank" rel="noreferrer"><ExternalLink size={15} /></a> : "Pending"}</td></tr>)}</tbody></table></div> : <EmptyState title="No settled wallet payouts" body="Individual wallet receipts will populate after the first completed Buffettcoin distribution." />}</section>
     </div>
   );
 }
@@ -155,14 +155,14 @@ export function ReceiptsView() {
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How RI6900 verifies, weights, and distributes." body="See how components, holder snapshots, permanent ineligibility, and multiplier-weighted distributions work." />
+      <PageHeading eyebrow="Documentation" title="How BUFFETTCOIN verifies, weights, and distributes." body="See how the Buffett basket, holder snapshots, eligibility, and weighted distributions work." />
       <div className="scout-doc-layout">
-        <aside><a href="#lifecycle">Component lifecycle</a><a href="#score">Index Score</a><a href="#access">Index Multiplier</a><a href="#treasury">Campaign engine</a></aside>
+        <aside><a href="#lifecycle">Basket lifecycle</a><a href="#score">Basket Score</a><a href="#access">Holder Weight</a><a href="#treasury">Buffett Basket</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Component lifecycle</h2><p>A verified component enters the RI6900 ledger. The protocol snapshots eligible holders and distributes RI6900 according to uninterrupted hold time.</p></section>
-          <section id="score"><span className="scout-kicker">02</span><h2>Index Score</h2><p>The public board can show liquidity, activity, attention, campaign status, and holder participation. The score is informational, not a guarantee.</p></section>
-          <section id="access"><span className="scout-kicker">03</span><h2>Index Multiplier</h2><p>Hold at least {formatToken(scoutPublicConfig.minimumHolding, "RI6900")} to qualify. The multiplier reaches 1.20x after 15 minutes, 1.50x after one hour, 2.00x after four hours, 2.50x after 12 hours, 3.00x after one day, 5.00x after three days, 10.00x after one week, and 25.00x after one month. Sell once and the wallet is ineligible forever.</p></section>
-          <section id="treasury"><span className="scout-kicker">04</span><h2>RI6900 Campaign Engine</h2><p>Projects can fund index campaigns with SOL or tokens. A 10% protocol fee supports exposure, contributor incentives, and protocol growth while each component rewards verified holder persistence.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Basket lifecycle</h2><p>Buffettcoin uses a fixed basket: 50% AAPL.x and 50% BRK.Bx. The worker rotates configured basket assets by epoch and records settled receipts.</p></section>
+          <section id="score"><span className="scout-kicker">02</span><h2>Basket Score</h2><p>The public board can show market, liquidity, activity, and holder participation data when connected. The score is informational, not a guarantee.</p></section>
+          <section id="access"><span className="scout-kicker">03</span><h2>Holder Weight</h2><p>Hold at least {formatToken(scoutPublicConfig.minimumHolding, "BUFFETT")} to qualify. Existing holder-state rules determine distribution weight and eligibility at each snapshot. Sell once and the wallet is permanently ineligible.</p></section>
+          <section id="treasury"><span className="scout-kicker">04</span><h2>Buffett Basket</h2><p>The basket is simple by design: Apple and Berkshire exposure, distributed through the same transparent holder-reward rail.</p></section>
         </div>
       </div>
     </div>
@@ -185,7 +185,7 @@ export function AdminView() {
       const response = await fetch("/api/scout/signals", { method: "POST", headers: { "Content-Type": "application/json", "x-scout-admin-secret": secret }, body: JSON.stringify({ mint, name, symbol, activate }) });
       const payload = await response.json() as { error?: string; activated?: boolean };
       if (!response.ok) throw new Error(payload.error || "Signal submission failed");
-      setMessage(payload.activated ? "Signal authenticated and activated." : "Signal authenticated and queued.");
+      setMessage(payload.activated ? "Basket asset authenticated and activated." : "Basket asset authenticated and queued.");
       setMint(""); setName(""); setSymbol(""); await refresh();
     } catch (error) { setMessage(error instanceof Error ? error.message : "Signal submission failed"); }
     finally { setBusy(false); }
@@ -193,11 +193,11 @@ export function AdminView() {
 
   return (
     <div className="scout-page scout-page--narrow">
-      <PageHeading eyebrow="Restricted console" title="Add an index component." body="Submit a Solana mint for the next verified RI6900 component. Your admin secret stays in this browser session only." action={<StatusBadge label="Protected" tone="risk" />} />
-      <section className="scout-panel scout-admin-panel"><div className="scout-panel__head"><div><span className="scout-kicker">Component intake</span><h2>Queue the next index component</h2></div><Settings2 size={21} /></div>
-        <form onSubmit={submit}><label>Admin secret<input type="password" value={secret} onChange={(event) => setSecret(event.target.value)} autoComplete="off" required /></label><label>Solana mint<input value={mint} onChange={(event) => setMint(event.target.value)} placeholder="Component token mint" required /></label><div className="scout-form-grid"><label>Name<input value={name} onChange={(event) => setName(event.target.value)} placeholder="Optional" /></label><label>Symbol<input value={symbol} onChange={(event) => setSymbol(event.target.value)} placeholder="Optional" /></label></div><label className="scout-checkbox"><input type="checkbox" checked={activate} onChange={(event) => setActivate(event.target.checked)} /><span>Activate for the next epoch after enrichment</span></label><button className="scout-button scout-button--primary" type="submit" disabled={busy}>{busy ? "Authenticating" : "Submit component"}<Send size={16} /></button>{message ? <p className="scout-admin-message" role="status">{message}</p> : null}</form>
+      <PageHeading eyebrow="Restricted console" title="Add a basket asset." body="Submit a Solana mint for a verified Buffettcoin basket record. Your admin secret stays in this browser session only." action={<StatusBadge label="Protected" tone="risk" />} />
+      <section className="scout-panel scout-admin-panel"><div className="scout-panel__head"><div><span className="scout-kicker">Basket intake</span><h2>Queue the next basket asset</h2></div><Settings2 size={21} /></div>
+        <form onSubmit={submit}><label>Admin secret<input type="password" value={secret} onChange={(event) => setSecret(event.target.value)} autoComplete="off" required /></label><label>Solana mint<input value={mint} onChange={(event) => setMint(event.target.value)} placeholder="Basket asset mint" required /></label><div className="scout-form-grid"><label>Name<input value={name} onChange={(event) => setName(event.target.value)} placeholder="Optional" /></label><label>Symbol<input value={symbol} onChange={(event) => setSymbol(event.target.value)} placeholder="Optional" /></label></div><label className="scout-checkbox"><input type="checkbox" checked={activate} onChange={(event) => setActivate(event.target.checked)} /><span>Activate for the next epoch after enrichment</span></label><button className="scout-button scout-button--primary" type="submit" disabled={busy}>{busy ? "Authenticating" : "Submit basket asset"}<Send size={16} /></button>{message ? <p className="scout-admin-message" role="status">{message}</p> : null}</form>
       </section>
-      <div className="scout-page-note"><ShieldCheck size={17} /><p>For launch, run the database migration and reset first, keep worker gates off, submit the first component, verify it here, then enable dynamic selection and the worker gates.</p></div>
+      <div className="scout-page-note"><ShieldCheck size={17} /><p>For launch, run the database migration and reset first, keep worker gates off, verify AAPL.x and BRK.Bx, then enable the worker gates.</p></div>
     </div>
   );
 }
@@ -209,34 +209,34 @@ export function TerminalPageView() {
   const factors = active ? [["Liquidity", formatMoney(active.liquidity_usd)], ["24h volume", formatMoney(active.volume_24h_usd)], ["1h movement", formatPercent(Number(active.metrics.change1h ?? Number.NaN))], ["Token age", active.token_age_seconds === null ? "Unavailable" : `${Math.max(1, Math.round(active.token_age_seconds / 60))}m`]] : [];
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="RI6900 Terminal" title="Track the live index." body="Monitor the active component, holder weights, and the next multiplier-weighted RI6900 rebalance." action={<StatusBadge label="Index live" tone="live" />} />
-      {state === "loading" ? <div className="runner-terminal-state"><i /><strong>INDEXING</strong><span>CONNECTING RI6900 LEDGER</span></div> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : (
+      <PageHeading eyebrow="BUFFETTCOIN Terminal" title="Track the Buffett basket." body="Monitor the active basket asset, holder weights, and the next AAPL.x / BRK.Bx distribution." action={<StatusBadge label="Basket live" tone="live" />} />
+      {state === "loading" ? <div className="runner-terminal-state"><i /><strong>VALUING</strong><span>CONNECTING BUFFETTCOIN LEDGER</span></div> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : (
         <div className="scout-desk-layout">
           <section className="scout-panel scout-desk-primary">
-            <div className="scout-terminal-bar"><span><i /> {active ? "ACTIVE RI6900 COMPONENT" : "RI6900 INDEX ONLINE"}</span><small>{active ? formatClock(active.detected_at) : "CALCULATING"}</small></div>
+            <div className="scout-terminal-bar"><span><i /> {active ? "ACTIVE BUFFETT BASKET ASSET" : "BUFFETT BASKET ONLINE"}</span><small>{active ? formatClock(active.detected_at) : "CALCULATING"}</small></div>
             {active ? (
               <>
-                <div className="scout-desk-token"><SignalMark signal={active} /><div><span>Active component</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "--"}{active.scout_score === null ? null : <small>/100</small>}</strong></div>
+                <div className="scout-desk-token"><SignalMark signal={active} /><div><span>Active basket asset</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "--"}{active.scout_score === null ? null : <small>/100</small>}</strong></div>
                 <div className="scout-desk-factors">{factors.map(([label, value]) => <Metric label={label} value={value} key={label} />)}</div>
                 <div className="scout-panel__footer"><span>{shortAddress(active.mint)}</span><a href={`https://dexscreener.com/solana/${active.mint}`} target="_blank" rel="noreferrer">Chart <ExternalLink size={14} /></a></div>
               </>
             ) : (
               <div className="runner-terminal-empty" role="status">
                 <div className="scout-desk-factors">
-                  <Metric label="Active Component" value="Not assigned" />
+                  <Metric label="Active basket asset" value="Not assigned" />
                   <Metric label="Status" value="Calculating..." />
-                  <Metric label="Index" value="Awaiting first component" />
+                  <Metric label="Basket" value="Awaiting first asset" />
                   <Metric label="Score" value="Awaiting authenticated data" />
                   <Metric label="Liquidity" value="Unavailable" />
                   <Metric label="24h Volume" value="Unavailable" />
-                  <Metric label="Token Age" value="Awaiting target" />
+                  <Metric label="Asset age" value="Awaiting asset" />
                   <Metric label="Current Score" value="--" />
                 </div>
-                <div className="runner-no-target-copy"><strong>No active component yet.</strong><p>The first verified RI6900 component will appear here after authentication.</p></div>
+                <div className="runner-no-target-copy"><strong>No active basket asset yet.</strong><p>The first verified Buffettcoin basket asset will appear here after authentication.</p></div>
               </div>
             )}
           </section>
-          <section className="scout-panel scout-countdown-panel"><span className="scout-kicker">{active ? "Next RI6900 rebalance" : "Next snapshot"}</span><strong>{countdown.label}</strong><p>{active ? (countdown.processing ? "The current distribution is processing. The timer resumes at the next confirmed boundary." : "Eligible holders receive RI6900 weighted by verified hold time.") : "The index remains online while it awaits an authenticated component."}</p><i><span style={{ width: `${countdown.progress * 100}%` }} /></i></section>
+          <section className="scout-panel scout-countdown-panel"><span className="scout-kicker">{active ? "Next Buffettcoin distribution" : "Next snapshot"}</span><strong>{countdown.label}</strong><p>{active ? (countdown.processing ? "The current distribution is processing. The timer resumes at the next confirmed boundary." : "Eligible holders receive AAPL.x / BRK.Bx weighted by verified holdings.") : "The basket remains online while it awaits an authenticated asset."}</p><i><span style={{ width: `${countdown.progress * 100}%` }} /></i></section>
           <HolderMultiplierPanel />
           <ActivityFeed />
         </div>

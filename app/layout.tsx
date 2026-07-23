@@ -32,26 +32,36 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Runner Index 6900 — Persistence, Indexed",
-    template: "%s | Runner Index 6900"
+    default: "Buffettcoin — The Onchain Buffett Basket",
+    template: "%s | Buffettcoin"
   },
-  description: "RI6900 converts verified hold time into distribution weight, recalculated every five minutes.",
-  applicationName: "Runner Index 6900",
-  keywords: ["Runner Index 6900", "RI6900 Protocol", "RI6900", "Pump.fun", "holder rewards", "Solana"],
+  description: "Buffettcoin distributes a 50/50 Buffett basket of AAPL.x and BRK.Bx to eligible holders with transparent onchain receipts.",
+  applicationName: "Buffettcoin",
+  keywords: ["Buffettcoin", "Buffett Coin", "BUFFETT", "tokenized stocks", "holder rewards", "Solana"],
   openGraph: {
-    title: "Runner Index 6900 — Persistence, Indexed",
-    description: "A continuous holder index with multiplier-weighted RI6900 distributions every five minutes.",
+    title: "Buffettcoin — The Onchain Buffett Basket",
+    description: "Hold Buffettcoin and receive weighted 50/50 AAPL.x and BRK.Bx basket drops.",
     url: siteUrl,
-    siteName: "Runner Index 6900",
-    type: "website"
+    siteName: "Buffettcoin",
+    type: "website",
+    images: [
+      {
+        url: "/brand/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Buffettcoin — Own Buffett's Portfolio"
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Runner Index 6900 — Persistence, Indexed",
-    description: "A continuous holder index with multiplier-weighted RI6900 distributions every five minutes."
+    title: "Buffettcoin — The Onchain Buffett Basket",
+    description: "A 50/50 Apple and Berkshire holder-reward basket.",
+    images: ["/brand/og-image.png"]
   },
   icons: {
-    icon: "/icon.jpg"
+    icon: "/brand/buffettcoin-mark.png",
+    apple: "/brand/buffettcoin-mark.png"
   },
   robots: { index: true, follow: true }
 };
