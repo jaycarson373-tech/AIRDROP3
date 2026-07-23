@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans_Condensed } from "next/font/google";
+import { Cinzel, IBM_Plex_Mono } from "next/font/google";
 import { ScoutShell } from "../components/scout/scout-shell";
 import "./globals.css";
 import "./scout.css";
@@ -11,9 +11,9 @@ const terminalFont = IBM_Plex_Mono({
   display: "swap"
 });
 
-const displayFont = IBM_Plex_Sans_Condensed({
+const displayFont = Cinzel({
   subsets: ["latin"],
-  weight: ["600", "700"],
+  weight: ["600", "700", "800", "900"],
   variable: "--font-runner-display",
   display: "swap"
 });
@@ -46,9 +46,9 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/brand/og-image.png",
-        width: 1200,
-        height: 630,
+        url: "/brand/buffettcoin-banner.png",
+        width: 1280,
+        height: 400,
         alt: "Buffettcoin — Own Buffett's Portfolio"
       }
     ]
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Buffettcoin — The Onchain Buffett Basket",
     description: "A 50/50 Apple and Berkshire holder-reward basket.",
-    images: ["/brand/og-image.png"]
+    images: ["/brand/buffettcoin-banner.png"]
   },
   icons: {
     icon: "/brand/buffettcoin-mark.png",

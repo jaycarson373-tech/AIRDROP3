@@ -27,14 +27,13 @@ const productNav = [
 ];
 
 function TopTicker() {
-  const { signals, stats, state } = useScout();
+  const { stats, state } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
-  const active = signals.active;
   const metrics = [
     ["LIVE", state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
     ["BASKET", scoutPublicConfig.basketLabel],
     ["NEXT DISTRIBUTION", countdown.label],
-    ["BASKET STATUS", active ? "ASSET ACTIVE" : "AAPL.x / BRK.Bx"],
+    ["BASKET STATUS", "AAPL.x / BRK.Bx"],
     ["ELIGIBLE HOLDERS", stats.latestEligibleHolders.toLocaleString()],
     ["TOTAL DISTRIBUTED", formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)],
     ["EPOCH", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "--"],

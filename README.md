@@ -1,41 +1,36 @@
-# Runner Index 6900
+# Buffettcoin
 
-RI6900 records verified index components and powers five-minute, multiplier-weighted distributions for eligible Runner Index 6900 holders.
+Buffettcoin presents a professional holder distribution site for a Buffett-inspired portfolio basket. Eligible holders receive the configured reward basket on the live epoch cadence.
 
-Each recorded call keeps its market cap at scan time. The site reads current market cap from DexScreener so the scan ledger can show live performance without overwriting the original snapshot.
+The initial reward basket is:
 
-## Product surfaces
+- `AAPL.x`
+- `BRK.Bx`
 
-- `/terminal` - live RI6900 terminal and index output
-- `/runners` - complete verified scan ledger
-- `/search` - search recorded RI6900 components
-- `/performance` - scan history without invented returns
+## Product Surfaces
+
+- `/terminal` - live Buffettcoin dashboard and basket status
+- `/runners` - basket ledger and recorded selections
+- `/search` - search recorded basket assets
+- `/performance` - basket history without invented returns
 - `/airdrop-history` - settled epoch and transaction receipts
-- `/docs` - scanner, multiplier, and distribution rules
+- `/docs` - eligibility and distribution rules
 
-## Holder rules
+## Holder Rules
 
-- Minimum balance: `1,000,000 RI6900`
+- Minimum balance: `1,000,000 BUFFETT`
 - Epoch cadence: five minutes
 - Wallets above `MAX_HOLDER_PCT` are excluded
-- A balance decrease resets the epoch streak and multiplier to `1.00x`
-- A wallet becomes eligible again whenever its balance returns above the threshold
+- Selling or transferring below the tracked balance marks the wallet ineligible according to the configured holder-state rules
 
-## Manual scan workflow
-
-Run `supabase/manual_runner_scan_setup.sql` once in Supabase SQL Editor. For every new call, copy `supabase/record_runner_scan.sql`, replace its six values, and run the transaction. Record the token name, symbol, Solana mint, market cap at scan, scan time with timezone, and selection note.
-
-When `SCOUT_DYNAMIC_SELECTION_ENABLED=true`, the active RI6900 component becomes the reward mint at the start of the next epoch. Leave this disabled until the scan setup has run and an active component has been verified.
-
-## Safe launch order
+## Safe Launch Order
 
 1. Rotate any credential that has ever been pasted into chat, logs, or screenshots.
-2. Keep `CLAIM_ENABLED`, `BUY_ENABLED`, `AIRDROP_ENABLED`, and `SCOUT_DYNAMIC_SELECTION_ENABLED` false.
-3. Run `supabase/manual_runner_scan_setup.sql`.
-4. Configure the RI6900 source mint, Supabase, RPC, and treasury secrets.
-5. Record the first verified component and confirm it appears in `/runners`, `/terminal`, and `/api/scout/signals`.
-6. Enable dynamic selection and run a controlled dry epoch with treasury gates still off.
-7. Fund reserves, then enable claim, buy, and airdrop gates in a monitored deployment.
+2. Keep `CLAIM_ENABLED`, `BUY_ENABLED`, and `AIRDROP_ENABLED` false until the public CA, reward mints, treasury, RPC, and Supabase settings are verified.
+3. Configure the Buffettcoin source mint, Supabase, RPC, treasury secrets, and the 50/50 `AAPL.x` / `BRK.Bx` reward mint rotation.
+4. Confirm the public site shows the Buffettcoin CA, X community link, buy link, reward basket, and no stale project links.
+5. Run a controlled dry epoch with treasury gates still off.
+6. Fund reserves, then enable claim, buy, and airdrop gates in a monitored deployment.
 
 The Railway configuration intentionally starts with a kill switch. Replace its start command with `npm run worker:start` only after the launch checklist is complete.
 

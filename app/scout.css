@@ -11,6 +11,431 @@
   letter-spacing: -0.012em;
 }
 
+/* Final Buffettcoin rebrand: clean shareholder-site presentation. */
+.scout-app {
+  --scout-bg: #fbf8f0;
+  --scout-surface: #fffdf8;
+  --scout-surface-strong: #ffffff;
+  --scout-text: #102033;
+  --scout-muted: #667083;
+  --scout-green: #b88928;
+  --scout-cyan: #132846;
+  --scout-amber: #c99732;
+  --scout-line: rgba(16, 32, 51, 0.13);
+  --scout-line-green: rgba(184, 137, 40, 0.32);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.95), transparent 26rem),
+    linear-gradient(180deg, #ffffff 0%, #fbf7ee 48%, #eef2f6 100%);
+  color: var(--scout-text);
+  font-family: var(--scout-display), Georgia, serif;
+}
+
+.scout-background {
+  opacity: 0.24;
+  animation: none !important;
+  background-image:
+    linear-gradient(rgba(16, 32, 51, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 32, 51, 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: none !important;
+}
+
+.scout-background::before,
+.scout-background::after,
+.runner-treadmill,
+.runner-market-grid,
+.runner-symbol-stream {
+  display: none !important;
+}
+
+.scout-panel::before,
+.scout-card::before,
+.scout-live-strip::before,
+.runner-next-distribution::before,
+.scout-terminal-grid::before,
+.runner-scanner-console::before {
+  display: none !important;
+  animation: none !important;
+}
+
+.scout-ticker,
+.scout-header,
+.scout-terminal-bar {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(16, 32, 51, 0.14);
+  color: var(--scout-text);
+  backdrop-filter: blur(18px);
+}
+
+.scout-ticker__item,
+.scout-brand small,
+.scout-footer__brand p,
+.scout-nav a,
+.scout-section-heading p,
+.scout-metric span,
+.scout-note,
+.scout-hero__delay {
+  color: var(--scout-muted);
+}
+
+.scout-ticker__item strong,
+.scout-terminal-bar span,
+.scout-brand strong,
+.scout-footer__brand strong,
+.scout-panel__head h2,
+.scout-section-heading h2,
+.runner-hero h1,
+.scout-metric strong,
+.runner-lock-panel strong,
+.runner-ranking-table strong {
+  color: var(--scout-text);
+}
+
+.scout-kicker,
+.scout-label,
+.scout-eyebrow,
+.runner-hero h1 span,
+.runner-hero-links a,
+.runner-hero-tape__track em,
+.scout-ticker__item i + span {
+  color: #a77922;
+}
+
+.scout-ticker__item i,
+.scout-terminal-bar i,
+.scout-status__dot {
+  background: #b88928;
+  box-shadow: 0 0 10px rgba(184, 137, 40, 0.26);
+}
+
+.scout-header__inner {
+  min-height: 76px;
+}
+
+.scout-brand__mark {
+  border-color: rgba(184, 137, 40, 0.36);
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(16, 32, 51, 0.12);
+}
+
+.scout-brand__mark img {
+  object-fit: cover;
+}
+
+.scout-ca-button,
+.scout-icon-link,
+.scout-menu-button,
+.scout-icon-button,
+.scout-mobile-nav a {
+  border-color: rgba(16, 32, 51, 0.16);
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--scout-text);
+}
+
+.scout-ca-button:hover,
+.scout-menu-button:hover,
+.scout-icon-button:hover,
+.scout-icon-link:hover {
+  border-color: rgba(184, 137, 40, 0.48);
+  background: rgba(184, 137, 40, 0.08);
+  color: #7a5718;
+}
+
+.scout-nav a.is-active,
+.scout-nav a:hover {
+  color: var(--scout-text);
+  background: rgba(184, 137, 40, 0.08);
+}
+
+.scout-nav a.is-active::after {
+  background: #b88928;
+}
+
+.runner-hero {
+  width: min(1180px, calc(100% - 40px));
+  margin: 32px auto 0;
+  border: 1px solid rgba(184, 137, 40, 0.22);
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0.97), rgba(250, 246, 237, 0.94) 52%, rgba(238, 243, 248, 0.9)),
+    radial-gradient(circle at 76% 14%, rgba(184, 137, 40, 0.13), transparent 22rem);
+  box-shadow: 0 34px 90px rgba(16, 32, 51, 0.14);
+}
+
+.runner-brand-masthead.ri-brand-masthead {
+  border-color: rgba(184, 137, 40, 0.22);
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0.96), rgba(246, 240, 228, 0.78)),
+    #fffdf8;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.86);
+}
+
+.ri-brand-masthead::after {
+  background: linear-gradient(90deg, transparent, rgba(184, 137, 40, 0.62), transparent);
+}
+
+.ri-brand-masthead > img {
+  border-color: rgba(184, 137, 40, 0.3);
+  box-shadow: 0 18px 45px rgba(16, 32, 51, 0.14);
+}
+
+.ri-brand-masthead span,
+.ri-brand-masthead small {
+  color: #8b6926;
+}
+
+.ri-brand-masthead strong {
+  color: var(--scout-text);
+  text-shadow: none;
+}
+
+.runner-hero .scout-eyebrow {
+  color: #8b6926;
+  letter-spacing: 0.14em;
+}
+
+.runner-hero h1 {
+  max-width: 560px;
+  font-size: clamp(44px, 5.1vw, 76px);
+  font-weight: 900;
+  line-height: 0.96;
+  letter-spacing: -0.01em;
+}
+
+.runner-hero h1 span {
+  color: #b88928;
+}
+
+.runner-hero .scout-hero__body {
+  max-width: 610px;
+  color: #3d4654;
+  font-family: var(--scout-display), Georgia, serif;
+  font-size: clamp(16px, 1.25vw, 20px);
+  line-height: 1.66;
+}
+
+.runner-hero-mechanism,
+.scout-live-strip,
+.scout-panel,
+.runner-scanner-console,
+.runner-lock-panel,
+.scout-metric-grid,
+.runner-ranking-table,
+.scout-card,
+.buffett-basket-card {
+  border-color: rgba(16, 32, 51, 0.13);
+  background-color: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 18px 54px rgba(16, 32, 51, 0.09);
+}
+
+.runner-hero-mechanism span,
+.scout-metric,
+.runner-ranking-table > div:not(.runner-ranking-table__head),
+.runner-scan-pipeline span {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(16, 32, 51, 0.1);
+}
+
+.runner-hero-mechanism small,
+.scout-metric__detail,
+.runner-lock-panel small,
+.runner-ranking-table__head {
+  color: var(--scout-muted);
+}
+
+.runner-hero-links a,
+.scout-button--secondary {
+  border-color: rgba(16, 32, 51, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--scout-text);
+}
+
+.scout-button--primary {
+  background: linear-gradient(135deg, #122743, #0e1e34 54%, #c99a32);
+  color: #fff;
+  box-shadow: 0 16px 36px rgba(16, 32, 51, 0.18);
+}
+
+.scout-button--primary:hover,
+.scout-button--secondary:hover,
+.runner-hero-links a:hover {
+  border-color: rgba(184, 137, 40, 0.5);
+  box-shadow: 0 18px 40px rgba(184, 137, 40, 0.14);
+  transform: translateY(-1px);
+}
+
+.buffett-stock-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.buffett-stock-grid article {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid rgba(16, 32, 51, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.buffett-stock-grid img {
+  width: 58px;
+  height: 58px;
+  border: 1px solid rgba(16, 32, 51, 0.12);
+  border-radius: 16px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.buffett-stock-grid div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.buffett-stock-grid span,
+.buffett-stock-grid strong,
+.buffett-stock-grid em {
+  color: var(--scout-text);
+  font-style: normal;
+}
+
+.buffett-stock-grid span {
+  color: var(--scout-muted);
+  font-size: 13px;
+}
+
+.buffett-stock-grid strong {
+  font-size: 23px;
+}
+
+.buffett-stock-grid code {
+  overflow: hidden;
+  color: #7d8795;
+  font-family: var(--scout-mono);
+  font-size: 11px;
+  text-overflow: ellipsis;
+}
+
+.buffett-stock-grid em {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(184, 137, 40, 0.1);
+  color: #8b6926;
+  font-weight: 800;
+}
+
+.buffett-basket-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.buffett-origin-section {
+  width: min(1180px, calc(100% - 40px));
+  margin: 34px auto 74px;
+}
+
+.buffett-origin-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: clamp(22px, 3vw, 36px);
+  border: 1px solid rgba(184, 137, 40, 0.22);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(246, 240, 228, 0.84)),
+    #fffdf8;
+  box-shadow: 0 20px 60px rgba(16, 32, 51, 0.09);
+}
+
+.buffett-origin-card h2 {
+  margin: 8px 0 10px;
+  color: var(--scout-text);
+  font-family: var(--scout-display), Georgia, serif;
+  font-size: clamp(28px, 3.4vw, 48px);
+  line-height: 1.05;
+}
+
+.buffett-origin-card p {
+  max-width: 740px;
+  margin: 0;
+  color: #3d4654;
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.buffett-origin-card a {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  border: 1px solid rgba(16, 32, 51, 0.16);
+  border-radius: 12px;
+  background: #102033;
+  color: #fff;
+  font-weight: 800;
+}
+
+.scout-footer {
+  background: #fffdf8;
+  border-top-color: rgba(16, 32, 51, 0.12);
+  color: var(--scout-text);
+}
+
+.scout-footer__risk {
+  color: var(--scout-muted);
+}
+
+@media (max-width: 720px) {
+  .scout-header__inner,
+  .runner-hero,
+  .buffett-origin-section {
+    width: min(100% - 28px, 1180px);
+  }
+
+  .runner-hero {
+    margin-top: 18px;
+  }
+
+  .runner-hero h1 {
+    font-size: clamp(38px, 13vw, 54px);
+  }
+
+  .runner-hero .scout-hero__body {
+    font-size: 15px;
+    line-height: 1.58;
+  }
+
+  .buffett-stock-grid article {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .buffett-stock-grid img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .buffett-stock-grid em {
+    grid-column: 1 / -1;
+    width: fit-content;
+  }
+
+  .buffett-basket-summary,
+  .buffett-origin-card {
+    grid-template-columns: 1fr;
+  }
+
+  .buffett-origin-card a {
+    width: 100%;
+  }
+}
+
 .scout-app > *:not(.scout-background) {
   position: relative;
   z-index: 1;
@@ -3278,5 +3703,478 @@
 
   .ri-brand-masthead strong {
     font-size: 34px;
+  }
+}
+
+/* Buffettcoin launch override: clean white shareholder-site presentation. */
+:root {
+  --buffett-ink: #111827;
+  --buffett-blue: #08172f;
+  --buffett-muted: #667085;
+  --buffett-gold: #bd8d2a;
+  --buffett-soft-gold: #f6e4b2;
+  --buffett-line: rgba(17, 24, 39, 0.12);
+  --buffett-paper: #fffaf0;
+}
+
+.scout-app {
+  min-height: 100vh !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(189, 141, 42, 0.14), transparent 36%),
+    radial-gradient(circle at 88% 4%, rgba(8, 23, 47, 0.12), transparent 34%),
+    linear-gradient(180deg, #ffffff 0%, #fffaf0 42%, #f7f2e7 100%) !important;
+  color: var(--buffett-ink) !important;
+  font-family: var(--font-runner-display), Georgia, "Times New Roman", serif !important;
+}
+
+.scout-background {
+  opacity: 0.18 !important;
+  background:
+    linear-gradient(rgba(8, 23, 47, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 23, 47, 0.035) 1px, transparent 1px) !important;
+  background-size: 72px 72px !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+.scout-background::before,
+.scout-background::after,
+.runner-treadmill,
+.runner-market-grid,
+.runner-symbol-stream,
+.runner-scan-pipeline,
+.runner-hero-tape,
+.runner-hero-tape__track,
+.scout-panel::before,
+.scout-panel::after,
+.runner-scanner-console::before {
+  display: none !important;
+}
+
+.scout-ticker,
+.scout-header,
+.scout-footer,
+.scout-terminal-bar {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: var(--buffett-line) !important;
+  color: var(--buffett-blue) !important;
+  box-shadow: 0 10px 32px rgba(8, 23, 47, 0.06) !important;
+  backdrop-filter: blur(18px) !important;
+}
+
+.scout-ticker {
+  border-bottom: 1px solid var(--buffett-line) !important;
+}
+
+.scout-ticker__item,
+.scout-nav a,
+.scout-mobile-nav a,
+.scout-label,
+.scout-kicker,
+.scout-terminal-bar small,
+.scout-terminal-bar span,
+.scout-metric__detail,
+.runner-lock-panel small,
+.runner-ranking-table__head,
+.scout-note,
+.scout-page-heading p,
+.scout-section-heading p {
+  color: var(--buffett-muted) !important;
+}
+
+.scout-ticker__item strong,
+.scout-brand strong,
+.scout-brand small,
+.scout-nav a.is-active,
+.scout-mobile-nav a.is-active,
+.scout-terminal-bar span,
+.scout-kicker,
+.runner-brand-masthead span,
+.runner-brand-masthead small {
+  color: var(--buffett-blue) !important;
+}
+
+.scout-brand__mark,
+.runner-brand-masthead img,
+.buffett-stock-grid img,
+.scout-token-mark {
+  background: #ffffff !important;
+  border-color: rgba(189, 141, 42, 0.3) !important;
+  box-shadow: 0 16px 42px rgba(189, 141, 42, 0.18) !important;
+}
+
+.scout-nav,
+.scout-header__actions,
+.scout-ca-button,
+.scout-menu-button,
+.scout-mobile-nav,
+.scout-button,
+.runner-hero-links a,
+.scout-icon-link,
+.scout-filter-bar button,
+.scout-query-examples button {
+  border-color: var(--buffett-line) !important;
+}
+
+.scout-ca-button,
+.scout-menu-button,
+.scout-button--secondary,
+.runner-hero-links a,
+.scout-query-examples button,
+.scout-filter-bar button {
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: var(--buffett-blue) !important;
+}
+
+.scout-button--primary {
+  background: linear-gradient(135deg, #08172f 0%, #1d3354 48%, #bd8d2a 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(189, 141, 42, 0.38) !important;
+  box-shadow: 0 18px 38px rgba(8, 23, 47, 0.18) !important;
+}
+
+.scout-button--primary:hover,
+.scout-button--secondary:hover,
+.runner-hero-links a:hover,
+.scout-ca-button:hover,
+.scout-icon-link:hover {
+  transform: translateY(-1px) !important;
+  border-color: rgba(189, 141, 42, 0.5) !important;
+  box-shadow: 0 18px 42px rgba(8, 23, 47, 0.12) !important;
+}
+
+.runner-hero {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.75fr) !important;
+  align-items: center !important;
+  gap: clamp(24px, 4vw, 68px) !important;
+  min-height: auto !important;
+  padding: clamp(32px, 6vw, 82px) clamp(18px, 5vw, 72px) clamp(34px, 5vw, 76px) !important;
+  overflow: hidden !important;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 250, 240, 0.94) 44%, rgba(8, 23, 47, 0.1) 100%),
+    url("/brand/buffettcoin-banner.png") center bottom / cover no-repeat !important;
+  border-bottom: 1px solid var(--buffett-line) !important;
+}
+
+.runner-hero::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 250, 240, 0.94) 47%, rgba(255, 255, 255, 0.52) 100%),
+    radial-gradient(circle at 84% 24%, rgba(189, 141, 42, 0.14), transparent 28%) !important;
+  pointer-events: none !important;
+}
+
+.runner-hero > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.runner-brand-masthead {
+  max-width: 980px !important;
+  margin: 0 0 clamp(18px, 3vw, 30px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.runner-brand-masthead img {
+  width: clamp(76px, 10vw, 128px) !important;
+  height: clamp(76px, 10vw, 128px) !important;
+  border-radius: 999px !important;
+  object-fit: cover !important;
+}
+
+.ri-brand-masthead strong {
+  color: var(--buffett-gold) !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: clamp(44px, 7.4vw, 104px) !important;
+  line-height: 0.86 !important;
+  text-shadow: 0 2px 0 rgba(8, 23, 47, 0.12) !important;
+}
+
+.scout-eyebrow,
+.runner-hero__statusline {
+  color: var(--buffett-gold) !important;
+}
+
+.runner-hero h1,
+.scout-page-heading h1,
+.scout-section-heading h2,
+.scout-panel__head h2,
+.runner-lock-panel strong,
+.runner-ranking-table strong {
+  color: var(--buffett-blue) !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.runner-hero h1 {
+  max-width: 760px !important;
+  font-size: clamp(52px, 8vw, 118px) !important;
+  line-height: 0.88 !important;
+}
+
+.runner-hero h1 span {
+  color: var(--buffett-gold) !important;
+}
+
+.runner-hero .scout-hero__body {
+  max-width: 720px !important;
+  color: #2f3c4d !important;
+  font-family: var(--font-runner-terminal), Inter, system-ui, sans-serif !important;
+  font-size: clamp(17px, 1.55vw, 22px) !important;
+  line-height: 1.72 !important;
+}
+
+.runner-hero-mechanism,
+.scout-live-strip,
+.scout-panel,
+.runner-lock-panel,
+.runner-ranking-table,
+.buffett-origin-card {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border: 1px solid var(--buffett-line) !important;
+  color: var(--buffett-blue) !important;
+  box-shadow: 0 24px 70px rgba(8, 23, 47, 0.08) !important;
+  backdrop-filter: blur(14px) !important;
+}
+
+.runner-hero-mechanism strong,
+.scout-metric__value,
+.buffett-stock-grid strong,
+.scout-score-track + strong,
+.scout-countdown-panel strong {
+  color: var(--buffett-blue) !important;
+}
+
+.scout-hero__terminal {
+  background: rgba(8, 23, 47, 0.94) !important;
+  border: 1px solid rgba(189, 141, 42, 0.28) !important;
+  color: #fffaf0 !important;
+  box-shadow: 0 26px 80px rgba(8, 23, 47, 0.28) !important;
+}
+
+.scout-hero__terminal .scout-terminal-bar,
+.scout-hero__terminal .scout-metric,
+.scout-hero__terminal .buffett-stock-grid article {
+  background: rgba(255, 250, 240, 0.07) !important;
+  border-color: rgba(246, 228, 178, 0.16) !important;
+  color: #fffaf0 !important;
+}
+
+.scout-hero__terminal .scout-terminal-bar span,
+.scout-hero__terminal .scout-terminal-bar small,
+.scout-hero__terminal .scout-label,
+.scout-hero__terminal .scout-metric__detail,
+.scout-hero__terminal .buffett-stock-grid span,
+.scout-hero__terminal .buffett-stock-grid small {
+  color: rgba(255, 250, 240, 0.68) !important;
+}
+
+.scout-hero__terminal .scout-metric__value,
+.scout-hero__terminal .buffett-stock-grid strong {
+  color: #ffffff !important;
+}
+
+.buffett-stock-grid {
+  display: grid !important;
+  gap: 14px !important;
+  margin-bottom: 16px !important;
+}
+
+.buffett-stock-grid article {
+  display: grid !important;
+  grid-template-columns: 58px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 14px !important;
+  border-radius: 18px !important;
+}
+
+.buffett-stock-grid img {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 16px !important;
+  object-fit: contain !important;
+  padding: 8px !important;
+}
+
+.buffett-stock-grid strong {
+  display: block !important;
+  font-size: clamp(24px, 3vw, 34px) !important;
+  line-height: 1 !important;
+}
+
+.buffett-stock-grid em {
+  color: var(--buffett-soft-gold) !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+}
+
+.buffett-origin-section {
+  padding: clamp(28px, 5vw, 72px) clamp(18px, 5vw, 72px) !important;
+  background: #ffffff !important;
+}
+
+.buffett-origin-card {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 20px !important;
+  align-items: center !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding: clamp(22px, 4vw, 44px) !important;
+  border-radius: 28px !important;
+}
+
+.buffett-origin-card h2 {
+  margin: 8px 0 10px !important;
+  color: var(--buffett-blue) !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: clamp(30px, 4vw, 58px) !important;
+  letter-spacing: 0 !important;
+}
+
+.buffett-origin-card p {
+  max-width: 760px !important;
+  color: #465468 !important;
+  font-family: var(--font-runner-terminal), Inter, system-ui, sans-serif !important;
+  font-size: clamp(15px, 1.3vw, 18px) !important;
+  line-height: 1.7 !important;
+}
+
+.buffett-origin-card a {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-height: 48px !important;
+  padding: 0 18px !important;
+  border: 1px solid rgba(189, 141, 42, 0.36) !important;
+  border-radius: 999px !important;
+  background: #08172f !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+.scout-terminal-section,
+.scout-page,
+.scout-footer {
+  background: transparent !important;
+}
+
+.runner-terminal-log,
+.runner-scanner-console,
+.runner-scanner-idle,
+.runner-scanner-inputs > span,
+.scout-metric,
+.runner-ranking-table > div:not(.runner-ranking-table__head) {
+  background: rgba(255, 255, 255, 0.72) !important;
+  border-color: var(--buffett-line) !important;
+  color: var(--buffett-blue) !important;
+}
+
+.scout-footer__banner {
+  display: block !important;
+  width: min(100%, 960px) !important;
+  max-height: 230px !important;
+  margin: 26px auto !important;
+  border-radius: 22px !important;
+  object-fit: cover !important;
+  border: 1px solid rgba(189, 141, 42, 0.22) !important;
+  box-shadow: 0 24px 70px rgba(8, 23, 47, 0.12) !important;
+}
+
+.scout-footer__risk {
+  color: var(--buffett-muted) !important;
+}
+
+@media (max-width: 920px) {
+  .runner-hero {
+    grid-template-columns: 1fr !important;
+    padding-top: 28px !important;
+  }
+
+  .runner-brand-masthead {
+    justify-content: center !important;
+    text-align: left !important;
+  }
+
+  .scout-hero__copy {
+    text-align: center !important;
+  }
+
+  .runner-hero h1,
+  .runner-hero .scout-hero__body {
+    margin-inline: auto !important;
+  }
+
+  .runner-hero-mechanism,
+  .scout-live-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  .buffett-origin-card {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .scout-app {
+    background: linear-gradient(180deg, #ffffff 0%, #fffaf0 58%, #f8f1df 100%) !important;
+  }
+
+  .scout-header__inner {
+    gap: 12px !important;
+  }
+
+  .scout-brand {
+    min-width: 0 !important;
+  }
+
+  .scout-brand strong {
+    font-size: 18px !important;
+  }
+
+  .runner-hero {
+    padding: 22px 16px 32px !important;
+  }
+
+  .runner-brand-masthead img {
+    width: 82px !important;
+    height: 82px !important;
+  }
+
+  .ri-brand-masthead strong {
+    font-size: 42px !important;
+  }
+
+  .runner-hero h1 {
+    font-size: clamp(44px, 14vw, 64px) !important;
+  }
+
+  .runner-hero .scout-hero__body {
+    font-size: 15px !important;
+    line-height: 1.62 !important;
+  }
+
+  .scout-hero__terminal {
+    border-radius: 22px !important;
+    padding: 14px !important;
+  }
+
+  .buffett-stock-grid article {
+    grid-template-columns: 48px minmax(0, 1fr) auto !important;
+    padding: 12px !important;
+  }
+
+  .buffett-stock-grid img {
+    width: 48px !important;
+    height: 48px !important;
   }
 }

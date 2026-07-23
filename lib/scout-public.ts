@@ -1,6 +1,26 @@
 const BUFFETTCOIN_CA = "";
 const BUFFETTCOIN_X_URL = "https://x.com/i/communities/2029250283063394361";
-const configuredCa = process.env.NEXT_PUBLIC_CA?.trim() || BUFFETTCOIN_CA;
+const OLD_PROJECT_MINTS = new Set([
+  "EWdDQyqHoUaSd93MwCpCaYygEPpF8deqLU87Cq5Bpump"
+]);
+
+function cleanPublicCa(value: string | undefined) {
+  const trimmed = value?.trim() ?? "";
+  if (!trimmed || OLD_PROJECT_MINTS.has(trimmed)) return "";
+  return trimmed;
+}
+
+function cleanPublicUrl(value: string | undefined, configuredMint: string) {
+  const trimmed = value?.trim() ?? "";
+  if (!trimmed || [...OLD_PROJECT_MINTS].some((mint) => trimmed.includes(mint))) return "";
+  if (configuredMint && trimmed.includes("pump.fun/coin/") && !trimmed.includes(configuredMint)) return "";
+  if (configuredMint && trimmed.includes("dexscreener.com/solana/") && !trimmed.includes(configuredMint)) return "";
+  return trimmed;
+}
+
+const configuredCa = cleanPublicCa(process.env.NEXT_PUBLIC_CA) || BUFFETTCOIN_CA;
+const configuredBuyUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_BUY_URL, configuredCa);
+const configuredDexUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_DEXSCREENER_URL, configuredCa);
 
 export const scoutPublicConfig = {
   name: "Buffettcoin",
@@ -30,10 +50,10 @@ export const scoutPublicConfig = {
   xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || BUFFETTCOIN_X_URL,
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
   buyUrl:
-    process.env.NEXT_PUBLIC_BUY_URL?.trim() ||
+    configuredBuyUrl ||
     (configuredCa ? `https://pump.fun/coin/${configuredCa}` : ""),
   dexScreenerUrl:
-    process.env.NEXT_PUBLIC_DEXSCREENER_URL?.trim() ||
+    configuredDexUrl ||
     (configuredCa ? `https://dexscreener.com/solana/${configuredCa}` : "")
 } as const;
 

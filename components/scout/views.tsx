@@ -45,6 +45,19 @@ function signalMetric(signal: ScoutSignal, key: string) {
   return Number.isFinite(value) ? value : null;
 }
 
+const BUFFETT_BASKET_MINTS = new Set([
+  "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
+  "Xs6B6zawENwAbWVi7w92rjazLuAr5Az59qgWKcNb45x"
+]);
+
+function isBuffettBasketSignal(signal: ScoutSignal) {
+  return BUFFETT_BASKET_MINTS.has(signal.mint);
+}
+
+function activeBasketSignal(signal: ScoutSignal | null) {
+  return signal && isBuffettBasketSignal(signal) ? signal : null;
+}
+
 function marketCapPerformance(signal: ScoutSignal) {
   const current = signalMetric(signal, "currentMarketCapUsd");
   if (!signal.market_cap_usd || current === null) return null;
@@ -75,7 +88,8 @@ function SignalTable({ signals, compact = false }: { signals: ScoutSignal[]; com
 export function SignalsView() {
   const { signals, state, error, refresh } = useScout();
   const [filter, setFilter] = useState<"all" | "active" | "queued" | "archived">("all");
-  const rows = filter === "all" ? signals.signals : signals.signals.filter((signal) => signal.status === filter || (filter === "archived" && ["passed", "rejected", "archived"].includes(signal.status)));
+  const basketSignals = signals.signals.filter(isBuffettBasketSignal);
+  const rows = filter === "all" ? basketSignals : basketSignals.filter((signal) => signal.status === filter || (filter === "archived" && ["passed", "rejected", "archived"].includes(signal.status)));
   return (
     <div className="scout-page">
       <PageHeading eyebrow="Buffett basket ledger" title="Apple and Berkshire receipts." body="Track basket assets, current values, basket scores, status, and the distributions tied to each record." />
@@ -118,20 +132,21 @@ export function SearchView() {
       <form className="scout-search-form" onSubmit={search}><Search size={21} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Show active basket assets" aria-label="Search basket assets" /><button className="scout-button scout-button--primary" type="submit" disabled={busy}>{busy ? "Searching" : "Search"}</button></form>
       <div className="scout-query-examples">{["AAPL.x records", "BRK.Bx records", "Active basket assets", "Recorded in the last hour"].map((example) => <button type="button" onClick={() => setQuery(example)} key={example}>{example}</button>)}</div>
       {error ? <ErrorState message={error} /> : null}
-      {result ? <section className="scout-panel scout-panel--table"><div className="scout-search-interpretation"><span>Applied filters</span><strong>{result.interpretedAs.maximumMarketCapUsd ? `Cap below ${formatMoney(result.interpretedAs.maximumMarketCapUsd)}` : "Any market cap"}</strong><strong>{result.interpretedAs.detectedSince ? `Since ${formatTime(result.interpretedAs.detectedSince)}` : "Any time"}</strong><strong>{result.interpretedAs.positiveMomentumOnly ? "Positive performance" : "Any performance"}</strong></div><SignalTable signals={result.results} compact /></section> : <EmptyState title="Search basket assets" body="Search by market cap, time, status, or token. Every result comes from the verified Buffettcoin ledger." />}
+      {result ? <section className="scout-panel scout-panel--table"><div className="scout-search-interpretation"><span>Applied filters</span><strong>{result.interpretedAs.maximumMarketCapUsd ? `Cap below ${formatMoney(result.interpretedAs.maximumMarketCapUsd)}` : "Any market cap"}</strong><strong>{result.interpretedAs.detectedSince ? `Since ${formatTime(result.interpretedAs.detectedSince)}` : "Any time"}</strong><strong>{result.interpretedAs.positiveMomentumOnly ? "Positive performance" : "Any performance"}</strong></div><SignalTable signals={result.results.filter(isBuffettBasketSignal)} compact /></section> : <EmptyState title="Search basket assets" body="Search by market cap, time, status, or token. Every result comes from the verified Buffettcoin ledger." />}
     </div>
   );
 }
 
 export function PerformanceView() {
   const { signals } = useScout();
-  const completed = signals.signals.filter((signal) => signal.status !== "queued");
+  const completed = signals.signals.filter((signal) => isBuffettBasketSignal(signal) && signal.status !== "queued");
   const scored = completed.filter((signal) => signal.scout_score !== null);
   const averageScore = scored.length ? scored.reduce((sum, signal) => sum + Number(signal.scout_score), 0) / scored.length : null;
+  const active = activeBasketSignal(signals.active);
   return (
     <div className="scout-page">
       <PageHeading eyebrow="Basket history" title="Buffettcoin records." body="Review verified AAPL.x / BRK.Bx records exactly as published. No backfilled winners." />
-      <div className="scout-overview-grid"><Metric label="Basket records" value={completed.length.toLocaleString()} /><Metric label="Active now" value={signals.active ? `$${signals.active.symbol}` : "Calculating"} /><Metric label="Average Basket Score" value={averageScore === null ? "Awaiting verified data" : averageScore.toFixed(1)} /><Metric label="Public delay" value={`${signals.publicDelaySeconds}s`} /></div>
+      <div className="scout-overview-grid"><Metric label="Basket records" value={completed.length.toLocaleString()} /><Metric label="Active now" value={active ? `$${active.symbol}` : "Calculating"} /><Metric label="Average Basket Score" value={averageScore === null ? "Awaiting verified data" : averageScore.toFixed(1)} /><Metric label="Public delay" value={`${signals.publicDelaySeconds}s`} /></div>
       <section className="scout-panel scout-panel--table"><SignalTable signals={completed} /></section>
       <div className="scout-page-note"><ShieldCheck size={17} /><p>Past basket records do not guarantee future performance. Tokenized assets and digital tokens can move rapidly.</p></div>
     </div>
@@ -205,7 +220,7 @@ export function AdminView() {
 export function TerminalPageView() {
   const { signals, stats, state, error, refresh } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
-  const active = signals.active;
+  const active = activeBasketSignal(signals.active);
   const factors = active ? [["Liquidity", formatMoney(active.liquidity_usd)], ["24h volume", formatMoney(active.volume_24h_usd)], ["1h movement", formatPercent(Number(active.metrics.change1h ?? Number.NaN))], ["Token age", active.token_age_seconds === null ? "Unavailable" : `${Math.max(1, Math.round(active.token_age_seconds / 60))}m`]] : [];
   return (
     <div className="scout-page">
