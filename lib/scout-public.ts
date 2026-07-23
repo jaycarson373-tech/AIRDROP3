@@ -1,5 +1,7 @@
-const BUFFETTCOIN_CA = "";
-const BUFFETTCOIN_X_URL = "https://x.com/i/communities/2029250283063394361";
+const BUFFETTCOIN_CA = "3dFiGivB2wRHQPXybNQTK2w2dHS6dR769cuJsVwypump";
+const BUFFETTCOIN_X_URL = "https://x.com/Buffettcoin_sol";
+const BUFFETTCOIN_BUY_URL =
+  "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=3dFiGivB2wRHQPXybNQTK2w2dHS6dR769cuJsVwypump";
 const OLD_PROJECT_MINTS = new Set([
   "EWdDQyqHoUaSd93MwCpCaYygEPpF8deqLU87Cq5Bpump"
 ]);
@@ -51,7 +53,7 @@ export const scoutPublicConfig = {
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
   buyUrl:
     configuredBuyUrl ||
-    (configuredCa ? `https://pump.fun/coin/${configuredCa}` : ""),
+    (configuredCa === BUFFETTCOIN_CA ? BUFFETTCOIN_BUY_URL : configuredCa ? `https://pump.fun/coin/${configuredCa}` : ""),
   dexScreenerUrl:
     configuredDexUrl ||
     (configuredCa ? `https://dexscreener.com/solana/${configuredCa}` : "")

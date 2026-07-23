@@ -35,7 +35,7 @@ function TopTicker() {
     ["NEXT DISTRIBUTION", countdown.label],
     ["BASKET STATUS", "AAPL.x / BRK.Bx"],
     ["ELIGIBLE HOLDERS", stats.latestEligibleHolders.toLocaleString()],
-    ["TOTAL DISTRIBUTED", formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)],
+    ["DIVIDENDS PAID", formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)],
     ["EPOCH", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "--"],
     ["BASKET ASSETS", scoutPublicConfig.basketAssets.join(" + ")]
   ];
@@ -72,7 +72,7 @@ function Header() {
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/terminal" aria-label="Buffettcoin terminal">
+        <Link className="scout-brand" href="/" aria-label="Buffettcoin home">
           <span className="scout-brand__mark" aria-hidden="true">
             <img src="/brand/buffettcoin-mark.png" alt="" />
           </span>
@@ -101,6 +101,8 @@ function Header() {
             {copied ? <Check size={15} /> : <Copy size={15} />}
             <span>{shortAddress(scoutPublicConfig.contractAddress)}</span>
           </button>
+          {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Buffettcoin on X">X</a> : null}
+          {scoutPublicConfig.buyUrl ? <a className="scout-header-link scout-header-link--buy" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">Buy</a> : null}
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -130,7 +132,7 @@ function Footer() {
         <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/buffettcoin-mark.png" alt="" /></span>
         <div>
           <strong>BUFFETTCOIN</strong>
-          <p>Shareholder-style rewards, verified onchain.</p>
+          <p>Shareholder-style dividends, verified onchain.</p>
         </div>
       </div>
       <img className="scout-footer__banner" src="/brand/buffettcoin-banner.png" alt="Buffettcoin - Own Buffett's portfolio" />

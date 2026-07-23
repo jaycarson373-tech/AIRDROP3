@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   keywords: ["Buffettcoin", "Buffett Coin", "BUFFETT", "tokenized stocks", "holder rewards", "Solana"],
   openGraph: {
     title: "Buffettcoin — The Onchain Buffett Basket",
-    description: "Hold Buffettcoin and receive weighted 50/50 AAPL.x and BRK.Bx basket drops.",
+    description: "Hold Buffettcoin and receive weighted AAPL.x and BRK.Bx holder dividends from a 50/50 mandate.",
     url: siteUrl,
     siteName: "Buffettcoin",
     type: "website",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Buffettcoin — The Onchain Buffett Basket",
-    description: "A 50/50 Apple and Berkshire holder-reward basket.",
+    description: "A 50/50 Apple and Berkshire holder-dividend mandate.",
     images: ["/brand/buffettcoin-banner.png"]
   },
   icons: {

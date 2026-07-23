@@ -649,6 +649,7 @@
 }
 
 .scout-ca-button,
+.scout-header-link,
 .scout-menu-button,
 .scout-icon-button,
 .scout-icon-link {
@@ -666,6 +667,25 @@
   transition: border-color 160ms ease, background 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
+.scout-header-link {
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.scout-header-link--buy {
+  border-color: #b88927;
+  background: #b88927;
+  color: #071326;
+}
+
+.scout-header-link--buy:hover {
+  border-color: #d7b45d;
+  background: #d7b45d;
+  color: #071326;
+}
+
 .scout-ca-button {
   padding: 0 11px;
   font-family: var(--scout-mono);
@@ -674,6 +694,7 @@
 }
 
 .scout-ca-button:hover,
+.scout-header-link:hover,
 .scout-menu-button:hover,
 .scout-icon-button:hover,
 .scout-icon-link:hover {

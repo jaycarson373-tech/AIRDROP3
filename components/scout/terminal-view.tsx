@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { scoutPublicConfig } from "../../lib/scout-public";
-import { formatClock, formatMoney, formatPercent, formatTime } from "./format";
+import { formatClock, formatMoney, formatPercent, formatTime, formatToken, shortWallet } from "./format";
 import { useCountdown } from "./hooks";
 import { useScout } from "./scout-provider";
 import { SignalLogo } from "./signal-logo";
@@ -213,57 +213,39 @@ function ScorePanel({ signal }: { signal: ScoutSignal | null }) {
 }
 
 export function ActivityFeed() {
-  const { signals, stats, state, lastUpdated } = useScout();
+  const { stats, state, lastUpdated } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const updatedAt = lastUpdated ?? new Date();
-  const idleLines = state === "loading"
-    ? [
-        { time: formatClock(updatedAt), status: "LEDGER", output: "STARTING" },
-        { time: formatClock(updatedAt), status: "HOLDER FEED", output: "CONNECTING" },
-        { time: formatClock(updatedAt), status: "BASKET", output: "INITIALIZING" },
-        { time: formatClock(updatedAt), status: "ASSET", output: "AAPL.x / BRK.Bx" }
-      ]
-    : state === "error" || state === "stale"
-    ? [
-        { time: formatClock(updatedAt), status: "LEDGER", output: "RECONNECTING" },
-        { time: formatClock(updatedAt), status: "HOLDER FEED", output: "STATUS UNAVAILABLE" },
-        { time: formatClock(updatedAt), status: "BASKET", output: "AAPL.x / BRK.Bx" },
-        { time: formatClock(updatedAt), status: "NEXT DROP", output: countdown.label }
-      ]
-    : [
-        { time: formatClock(updatedAt), status: "LEDGER", output: "ONLINE" },
-        { time: formatClock(updatedAt), status: "HOLDER FEED", output: "CONNECTED" },
-        { time: formatClock(updatedAt), status: "BASKET", output: "BUFFETTCOIN" },
-        { time: formatClock(updatedAt), status: "AWAITING", output: "VERIFIED ASSET" },
-        { time: formatClock(updatedAt), status: "NEXT DROP", output: countdown.label }
-      ];
-  const activeLines = signals.active ? [
-    { time: formatClock(signals.active.updated_at), status: "LEDGER", output: "ONLINE" },
-    { time: formatClock(signals.active.updated_at), status: "BASKET ASSET VERIFIED", output: `$${signals.active.symbol}` },
-    ...(signals.active.selected_at ? [
-      { time: formatClock(signals.active.selected_at), status: "BASKET ASSET LOCKED", output: `$${signals.active.symbol}` }
-    ] : []),
-    ...(verifiedConfidence(signals.active) === null ? [] : [
-      { time: formatClock(signals.active.updated_at), status: "CONFIDENCE", output: `${verifiedConfidence(signals.active)}%` }
-    ]),
-    { time: formatClock(updatedAt), status: "NEXT DROP", output: countdown.label }
-  ] : [];
-  const eventLines = signals.events.slice(0, 5).map((event) => {
-    const joined = Array.isArray(event.signal) ? event.signal[0] : event.signal;
-    return {
-      time: formatClock(event.created_at),
-      status: event.event_type.replaceAll("_", " ").toUpperCase(),
-      output: joined ? `$${joined.symbol}` : "BUFFETTCOIN PROTOCOL"
-    };
-  });
-  const lines = signals.active ? [...activeLines, ...eventLines].slice(0, 16) : idleLines;
+  const walletLines = stats.recentRewards.slice(0, 8).map((reward) => ({
+    time: formatClock(reward.time),
+    status: "DIVIDEND SETTLED",
+    output: `${shortWallet(reward.wallet)} · ${formatToken(reward.rewardAmount, scoutPublicConfig.rewardSymbol)}`
+  }));
+  const epochLines = stats.roundHistory.slice(0, 6).map((epoch) => ({
+    time: formatClock(epoch.startedAt),
+    status: `EPOCH ${epoch.epoch} ${epoch.status.toUpperCase()}`,
+    output: `${formatToken(epoch.distributedPump, scoutPublicConfig.rewardSymbol)} · ${epoch.eligibleCount.toLocaleString()} HOLDERS`
+  }));
+  const settledLines = [...walletLines, ...epochLines]
+    .sort((left, right) => right.time.localeCompare(left.time))
+    .slice(0, 12);
+  const lines = settledLines.length
+    ? settledLines
+    : state === "loading"
+      ? [{ time: formatClock(updatedAt), status: "DIVIDEND LEDGER", output: "LOADING SETTLED RECEIPTS" }]
+      : state === "error" || state === "stale"
+        ? [{ time: formatClock(updatedAt), status: "DIVIDEND LEDGER", output: "RECONNECTING TO SUPABASE" }]
+        : [
+            { time: formatClock(updatedAt), status: "DIVIDEND LEDGER", output: "AWAITING FIRST SETTLED DIVIDEND" },
+            { time: formatClock(updatedAt), status: "NEXT DIVIDEND", output: countdown.label }
+          ];
   return (
     <section className="scout-panel scout-panel--feed">
       <div className="scout-panel__head">
         <div><span className="scout-kicker">Live tape</span><h2>Buffettcoin feed</h2></div>
         <Activity size={21} aria-hidden="true" />
       </div>
-      <div className="runner-terminal-log" aria-label="Live index feed">
+      <div className="runner-terminal-log" aria-label="Live Buffettcoin dividend feed">
         <div className="runner-terminal-log__track">
           {[...lines, ...lines].map((line, index) => (
             <span aria-hidden={index >= lines.length} key={`${line.time}-${line.status}-${index}`}>
@@ -306,32 +288,14 @@ export function ScoutTerminalView() {
   const previousActiveId = useRef<string | null | undefined>(undefined);
   const countdown = useCountdown(stats.nextDropTime);
   const reconnecting = state === "error" || state === "stale";
-  const scannerStatus = state === "loading" ? "STARTING" : reconnecting ? "RECONNECTING" : "ONLINE";
   const activeSignal = cleanActiveSignal(signals.active);
   const activeSymbol = activeSignal ? `$${activeSignal.symbol}` : "AAPL.x / BRK.Bx";
-  const rankedSignals = activeSignal
-    ? [...signals.signals.filter((signal) => BUFFETT_BASKET_MINTS.has(signal.mint))]
-        .sort((left, right) => (right.scout_score ?? -1) - (left.scout_score ?? -1))
-        .slice(0, 6)
-    : [];
-  const activeConfidence = verifiedConfidence(activeSignal);
-  const tapeItems = activeSignal
-    ? [
-        ...rankedSignals.map((signal) => ({
-          id: signal.id,
-          symbol: `$${signal.symbol}`,
-          score: signal.scout_score === null ? "SCORE UNAVAILABLE" : `${signal.scout_score}/100`,
-          status: signal.id === activeSignal?.id ? "ACTIVE" : signal.status.toUpperCase()
-        })),
-        { id: "cycle", symbol: "NEXT DISTRIBUTION", score: countdown.label, status: stats.currentEpoch > 0 ? `EPOCH ${stats.currentEpoch}` : "EPOCH UNAVAILABLE" },
-        { id: "protocol", symbol: "$BUFFETT", score: signals.access === "premium" ? "REAL TIME" : `${signals.publicDelaySeconds}S DELAY`, status: "BASKET LIVE" }
-      ]
-    : [
-        { id: "engine", symbol: "BUFFETT BASKET", score: scannerStatus, status: state === "loading" ? "INITIALIZING" : reconnecting ? "RECONNECTING" : "CALCULATING" },
-        { id: "feed", symbol: "HOLDER LEDGER", score: state === "loading" ? "CONNECTING" : reconnecting ? "STATUS UNAVAILABLE" : "CONNECTED", status: "WEIGHTING" },
-        { id: "target", symbol: "AAPL.x / BRK.Bx", score: "50 / 50", status: "VERIFYING" },
-        { id: "drop", symbol: "NEXT DISTRIBUTION", score: countdown.label, status: "SCHEDULED" }
-      ];
+  const tapeItems = [
+    { id: "basket", symbol: "AAPL.x / BRK.Bx", score: "50 / 50 MANDATE", status: "ACTIVE" },
+    { id: "dividend", symbol: "NEXT DIVIDEND", score: countdown.label, status: "SCHEDULED" },
+    { id: "holders", symbol: "ELIGIBLE HOLDERS", score: stats.latestEligibleHolders.toLocaleString(), status: stats.latestEligibleHolders > 0 ? "SNAPSHOT RECORDED" : "AWAITING SNAPSHOT" },
+    { id: "settled", symbol: "DIVIDENDS PAID", score: formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol), status: stats.totalEpochs > 0 ? `${stats.totalEpochs} EPOCHS` : "AWAITING FIRST SETTLEMENT" }
+  ];
 
   useEffect(() => {
     const nextActiveId = activeSignal?.id ?? null;
@@ -357,15 +321,15 @@ export function ScoutTerminalView() {
           </div>
           <p className="scout-eyebrow">BUFFETTCOIN // THE ONCHAIN SHAREHOLDER BASKET</p>
           <h1>Own Buffett's<br /><span>portfolio.</span></h1>
-          <p className="scout-hero__body">Every 5 minutes Buffettcoin distributes a 50/50 basket of AAPL.x and BRK.Bx to eligible holders. Hold 1,000,000+ {scoutPublicConfig.tokenLabel}. Sell once and that wallet is ineligible forever.</p>
+          <p className="scout-hero__body">Every 5 minutes Buffettcoin pays holder dividends in AAPL.x or BRK.Bx across its 50/50 mandate. Hold 1,000,000+ {scoutPublicConfig.tokenLabel}. Sell once and that wallet is ineligible forever.</p>
           <div className="runner-hero-mechanism" aria-label="Buffettcoin basket mechanism">
             <span><small>Mandate</small><strong>{scoutPublicConfig.basketLabel}</strong></span>
-            <span><small>Settlement</small><strong>{scoutPublicConfig.epochMinutes}-minute epochs</strong></span>
+            <span><small>Dividend cycle</small><strong>{scoutPublicConfig.epochMinutes}-minute epochs</strong></span>
             <span><small>Eligibility</small><strong>{scoutPublicConfig.minimumHolding.toLocaleString()}+ {scoutPublicConfig.tokenLabel}</strong></span>
           </div>
           <nav className="runner-hero-links" aria-label="BUFFETTCOIN protocol links">
-            <Link href="/runners">View basket <ArrowRight size={13} /></Link>
-            <Link href="/terminal">Open ledger <ArrowRight size={13} /></Link>
+            {scoutPublicConfig.buyUrl ? <a href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">Buy Buffettcoin <ArrowRight size={13} /></a> : null}
+            <Link href="/airdrop-history">View dividends <ArrowRight size={13} /></Link>
           </nav>
           <p className="scout-hero__delay"><Clock3 size={15} /> APPLE. BERKSHIRE. HOLDER-WEIGHTED RECEIPTS.</p>
         </div>
@@ -386,7 +350,7 @@ export function ScoutTerminalView() {
           </div>
           <div className="buffett-basket-summary">
             <Metric label="Basket" value="AAPL.x / BRK.Bx" detail="50 / 50 split" />
-            <Metric label="Next Distribution" value={countdown.label} detail={`${scoutPublicConfig.epochMinutes}-minute epoch`} />
+            <Metric label="Next Dividend" value={countdown.label} detail={`${scoutPublicConfig.epochMinutes}-minute epoch`} />
             <Metric label="Eligibility" value="1,000,000+" detail={scoutPublicConfig.tokenLabel} />
             <Metric label="Sell Rule" value="Ineligible" detail="Forever after sell" />
           </div>
@@ -396,7 +360,7 @@ export function ScoutTerminalView() {
           <Metric label="Basket Assets" value="2" detail={scoutPublicConfig.basketAssets.join(" + ")} />
           <Metric label="Active Basket" value={activeSignal ? activeSymbol : scoutPublicConfig.basketLabel} detail={activeSignal?.name ?? "Apple + Berkshire"} />
           <Metric label="Average Weight" value={stats.averageMultiplier === null ? "—" : `${stats.averageMultiplier.toFixed(2)}x`} detail="Eligible holders" />
-          <div className="runner-next-distribution"><Metric label="Next Distribution" value={countdown.label} detail={`${scoutPublicConfig.epochMinutes}-minute epoch`} /></div>
+          <div className="runner-next-distribution"><Metric label="Next Dividend" value={countdown.label} detail={`${scoutPublicConfig.epochMinutes}-minute epoch`} /></div>
         </div>
         <div className="runner-hero-tape" aria-label="Live Buffettcoin ledger tape">
           <div className="runner-hero-tape__track">
