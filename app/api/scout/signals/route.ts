@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       ? [active, ...signals]
       : signals;
     const liveSignals = await enrichScoutSignalsWithLiveMarket(combined).catch((error) => {
-      console.warn("Buffettcoin live market enrichment failed", error);
+      console.warn("Cat Strat live market enrichment failed", error);
       return combined;
     });
     const liveById = new Map(liveSignals.map((signal) => [signal.id, signal]));
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       events
     });
   } catch (error) {
-    console.error("BUFFETTCOIN basket assets GET failed", error);
+    console.error("CAT STRAT basket assets GET failed", error);
     try {
       await discoverLiveScoutSignals(Number(request.nextUrl.searchParams.get("limit") ?? 40));
       return NextResponse.json({
@@ -57,8 +57,8 @@ export async function GET(request: NextRequest) {
         events: []
       });
     } catch (liveError) {
-      console.error("Buffettcoin live ledger fallback failed", liveError);
-      return NextResponse.json({ error: "BUFFETTCOIN ledger is reconnecting" }, { status: 503 });
+      console.error("Cat Strat live ledger fallback failed", liveError);
+      return NextResponse.json({ error: "CAT STRAT ledger is reconnecting" }, { status: 503 });
     }
   }
 }
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     });
     if (result.activated) {
       await queueSignalDeliveries(result.signal);
-      await processTelegramQueue(20).catch((error) => console.warn("Immediate Buffettcoin delivery failed", error));
+      await processTelegramQueue(20).catch((error) => console.warn("Immediate Cat Strat delivery failed", error));
     }
     return NextResponse.json(result, { status: 201 });
   } catch (error) {

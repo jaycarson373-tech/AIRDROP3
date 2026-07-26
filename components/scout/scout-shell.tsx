@@ -2,23 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  BookOpen,
-  Check,
-  Copy,
-  ExternalLink,
-  Menu,
-  X
-} from "lucide-react";
+import { BookOpen, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
-import { formatMoney, formatToken } from "./format";
+import { formatToken } from "./format";
 import { useCountdown } from "./hooks";
 import { ScoutProvider, useScout } from "./scout-provider";
 
 const primaryNav = [
-  { href: "/terminal", label: "Ledger" },
-  { href: "/runners", label: "Holdings" },
+  { href: "/terminal", label: "Strategy" },
+  { href: "/runners", label: "Cats" },
   { href: "/airdrop-history", label: "Receipts" }
 ];
 
@@ -27,21 +20,21 @@ const productNav = [
 ];
 
 function TopTicker() {
-  const { stats, state } = useScout();
+  const { stats, signals, state } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
+  const active = signals.active;
   const metrics = [
     ["LIVE", state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
-    ["BASKET", scoutPublicConfig.basketLabel],
-    ["NEXT DISTRIBUTION", countdown.label],
-    ["BASKET STATUS", "AAPL.x / BRK.Bx"],
+    ["ACTIVE CAT", active ? `$${active.symbol}` : "AWAITING"],
+    ["NEXT DROP", countdown.label],
     ["ELIGIBLE HOLDERS", stats.latestEligibleHolders.toLocaleString()],
-    ["DIVIDENDS PAID", formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)],
+    ["CAT DROPPED", formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)],
     ["EPOCH", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "--"],
-    ["BASKET ASSETS", scoutPublicConfig.basketAssets.join(" + ")]
+    ["AVG MULTIPLIER", stats.averageMultiplier ? `${(stats.averageMultiplier / 10000).toFixed(2)}x` : "BASE"]
   ];
 
   return (
-    <div className="scout-ticker" aria-label="Buffettcoin metrics">
+    <div className="scout-ticker" aria-label="Cat Strat live metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -72,13 +65,13 @@ function Header() {
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/" aria-label="Buffettcoin home">
+        <Link className="scout-brand" href="/" aria-label="Cat Strat home">
           <span className="scout-brand__mark" aria-hidden="true">
-            <img src="/brand/buffettcoin-mark.png" alt="" />
+            <img src="/brand/cat-strat-mark.svg" alt="" />
           </span>
           <span>
-            <strong>BUFFETTCOIN</strong>
-            <small>APPLE + BERKSHIRE REWARDS</small>
+            <strong>CAT STRAT</strong>
+            <small>CSTR cat runner meta</small>
           </span>
         </Link>
 
@@ -96,12 +89,12 @@ function Header() {
             type="button"
             onClick={copyContract}
             disabled={!scoutPublicConfig.contractAddress}
-            title={scoutPublicConfig.contractAddress || "BUFFETTCOIN contract pending"}
+            title={scoutPublicConfig.contractAddress || "Cat Strat contract pending"}
           >
             {copied ? <Check size={15} /> : <Copy size={15} />}
             <span>{shortAddress(scoutPublicConfig.contractAddress)}</span>
           </button>
-          {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Buffettcoin on X">X</a> : null}
+          {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Cat Strat on X">X</a> : null}
           {scoutPublicConfig.buyUrl ? <a className="scout-header-link scout-header-link--buy" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">Buy</a> : null}
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
@@ -116,7 +109,7 @@ function Header() {
           ))}
           {scoutPublicConfig.buyUrl ? (
             <a href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
-              Buy $BUFFETT <ExternalLink size={15} />
+              Buy $CSTR <ExternalLink size={15} />
             </a>
           ) : null}
         </div>
@@ -129,13 +122,12 @@ function Footer() {
   return (
     <footer className="scout-footer">
       <div className="scout-footer__brand">
-        <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/buffettcoin-mark.png" alt="" /></span>
+        <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/cat-strat-mark.svg" alt="" /></span>
         <div>
-          <strong>BUFFETTCOIN</strong>
-          <p>Shareholder-style dividends, verified onchain.</p>
+          <strong>CAT STRAT</strong>
+          <p>Cat runner strategy, verified onchain.</p>
         </div>
       </div>
-      <img className="scout-footer__banner" src="/brand/buffettcoin-banner.png" alt="Buffettcoin - Own Buffett's portfolio" />
       <nav aria-label="Product links">
         {productNav.map(({ href, label, icon: Icon }) => (
           <Link href={href} key={href}><Icon size={14} /> {label}</Link>
@@ -143,7 +135,7 @@ function Footer() {
         {scoutPublicConfig.xUrl ? <a href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer">X <ExternalLink size={13} /></a> : null}
       </nav>
       <p className="scout-footer__risk">
-        Buffettcoin is an experimental holder-reward protocol inspired by public Buffett-style holdings. Digital assets are volatile. Verify every address, eligibility rule, and onchain transaction independently.
+        Cat Strat is an experimental cat-token runner reward protocol. Digital assets are volatile. Selling resets holder multiplier progress back to base weight. Verify every address, eligibility rule, and onchain transaction independently.
       </p>
     </footer>
   );

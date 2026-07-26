@@ -1,9 +1,6 @@
 import type { ScoutSignal } from "./types";
 
-const LOCAL_TOKEN_IMAGES: Record<string, string> = {
-  XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp: "/brand/apple-logo.svg",
-  Xs6B6zawENwAbWVi7w92rjazLuAr5Az59qgWKcNb45x: "/brand/berkshire-logo.svg"
-};
+const LOCAL_TOKEN_IMAGES: Record<string, string> = {};
 
 function signalImage(signal: ScoutSignal) {
   const localImage = LOCAL_TOKEN_IMAGES[signal.mint];

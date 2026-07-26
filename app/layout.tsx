@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cinzel, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import { ScoutShell } from "../components/scout/scout-shell";
 import "./globals.css";
 import "./scout.css";
@@ -11,9 +11,9 @@ const terminalFont = IBM_Plex_Mono({
   display: "swap"
 });
 
-const displayFont = Cinzel({
+const displayFont = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
+  weight: ["500", "600", "700"],
   variable: "--font-runner-display",
   display: "swap"
 });
@@ -32,36 +32,36 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Buffettcoin — The Onchain Buffett Basket",
-    template: "%s | Buffettcoin"
+    default: "Cat Strat — Cat Runner Strategy",
+    template: "%s | Cat Strat"
   },
-  description: "Buffettcoin distributes a 50/50 Buffett basket of AAPL.x and BRK.Bx to eligible holders with transparent onchain receipts.",
-  applicationName: "Buffettcoin",
-  keywords: ["Buffettcoin", "Buffett Coin", "BUFFETT", "tokenized stocks", "holder rewards", "Solana"],
+  description: "Cat Strat tracks cat-token runner momentum and drops the active cat runner to eligible CSTR holders with onchain receipts.",
+  applicationName: "Cat Strat",
+  keywords: ["Cat Strat", "CSTR", "cat tokens", "runner rewards", "holder rewards", "Solana"],
   openGraph: {
-    title: "Buffettcoin — The Onchain Buffett Basket",
-    description: "Hold Buffettcoin and receive weighted AAPL.x and BRK.Bx holder dividends from a 50/50 mandate.",
+    title: "Cat Strat — Cat Runner Strategy",
+    description: "Hold CSTR. Receive the active cat-token runner as Cat Strat rotates through the cat meta.",
     url: siteUrl,
-    siteName: "Buffettcoin",
+    siteName: "Cat Strat",
     type: "website",
     images: [
       {
-        url: "/brand/buffettcoin-banner.png",
-        width: 1280,
-        height: 400,
-        alt: "Buffettcoin — Own Buffett's Portfolio"
+        url: "/brand/cat-strat-og.svg",
+        width: 1200,
+        height: 630,
+        alt: "Cat Strat — Cat Runner Strategy"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Buffettcoin — The Onchain Buffett Basket",
-    description: "A 50/50 Apple and Berkshire holder-dividend mandate.",
-    images: ["/brand/buffettcoin-banner.png"]
+    title: "Cat Strat — Cat Runner Strategy",
+    description: "A live cat-token runner reward terminal for CSTR holders.",
+    images: ["/brand/cat-strat-og.svg"]
   },
   icons: {
-    icon: "/brand/buffettcoin-mark.png",
-    apple: "/brand/buffettcoin-mark.png"
+    icon: "/brand/cat-strat-mark.svg",
+    apple: "/brand/cat-strat-mark.svg"
   },
   robots: { index: true, follow: true }
 };

@@ -1,213 +1,222 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Activity,
-  ArrowRight,
-  Clock3,
-  ExternalLink,
-  Gauge,
-  Radio,
-  Terminal
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { scoutPublicConfig } from "../../lib/scout-public";
-import { formatClock, formatMoney, formatPercent, formatTime, formatToken, shortWallet } from "./format";
+import { Activity, ArrowRight, Cat, ExternalLink, Radio, Terminal } from "lucide-react";
+import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
+import { formatClock, formatMoney, formatTime, formatToken, shortWallet } from "./format";
 import { useCountdown } from "./hooks";
 import { useScout } from "./scout-provider";
 import { SignalLogo } from "./signal-logo";
 import type { ScoutSignal } from "./types";
 import { Metric, StatusBadge } from "./ui";
 
-function numericMetric(signal: ScoutSignal, key: string) {
-  const raw = signal.metrics?.[key];
+function signalMetric(signal: ScoutSignal | null, key: string) {
+  const raw = signal?.metrics?.[key];
   if (raw === null || raw === undefined || raw === "") return null;
   const value = Number(raw);
   return Number.isFinite(value) ? value : null;
 }
 
-function firstNumericMetric(signal: ScoutSignal, keys: string[]) {
-  for (const key of keys) {
-    const value = numericMetric(signal, key);
-    if (value !== null) return value;
-  }
-  return null;
+function activeName(signal: ScoutSignal | null) {
+  return signal ? `$${signal.symbol}` : "Awaiting cat runner";
 }
 
-function scoreFactors(signal: ScoutSignal) {
-  const buys = numericMetric(signal, "buys1h");
-  const sells = numericMetric(signal, "sells1h");
-  const totalTrades = (buys ?? 0) + (sells ?? 0);
-  const buyShare = totalTrades > 0 ? (buys ?? 0) / totalTrades : null;
-  const volumeVelocity = signal.liquidity_usd && signal.volume_24h_usd ? signal.volume_24h_usd / signal.liquidity_usd : null;
-  const attention = firstNumericMetric(signal, ["attentionScore", "attention_score"]);
-  const smartWallets = firstNumericMetric(signal, ["smartWalletScore", "smart_wallet_score"]);
-  const narrative = firstNumericMetric(signal, ["narrativeScore", "narrative_score"]);
-  return [
-    { label: "Liquidity", value: formatMoney(signal.liquidity_usd), connected: signal.liquidity_usd !== null },
-    { label: "24h volume", value: formatMoney(signal.volume_24h_usd), connected: signal.volume_24h_usd !== null },
-    { label: "Volume velocity", value: volumeVelocity === null ? "Unavailable" : `${volumeVelocity.toFixed(2)}x`, connected: volumeVelocity !== null },
-    { label: "Recent buy pressure", value: buyShare === null ? "Unavailable" : formatPercent(buyShare * 100), connected: buyShare !== null },
-    { label: "Market attention", value: attention === null ? "Unavailable" : `${attention}/100`, connected: attention !== null },
-    { label: "Smart-wallet activity", value: smartWallets === null ? "Unavailable" : `${smartWallets}/100`, connected: smartWallets !== null },
-    { label: "Narrative", value: narrative === null ? "Unavailable" : `${narrative}/100`, connected: narrative !== null },
-    { label: "1h price action", value: formatPercent(numericMetric(signal, "change1h")), connected: numericMetric(signal, "change1h") !== null }
-  ];
-}
-
-function verifiedConfidence(signal: ScoutSignal | null) {
-  if (!signal) return null;
-  const value = firstNumericMetric(signal, ["confidence", "confidenceScore", "confidence_score"]);
-  return value === null ? null : Math.max(0, Math.min(100, value));
-}
-
-const BUFFETT_BASKET_ASSETS = [
-  {
-    symbol: "AAPL.x",
-    name: "Apple",
-    weight: "50%",
-    mint: "XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp",
-    logo: "/brand/apple-logo.svg"
-  },
-  {
-    symbol: "BRK.Bx",
-    name: "Berkshire Hathaway",
-    weight: "50%",
-    mint: "Xs6B6zawENwAbWVi7w92rjazLuAr5Az59qgWKcNb45x",
-    logo: "/brand/berkshire-logo.svg"
-  }
-];
-
-const BUFFETT_BASKET_MINTS = new Set(BUFFETT_BASKET_ASSETS.map((asset) => asset.mint));
-
-function cleanActiveSignal(signal: ScoutSignal | null) {
-  return signal && BUFFETT_BASKET_MINTS.has(signal.mint) ? signal : null;
-}
-
-function SignalIdentity({ signal }: { signal: ScoutSignal }) {
-  return (
-    <div className="scout-signal-identity">
-      <SignalLogo signal={signal} />
-      <div>
-        <span className="scout-label">Current portfolio asset</span>
-        <h2>${signal.symbol}</h2>
-        <p>{signal.name}</p>
-      </div>
-    </div>
-  );
-}
-
-function CurrentSignalPanel({ signal }: { signal: ScoutSignal | null }) {
-  const { stats, state } = useScout();
+function Hero() {
+  const { signals, stats, state } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
-  const reconnecting = state === "error" || state === "stale";
-  const idleStatus = state === "loading" ? "Starting..." : reconnecting ? "Reconnecting..." : "Watching...";
-
-  if (!signal) {
-    return (
-      <section className="scout-panel scout-panel--signal scout-panel--empty">
-        <div className="scout-panel__head">
-          <div><span className="scout-kicker">Buffett Basket</span><h2>CALCULATING BASKET</h2></div>
-          <StatusBadge label={state === "loading" ? "Starting" : reconnecting ? "Reconnecting" : "Basket online"} tone="queued" />
-        </div>
-        <div className="scout-metric-grid scout-metric-grid--four runner-idle-metrics" role="status">
-          <Metric label="Current Basket" value="AAPL.x / BRK.Bx" />
-          <Metric label="Status" value={idleStatus} />
-          <Metric label="Basket Split" value="50 / 50" />
-          <Metric label="Holder State" value="Awaiting first snapshot" />
-          <Metric label="Minimum Hold" value="1,000,000+" />
-          <Metric label="Sell Rule" value="Ineligible forever" />
-          <Metric label="Epoch" value={`${scoutPublicConfig.epochMinutes} min`} />
-          <Metric label="Portfolio" value="Apple + Berkshire" />
-        </div>
-        <div className="runner-no-target-copy">
-          <strong>Awaiting first settled distribution.</strong>
-          <p>Buffettcoin is configured for a 50/50 Apple and Berkshire basket. Eligible holders receive the basket once the first holder snapshot settles.</p>
-        </div>
-      </section>
-    );
-  }
-
-  const currentMarketCap = numericMetric(signal, "currentMarketCapUsd");
-  const marketCapChange = signal.market_cap_usd && currentMarketCap !== null
-    ? ((currentMarketCap / signal.market_cap_usd) - 1) * 100
-    : null;
+  const active = signals.active;
 
   return (
-    <section className="scout-panel scout-panel--signal">
-      <div className="scout-panel__head">
-        <SignalIdentity signal={signal} />
-        <StatusBadge label="Basket verified" />
+    <section className="cat-hero">
+      <div className="cat-hero__grid" aria-hidden="true" />
+      <div className="cat-orbit" aria-hidden="true">
+        <span>CAT</span><span>CSTR</span><span>MEOW</span><span>RUN</span>
       </div>
-
-      <div className="scout-signal-score">
-        <div>
-          <span className="scout-label">Portfolio Weight</span>
-          <strong>{signal.scout_score === null ? "--" : signal.scout_score}</strong>
-          {signal.scout_score !== null ? <small>/100</small> : null}
+      <div className="cat-hero__copy">
+        <StatusBadge label={state === "loading" ? "Cat strat starting" : "Cat strat online"} />
+        <img className="cat-hero__logo" src="/brand/cat-strat-mark.svg" alt="Cat Strat" />
+        <p className="scout-kicker">CSTR CAT RUNNER META</p>
+        <h1>Own the cat runner. Do not chase it.</h1>
+        <p className="cat-hero__body">
+          Cat Strat tracks cat-token momentum, buys the active cat runner, and drops it to eligible $CSTR holders on five-minute epochs.
+        </p>
+        <div className="cat-hero__actions">
+          {scoutPublicConfig.buyUrl ? (
+            <a className="scout-button scout-button--primary" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
+              Buy $CSTR <ArrowRight size={18} />
+            </a>
+          ) : (
+            <button className="scout-button scout-button--primary" type="button" disabled>Buy link pending</button>
+          )}
+          <Link className="scout-button scout-button--secondary" href="/airdrop-history">View Cat Drops</Link>
         </div>
-        <div className="scout-score-track" aria-label={signal.scout_score === null ? "Basket score unavailable" : `Basket score ${signal.scout_score} out of 100`}>
-          <i style={{ width: `${signal.scout_score ?? 0}%` }} />
-        </div>
-      </div>
-
-      <div className="scout-metric-grid scout-metric-grid--four">
-        <Metric label="Entry price" value={signal.price_usd === null ? "Unavailable" : `$${signal.price_usd.toPrecision(5)}`} />
-        <Metric label="Entry MC" value={formatMoney(signal.market_cap_usd)} />
-        <Metric label="Current market cap" value={formatMoney(currentMarketCap)} />
-        <Metric label="Since entry" value={formatPercent(marketCapChange)} />
-        <Metric label="Entry liquidity" value={formatMoney(signal.liquidity_usd)} />
-        <Metric label="Confidence" value={verifiedConfidence(signal) === null ? "Unavailable" : `${verifiedConfidence(signal)}%`} />
-        <Metric label="Current score" value={signal.scout_score === null ? "--" : `${signal.scout_score}/100`} />
-        <Metric label="Scan time" value={formatTime(signal.detected_at)} />
-      </div>
-
-      <div className="scout-signal-reason">
-        <Terminal size={17} aria-hidden="true" />
-        <div>
-          <span className="scout-label">Distribution logic</span>
-          <p>{signal.selection_reason || signal.reasons[0] || "Buffettcoin distributes a 50/50 basket of AAPL.x and BRK.Bx to eligible long-term holders."}</p>
+        <div className="cat-hero__strip">
+          <Metric label="Active Cat" value={activeName(active)} />
+          <Metric label="Next Drop" value={countdown.label} />
+          <Metric label="Eligible" value={stats.latestEligibleHolders.toLocaleString()} />
+          <Metric label="Epoch" value={stats.currentEpoch > 0 ? `#${stats.currentEpoch}` : "--"} />
         </div>
       </div>
 
-      <div className="scout-panel__footer">
-        <span><Clock3 size={15} /> {signal.selected_at ? `Selected ${formatTime(signal.selected_at)}` : "Selection time unavailable"}</span>
-        <span><Radio size={15} /> Next 50/50 basket distribution {countdown.label}</span>
-        <a href={`https://dexscreener.com/solana/${signal.mint}`} target="_blank" rel="noreferrer">
-          Open chart <ExternalLink size={14} />
-        </a>
+      <div className="cat-live-card">
+        <div className="scout-panel__head">
+          <div><span className="scout-kicker">Current Strategy</span><h2>{activeName(active)}</h2></div>
+          <StatusBadge label={active ? "Active cat" : "Waiting"} tone={active ? "live" : "queued"} />
+        </div>
+        {active ? (
+          <div className="cat-active-signal">
+            <SignalLogo signal={active} />
+            <div>
+              <strong>{active.name}</strong>
+              <span>{shortAddress(active.mint, 6, 6)}</span>
+            </div>
+          </div>
+        ) : (
+          <div className="cat-empty-target">
+            <Cat size={42} />
+            <strong>Awaiting first cat runner</strong>
+            <span>The active token appears here once the strategy has a live signal.</span>
+          </div>
+        )}
+        <div className="scout-metric-grid scout-metric-grid--two">
+          <Metric label="Price" value={active?.price_usd ? `$${active.price_usd.toPrecision(5)}` : "Pending"} />
+          <Metric label="Market Cap" value={formatMoney(active?.market_cap_usd)} />
+          <Metric label="Liquidity" value={formatMoney(active?.liquidity_usd)} />
+          <Metric label="24h Volume" value={formatMoney(active?.volume_24h_usd)} />
+        </div>
+        <div className="cat-countdown">
+          <span>Next holder drop</span>
+          <strong>{countdown.label}</strong>
+          <i style={{ width: `${Math.round(countdown.progress * 100)}%` }} />
+        </div>
       </div>
     </section>
   );
 }
 
-function ScorePanel({ signal }: { signal: ScoutSignal | null }) {
-  const { state } = useScout();
-  const factors = signal ? scoreFactors(signal) : [];
+function LiveTreasury() {
+  const { signals, stats, state } = useScout();
+  const active = signals.active;
+  const countdown = useCountdown(stats.nextDropTime);
+
   return (
-    <section className="scout-panel scout-panel--factors">
-      <div className="scout-panel__head">
-        <div><span className="scout-kicker">Portfolio Ledger</span><h2>Basket accounting</h2></div>
-        <Gauge size={22} aria-hidden="true" />
+    <section className="scout-section" id="strategy">
+      <div className="scout-section__head">
+        <span className="scout-kicker">Cat Board</span>
+        <h2>Live Cat Strategy</h2>
+        <p>The active cat-token runner, holder snapshot, and verified distribution state.</p>
       </div>
-      {signal ? (
-        <div className="scout-factor-list">
-          {factors.map((factor) => (
-            <div key={factor.label}>
-              <span>{factor.label}</span>
-              <strong className={factor.connected ? "" : "is-muted"}>{factor.value}</strong>
+
+      <div className="cat-dashboard">
+        <article className="scout-panel cat-dashboard__primary">
+          <div className="scout-panel__head">
+            <div><span className="scout-kicker">Current Cat Runner</span><h2>{activeName(active)}</h2></div>
+            <StatusBadge label={active ? "Selected by Cat Strat" : state === "loading" ? "Starting" : "Scanning cats"} tone={active ? "live" : "queued"} />
+          </div>
+          {active ? (
+            <>
+              <div className="cat-active-signal cat-active-signal--large">
+                <SignalLogo signal={active} />
+                <div>
+                  <strong>{active.name}</strong>
+                  <span>{shortAddress(active.mint, 7, 7)}</span>
+                </div>
+              </div>
+              <div className="scout-metric-grid scout-metric-grid--four">
+                <Metric label="Token Price" value={active.price_usd ? `$${active.price_usd.toPrecision(5)}` : "Unavailable"} />
+                <Metric label="Market Cap" value={formatMoney(active.market_cap_usd)} />
+                <Metric label="Liquidity" value={formatMoney(active.liquidity_usd)} />
+                <Metric label="Holders" value={active.holder_count?.toLocaleString() ?? "Unavailable"} />
+                <Metric label="Buy Pressure" value={signalMetric(active, "buys1h") ?? "Unavailable"} />
+                <Metric label="Cat Score" value={active.scout_score === null ? "--" : `${active.scout_score}/100`} />
+                <Metric label="Selected" value={active.selected_at ? formatTime(active.selected_at) : "Pending"} />
+                <Metric label="Public Delay" value={`${scoutPublicConfig.publicDelaySeconds}s`} />
+              </div>
+              <div className="cat-panel-actions">
+                <a href={`https://dexscreener.com/solana/${active.mint}`} target="_blank" rel="noreferrer">Chart <ExternalLink size={15} /></a>
+                <a href={`https://pump.fun/coin/${active.mint}`} target="_blank" rel="noreferrer">Pump.fun <ExternalLink size={15} /></a>
+              </div>
+            </>
+          ) : (
+            <div className="cat-empty-target cat-empty-target--wide">
+              <Terminal size={40} />
+              <strong>Strategy is live. Cat runner pending.</strong>
+              <span>Once a cat-token target is selected, this card shows token, chart, snapshot, and drop state.</span>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="runner-scanner-idle" role="status">
-          <strong>{state === "loading" ? "STARTING..." : state === "error" || state === "stale" ? "RECONNECTING..." : "READY"}</strong>
-          <span>AAPL.x / BRK.Bx basket configured.</span>
-          <span>Waiting for the first settled distribution record.</span>
-          <small>Amounts appear once a transaction is verified.</small>
-        </div>
-      )}
-      <p className="scout-note">Buffettcoin publishes holder-weight and distribution data only after receipts are verified.</p>
+          )}
+        </article>
+
+        <aside className="scout-panel cat-dashboard__side">
+          <div className="cat-countdown cat-countdown--big">
+            <span>Next Cat Drop</span>
+            <strong>{countdown.label}</strong>
+            <i style={{ width: `${Math.round(countdown.progress * 100)}%` }} />
+          </div>
+          <div className="scout-metric-grid scout-metric-grid--two">
+            <Metric label="Eligible Holders" value={stats.latestEligibleHolders.toLocaleString()} />
+            <Metric label="Total Cat Dropped" value={formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)} />
+            <Metric label="SOL Value Dropped" value={`${stats.totalSolValueAirdropped.toLocaleString(undefined, { maximumFractionDigits: 3 })} SOL`} />
+            <Metric label="Avg Multiplier" value={stats.averageMultiplier ? `${(stats.averageMultiplier / 10000).toFixed(2)}x` : "1.00x"} />
+          </div>
+        </aside>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks() {
+  const steps = [
+    ["01", "Track cat meta", "Cat Strat watches the active cat-token lane and keeps one current runner in focus."],
+    ["02", "Buy the active cat", "Treasury buyback flow points at the configured reward token for that epoch."],
+    ["03", "Snapshot holders", `Wallets holding ${scoutPublicConfig.minimumHolding.toLocaleString()}+ $CSTR are included in the holder snapshot.`],
+    ["04", "Drop receipts", "The cat runner is distributed by weight, with settled receipts published onchain."]
+  ];
+  return (
+    <section className="scout-section">
+      <div className="scout-section__head">
+        <span className="scout-kicker">Mechanic</span>
+        <h2>Cat Runner Loop</h2>
+      </div>
+      <div className="cat-step-grid">
+        {steps.map(([number, title, body]) => (
+          <article className="scout-panel" key={number}>
+            <span className="cat-step-number">{number}</span>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function HolderWeight() {
+  const tiers = [
+    ["Base", "1.00x"],
+    ["15 min", "1.20x"],
+    ["1 hour", "1.50x"],
+    ["4 hours", "2.00x"],
+    ["12 hours", "2.50x"],
+    ["1 day", "3.00x"],
+    ["3 days", "5.00x"],
+    ["1 week", "10.00x"],
+    ["1 month", "25.00x"]
+  ];
+  return (
+    <section className="scout-section" id="holders">
+      <div className="scout-section__head">
+        <span className="scout-kicker">Holder Weight</span>
+        <h2>Hold Longer. Weigh Heavier.</h2>
+        <p>Selling or transferring resets multiplier progress back to base. It does not permanently ban the wallet.</p>
+      </div>
+      <div className="cat-tier-grid">
+        {tiers.map(([label, value]) => (
+          <div className="cat-tier" key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
@@ -218,7 +227,7 @@ export function ActivityFeed() {
   const updatedAt = lastUpdated ?? new Date();
   const walletLines = stats.recentRewards.slice(0, 8).map((reward) => ({
     time: formatClock(reward.time),
-    status: "DIVIDEND SETTLED",
+    status: "CAT DROP SETTLED",
     output: `${shortWallet(reward.wallet)} · ${formatToken(reward.rewardAmount, scoutPublicConfig.rewardSymbol)}`
   }));
   const epochLines = stats.roundHistory.slice(0, 6).map((epoch) => ({
@@ -226,26 +235,24 @@ export function ActivityFeed() {
     status: `EPOCH ${epoch.epoch} ${epoch.status.toUpperCase()}`,
     output: `${formatToken(epoch.distributedPump, scoutPublicConfig.rewardSymbol)} · ${epoch.eligibleCount.toLocaleString()} HOLDERS`
   }));
-  const settledLines = [...walletLines, ...epochLines]
-    .sort((left, right) => right.time.localeCompare(left.time))
-    .slice(0, 12);
+  const settledLines = [...walletLines, ...epochLines].slice(0, 12);
   const lines = settledLines.length
     ? settledLines
     : state === "loading"
-      ? [{ time: formatClock(updatedAt), status: "DIVIDEND LEDGER", output: "LOADING SETTLED RECEIPTS" }]
+      ? [{ time: formatClock(updatedAt), status: "CAT TAPE", output: "LOADING SETTLED RECEIPTS" }]
       : state === "error" || state === "stale"
-        ? [{ time: formatClock(updatedAt), status: "DIVIDEND LEDGER", output: "RECONNECTING TO SUPABASE" }]
+        ? [{ time: formatClock(updatedAt), status: "CAT TAPE", output: "RECONNECTING TO SUPABASE" }]
         : [
-            { time: formatClock(updatedAt), status: "DIVIDEND LEDGER", output: "AWAITING FIRST SETTLED DIVIDEND" },
-            { time: formatClock(updatedAt), status: "NEXT DIVIDEND", output: countdown.label }
+            { time: formatClock(updatedAt), status: "CAT TAPE", output: "AWAITING FIRST SETTLED CAT DROP" },
+            { time: formatClock(updatedAt), status: "NEXT DROP", output: countdown.label }
           ];
   return (
     <section className="scout-panel scout-panel--feed">
       <div className="scout-panel__head">
-        <div><span className="scout-kicker">Live tape</span><h2>Buffettcoin feed</h2></div>
+        <div><span className="scout-kicker">Live Tape</span><h2>Cat Strat Feed</h2></div>
         <Activity size={21} aria-hidden="true" />
       </div>
-      <div className="runner-terminal-log" aria-label="Live Buffettcoin dividend feed">
+      <div className="runner-terminal-log" aria-label="Live Cat Strat feed">
         <div className="runner-terminal-log__track">
           {[...lines, ...lines].map((line, index) => (
             <span aria-hidden={index >= lines.length} key={`${line.time}-${line.status}-${index}`}>
@@ -258,147 +265,61 @@ export function ActivityFeed() {
   );
 }
 
-export function HolderMultiplierPanel() {
+function ReceiptsPreview() {
   const { stats } = useScout();
   return (
-    <section className="scout-panel scout-panel--protocol scout-multiplier-panel">
-      <div className="scout-panel__head">
-        <div><span className="scout-kicker">Holder Weight</span><h2>Shareholder-style weight.</h2></div>
-        <span className="runner-average-multiplier">AVG {stats.averageMultiplier === null ? "—" : `${stats.averageMultiplier.toFixed(2)}x`}</span>
+    <section className="scout-section" id="receipts">
+      <div className="scout-section__head">
+        <span className="scout-kicker">Receipts</span>
+        <h2>Onchain Cat Drops</h2>
+        <p>Every settled epoch publishes the wallet count, token amount, SOL value, and transaction proof.</p>
       </div>
-      <div className="runner-multiplier-tiers" aria-label="Holder weight milestones">
-        <span><small>START</small><strong>1.00x</strong></span>
-        <span><small>1 DAY</small><strong>1.50x</strong></span>
-        <span><small>1 WEEK</small><strong>2.00x</strong></span>
-        <span><small>1 MONTH</small><strong>3.00x</strong></span>
-        <span><small>3 MONTHS</small><strong>5.00x</strong></span>
+      <div className="cat-receipt-list">
+        {stats.roundHistory.slice(0, 5).map((epoch) => (
+          <article className="scout-panel cat-receipt" key={epoch.epoch}>
+            <Metric label="Epoch" value={`#${epoch.epoch}`} />
+            <Metric label="Tokens" value={formatToken(epoch.distributedPump, scoutPublicConfig.rewardSymbol)} />
+            <Metric label="SOL Value" value={`${epoch.solValueAirdropped.toLocaleString(undefined, { maximumFractionDigits: 3 })} SOL`} />
+            <Metric label="Holders" value={epoch.eligibleCount.toLocaleString()} />
+            {epoch.txSig ? <a href={`https://solscan.io/tx/${epoch.txSig}`} target="_blank" rel="noreferrer">Proof <ExternalLink size={14} /></a> : <span>Pending proof</span>}
+          </article>
+        ))}
+        {!stats.roundHistory.length ? (
+          <div className="scout-panel cat-empty-target cat-empty-target--wide">
+            <Radio size={36} />
+            <strong>Awaiting first settled cat epoch.</strong>
+            <span>Receipts appear here as soon as a distribution is recorded.</span>
+          </div>
+        ) : null}
       </div>
-      <div className="runner-multiplier-flow" aria-label="How Buffettcoin holder weight works">
-        <span>Hold longer</span><i>→</i><span>Multiplier increases</span><i>→</i><span>Distribution weight grows</span><i>→</i><span>Sell once = out forever</span>
+    </section>
+  );
+}
+
+function FinalCta() {
+  return (
+    <section className="cat-final-cta">
+      <span className="scout-kicker">Cat Meta</span>
+      <h2>The next cat runner does not wait.</h2>
+      <p>Hold $CSTR, build multiplier weight, and stay eligible for the active cat-token runner drops.</p>
+      <div className="cat-hero__actions">
+        {scoutPublicConfig.buyUrl ? <a className="scout-button scout-button--primary" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">Buy $CSTR</a> : null}
+        <Link className="scout-button scout-button--secondary" href="/airdrop-history">View Receipts</Link>
       </div>
-      <p className="scout-note">Buffettcoin uses holder-weight rules to split each AAPL.x / BRK.Bx distribution among eligible wallets. Keep holding to preserve weight. Sell once and that wallet is permanently ineligible for future Buffettcoin distributions.</p>
-      <Link className="scout-text-link" href="/docs#access">View holder rules <ArrowRight size={15} /></Link>
     </section>
   );
 }
 
 export function ScoutTerminalView() {
-  const { signals, stats, state, lastUpdated } = useScout();
-  const [treadmillBoost, setTreadmillBoost] = useState(false);
-  const previousActiveId = useRef<string | null | undefined>(undefined);
-  const countdown = useCountdown(stats.nextDropTime);
-  const reconnecting = state === "error" || state === "stale";
-  const activeSignal = cleanActiveSignal(signals.active);
-  const activeSymbol = activeSignal ? `$${activeSignal.symbol}` : "AAPL.x / BRK.Bx";
-  const tapeItems = [
-    { id: "basket", symbol: "AAPL.x / BRK.Bx", score: "50 / 50 MANDATE", status: "ACTIVE" },
-    { id: "dividend", symbol: "NEXT DIVIDEND", score: countdown.label, status: "SCHEDULED" },
-    { id: "holders", symbol: "ELIGIBLE HOLDERS", score: stats.latestEligibleHolders.toLocaleString(), status: stats.latestEligibleHolders > 0 ? "SNAPSHOT RECORDED" : "AWAITING SNAPSHOT" },
-    { id: "settled", symbol: "DIVIDENDS PAID", score: formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol), status: stats.totalEpochs > 0 ? `${stats.totalEpochs} EPOCHS` : "AWAITING FIRST SETTLEMENT" }
-  ];
-
-  useEffect(() => {
-    const nextActiveId = activeSignal?.id ?? null;
-    const previous = previousActiveId.current;
-    previousActiveId.current = nextActiveId;
-    if (previous === undefined || !nextActiveId || nextActiveId === previous) return;
-    setTreadmillBoost(true);
-    const timeout = window.setTimeout(() => setTreadmillBoost(false), 1800);
-    return () => window.clearTimeout(timeout);
-  }, [activeSignal?.id]);
-
   return (
     <>
-      <section className={`scout-hero runner-hero${treadmillBoost ? " is-runner-boost" : ""}`}>
-        <div className="runner-brand-masthead ri-brand-masthead">
-          <img src="/brand/buffettcoin-mark.png" alt="Buffettcoin" />
-          <div><span>BUFFETTCOIN</span><strong>50/50</strong><small>APPLE // BERKSHIRE // HOLDER RECEIPTS</small></div>
-        </div>
-        <div className="scout-hero__copy">
-          <div className="runner-hero__statusline">
-            <StatusBadge label={state === "loading" ? "Basket starting" : reconnecting ? "Basket reconnecting" : "Basket online"} />
-            <span>{activeSignal ? (signals.access === "premium" ? "REAL-TIME BASKET FEED" : `BASKET FEED · ${signals.publicDelaySeconds}S DELAY`) : state === "loading" ? "CONNECTING HOLDER LEDGER" : reconnecting ? "HOLDER LEDGER STATUS UNAVAILABLE" : "50/50 APPLE + BERKSHIRE BASKET"}</span>
-          </div>
-          <p className="scout-eyebrow">BUFFETTCOIN // THE ONCHAIN SHAREHOLDER BASKET</p>
-          <h1>Own Buffett's<br /><span>portfolio.</span></h1>
-          <p className="scout-hero__body">Every 5 minutes Buffettcoin pays holder dividends in AAPL.x or BRK.Bx across its 50/50 mandate. Hold 1,000,000+ {scoutPublicConfig.tokenLabel}. Sell once and that wallet is ineligible forever.</p>
-          <div className="runner-hero-mechanism" aria-label="Buffettcoin basket mechanism">
-            <span><small>Mandate</small><strong>{scoutPublicConfig.basketLabel}</strong></span>
-            <span><small>Dividend cycle</small><strong>{scoutPublicConfig.epochMinutes}-minute epochs</strong></span>
-            <span><small>Eligibility</small><strong>{scoutPublicConfig.minimumHolding.toLocaleString()}+ {scoutPublicConfig.tokenLabel}</strong></span>
-          </div>
-          <nav className="runner-hero-links" aria-label="BUFFETTCOIN protocol links">
-            {scoutPublicConfig.buyUrl ? <a href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">Buy Buffettcoin <ArrowRight size={13} /></a> : null}
-            <Link href="/airdrop-history">View dividends <ArrowRight size={13} /></Link>
-          </nav>
-          <p className="scout-hero__delay"><Clock3 size={15} /> APPLE. BERKSHIRE. HOLDER-WEIGHTED RECEIPTS.</p>
-        </div>
-        <div className="scout-hero__terminal buffett-basket-card">
-          <div className="scout-terminal-bar"><span><i /> BUFFETTCOIN PORTFOLIO</span><small>{lastUpdated ? `UPDATED ${formatClock(lastUpdated)}` : "INITIALIZING"}</small></div>
-          <div className="buffett-stock-grid" aria-label="Buffettcoin 50/50 portfolio">
-            {BUFFETT_BASKET_ASSETS.map((asset) => (
-              <article key={asset.mint}>
-                <img src={asset.logo} alt={`${asset.name} logo`} />
-                <div>
-                  <span>{asset.name}</span>
-                  <strong>{asset.symbol}</strong>
-                  <code>{asset.mint.slice(0, 6)}...{asset.mint.slice(-5)}</code>
-                </div>
-                <em>{asset.weight}</em>
-              </article>
-            ))}
-          </div>
-          <div className="buffett-basket-summary">
-            <Metric label="Basket" value="AAPL.x / BRK.Bx" detail="50 / 50 split" />
-            <Metric label="Next Dividend" value={countdown.label} detail={`${scoutPublicConfig.epochMinutes}-minute epoch`} />
-            <Metric label="Eligibility" value="1,000,000+" detail={scoutPublicConfig.tokenLabel} />
-            <Metric label="Sell Rule" value="Ineligible" detail="Forever after sell" />
-          </div>
-          {state === "loading" ? <div className="runner-terminal-state"><i /><strong>VALUING</strong><span>CONNECTING BUFFETTCOIN LEDGER</span></div> : null}
-        </div>
-        <div className="scout-live-strip">
-          <Metric label="Basket Assets" value="2" detail={scoutPublicConfig.basketAssets.join(" + ")} />
-          <Metric label="Active Basket" value={activeSignal ? activeSymbol : scoutPublicConfig.basketLabel} detail={activeSignal?.name ?? "Apple + Berkshire"} />
-          <Metric label="Average Weight" value={stats.averageMultiplier === null ? "—" : `${stats.averageMultiplier.toFixed(2)}x`} detail="Eligible holders" />
-          <div className="runner-next-distribution"><Metric label="Next Dividend" value={countdown.label} detail={`${scoutPublicConfig.epochMinutes}-minute epoch`} /></div>
-        </div>
-        <div className="runner-hero-tape" aria-label="Live Buffettcoin ledger tape">
-          <div className="runner-hero-tape__track">
-            {[...tapeItems, ...tapeItems, ...tapeItems, ...tapeItems].map((item, index) => (
-              <span key={`${item.id}-${index}`}><i />{item.symbol}<strong>{item.score}</strong><em>{item.status}</em></span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="buffett-origin-section" aria-labelledby="buffett-origin-title">
-        <div className="buffett-origin-card">
-          <div>
-            <span className="scout-kicker">Origin clip</span>
-            <h2 id="buffett-origin-title">“Why don’t you call it Buffettcoin?”</h2>
-            <p>
-              The thesis starts from Buffett’s own line: create your own coin. Buffettcoin turns that joke into a clean
-              onchain shareholder basket: Apple, Berkshire, holder conviction, and public receipts.
-            </p>
-          </div>
-          <a href="https://www.youtube.com/watch?v=HVm7Pfb0ilY&t=149s" target="_blank" rel="noreferrer">
-            Watch the clip <ExternalLink size={15} />
-          </a>
-        </div>
-      </section>
-
-      <section className="scout-terminal-section" id="terminal">
-        <div className="scout-section-heading scout-section-heading--inline">
-          <div><span className="scout-kicker">Buffettcoin Board</span><h2>Apple and Berkshire, settled onchain.</h2></div>
-          <p>Track the basket mandate, holder weights, and settled AAPL.x / BRK.Bx receipts from one clean ledger.</p>
-        </div>
-        <div className="scout-terminal-grid">
-          <CurrentSignalPanel signal={activeSignal} />
-          <ScorePanel signal={activeSignal} />
-          <ActivityFeed />
-          <HolderMultiplierPanel />
-        </div>
-      </section>
+      <Hero />
+      <LiveTreasury />
+      <HowItWorks />
+      <HolderWeight />
+      <ActivityFeed />
+      <ReceiptsPreview />
+      <FinalCta />
     </>
   );
 }

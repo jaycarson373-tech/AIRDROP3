@@ -1,9 +1,10 @@
-const BUFFETTCOIN_CA = "3dFiGivB2wRHQPXybNQTK2w2dHS6dR769cuJsVwypump";
-const BUFFETTCOIN_X_URL = "https://x.com/Buffettcoin_sol";
-const BUFFETTCOIN_BUY_URL =
-  "https://jup.ag/?sell=So11111111111111111111111111111111111111112&buy=3dFiGivB2wRHQPXybNQTK2w2dHS6dR769cuJsVwypump";
 const OLD_PROJECT_MINTS = new Set([
-  "EWdDQyqHoUaSd93MwCpCaYygEPpF8deqLU87Cq5Bpump"
+  "EWdDQyqHoUaSd93MwCpCaYygEPpF8deqLU87Cq5Bpump",
+  "3dFiGivB2wRHQPXybNQTK2w2dHS6dR769cuJsVwypump",
+  "8Ab3XVBjvRB2p6sunVJgAiHGmwJA8hSgbs36kZFxpump",
+  "8ZG2jEdmEp5t31aikFFHJrYU4JxJjUGRTjxEpPSipump",
+  "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump",
+  "8TUWgrMcBMtviLyuJWUvpXLx8RUUYDKK2Bp7qUVJpump"
 ]);
 
 function cleanPublicCa(value: string | undefined) {
@@ -20,19 +21,24 @@ function cleanPublicUrl(value: string | undefined, configuredMint: string) {
   return trimmed;
 }
 
-const configuredCa = cleanPublicCa(process.env.NEXT_PUBLIC_CA) || BUFFETTCOIN_CA;
+function cleanRewardSymbol(value: string | undefined) {
+  const trimmed = value?.trim() ?? "";
+  if (!trimmed) return "CAT";
+  return trimmed;
+}
+
+const configuredCa = cleanPublicCa(process.env.NEXT_PUBLIC_CA || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT);
 const configuredBuyUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_BUY_URL, configuredCa);
 const configuredDexUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_DEXSCREENER_URL, configuredCa);
 
 export const scoutPublicConfig = {
-  name: "Buffettcoin",
-  ticker: "BUFFETT",
-  tokenLabel: "$BUFFETT",
-  rewardSymbol: process.env.NEXT_PUBLIC_REWARD_SYMBOL?.trim() || "AAPL.x/BRK.Bx",
-  basketLabel: "50% AAPL.x / 50% BRK.Bx",
-  basketAssets: ["AAPL.x", "BRK.Bx"],
-  contractAddress:
-    configuredCa,
+  name: "Cat Strat",
+  ticker: "CSTR",
+  tokenLabel: "$CSTR",
+  rewardSymbol: cleanRewardSymbol(process.env.NEXT_PUBLIC_REWARD_SYMBOL),
+  basketLabel: "Active cat runner",
+  basketAssets: ["CAT"],
+  contractAddress: configuredCa,
   minimumHolding: (() => {
     const parsed = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 1_000_000;
@@ -49,14 +55,10 @@ export const scoutPublicConfig = {
     );
     return Number.isFinite(parsed) && parsed >= 0 ? parsed : 60;
   })(),
-  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || BUFFETTCOIN_X_URL,
+  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "",
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
-  buyUrl:
-    configuredBuyUrl ||
-    (configuredCa === BUFFETTCOIN_CA ? BUFFETTCOIN_BUY_URL : configuredCa ? `https://pump.fun/coin/${configuredCa}` : ""),
-  dexScreenerUrl:
-    configuredDexUrl ||
-    (configuredCa ? `https://dexscreener.com/solana/${configuredCa}` : "")
+  buyUrl: configuredBuyUrl || (configuredCa ? `https://pump.fun/coin/${configuredCa}` : ""),
+  dexScreenerUrl: configuredDexUrl || (configuredCa ? `https://dexscreener.com/solana/${configuredCa}` : "")
 } as const;
 
 export function shortAddress(value: string, head = 5, tail = 5) {

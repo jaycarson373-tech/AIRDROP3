@@ -1,34 +1,33 @@
-# Buffettcoin
+# Cat Strat
 
-Buffettcoin presents a professional holder distribution site for a Buffett-inspired portfolio basket. Eligible holders receive the configured reward basket on the live epoch cadence.
+Cat Strat is a live cat-runner reward site for `CSTR`. Eligible holders receive the configured cat-token runner on the live epoch cadence.
 
-The initial reward basket is:
+The active reward asset defaults to:
 
-- `AAPL.x`
-- `BRK.Bx`
+- `CAT`
 
 ## Product Surfaces
 
-- `/terminal` - live Buffettcoin dashboard and basket status
-- `/runners` - basket ledger and recorded selections
-- `/search` - search recorded basket assets
-- `/performance` - basket history without invented returns
+- `/terminal` - live Cat Strat dashboard and active cat-runner status
+- `/runners` - cat runner ledger and recorded selections
+- `/search` - search recorded cat runner assets
+- `/performance` - cat runner history without invented returns
 - `/airdrop-history` - settled epoch and transaction receipts
 - `/docs` - eligibility and distribution rules
 
 ## Holder Rules
 
-- Minimum balance: `1,000,000 BUFFETT`
+- Minimum balance: `1,000,000 CSTR`
 - Epoch cadence: five minutes
 - Wallets above `MAX_HOLDER_PCT` are excluded
-- Selling or transferring below the tracked balance marks the wallet ineligible according to the configured holder-state rules
+- Selling or transferring below the tracked balance resets holder multiplier progress back to base
 
 ## Safe Launch Order
 
 1. Rotate any credential that has ever been pasted into chat, logs, or screenshots.
 2. Keep `CLAIM_ENABLED`, `BUY_ENABLED`, and `AIRDROP_ENABLED` false until the public CA, reward mints, treasury, RPC, and Supabase settings are verified.
-3. Configure the Buffettcoin source mint, Supabase, RPC, treasury secrets, and the 50/50 `AAPL.x` / `BRK.Bx` reward mint rotation.
-4. Confirm the public site shows the Buffettcoin CA, X community link, buy link, reward basket, and no stale project links.
+3. Configure the Cat Strat source mint, Supabase, RPC, treasury secrets, and active `CAT` reward mint.
+4. Confirm the public site shows the Cat Strat CA, X community link, buy link, reward basket, and no stale project links.
 5. Run a controlled dry epoch with treasury gates still off.
 6. Fund reserves, then enable claim, buy, and airdrop gates in a monitored deployment.
 

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Cat Strat">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#020403"/>
+      <stop offset="0.55" stop-color="#07160a"/>
+      <stop offset="1" stop-color="#000"/>
+    </linearGradient>
+    <linearGradient id="line" x1="120" x2="1080" y1="500" y2="120">
+      <stop stop-color="#dfff43"/>
+      <stop offset="0.5" stop-color="#40ff70"/>
+      <stop offset="1" stop-color="#f7ffb4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g opacity=".22" stroke="#50ff72">
+    <path d="M0 140h1200M0 260h1200M0 380h1200M0 500h1200M160 0v630M360 0v630M560 0v630M760 0v630M960 0v630"/>
+  </g>
+  <path d="M110 492c82-68 148-82 203-42s106 5 160-53 100-70 151-34 100-2 148-78 97-103 154-65 105-3 164-91" fill="none" stroke="url(#line)" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="920" cy="315" r="154" fill="#071109" stroke="#6dff7f" stroke-width="8"/>
+  <path d="M842 322 810 238l70 40c13-8 26-12 40-12s27 4 40 12l70-40-32 84c6 16 8 33 4 50-11 43-49 74-82 74s-71-31-82-74c-4-17-2-34 4-50Z" fill="#030805" stroke="#dfff7b" stroke-width="8" stroke-linejoin="round"/>
+  <text x="110" y="230" fill="#f6fff3" font-family="Arial Black, Arial, sans-serif" font-size="96" letter-spacing="-2">CAT STRAT</text>
+  <text x="116" y="302" fill="#6dff7f" font-family="Arial Black, Arial, sans-serif" font-size="36" letter-spacing="6">CSTR</text>
+  <text x="116" y="370" fill="#d8e2d2" font-family="Arial, sans-serif" font-size="34">Own the cat runner. Do not chase it.</text>
+</svg>
