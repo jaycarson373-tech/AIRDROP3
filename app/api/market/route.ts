@@ -142,7 +142,7 @@ export async function GET() {
     reward: marketFromPair(pickPair(pairs, reward), rewardSymbol),
     source: marketFromPair(
       source ? pickPair(pairs, source) : null,
-      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CAT STRATEGY"
+      process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "CASINO"
     ),
     sol: marketFromPair(pickPair(pairs, SOL_MINT), "SOL"),
     basket: reward ? { [reward]: marketFromPair(pickPair(pairs, reward), rewardSymbol) } : {},

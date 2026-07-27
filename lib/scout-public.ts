@@ -29,12 +29,12 @@ const configuredBuyUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_BUY_URL, configu
 const configuredDexUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_DEXSCREENER_URL, configuredCa);
 
 export const scoutPublicConfig = {
-  name: "Cat Strategy",
-  ticker: "CSTR",
-  tokenLabel: "$CSTR",
+  name: "Casino Strategy",
+  ticker: "CASINO",
+  tokenLabel: "$CASINO",
   rewardSymbol: "TOKENS",
-  basketLabel: "Active cat runner",
-  basketAssets: ["CAT"],
+  basketLabel: "Active casino round",
+  basketAssets: ["PONG", "CRASH", "ROULETTE", "DUEL", "COINFLIP"],
   contractAddress: configuredCa || null,
   minimumHolding: (() => {
     const parsed = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);

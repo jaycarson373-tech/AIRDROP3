@@ -2,11 +2,9 @@
 
 import { ExternalLink, Filter, Radio, Search, Send, Settings2, ShieldCheck, Users } from "lucide-react";
 import { FormEvent, useState } from "react";
-import { cateCall } from "../../lib/cat-scanner-public";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
-import { formatClock, formatMoney, formatPercent, formatTime, formatToken, shortWallet } from "./format";
-import { useCountdown } from "./hooks";
-import { ActivityFeed, CatScanner } from "./terminal-view";
+import { formatMoney, formatPercent, formatTime, formatToken, shortWallet } from "./format";
+import { CasinoTerminalView } from "./casino-view";
 import { SignalLogo } from "./signal-logo";
 import { useScout } from "./scout-provider";
 import type { ScoutSignal } from "./types";
@@ -40,13 +38,13 @@ function marketCapPerformance(signal: ScoutSignal) {
 }
 
 function SignalTable({ signals, compact = false }: { signals: ScoutSignal[]; compact?: boolean }) {
-  if (!signals.length) return <EmptyState title="No cat runners yet" body="The first active cat-token runner appears here once Cat Strategy has a live signal." />;
+  if (!signals.length) return <EmptyState title="No verified records yet" body="Records appear only after Casino Strategy receives a verified settlement signal." />;
   return (
     <div className="scout-table-wrap">
       <table className="scout-table">
         <thead>
           <tr>
-            <th>Cat</th><th>Score</th><th>Entry MC</th><th>Current MC</th>{compact ? null : <th>Move</th>}<th>Detected</th><th>Status</th><th aria-label="Chart" />
+            <th>Asset</th><th>Score</th><th>Entry MC</th><th>Current MC</th>{compact ? null : <th>Move</th>}<th>Detected</th><th>Status</th><th aria-label="Chart" />
           </tr>
         </thead>
         <tbody>
@@ -76,7 +74,7 @@ export function SignalsView() {
     : signals.signals.filter((signal) => signal.status === filter || (filter === "archived" && ["passed", "rejected", "archived"].includes(signal.status)));
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Cat Board" title="Cat runners." body="Track the active cat-token runner and every signal recorded by Cat Strategy." />
+      <PageHeading eyebrow="Casino Ledger" title="Verified records." body="Track every public record connected to Casino Strategy settlement." />
       {launchState === "prelaunch" ? <PrelaunchNotice /> : <>
       <div className="scout-filter-bar">
         <Filter size={16} />
@@ -88,7 +86,7 @@ export function SignalsView() {
       <section className="scout-panel scout-panel--table">
         {state === "loading" ? <Skeleton rows={6} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : <SignalTable signals={rows} />}
       </section>
-      <div className="scout-page-note"><ShieldCheck size={17} /><p>Cat Strategy data reflects records currently connected to the protocol. It is informational, not a promise of future performance.</p></div>
+      <div className="scout-page-note"><ShieldCheck size={17} /><p>Casino Strategy displays only records currently connected to the protocol. No result is final until its on-chain settlement is confirmed.</p></div>
       </>}
     </div>
   );
@@ -126,14 +124,14 @@ export function SearchView() {
 
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Cat Search" title="Search cat-runner records." body="Filter the Cat Strategy signal table by token, market cap, status, or record time." action={<StatusBadge label="Public data" tone="muted" />} />
+      <PageHeading eyebrow="Record Search" title="Search settlement records." body="Filter the Casino Strategy public ledger by asset, status, or record time." action={<StatusBadge label="Public data" tone="muted" />} />
       <form className="scout-search-form" onSubmit={search}>
         <Search size={21} />
-        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Show active cat runners" aria-label="Search cat runners" />
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Show verified records" aria-label="Search records" />
         <button className="scout-button scout-button--primary" type="submit" disabled={busy}>{busy ? "Searching" : "Search"}</button>
       </form>
       <div className="scout-query-examples">
-        {["Active cat runners", "Under 500k market cap", "Detected in the last hour", "Positive momentum"].map((example) => (
+        {["Active records", "Under 500k market cap", "Detected in the last hour", "Positive momentum"].map((example) => (
           <button type="button" onClick={() => setQuery(example)} key={example}>{example}</button>
         ))}
       </div>
@@ -148,7 +146,7 @@ export function SearchView() {
           </div>
           <SignalTable signals={result.results} compact />
         </section>
-      ) : <EmptyState title="Search the cat tape" body="Search by market cap, time, status, or token. Results come from the same public signal feed." />}
+      ) : <EmptyState title="Search the public ledger" body="Search by market cap, time, status, or token. Results come from the verified feed." />}
     </div>
   );
 }
@@ -160,7 +158,7 @@ export function PerformanceView() {
   const averageScore = scored.length ? scored.reduce((sum, signal) => sum + Number(signal.scout_score), 0) / scored.length : null;
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="History" title="Cat Strategy record." body="Review previous cat runners as they were recorded by the protocol." />
+      <PageHeading eyebrow="History" title="Casino Strategy record." body="Review previous public records as they were received by the protocol." />
       <div className="scout-overview-grid">
         <Metric label="Records" value={completed.length.toLocaleString()} />
         <Metric label="Active Now" value={signals.active ? `$${signals.active.symbol}` : "NO LIVE RUNNER"} />
@@ -176,16 +174,15 @@ export function ReceiptsView() {
   const { stats, state } = useScout();
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Cat Receipts" title="Verify every drop." body="Each settled holder drop links back to its epoch, wallet count, token amount, and transaction proof." />
-      <CatScanner />
+      <PageHeading eyebrow="Casino Results" title="Verify every round." body="Every settled result links to its round, recipient count, amount, and transaction proof." />
       <div className="scout-overview-grid">
-        <Metric label="Settled Epochs" value={stats.totalEpochs.toLocaleString()} />
-        <Metric label="Cat Dropped" value={formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)} />
-        <Metric label="SOL Value Dropped" value={`${stats.totalSolValueAirdropped.toFixed(4)} SOL`} />
-        <Metric label="Eligible Holders" value={stats.latestEligibleHolders.toLocaleString()} />
+        <Metric label="Verified Rounds" value={stats.totalEpochs.toLocaleString()} />
+        <Metric label="Tokens Distributed" value={formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)} />
+        <Metric label="Distributed Value" value={`${stats.totalSolValueAirdropped.toFixed(4)} SOL`} />
+        <Metric label="Recorded Recipients" value={stats.latestEligibleHolders.toLocaleString()} />
       </div>
       <section className="scout-panel scout-panel--table">
-        <div className="scout-panel__head"><div><span className="scout-kicker">Epoch history</span><h2>Settled cat drops</h2></div><Radio size={20} /></div>
+        <div className="scout-panel__head"><div><span className="scout-kicker">Round history</span><h2>Verified settlements</h2></div><Radio size={20} /></div>
         {state === "loading" ? <Skeleton rows={5} /> : stats.roundHistory.length ? (
           <div className="scout-table-wrap">
             <table className="scout-table">
@@ -200,10 +197,10 @@ export function ReceiptsView() {
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="The first settled cat drop appears after launch" body="Epochs appear here only after holder payouts are recorded as settled." />}
+        ) : <EmptyState title="No verified settlement yet" body="Rounds appear here only after recipient transactions are recorded as settled." />}
       </section>
       <section className="scout-panel scout-panel--table">
-        <div className="scout-panel__head"><div><span className="scout-kicker">Wallet feed</span><h2>Recent cat drops</h2></div><Users size={20} /></div>
+        <div className="scout-panel__head"><div><span className="scout-kicker">Recipient feed</span><h2>Recent verified payouts</h2></div><Users size={20} /></div>
         {stats.recentRewards.length ? (
           <div className="scout-table-wrap">
             <table className="scout-table">
@@ -217,7 +214,7 @@ export function ReceiptsView() {
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="No wallet drops yet" body="Individual receipts will populate after the first completed Cat Strategy epoch." />}
+        ) : <EmptyState title="No recipient receipts yet" body="Individual proofs populate after the first completed Casino Strategy settlement." />}
       </section>
     </div>
   );
@@ -226,13 +223,13 @@ export function ReceiptsView() {
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How Cat Strategy works." body="The short version: hold CSTR, build weight, receive the active cat-token runner when epochs settle." />
+      <PageHeading eyebrow="Documentation" title="How Casino Strategy works." body="Ten two-dimensional games rotate on a shared fifteen-minute clock. Results publish only after settlement." />
       <div className="scout-doc-layout">
-        <aside><a href="#lifecycle">Lifecycle</a><a href="#weight">Holder Weight</a><a href="#treasury">Cat Runner</a></aside>
+        <aside><a href="#lifecycle">Round cycle</a><a href="#weight">Eligibility</a><a href="#treasury">Settlement</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Cat lifecycle</h2><p>Cat Strategy keeps one active cat-token runner in focus. Each epoch snapshots holders and records settled drops.</p></section>
-          <section id="weight"><span className="scout-kicker">02</span><h2>Holder Weight</h2><p>Hold at least {formatToken(scoutPublicConfig.minimumHolding, "CSTR")} to qualify. Selling or transferring resets multiplier progress to base weight.</p></section>
-          <section id="treasury"><span className="scout-kicker">03</span><h2>Cat Runner</h2><p>The active reward token is configured through the reward mint. When the worker buys and distributes it, receipts appear publicly.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Round cycle</h2><p>Casino Strategy rotates through ten games. A new game begins on each fifteen-minute UTC boundary.</p></section>
+          <section id="weight"><span className="scout-kicker">02</span><h2>Eligibility</h2><p>Eligibility is read from the configured strategy rules. Never infer eligibility from an unverified screen state.</p></section>
+          <section id="treasury"><span className="scout-kicker">03</span><h2>Settlement</h2><p>Recipients and amounts appear publicly only after a real transaction receipt is available.</p></section>
         </div>
       </div>
     </div>
@@ -261,7 +258,7 @@ export function AdminView() {
       });
       const payload = await response.json() as { error?: string; activated?: boolean };
       if (!response.ok) throw new Error(payload.error || "Signal submission failed");
-      setMessage(payload.activated ? "Cat runner activated." : "Cat runner queued.");
+      setMessage(payload.activated ? "Record activated." : "Record queued.");
       setMint("");
       setName("");
       setSymbol("");
@@ -275,18 +272,18 @@ export function AdminView() {
 
   return (
     <div className="scout-page scout-page--narrow">
-      <PageHeading eyebrow="Restricted console" title="Add a cat runner." body="Submit a Solana mint for the Cat Strategy public board." action={<StatusBadge label="Protected" tone="risk" />} />
+      <PageHeading eyebrow="Restricted console" title="Add a settlement asset." body="Submit a Solana mint to the Casino Strategy public ledger." action={<StatusBadge label="Protected" tone="risk" />} />
       <section className="scout-panel scout-admin-panel">
-        <div className="scout-panel__head"><div><span className="scout-kicker">Cat intake</span><h2>Queue the next cat runner</h2></div><Settings2 size={21} /></div>
+        <div className="scout-panel__head"><div><span className="scout-kicker">Asset intake</span><h2>Queue a settlement asset</h2></div><Settings2 size={21} /></div>
         <form onSubmit={submit}>
           <label>Admin secret<input type="password" value={secret} onChange={(event) => setSecret(event.target.value)} autoComplete="off" required /></label>
-          <label>Solana mint<input value={mint} onChange={(event) => setMint(event.target.value)} placeholder="Cat-token mint" required /></label>
+          <label>Solana mint<input value={mint} onChange={(event) => setMint(event.target.value)} placeholder="Token mint" required /></label>
           <div className="scout-form-grid">
             <label>Name<input value={name} onChange={(event) => setName(event.target.value)} placeholder="Optional" /></label>
             <label>Symbol<input value={symbol} onChange={(event) => setSymbol(event.target.value)} placeholder="Optional" /></label>
           </div>
           <label className="scout-checkbox"><input type="checkbox" checked={activate} onChange={(event) => setActivate(event.target.checked)} /><span>Activate after enrichment</span></label>
-          <button className="scout-button scout-button--primary" type="submit" disabled={busy}>{busy ? "Authenticating" : "Submit cat runner"}<Send size={16} /></button>
+          <button className="scout-button scout-button--primary" type="submit" disabled={busy}>{busy ? "Authenticating" : "Submit asset"}<Send size={16} /></button>
           {message ? <p className="scout-admin-message" role="status">{message}</p> : null}
         </form>
       </section>
@@ -295,44 +292,5 @@ export function AdminView() {
 }
 
 export function TerminalPageView() {
-  const { launchState, signals, stats, state, error, refresh } = useScout();
-  const countdown = useCountdown(stats.nextDropTime);
-  const active = signals.active;
-  const factors = active ? [
-    ["Liquidity", formatMoney(active.liquidity_usd)],
-    ["24h Volume", formatMoney(active.volume_24h_usd)],
-    ["1h Move", formatPercent(Number(active.metrics.change1h ?? Number.NaN))],
-    ["Token Age", active.token_age_seconds === null ? "NOT RECORDED" : `${Math.max(1, Math.round(active.token_age_seconds / 60))}m`]
-  ] : [];
-
-  return (
-    <div className="scout-page">
-      <PageHeading eyebrow="Cat Terminal" title="Track the active cat runner." body="Monitor the active cat-token target, holder weights, and the next distribution." action={<StatusBadge label={launchState === "live" ? "Cat Strategy live" : "Prelaunch"} tone={launchState === "live" ? "live" : "muted"} />} />
-      {launchState === "prelaunch" ? <PrelaunchNotice /> : state === "loading" ? <div className="runner-terminal-state"><i /><strong>CONNECTING</strong><span>CAT STRATEGY DATA</span></div> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : (
-        <div className="scout-desk-layout">
-          <section className="scout-panel scout-desk-primary">
-            <div className="scout-terminal-bar"><span><i /> {active ? "ACTIVE CAT RUNNER" : "CAT STRATEGY ONLINE"}</span><small>{active ? formatClock(active.detected_at) : "NO LIVE RUNNER"}</small></div>
-            {active ? (
-              <>
-                <div className="scout-desk-token"><SignalLogo signal={active} small /><div><span>Active cat runner</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "NOT RECORDED"}{active.scout_score === null ? null : <small>/100</small>}</strong></div>
-                <div className="scout-desk-factors">{factors.map(([label, value]) => <Metric label={label} value={value} key={label} />)}</div>
-                <div className="scout-panel__footer"><span>{shortAddress(active.mint)}</span><a href={`https://dexscreener.com/solana/${active.mint}`} target="_blank" rel="noreferrer">Chart <ExternalLink size={14} /></a></div>
-              </>
-            ) : (
-              <div className="runner-terminal-empty" role="status">
-                <div className="scout-desk-factors">
-                  <Metric label="Active Cat" value={`$${cateCall.symbol}`} />
-                  <Metric label="Status" value="FIRST AIRDROP" />
-                  <Metric label="Minimum" value={`${scoutPublicConfig.minimumHolding.toLocaleString()} CSTR`} />
-                  <Metric label="Multiplier" value="Base until streak builds" />
-                </div>
-              </div>
-            )}
-          </section>
-          <section className="scout-panel scout-countdown-panel"><span className="scout-kicker">Next Cat Drop</span><strong>{countdown.label}</strong><p>{countdown.processing ? "Distribution is processing. Timer resumes at the next confirmed boundary." : "Eligible holders receive the active cat runner weighted by holder state."}</p><i><span style={{ width: `${countdown.progress * 100}%` }} /></i></section>
-          <ActivityFeed />
-        </div>
-      )}
-    </div>
-  );
+  return <CasinoTerminalView />;
 }

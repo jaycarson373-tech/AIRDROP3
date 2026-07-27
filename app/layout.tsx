@@ -32,36 +32,23 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Cat Strategy — Cat Runner Strategy",
-    template: "%s | Cat Strategy"
+    default: "Casino Strategy — On-Chain Casino Arcade",
+    template: "%s | Casino Strategy"
   },
-  description: "Cat Strategy tracks cat-token runner momentum and drops the active cat runner to eligible CSTR holders with onchain receipts.",
-  applicationName: "Cat Strategy",
-  keywords: ["Cat Strategy", "CSTR", "cat tokens", "runner rewards", "holder rewards", "Solana"],
+  description: "Casino Strategy is a monochrome on-chain arcade rotating through ten verifiable games every fifteen minutes.",
+  applicationName: "Casino Strategy",
+  keywords: ["Casino Strategy", "CASINO", "on-chain games", "Pong", "Solana", "verifiable results"],
   openGraph: {
-    title: "Cat Strategy — Cat Runner Strategy",
-    description: "Hold CSTR. Receive the active cat-token runner as Cat Strategy rotates through the cat meta.",
+    title: "Casino Strategy — Every 15 Minutes, A New Game",
+    description: "Ten rotating two-dimensional games with public on-chain settlement receipts.",
     url: siteUrl,
-    siteName: "Cat Strategy",
+    siteName: "Casino Strategy",
     type: "website",
-    images: [
-      {
-        url: "/brand/cat-strategy-banner.jpg",
-        width: 1280,
-        height: 426,
-        alt: "Cat Strategy"
-      }
-    ]
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Cat Strategy — Cat Runner Strategy",
-    description: "A live cat-token runner reward terminal for CSTR holders.",
-    images: ["/brand/cat-strategy-banner.jpg"]
-  },
-  icons: {
-    icon: "/brand/cat-strategy-logo.jpg",
-    apple: "/brand/cat-strategy-logo.jpg"
+    card: "summary",
+    title: "Casino Strategy — Every 15 Minutes, A New Game",
+    description: "A monochrome on-chain casino arcade with verifiable results."
   },
   robots: { index: true, follow: true }
 };

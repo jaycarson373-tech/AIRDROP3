@@ -5,7 +5,7 @@ import { AlertCircle, LoaderCircle, RefreshCw } from "lucide-react";
 export function PrelaunchNotice({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`scout-prelaunch-line${compact ? " scout-prelaunch-line--compact" : ""}`}>
-      FIRST CAT RUNNER SELECTED AT LAUNCH. REAL RECEIPTS ONLY.
+      FIRST CASINO ROUND OPENS AT LAUNCH. VERIFIED RESULTS ONLY.
     </div>
   );
 }

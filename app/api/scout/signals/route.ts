@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       ? [active, ...signals]
       : signals;
     const liveSignals = await enrichScoutSignalsWithLiveMarket(combined).catch((error) => {
-      console.warn("Cat Strategy live market enrichment failed", error);
+      console.warn("Casino Strategy live market enrichment failed", error);
       return combined;
     });
     const liveById = new Map(liveSignals.map((signal) => [signal.id, signal]));
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       events
     });
   } catch (error) {
-    console.error("CAT STRATEGY basket assets GET failed", error);
+    console.error("CASINO STRATEGY settlement assets GET failed", error);
     try {
       await discoverLiveScoutSignals(Number(request.nextUrl.searchParams.get("limit") ?? 40));
       return NextResponse.json({
@@ -57,8 +57,8 @@ export async function GET(request: NextRequest) {
         events: []
       });
     } catch (liveError) {
-      console.error("Cat Strategy live ledger fallback failed", liveError);
-      return NextResponse.json({ error: "CAT STRATEGY ledger is reconnecting" }, { status: 503 });
+      console.error("Casino Strategy live ledger fallback failed", liveError);
+      return NextResponse.json({ error: "CASINO STRATEGY ledger is reconnecting" }, { status: 503 });
     }
   }
 }
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     });
     if (result.activated) {
       await queueSignalDeliveries(result.signal);
-      await processTelegramQueue(20).catch((error) => console.warn("Immediate Cat Strategy delivery failed", error));
+      await processTelegramQueue(20).catch((error) => console.warn("Immediate Casino Strategy delivery failed", error));
     }
     return NextResponse.json(result, { status: 201 });
   } catch (error) {

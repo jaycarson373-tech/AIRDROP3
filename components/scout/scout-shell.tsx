@@ -4,17 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { cateCall } from "../../lib/cat-scanner-public";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
-import { formatToken } from "./format";
-import { useCountdown } from "./hooks";
 import { ScoutProvider, useScout } from "./scout-provider";
 import { PrelaunchNotice } from "./ui";
 
 const primaryNav = [
-  { href: "/terminal", label: "Strategy" },
-  { href: "/runners", label: "Cats" },
-  { href: "/airdrop-history", label: "Receipts" }
+  { href: "/#live-round", label: "Live Round" },
+  { href: "/#games", label: "Games" },
+  { href: "/airdrop-history", label: "Results" }
 ];
 
 const productNav = [
@@ -22,26 +19,34 @@ const productNav = [
 ];
 
 function TopTicker() {
-  const { launchState, stats, signals, state } = useScout();
-  const countdown = useCountdown(stats.nextDropTime);
-  const active = signals.active;
+  const { launchState, stats, state } = useScout();
+  const [remaining, setRemaining] = useState(15 * 60);
+
+  useEffect(() => {
+    const update = () => setRemaining(Math.ceil((15 * 60 * 1000 - (Date.now() % (15 * 60 * 1000))) / 1000));
+    update();
+    const interval = window.setInterval(update, 1000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   if (launchState === "prelaunch") {
     return <PrelaunchNotice compact />;
   }
 
+  const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const seconds = String(remaining % 60).padStart(2, "0");
   const metrics = [
-    ["LIVE", state === "loading" ? "CONNECTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
-    ["FIRST AIRDROP", active ? `$${active.symbol}` : `$${cateCall.symbol}`],
-    ["NEXT DROP", countdown.label],
-    ["ELIGIBLE HOLDERS", stats.latestEligibleHolders.toLocaleString()],
-    ["CAT DROPPED", formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)],
-    ["EPOCH", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "NOT RECORDED"],
-    ["AVG MULTIPLIER", stats.averageMultiplier ? `${(stats.averageMultiplier / 10000).toFixed(2)}x` : "BASE"]
+    ["CASINO", state === "error" ? "OFFLINE" : "ONLINE"],
+    ["ROUND", "LIVE"],
+    ["ROTATION", "10 GAMES"],
+    ["NEXT GAME", `${minutes}:${seconds}`],
+    ["ROUND LENGTH", "15:00"],
+    ["VERIFIED ROUNDS", stats.totalEpochs.toLocaleString()],
+    ["SETTLEMENT", "ON-CHAIN"]
   ];
 
   return (
-    <div className="scout-ticker" aria-label="Cat Strategy live metrics">
+    <div className="scout-ticker" aria-label="Casino Strategy live metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -72,12 +77,10 @@ function Header() {
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/" aria-label="Cat Strategy home">
-          <span className="scout-brand__mark" aria-hidden="true">
-            <img src="/brand/cat-strategy-logo.jpg" alt="" />
-          </span>
+        <Link className="scout-brand" href="/" aria-label="Casino Strategy home">
+          <span className="scout-brand__mark casino-brand-mark" aria-hidden="true"><i /><b>CS</b></span>
           <span>
-            <strong>CAT STRATEGY</strong>
+            <strong>CASINO STRATEGY</strong>
           </span>
         </Link>
 
@@ -102,7 +105,7 @@ function Header() {
               <span className="scout-ca-button__short">{shortAddress(scoutPublicConfig.contractAddress, 4, 5)}</span>
             </button>
           ) : null}
-          {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Cat Strategy on X">X</a> : null}
+          {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Casino Strategy on X">X</a> : null}
           {scoutPublicConfig.buyUrl ? <a className="scout-header-link scout-header-link--buy" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">Buy</a> : null}
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
@@ -117,7 +120,7 @@ function Header() {
           ))}
           {scoutPublicConfig.buyUrl ? (
             <a href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
-              Buy $CSTR <ExternalLink size={15} />
+              Buy $CASINO <ExternalLink size={15} />
             </a>
           ) : null}
         </div>
@@ -130,10 +133,10 @@ function Footer() {
   return (
     <footer className="scout-footer">
       <div className="scout-footer__brand">
-        <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/cat-strategy-logo.jpg" alt="" /></span>
+        <span className="scout-brand__mark casino-brand-mark" aria-hidden="true"><i /><b>CS</b></span>
         <div>
-          <strong>CAT STRATEGY</strong>
-          <p>Verified calls. Verified onchain.</p>
+          <strong>CASINO STRATEGY</strong>
+          <p>Fifteen-minute games. Verified on-chain.</p>
         </div>
       </div>
       <nav aria-label="Product links">
@@ -143,7 +146,7 @@ function Footer() {
         {scoutPublicConfig.xUrl ? <a href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer">X <ExternalLink size={13} /></a> : null}
       </nav>
       <p className="scout-footer__risk">
-        Cat Strategy is an experimental cat-token runner reward protocol. Digital assets are volatile. Selling resets holder multiplier progress back to base weight. Verify every address, eligibility rule, and onchain transaction independently.
+        Casino Strategy is an experimental on-chain game interface. Digital assets are volatile. No result is final until its settlement transaction is confirmed. Verify every address, rule, and on-chain transaction independently.
       </p>
     </footer>
   );
@@ -172,19 +175,11 @@ function ShellContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="scout-app" ref={appRef}>
-      <div className="scout-background" aria-hidden="true">
-        <i /><i /><i />
-        <div className="cat-real-drift">
-          <span className="cat-scene cat-scene--walk">
-            <img src="/brand/cat-walker-pixel-v2.png" alt="" decoding="async" draggable={false} />
-          </span>
-          <span className="cat-scene cat-scene--sit">
-            <img src="/brand/cat-sitting-pixel-v1.png" alt="" decoding="async" draggable={false} />
-          </span>
-          <span className="cat-scene cat-scene--stand">
-            <img src="/brand/cat-standing-pixel-v1.png" alt="" decoding="async" draggable={false} />
-          </span>
-        </div>
+      <div className="scout-background casino-background" aria-hidden="true">
+        <i className="casino-bg-net" />
+        <i className="casino-bg-paddle casino-bg-paddle--left" />
+        <i className="casino-bg-paddle casino-bg-paddle--right" />
+        <i className="casino-bg-ball" />
       </div>
       <TopTicker />
       <Header />

@@ -19,7 +19,7 @@ export async function GET() {
   try {
     return NextResponse.json(await getScoutSettings());
   } catch {
-    return NextResponse.json({ error: "CAT STRATEGY settings connection failed" }, { status: 503 });
+    return NextResponse.json({ error: "CASINO STRATEGY settings connection failed" }, { status: 503 });
   }
 }
 

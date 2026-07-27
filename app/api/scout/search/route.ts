@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
       results
     });
   } catch (error) {
-    console.error("CAT STRATEGY search failed", error);
+    console.error("CASINO STRATEGY search failed", error);
     return NextResponse.json({ error: "Search connection failed", results: [] }, { status: 503 });
   }
 }

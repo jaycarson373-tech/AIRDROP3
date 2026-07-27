@@ -1,5 +1,5 @@
-import { ScoutTerminalView } from "../components/scout/terminal-view";
+import { CasinoTerminalView } from "../components/scout/casino-view";
 
 export default function Page() {
-  return <ScoutTerminalView />;
+  return <CasinoTerminalView />;
 }
