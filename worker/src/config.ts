@@ -107,6 +107,41 @@ const configuredBagworkRewardWallet =
   optionalPublicKeyEnv("BAGWORK_REWARD_WALLET_PUBLIC_KEY") ?? optionalPublicKeyEnv("PFP_REWARD_WALLET_PUBLIC_KEY");
 const configuredBagworkRewardBps = intEnv("BAGWORK_REWARD_BPS", intEnv("PFP_REWARD_BPS", 5000));
 const configuredRewardBuyBps = intEnv("REWARD_BUY_BPS", 5000);
+const casinoModeEnabled = boolEnv("CASINO_MODE_ENABLED", false);
+const casinoPayoutsEnabled = boolEnv("CASINO_PAYOUTS_ENABLED", false);
+const configuredEpochMinutes = Math.max(1, intEnv("EPOCH_MINUTES", casinoModeEnabled ? 15 : 5));
+const casinoRoundMinutes = Math.max(1, intEnv("CASINO_ROUND_MINUTES", 15));
+const casinoRoundPayoutBps = Math.min(10_000, Math.max(0, intEnv("CASINO_ROUND_PAYOUT_BPS", 8_000)));
+const casinoJackpotBps = Math.min(10_000, Math.max(0, intEnv("CASINO_JACKPOT_BPS", 2_000)));
+const casinoTopThreeSplitBps = stringListEnv("CASINO_TOP3_SPLIT_BPS").length
+  ? stringListEnv("CASINO_TOP3_SPLIT_BPS").map((value) => Number(value))
+  : [5_000, 3_000, 2_000];
+const configuredAirdropBatchSize = Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4));
+
+if (casinoModeEnabled && rewardMode !== "sol") {
+  throw new Error("CASINO_MODE_ENABLED requires REWARD_MODE=sol");
+}
+if (casinoModeEnabled && configuredEpochMinutes !== casinoRoundMinutes) {
+  throw new Error(
+    `Casino schedule mismatch: EPOCH_MINUTES=${configuredEpochMinutes} but CASINO_ROUND_MINUTES=${casinoRoundMinutes}`
+  );
+}
+if (casinoRoundPayoutBps + casinoJackpotBps !== 10_000) {
+  throw new Error("CASINO_ROUND_PAYOUT_BPS + CASINO_JACKPOT_BPS must equal 10000");
+}
+if (
+  casinoTopThreeSplitBps.length !== 3 ||
+  casinoTopThreeSplitBps.some((value) => !Number.isInteger(value) || value < 0) ||
+  casinoTopThreeSplitBps.reduce((sum, value) => sum + value, 0) !== 10_000
+) {
+  throw new Error("CASINO_TOP3_SPLIT_BPS must contain three non-negative integers totaling 10000");
+}
+if (casinoPayoutsEnabled && !casinoModeEnabled) {
+  throw new Error("CASINO_PAYOUTS_ENABLED requires CASINO_MODE_ENABLED=true");
+}
+if (casinoModeEnabled && configuredAirdropBatchSize < 3) {
+  throw new Error("Casino settlement requires AIRDROP_BATCH_SIZE>=3 so the top-three payout is atomic");
+}
 
 export const config = {
   heliusRpcUrl: required("HELIUS_RPC_URL"),
@@ -125,8 +160,15 @@ export const config = {
   claimEnabled: boolEnv("CLAIM_ENABLED", false),
   buyEnabled: boolEnv("BUY_ENABLED", false),
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
+  casinoModeEnabled,
+  casinoPayoutsEnabled,
+  casinoRoundMinutes,
+  casinoRoundPayoutBps,
+  casinoJackpotBps,
+  casinoTopThreeSplitBps,
+  casinoJackpotInterval: Math.max(1, intEnv("CASINO_JACKPOT_INTERVAL", 25)),
 
-  epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 5)),
+  epochMinutes: configuredEpochMinutes,
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),
   maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 150)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 4),
@@ -138,7 +180,7 @@ export const config = {
   pfpRewardBps: configuredBagworkRewardWallet ? Math.min(10_000, Math.max(0, configuredBagworkRewardBps)) : 0,
   minSolReserve: Math.max(0.3, numberEnv("MIN_SOL_RESERVE", 0.3)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
-  airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
+  airdropBatchSize: configuredAirdropBatchSize,
   airdropRewardBps: Math.min(10_000, Math.max(1, intEnv("AIRDROP_REWARD_BPS", 10000))),
   swapSlippageBps: Math.max(1, intEnv("SWAP_SLIPPAGE_BPS", 300)),
   priorityFeeSol: numberEnv("PRIORITY_FEE_SOL", 0.000001),

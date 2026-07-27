@@ -55,6 +55,12 @@ const emptyStats: ScoutStats = {
   averageMultiplier: null,
   nextDropTime: null,
   totalSolValueAirdropped: 0,
+  casinoRoundCount: 0,
+  casinoTotalDistributedSol: 0,
+  casinoJackpotSol: 0,
+  casinoTotalFeesSol: 0,
+  casinoLatestRound: null,
+  casinoWinners: [],
   roundHistory: [],
   recentRewards: []
 };

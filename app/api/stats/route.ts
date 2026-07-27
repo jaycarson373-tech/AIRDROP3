@@ -50,6 +50,35 @@ type HolderStateRow = {
   ineligible_reason: string | null;
 };
 
+type CasinoRoundRow = {
+  round_id: string;
+  round_sequence: string | number;
+  game: string;
+  claimed_lamports: string | number;
+  round_pool_lamports: string | number;
+  jackpot_contribution_lamports: string | number;
+  jackpot_payout_lamports: string | number;
+  jackpot_closing_lamports: string | number;
+  is_jackpot_round: boolean;
+  settled_at: string | null;
+  settlement_tx_sig: string | null;
+  randomness_provider: string | null;
+  randomness_account: string | null;
+  randomness_commit_tx_sig: string | null;
+  randomness_reveal_tx_sig: string | null;
+};
+
+type CasinoWinnerRow = {
+  round_id: string;
+  position: number;
+  wallet: string;
+  round_payout_lamports: string | number;
+  jackpot_payout_lamports: string | number;
+  total_payout_lamports: string | number;
+  tx_sig: string | null;
+  updated_at: string | null;
+};
+
 type EpochPayoutSummary = {
   rewardAmount: number;
   normalRewardAmount: number;
@@ -134,6 +163,85 @@ async function getSettledPayouts(config: SupabaseConfig) {
 
   return rows;
 }
+
+async function getSettledCasinoData(config: SupabaseConfig) {
+  try {
+    const rounds = await getSupabaseJson<CasinoRoundRow[]>(
+      config,
+      "casino_rounds?select=round_id,round_sequence,game,claimed_lamports,round_pool_lamports,jackpot_contribution_lamports,jackpot_payout_lamports,jackpot_closing_lamports,is_jackpot_round,settled_at,settlement_tx_sig,randomness_provider,randomness_account,randomness_commit_tx_sig,randomness_reveal_tx_sig&status=eq.settled&order=round_sequence.desc&limit=1000"
+    );
+    const winners = await getSupabaseJson<CasinoWinnerRow[]>(
+      config,
+      "casino_winners?select=round_id,position,wallet,round_payout_lamports,jackpot_payout_lamports,total_payout_lamports,tx_sig,updated_at&status=eq.settled&order=updated_at.desc&limit=3000"
+    );
+    return { rounds, winners };
+  } catch (error) {
+    console.warn("stats route could not load casino settlement tables", error);
+    return { rounds: [] as CasinoRoundRow[], winners: [] as CasinoWinnerRow[] };
+  }
+}
+
+function casinoStats(rounds: CasinoRoundRow[], winners: CasinoWinnerRow[]) {
+  const roundById = new Map(rounds.map((round) => [round.round_id, round]));
+  const verifiedWinners = winners
+    .filter((winner) => {
+      const round = roundById.get(winner.round_id);
+      return Boolean(
+        round &&
+          round.randomness_provider === "switchboard" &&
+          round.randomness_account &&
+          round.randomness_commit_tx_sig &&
+          round.randomness_reveal_tx_sig &&
+          winner.tx_sig
+      );
+    })
+    .map((winner) => {
+      const round = roundById.get(winner.round_id)!;
+      return {
+        roundId: winner.round_id,
+        roundNumber: toNumber(round.round_sequence),
+        game: round.game,
+        position: winner.position,
+        wallet: winner.wallet,
+        roundPayoutSol: toNumber(winner.round_payout_lamports) / LAMPORTS_PER_SOL,
+        jackpotPayoutSol: toNumber(winner.jackpot_payout_lamports) / LAMPORTS_PER_SOL,
+        payoutSol: toNumber(winner.total_payout_lamports) / LAMPORTS_PER_SOL,
+        txSig: winner.tx_sig!,
+        settledAt: winner.updated_at ?? round.settled_at ?? new Date(0).toISOString()
+      };
+    });
+  const latest = rounds[0] ?? null;
+
+  return {
+    casinoRoundCount: rounds.length,
+    casinoTotalDistributedSol: verifiedWinners.reduce((sum, winner) => sum + winner.payoutSol, 0),
+    casinoJackpotSol: latest ? toNumber(latest.jackpot_closing_lamports) / LAMPORTS_PER_SOL : 0,
+    casinoTotalFeesSol: rounds.reduce(
+      (sum, round) => sum + toNumber(round.claimed_lamports) / LAMPORTS_PER_SOL,
+      0
+    ),
+    casinoLatestRound: latest
+      ? {
+          roundId: latest.round_id,
+          roundNumber: toNumber(latest.round_sequence),
+          game: latest.game,
+          claimedSol: toNumber(latest.claimed_lamports) / LAMPORTS_PER_SOL,
+          roundPoolSol: toNumber(latest.round_pool_lamports) / LAMPORTS_PER_SOL,
+          jackpotContributionSol: toNumber(latest.jackpot_contribution_lamports) / LAMPORTS_PER_SOL,
+          jackpotPayoutSol: toNumber(latest.jackpot_payout_lamports) / LAMPORTS_PER_SOL,
+          isJackpotRound: latest.is_jackpot_round,
+          settledAt: latest.settled_at,
+          txSig: latest.settlement_tx_sig,
+          randomnessAccount: latest.randomness_account,
+          randomnessCommitTxSig: latest.randomness_commit_tx_sig,
+          randomnessRevealTxSig: latest.randomness_reveal_tx_sig
+        }
+      : null,
+    casinoWinners: verifiedWinners
+  };
+}
+
+const emptyCasinoStats = casinoStats([], []);
 
 async function getBuysForEpochs(config: SupabaseConfig, epochIds: string[]) {
   const uniqueEpochIds = [...new Set(epochIds)].filter(Boolean);
@@ -434,6 +542,7 @@ export async function GET() {
       averageMultiplier: null,
       nextDropTime: nextDropTime(),
       totalSolValueAirdropped: 0,
+      ...emptyCasinoStats,
       totalPfpRewardSol: 0,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       epochHistory: [],
@@ -443,6 +552,8 @@ export async function GET() {
   }
 
   try {
+    const casinoData = await getSettledCasinoData(config);
+    const liveCasinoStats = casinoStats(casinoData.rounds, casinoData.winners);
     const rows = await getSupabaseJson<EpochRow[]>(
       config,
       "epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,started_at,completed_at&order=started_at.desc&limit=50"
@@ -562,6 +673,7 @@ export async function GET() {
       latestEligibleHolders,
       nextDropTime: nextDropTime(),
       totalSolValueAirdropped,
+      ...liveCasinoStats,
       totalPfpRewardSol,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       averageMultiplier,
@@ -581,6 +693,7 @@ export async function GET() {
       averageMultiplier: null,
       nextDropTime: nextDropTime(),
       totalSolValueAirdropped: 0,
+      ...emptyCasinoStats,
       totalPfpRewardSol: 0,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       epochHistory: [],

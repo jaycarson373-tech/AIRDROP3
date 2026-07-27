@@ -15,6 +15,16 @@ if (config.rewardMode === "token") {
   );
 }
 console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
+if (config.casinoModeEnabled) {
+  console.log(
+    `Casino settlement: ${config.casinoRoundPayoutBps / 100}% top-three pool (${config.casinoTopThreeSplitBps.join(
+      "/"
+    )} bps), ${config.casinoJackpotBps / 100}% jackpot, jackpot every ${config.casinoJackpotInterval} rounds.`
+  );
+  console.log(
+    `Casino payout gate: ${config.casinoPayoutsEnabled && config.airdropEnabled ? "LIVE" : "DRY-RUN"}; verified Switchboard proof required.`
+  );
+}
 console.log(`Scout dynamic selection: ${config.scoutDynamicSelectionEnabled ? "enabled" : "disabled"}`);
 console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ source tokens; wallets above ${config.maxHolderPct}% are excluded.`);
 console.log(`Scout distribution allocation: ${config.rewardBuyBps} bps of usable creator fees is available for the active signal token after reserves.`);

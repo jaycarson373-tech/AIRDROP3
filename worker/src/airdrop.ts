@@ -26,6 +26,7 @@ export type Allocation = {
 
 export type AirdropResult = {
   signatures: string[];
+  receipts: Array<{ wallet: string; txSig: string }>;
   settledCount: number;
   settledRaw: bigint;
   settledUi: number;
@@ -219,8 +220,12 @@ export async function estimatePayoutReserveLamports(wallets: string[]) {
   return totalLamports;
 }
 
-export async function airdropRewards(epochId: string, allocations: Allocation[]): Promise<AirdropResult> {
-  if (config.rewardMode === "sol") return airdropSolRewards(epochId, allocations);
+export async function airdropRewards(
+  epochId: string,
+  allocations: Allocation[],
+  sendEnabled = config.airdropEnabled
+): Promise<AirdropResult> {
+  if (config.rewardMode === "sol") return airdropSolRewards(epochId, allocations, sendEnabled);
 
   const treasury = treasuryKeypair();
   const tokenProgram = await tokenProgramForMint();
@@ -233,11 +238,11 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
 
   console.log(`[${epochId}] proof before send: ${allocations.length} payouts`);
   for (const allocation of allocations) {
-    const sendMode = config.airdropEnabled ? "queued live send" : "[DRY-RUN] would send";
+    const sendMode = sendEnabled ? "queued live send" : "[DRY-RUN] would send";
     console.log(`[${epochId}] ${sendMode} ${allocation.amount.toString()} raw reward tokens to ${allocation.wallet}`);
   }
 
-  if (!config.airdropEnabled) {
+  if (!sendEnabled) {
     for (const allocation of allocations) {
       await dryRunPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString(), {
         normalRewardAmountRaw: allocation.normalAmount.toString(),
@@ -246,6 +251,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     }
     return {
       signatures: [],
+      receipts: [],
       settledCount: 0,
       settledRaw: 0n,
       settledUi: 0,
@@ -263,6 +269,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
   });
 
   const signatures: string[] = [];
+  const receipts: Array<{ wallet: string; txSig: string }> = [];
   for (const allocation of prepared) {
     await planPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString(), {
       normalRewardAmountRaw: allocation.normalAmount.toString(),
@@ -337,6 +344,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
         settledRaw += allocation.amount;
         settledUi += allocation.uiAmount;
         settledCount += 1;
+        receipts.push({ wallet: allocation.wallet, txSig });
         console.log(`[${epochId}] settled ${allocation.wallet}: ${txSig}`);
       }
       signatures.push(txSig);
@@ -350,6 +358,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
 
   return {
     signatures,
+    receipts,
     settledCount,
     settledRaw,
     settledUi,
@@ -357,7 +366,11 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
   };
 }
 
-async function airdropSolRewards(epochId: string, allocations: Allocation[]): Promise<AirdropResult> {
+async function airdropSolRewards(
+  epochId: string,
+  allocations: Allocation[],
+  sendEnabled: boolean
+): Promise<AirdropResult> {
   const treasury = treasuryKeypair();
   let settledRaw = 0n;
   let settledUi = 0;
@@ -366,11 +379,11 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
 
   console.log(`[${epochId}] proof before SOL send: ${allocations.length} payouts`);
   for (const allocation of allocations) {
-    const sendMode = config.airdropEnabled ? "queued live SOL send" : "[DRY-RUN] would send";
+    const sendMode = sendEnabled ? "queued live SOL send" : "[DRY-RUN] would send";
     console.log(`[${epochId}] ${sendMode} ${allocation.amount.toString()} lamports to ${allocation.wallet}`);
   }
 
-  if (!config.airdropEnabled) {
+  if (!sendEnabled) {
     for (const allocation of allocations) {
       await dryRunPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString(), {
         normalRewardAmountRaw: allocation.normalAmount.toString(),
@@ -379,6 +392,7 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
     }
     return {
       signatures: [],
+      receipts: [],
       settledCount: 0,
       settledRaw: 0n,
       settledUi: 0,
@@ -392,6 +406,7 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
   }));
 
   const signatures: string[] = [];
+  const receipts: Array<{ wallet: string; txSig: string }> = [];
   for (const allocation of prepared) {
     await planPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString(), {
       normalRewardAmountRaw: allocation.normalAmount.toString(),
@@ -449,6 +464,7 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
         settledRaw += allocation.amount;
         settledUi += allocation.uiAmount;
         settledCount += 1;
+        receipts.push({ wallet: allocation.wallet, txSig });
         console.log(`[${epochId}] settled SOL ${allocation.wallet}: ${txSig}`);
       }
       signatures.push(txSig);
@@ -462,6 +478,7 @@ async function airdropSolRewards(epochId: string, allocations: Allocation[]): Pr
 
   return {
     signatures,
+    receipts,
     settledCount,
     settledRaw,
     settledUi,

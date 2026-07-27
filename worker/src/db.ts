@@ -14,6 +14,33 @@ export type PayoutMetadata = {
   rewardAsset?: string;
 };
 
+export type CasinoRoundRow = {
+  round_id: string;
+  round_sequence: number | string;
+  epoch_id: string;
+  game: string;
+  status: "awaiting_randomness" | "ready" | "settling" | "settled" | "skipped" | "failed";
+  eligible_count: number;
+  snapshot_hash: string;
+  claimed_lamports: string | number;
+  round_pool_lamports: string | number;
+  jackpot_opening_lamports: string | number;
+  jackpot_contribution_lamports: string | number;
+  jackpot_payout_lamports: string | number;
+  jackpot_closing_lamports: string | number;
+  is_jackpot_round: boolean;
+  randomness_provider: string | null;
+  randomness_account: string | null;
+  randomness_commit_slot: number | string | null;
+  randomness_hex: string | null;
+  randomness_commit_tx_sig: string | null;
+  randomness_reveal_tx_sig: string | null;
+  randomness_verified_at: string | null;
+  settlement_tx_sig: string | null;
+  settlement_transaction_base64: string | null;
+  settlement_last_valid_block_height: number | string | null;
+};
+
 function assertNoError<T>(result: { data: T; error: unknown }, label: string): T {
   if (result.error) throw new Error(`${label}: ${JSON.stringify(result.error)}`);
   return result.data;
@@ -260,4 +287,225 @@ export async function failPayout(epochId: string, wallet: string, error: unknown
     .eq("epoch_id", epochId)
     .eq("wallet", wallet);
   assertNoError(result, "fail payout");
+}
+
+export async function createCasinoRound(
+  epochId: string,
+  snapshotHash: string,
+  eligibleCount: number,
+  claimedLamports: string
+): Promise<CasinoRoundRow> {
+  const existing = await supabase.from("casino_rounds").select("*").eq("epoch_id", epochId).maybeSingle();
+  const existingRow = assertNoError(existing, "get casino round");
+  if (existingRow) {
+    if (existingRow.snapshot_hash !== snapshotHash) {
+      throw new Error(`Casino snapshot commitment mismatch for ${epochId}`);
+    }
+    return existingRow as CasinoRoundRow;
+  }
+
+  const roundId = `CS-${epochId}`;
+  const result = await supabase
+    .from("casino_rounds")
+    .insert({
+      round_id: roundId,
+      epoch_id: epochId,
+      game: "PENDING",
+      status: "awaiting_randomness",
+      eligible_count: eligibleCount,
+      snapshot_hash: snapshotHash,
+      claimed_lamports: claimedLamports
+    })
+    .select()
+    .single();
+  return assertNoError(result, "create casino round") as CasinoRoundRow;
+}
+
+export async function setCasinoRoundGame(roundId: string, game: string): Promise<CasinoRoundRow> {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({ game })
+    .eq("round_id", roundId)
+    .select()
+    .single();
+  return assertNoError(result, "set casino round game") as CasinoRoundRow;
+}
+
+export async function setCasinoRoundClaim(roundId: string, claimedLamports: bigint) {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({ claimed_lamports: claimedLamports.toString() })
+    .eq("round_id", roundId);
+  assertNoError(result, "set casino round claim");
+}
+
+export async function casinoJackpotOpening(roundSequence: number) {
+  const result = await supabase
+    .from("casino_rounds")
+    .select("round_sequence,status,jackpot_closing_lamports")
+    .lt("round_sequence", roundSequence)
+    .order("round_sequence", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const previous = assertNoError(result, "get casino jackpot opening") as
+    | { status: string; jackpot_closing_lamports: string | number }
+    | null;
+  if (!previous) return 0n;
+  if (previous.status !== "settled" && previous.status !== "skipped") {
+    throw new Error("Casino rounds must settle in sequence before the jackpot can advance");
+  }
+  return BigInt(previous.jackpot_closing_lamports ?? 0);
+}
+
+export async function pendingCasinoRounds() {
+  const result = await supabase
+    .from("casino_rounds")
+    .select("*")
+    .in("status", ["awaiting_randomness", "ready", "settling"])
+    .order("round_sequence", { ascending: true });
+  return assertNoError(result, "get pending casino rounds") as CasinoRoundRow[];
+}
+
+export async function casinoSnapshot(epochId: string) {
+  const result = await supabase
+    .from("snapshots")
+    .select("wallet,source_balance,source_balance_raw,holder_pct")
+    .eq("epoch_id", epochId)
+    .order("wallet", { ascending: true });
+  return assertNoError(result, "get casino snapshot") as Array<{
+    wallet: string;
+    source_balance: string | number;
+    source_balance_raw: string;
+    holder_pct: string | number;
+  }>;
+}
+
+export async function markCasinoRoundReady(
+  roundId: string,
+  fields: {
+    roundPoolLamports: bigint;
+    jackpotOpeningLamports: bigint;
+    jackpotContributionLamports: bigint;
+    jackpotPayoutLamports: bigint;
+    jackpotClosingLamports: bigint;
+    isJackpotRound: boolean;
+  }
+) {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({
+      status: "ready",
+      round_pool_lamports: fields.roundPoolLamports.toString(),
+      jackpot_opening_lamports: fields.jackpotOpeningLamports.toString(),
+      jackpot_contribution_lamports: fields.jackpotContributionLamports.toString(),
+      jackpot_payout_lamports: fields.jackpotPayoutLamports.toString(),
+      jackpot_closing_lamports: fields.jackpotClosingLamports.toString(),
+      is_jackpot_round: fields.isJackpotRound,
+      error: null
+    })
+    .eq("round_id", roundId);
+  assertNoError(result, "mark casino round ready");
+}
+
+export async function markCasinoRoundSettling(roundId: string) {
+  const result = await supabase.from("casino_rounds").update({ status: "settling" }).eq("round_id", roundId);
+  assertNoError(result, "mark casino round settling");
+}
+
+export async function markCasinoRoundBroadcast(
+  roundId: string,
+  fields: {
+    txSig: string;
+    transactionBase64: string;
+    lastValidBlockHeight: number;
+  }
+) {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({
+      status: "settling",
+      settlement_tx_sig: fields.txSig,
+      settlement_transaction_base64: fields.transactionBase64,
+      settlement_last_valid_block_height: fields.lastValidBlockHeight,
+      error: null
+    })
+    .eq("round_id", roundId);
+  assertNoError(result, "record casino settlement broadcast");
+}
+
+export async function recordCasinoWinner(
+  roundId: string,
+  winner: {
+    position: number;
+    wallet: string;
+    selectionScore: string;
+    roundPayoutLamports: bigint;
+    jackpotPayoutLamports: bigint;
+    totalPayoutLamports: bigint;
+    status: "planned" | "settled" | "failed" | "dry_run";
+    txSig?: string | null;
+    error?: string | null;
+  }
+) {
+  const result = await supabase.from("casino_winners").upsert(
+    {
+      round_id: roundId,
+      position: winner.position,
+      wallet: winner.wallet,
+      selection_score: winner.selectionScore,
+      round_payout_lamports: winner.roundPayoutLamports.toString(),
+      jackpot_payout_lamports: winner.jackpotPayoutLamports.toString(),
+      total_payout_lamports: winner.totalPayoutLamports.toString(),
+      status: winner.status,
+      tx_sig: winner.txSig ?? null,
+      error: winner.error ?? null,
+      updated_at: new Date().toISOString()
+    },
+    { onConflict: "round_id,position" }
+  );
+  assertNoError(result, "record casino winner");
+}
+
+export async function settleCasinoRound(roundId: string, txSig: string) {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({
+      status: "settled",
+      settlement_tx_sig: txSig,
+      settled_at: new Date().toISOString(),
+      error: null
+    })
+    .eq("round_id", roundId);
+  assertNoError(result, "settle casino round");
+}
+
+export async function skipCasinoRound(
+  roundId: string,
+  jackpotOpeningLamports: bigint,
+  jackpotContributionLamports: bigint,
+  reason: string
+) {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({
+      status: "skipped",
+      jackpot_opening_lamports: jackpotOpeningLamports.toString(),
+      jackpot_contribution_lamports: jackpotContributionLamports.toString(),
+      jackpot_closing_lamports: (jackpotOpeningLamports + jackpotContributionLamports).toString(),
+      settled_at: new Date().toISOString(),
+      error: reason
+    })
+    .eq("round_id", roundId);
+  assertNoError(result, "skip casino round");
+}
+
+export async function failCasinoRound(roundId: string, error: unknown) {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({
+      status: "failed",
+      error: error instanceof Error ? error.message : String(error)
+    })
+    .eq("round_id", roundId);
+  assertNoError(result, "fail casino round");
 }

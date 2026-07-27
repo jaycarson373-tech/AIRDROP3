@@ -57,6 +57,37 @@ export type ScoutStats = {
   averageMultiplier: number | null;
   nextDropTime: string | null;
   totalSolValueAirdropped: number;
+  casinoRoundCount: number;
+  casinoTotalDistributedSol: number;
+  casinoJackpotSol: number;
+  casinoTotalFeesSol: number;
+  casinoLatestRound: {
+    roundId: string;
+    roundNumber: number;
+    game: string;
+    claimedSol: number;
+    roundPoolSol: number;
+    jackpotContributionSol: number;
+    jackpotPayoutSol: number;
+    isJackpotRound: boolean;
+    settledAt: string | null;
+    txSig: string | null;
+    randomnessAccount: string | null;
+    randomnessCommitTxSig: string | null;
+    randomnessRevealTxSig: string | null;
+  } | null;
+  casinoWinners: Array<{
+    roundId: string;
+    roundNumber: number;
+    game: string;
+    position: number;
+    wallet: string;
+    roundPayoutSol: number;
+    jackpotPayoutSol: number;
+    payoutSol: number;
+    txSig: string;
+    settledAt: string;
+  }>;
   roundHistory: Array<{
     epoch: number;
     status: string;

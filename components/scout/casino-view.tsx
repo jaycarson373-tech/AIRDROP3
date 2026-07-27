@@ -138,10 +138,10 @@ function GameVisual({ game }: { game: (typeof games)[number]["name"] }) {
 
 function ResultBoard() {
   const { stats } = useScout();
-  const latestEpoch = stats.recentRewards.reduce((highest, item) => Math.max(highest, item.epoch), 0);
-  const verified = stats.recentRewards
-    .filter((item) => item.epoch === latestEpoch && item.txSig)
-    .sort((a, b) => b.rewardAmount - a.rewardAmount)
+  const latestRound = stats.casinoWinners.reduce((highest, item) => Math.max(highest, item.roundNumber), 0);
+  const verified = stats.casinoWinners
+    .filter((item) => item.roundNumber === latestRound && item.txSig)
+    .sort((a, b) => a.position - b.position)
     .slice(0, 3);
 
   return (
@@ -161,9 +161,9 @@ function ResultBoard() {
               <strong>0{index + 1}</strong>
               <div>
                 <span>{result ? shortWallet(result.wallet) : "NO VERIFIED RESULT"}</span>
-                <small>{result ? `ROUND ${result.epoch}` : "ROUND STILL OPEN"}</small>
+                <small>{result ? `${result.game} / ROUND ${result.roundNumber}` : "ROUND STILL OPEN"}</small>
               </div>
-              <b>{result ? result.rewardAmount.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}</b>
+              <b>{result ? `${result.payoutSol.toLocaleString(undefined, { maximumFractionDigits: 4 })} SOL` : "—"}</b>
               {result?.txSig ? (
                 <a href={`https://solscan.io/tx/${result.txSig}`} target="_blank" rel="noreferrer" aria-label={`View result ${index + 1} on Solscan`}>
                   PROOF <ArrowUpRight size={13} />
@@ -207,8 +207,8 @@ export function CasinoTerminalView() {
           <div className="casino-eyebrow"><span>CASINO STRATEGY</span><i /> ROUND {roundId}</div>
           <h1>EVERY 15 MINUTES.<br /><span>A NEW GAME.</span></h1>
           <p>
-            A monochrome on-chain casino arcade rotating through ten fast, verifiable games.
-            Every result stays pending until settlement is confirmed.
+            Ten autonomous games rotate on a fifteen-minute clock. Eighty percent of each round&apos;s
+            creator fees goes to the verified top three; twenty percent builds the jackpot.
           </p>
           <div className="casino-hero__actions">
             <a className="casino-button casino-button--solid" href="#live-round">ENTER LIVE ROUND <ArrowUpRight size={16} /></a>
@@ -216,9 +216,9 @@ export function CasinoTerminalView() {
           </div>
           <div className="casino-hero__metrics">
             <div><span>NEXT GAME</span><strong>{clockLabel(remaining)}</strong></div>
-            <div><span>VERIFIED ROUNDS</span><strong>{stats.totalEpochs.toLocaleString()}</strong></div>
-            <div><span>DISTRIBUTED VALUE</span><strong>{stats.totalSolValueAirdropped.toFixed(2)} SOL</strong></div>
-            <div><span>FEED</span><strong>{state === "error" ? "OFFLINE" : "ONLINE"}</strong></div>
+            <div><span>VERIFIED ROUNDS</span><strong>{stats.casinoRoundCount.toLocaleString()}</strong></div>
+            <div><span>DISTRIBUTED VALUE</span><strong>{stats.casinoTotalDistributedSol.toFixed(2)} SOL</strong></div>
+            <div><span>JACKPOT</span><strong>{stats.casinoJackpotSol.toFixed(2)} SOL</strong></div>
           </div>
         </div>
 
@@ -235,7 +235,9 @@ export function CasinoTerminalView() {
           <div className="casino-stage__footer">
             <span>{activeGame.rule.toUpperCase()}</span>
             <span>NEXT: {nextGame.name}</span>
-            <span>SETTLEMENT: ON-CHAIN</span>
+            <span>
+              SETTLEMENT: {state === "error" ? "OFFLINE" : stats.casinoLatestRound ? "VERIFIED FEED" : "PROOF REQUIRED"}
+            </span>
           </div>
           <div className="casino-round-progress"><i style={{ width: `${progress * 100}%` }} /></div>
         </div>
@@ -256,7 +258,7 @@ export function CasinoTerminalView() {
           <div><span>GAME</span><strong>{activeGame.name}</strong></div>
           <div><span>PHASE</span><strong>{remaining < 30_000 ? "LOCKING" : "OPEN"}</strong></div>
           <div><span>RESULT</span><strong>NOT SETTLED</strong></div>
-          <div><span>INTEGRITY</span><strong>VERIFY ON-CHAIN</strong></div>
+          <div><span>INTEGRITY</span><strong>SWITCHBOARD PROOF</strong></div>
           <div><span>NEXT ROTATION</span><strong>{clockLabel(remaining)}</strong></div>
         </div>
       </section>
@@ -287,33 +289,33 @@ export function CasinoTerminalView() {
         <div>
           <Clock3 size={18} />
           <span>01</span>
-          <strong>PLAY</strong>
-          <p>The current two-dimensional game remains open until the round clock closes.</p>
+          <strong>80% ROUND POOL</strong>
+          <p>Eighty percent of verified creator fees funds the current round&apos;s top three.</p>
         </div>
         <div>
           <Circle size={18} />
           <span>02</span>
-          <strong>LOCK</strong>
-          <p>Inputs lock at the fifteen-minute boundary. No late result is displayed.</p>
+          <strong>50 / 30 / 20</strong>
+          <p>First, second, and third split the round pool at fifty, thirty, and twenty percent.</p>
         </div>
         <div>
           <ShieldCheck size={18} />
           <span>03</span>
-          <strong>SETTLE</strong>
-          <p>The settlement feed records recipients and transaction proofs.</p>
+          <strong>20% JACKPOT</strong>
+          <p>Twenty percent of every round carries into the independently tracked jackpot.</p>
         </div>
         <div>
           <CheckCircle2 size={18} />
           <span>04</span>
-          <strong>VERIFY</strong>
-          <p>The top three appear only when a real on-chain receipt exists.</p>
+          <strong>EVERY 25TH ROUND</strong>
+          <p>The accumulated jackpot is added to first place after proof and settlement confirm.</p>
         </div>
       </section>
 
       <section className="casino-final">
         <span>CASINO STRATEGY / {scoutPublicConfig.tokenLabel}</span>
         <h2>THE HOUSE RUNS<br />ON A CLOCK.</h2>
-        <p>Ten games. Fifteen-minute rounds. Public settlement receipts.</p>
+        <p>Ten games. Fifteen-minute rounds. 80% to the top three. 20% to the jackpot.</p>
         {scoutPublicConfig.buyUrl ? (
           <a className="casino-button casino-button--solid" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
             BUY {scoutPublicConfig.tokenLabel} <ArrowUpRight size={16} />

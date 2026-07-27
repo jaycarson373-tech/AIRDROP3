@@ -58,6 +58,10 @@ export async function claimFees(epochId: string): Promise<ClaimResult> {
     const balanceBefore = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
     const tx = VersionedTransaction.deserialize(bytes);
     tx.sign([treasury]);
+    const simulation = await connection.simulateTransaction(tx);
+    if (simulation.value.err) {
+      throw new Error(`Creator-fee claim simulation failed: ${JSON.stringify(simulation.value.err)}`);
+    }
     const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
     await connection.confirmTransaction(txSig, "confirmed");
     const balanceAfter = BigInt(await connection.getBalance(treasury.publicKey, "confirmed"));
