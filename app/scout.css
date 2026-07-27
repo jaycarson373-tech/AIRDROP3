@@ -4593,18 +4593,13 @@
   pointer-events: none;
 }
 
-.cat-real-drift span {
-  --cat-walk-width: 280px;
-  --cat-walk-duration: 38s;
+.cat-scene {
   position: absolute;
-  left: 108%;
-  width: var(--cat-walk-width);
-  opacity: 0;
-  animation: cat-real-cross var(--cat-walk-duration) linear infinite;
-  will-change: transform, opacity;
+  opacity: 0.3;
+  will-change: transform;
 }
 
-.cat-real-drift img {
+.cat-scene img {
   display: block;
   width: 100%;
   height: auto;
@@ -4612,21 +4607,42 @@
   mix-blend-mode: screen;
   filter: contrast(1.4);
   transform-origin: 50% 88%;
-  animation: cat-real-gait 1.1s ease-in-out infinite;
-  will-change: transform;
   user-select: none;
 }
 
-.cat-real-drift span:nth-child(1) { top: 7%; --cat-walk-width: 300px; --cat-walk-duration: 47s; animation-delay: -9s; }
-.cat-real-drift span:nth-child(2) { top: 28%; --cat-walk-width: 190px; --cat-walk-duration: 35s; animation-delay: -26s; }
-.cat-real-drift span:nth-child(3) { top: 49%; --cat-walk-width: 250px; --cat-walk-duration: 43s; animation-delay: -17s; }
-.cat-real-drift span:nth-child(4) { top: 70%; --cat-walk-width: 170px; --cat-walk-duration: 32s; animation-delay: -5s; }
-.cat-real-drift span:nth-child(5) { top: 86%; --cat-walk-width: 280px; --cat-walk-duration: 49s; animation-delay: -38s; }
+.cat-scene--walk {
+  top: 34%;
+  left: calc(100% + 280px);
+  width: 260px;
+  animation: cat-walk-across 86s linear infinite;
+  animation-delay: -32s;
+}
 
-.cat-real-drift span:nth-child(2) img,
-.cat-real-drift span:nth-child(5) img { animation-delay: -0.38s; }
+.cat-scene--walk img {
+  animation: cat-walk-gait 1.15s ease-in-out infinite;
+}
 
-.cat-real-drift span:nth-child(3) img { animation-delay: -0.72s; }
+.cat-scene--sit {
+  top: 63%;
+  left: 4%;
+  width: 170px;
+  opacity: 0.26;
+}
+
+.cat-scene--sit img {
+  animation: cat-idle-breathe 6.8s ease-in-out infinite;
+}
+
+.cat-scene--stand {
+  top: 10%;
+  right: 4%;
+  width: 185px;
+  opacity: 0.24;
+}
+
+.cat-scene--stand img {
+  animation: cat-idle-look 8.4s ease-in-out infinite;
+}
 
 .scout-ticker,
 .scout-header,
@@ -5146,8 +5162,20 @@
 
 .cat-countdown strong {
   color: #fff !important;
-  font: 700 24px/1 var(--scout-mono) !important;
+  font: 700 clamp(32px, 4vw, 44px)/1 var(--scout-mono) !important;
   text-shadow: none !important;
+}
+
+.cat-countdown--big strong {
+  font-size: clamp(42px, 6vw, 62px) !important;
+}
+
+.cat-hero__strip .scout-metric:first-child strong {
+  font-size: clamp(18px, 2.2vw, 26px) !important;
+}
+
+.scout-countdown-panel > strong {
+  font-size: clamp(52px, 8vw, 88px) !important;
 }
 
 .cat-countdown i {
@@ -5554,31 +5582,27 @@
   50% { transform: translateX(22%); opacity: 0.48; }
 }
 
-@keyframes cat-real-cross {
-  0% {
-    transform: translate3d(0, 0, 0);
-    opacity: 0;
-  }
-  8% {
-    opacity: 0.34;
-  }
-  50% {
-    opacity: 0.52;
-  }
-  92% {
-    opacity: 0.34;
-  }
-  100% {
-    transform: translate3d(calc(-100vw - 420px), 0, 0);
-    opacity: 0;
-  }
+@keyframes cat-walk-across {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(calc(-100vw - 560px), 0, 0); }
 }
 
-@keyframes cat-real-gait {
+@keyframes cat-walk-gait {
   0%, 100% { transform: translateY(0) rotate(0); }
-  25% { transform: translateY(-1.5px) rotate(-0.2deg); }
-  50% { transform: translateY(-0.5px) rotate(0); }
-  75% { transform: translateY(-1px) rotate(0.18deg); }
+  25% { transform: translateY(-1px) rotate(-0.12deg); }
+  50% { transform: translateY(-0.35px) rotate(0); }
+  75% { transform: translateY(-0.8px) rotate(0.1deg); }
+}
+
+@keyframes cat-idle-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1px) scale(1.006); }
+}
+
+@keyframes cat-idle-look {
+  0%, 72%, 100% { transform: translateY(0) rotate(0); }
+  80% { transform: translateY(-1px) rotate(-0.5deg); }
+  88% { transform: translateY(-1px) rotate(0.4deg); }
 }
 
 @media (max-width: 1050px) {
@@ -5879,12 +5903,19 @@
     font-size: 40px !important;
   }
 
-  .cat-real-drift span:nth-child(even) {
+  .cat-scene--stand {
     display: none;
   }
 
-  .cat-real-drift span {
-    --cat-walk-width: 190px;
+  .cat-scene--walk {
+    top: 39%;
+    width: 190px;
+  }
+
+  .cat-scene--sit {
+    top: 70%;
+    left: 2%;
+    width: 125px;
   }
 }
 
@@ -5892,8 +5923,13 @@
   .scout-background,
   .scout-background::before,
   .scout-ticker__track,
-  .cat-real-drift span,
-  .cat-real-drift img {
+  .cat-scene,
+  .cat-scene img {
     animation: none !important;
+  }
+
+  .cat-scene--walk {
+    left: 52%;
+    transform: translateX(-50%);
   }
 }

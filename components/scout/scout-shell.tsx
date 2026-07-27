@@ -174,16 +174,15 @@ function ShellContent({ children }: { children: React.ReactNode }) {
       <div className="scout-background" aria-hidden="true">
         <i /><i /><i />
         <div className="cat-real-drift">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <span key={index}>
-              <img
-                src="/brand/cat-walker-pixel-v2.png"
-                alt=""
-                decoding="async"
-                draggable={false}
-              />
-            </span>
-          ))}
+          <span className="cat-scene cat-scene--walk">
+            <img src="/brand/cat-walker-pixel-v2.png" alt="" decoding="async" draggable={false} />
+          </span>
+          <span className="cat-scene cat-scene--sit">
+            <img src="/brand/cat-sitting-pixel-v1.png" alt="" decoding="async" draggable={false} />
+          </span>
+          <span className="cat-scene cat-scene--stand">
+            <img src="/brand/cat-standing-pixel-v1.png" alt="" decoding="async" draggable={false} />
+          </span>
         </div>
       </div>
       <TopTicker />
