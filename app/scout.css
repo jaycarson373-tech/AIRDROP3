@@ -7144,6 +7144,7 @@
 }
 
 .casino-games,
+.casino-leaderboard,
 .casino-results {
   padding-top: 72px;
 }
@@ -7227,6 +7228,98 @@
 
 .casino-game-list article.is-active > * {
   color: #050505 !important;
+}
+
+.casino-leaderboard__table {
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.casino-leaderboard__row {
+  display: grid;
+  grid-template-columns: 68px minmax(150px, 0.85fr) 110px minmax(220px, 1.4fr) minmax(140px, 0.65fr);
+  min-height: 48px;
+  align-items: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(3, 3, 3, 0.82);
+}
+
+.casino-leaderboard__row > * {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  align-items: center;
+  padding: 0 14px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.casino-leaderboard__row > *:last-child {
+  border-right: 0;
+}
+
+.casino-leaderboard__row--head {
+  min-height: 34px;
+  background: #0a0a0a;
+}
+
+.casino-leaderboard__row--head span {
+  color: #696965;
+  font-size: 7px;
+  letter-spacing: 0.12em;
+}
+
+.casino-leaderboard__row strong {
+  color: #f1f1eb;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.casino-leaderboard__row span,
+.casino-leaderboard__row b,
+.casino-leaderboard__row code {
+  color: #a0a09b;
+  font-family: inherit;
+  font-size: 8px;
+  font-weight: 400;
+}
+
+.casino-leaderboard__row b {
+  color: #deded8;
+}
+
+.casino-leaderboard__row code {
+  color: #71716d;
+}
+
+.casino-leaderboard__row.is-podium {
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.casino-leaderboard__row.is-podium strong,
+.casino-leaderboard__row.is-podium > span:first-of-type {
+  color: #fff;
+}
+
+.casino-leaderboard__empty {
+  min-height: 112px;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(3, 3, 3, 0.82);
+  color: #62625e;
+  font-size: 8px;
+  letter-spacing: 0.11em;
+}
+
+.casino-leaderboard__note {
+  margin: 9px 0 0;
+  color: #62625e;
+  font-size: 8px;
+  text-align: right;
 }
 
 .casino-podium {
@@ -7737,8 +7830,18 @@
   }
 
   .casino-games,
+  .casino-leaderboard,
   .casino-results {
     padding-top: 50px;
+  }
+
+  .casino-leaderboard__row {
+    grid-template-columns: 50px minmax(110px, 0.9fr) minmax(160px, 1.3fr);
+  }
+
+  .casino-leaderboard__row > *:nth-child(3),
+  .casino-leaderboard__row > *:nth-child(5) {
+    display: none;
   }
 
   .casino-game-list article {

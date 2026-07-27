@@ -335,6 +335,51 @@ function LiveChat() {
   );
 }
 
+function RoundLeaderboard({ live }: { live: CasinoLivePayload }) {
+  return (
+    <section className="casino-leaderboard" id="leaderboard" aria-labelledby="casino-leaderboard-title">
+      <div className="casino-section-heading">
+        <div>
+          <span>VERIFIED ROUND STANDINGS</span>
+          <h2 id="casino-leaderboard-title">LEADERBOARD</h2>
+        </div>
+        <p>
+          {live.round
+            ? `Round ${live.round.roundNumber} · ${live.completedCount.toLocaleString()} of ${live.round.eligibleCount.toLocaleString()} wallets completed`
+            : "Standings appear only after verified holder simulations complete."}
+        </p>
+      </div>
+      <div className="casino-leaderboard__table" role="table" aria-label="Current casino round leaderboard">
+        <div className="casino-leaderboard__row casino-leaderboard__row--head" role="row">
+          <span role="columnheader">RANK</span>
+          <span role="columnheader">WALLET</span>
+          <span role="columnheader">GAME</span>
+          <span role="columnheader">VERIFIED OUTCOME</span>
+          <span role="columnheader">RESULT HASH</span>
+        </div>
+        {live.leaderboard.length ? live.leaderboard.slice(0, 25).map((result, index) => (
+          <div
+            className={`casino-leaderboard__row${index < 3 ? " is-podium" : ""}`}
+            role="row"
+            key={result.resultHash || `${result.wallet}-${result.playIndex}`}
+          >
+            <strong role="cell">{String(index + 1).padStart(2, "0")}</strong>
+            <span role="cell">{shortWallet(result.wallet)}</span>
+            <span role="cell">{live.round?.game ?? "—"}</span>
+            <b role="cell">{result.summary}</b>
+            <code role="cell">{result.resultHash ? `${result.resultHash.slice(0, 8)}…${result.resultHash.slice(-6)}` : "—"}</code>
+          </div>
+        )) : (
+          <div className="casino-leaderboard__empty">NO VERIFIED PLAYS IN THE CURRENT ROUND</div>
+        )}
+      </div>
+      {live.leaderboard.length > 25 ? (
+        <p className="casino-leaderboard__note">Showing the top 25 of {live.leaderboard.length.toLocaleString()} ranked results.</p>
+      ) : null}
+    </section>
+  );
+}
+
 function ResultBoard() {
   const { stats } = useScout();
   const latestRound = stats.casinoWinners.reduce((highest, item) => Math.max(highest, item.roundNumber), 0);
@@ -527,6 +572,8 @@ export function CasinoTerminalView() {
           ))}
         </div>
       </section>
+
+      <RoundLeaderboard live={live} />
 
       <div id="results"><ResultBoard /></div>
 

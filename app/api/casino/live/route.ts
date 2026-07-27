@@ -183,7 +183,7 @@ export async function GET() {
             }
           : null,
         latestPlays: completed.slice(-8).reverse().map(publicResult),
-        leaderboard: [...completed].sort(compareScore).slice(0, 3).map(publicResult)
+        leaderboard: [...completed].sort(compareScore).slice(0, 100).map(publicResult)
       },
       { headers: { "Cache-Control": "no-store, max-age=0" } }
     );

@@ -11,6 +11,7 @@ import { PrelaunchNotice } from "./ui";
 const primaryNav = [
   { href: "/#live-round", label: "Live Round" },
   { href: "/#games", label: "Games" },
+  { href: "/#leaderboard", label: "Leaderboard" },
   { href: "/airdrop-history", label: "Results" }
 ];
 
