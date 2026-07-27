@@ -21,6 +21,7 @@ declare global {
 }
 
 type ScoutContextValue = {
+  launchState: "prelaunch" | "live";
   signals: ScoutSignalsPayload;
   stats: ScoutStats;
   holders: ScoutHoldersPayload;
@@ -79,7 +80,13 @@ function base64(bytes: Uint8Array) {
   return window.btoa(binary);
 }
 
-export function ScoutProvider({ children }: { children: React.ReactNode }) {
+export function ScoutProvider({
+  children,
+  launchState
+}: {
+  children: React.ReactNode;
+  launchState: "prelaunch" | "live";
+}) {
   const [signals, setSignals] = useState(emptySignals);
   const [stats, setStats] = useState(emptyStats);
   const [holders, setHolders] = useState(emptyHolders);
@@ -113,7 +120,7 @@ export function ScoutProvider({ children }: { children: React.ReactNode }) {
       setState((current) =>
         current === "loaded" || current === "empty" || current === "stale" ? "stale" : "error"
       );
-      setError(nextError instanceof Error ? nextError.message : "CAT STRATEGY data is unavailable");
+      setError(nextError instanceof Error ? nextError.message : "CAT STRATEGY data connection failed");
     }
   }, [accessToken]);
 
@@ -181,6 +188,7 @@ export function ScoutProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<ScoutContextValue>(
     () => ({
+      launchState,
       signals,
       stats,
       holders,
@@ -203,6 +211,7 @@ export function ScoutProvider({ children }: { children: React.ReactNode }) {
       clearAccess,
       error,
       holders,
+      launchState,
       lastUpdated,
       lookupWallet,
       refresh,

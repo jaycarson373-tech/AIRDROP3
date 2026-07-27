@@ -5,11 +5,11 @@ import { FormEvent, useState } from "react";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { formatClock, formatMoney, formatPercent, formatTime, formatToken, shortWallet } from "./format";
 import { useCountdown } from "./hooks";
-import { ActivityFeed } from "./terminal-view";
+import { ActivityFeed, CatScanner } from "./terminal-view";
 import { SignalLogo } from "./signal-logo";
 import { useScout } from "./scout-provider";
 import type { ScoutSignal } from "./types";
-import { EmptyState, ErrorState, Metric, Skeleton, StatusBadge } from "./ui";
+import { EmptyState, ErrorState, Metric, PrelaunchNotice, Skeleton, StatusBadge } from "./ui";
 
 function PageHeading({ eyebrow, title, body, action }: { eyebrow: string; title: string; body: string; action?: React.ReactNode }) {
   return (
@@ -52,7 +52,7 @@ function SignalTable({ signals, compact = false }: { signals: ScoutSignal[]; com
           {signals.map((signal) => (
             <tr key={signal.id} className={signal.status === "active" ? "is-active" : ""}>
               <td><div className="scout-table-token"><SignalLogo signal={signal} small /><span><strong>${signal.symbol}</strong><small>{signal.name}</small></span></div></td>
-              <td><strong>{signal.scout_score === null ? "--" : `${signal.scout_score}/100`}</strong></td>
+              <td><strong>{signal.scout_score === null ? "NOT RECORDED" : `${signal.scout_score}/100`}</strong></td>
               <td>{formatMoney(signal.market_cap_usd)}</td>
               <td>{formatMoney(signalMetric(signal, "currentMarketCapUsd"))}</td>
               {compact ? null : <td className={(marketCapPerformance(signal) ?? 0) > 0 ? "is-positive" : (marketCapPerformance(signal) ?? 0) < 0 ? "is-negative" : ""}>{formatPercent(marketCapPerformance(signal))}</td>}
@@ -68,7 +68,7 @@ function SignalTable({ signals, compact = false }: { signals: ScoutSignal[]; com
 }
 
 export function SignalsView() {
-  const { signals, state, error, refresh } = useScout();
+  const { launchState, signals, state, error, refresh } = useScout();
   const [filter, setFilter] = useState<"all" | "active" | "queued" | "archived">("all");
   const rows = filter === "all"
     ? signals.signals
@@ -76,6 +76,7 @@ export function SignalsView() {
   return (
     <div className="scout-page">
       <PageHeading eyebrow="Cat Board" title="Cat runners." body="Track the active cat-token runner and every signal recorded by Cat Strategy." />
+      {launchState === "prelaunch" ? <PrelaunchNotice /> : <>
       <div className="scout-filter-bar">
         <Filter size={16} />
         {(["all", "active", "queued", "archived"] as const).map((value) => (
@@ -87,6 +88,7 @@ export function SignalsView() {
         {state === "loading" ? <Skeleton rows={6} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : <SignalTable signals={rows} />}
       </section>
       <div className="scout-page-note"><ShieldCheck size={17} /><p>Cat Strategy data reflects records currently connected to the protocol. It is informational, not a promise of future performance.</p></div>
+      </>}
     </div>
   );
 }
@@ -160,8 +162,8 @@ export function PerformanceView() {
       <PageHeading eyebrow="History" title="Cat Strategy record." body="Review previous cat runners as they were recorded by the protocol." />
       <div className="scout-overview-grid">
         <Metric label="Records" value={completed.length.toLocaleString()} />
-        <Metric label="Active Now" value={signals.active ? `$${signals.active.symbol}` : "Awaiting"} />
-        <Metric label="Average Score" value={averageScore === null ? "Awaiting data" : averageScore.toFixed(1)} />
+        <Metric label="Active Now" value={signals.active ? `$${signals.active.symbol}` : "NO LIVE RUNNER"} />
+        <Metric label="Average Score" value={averageScore === null ? "NOT RECORDED" : averageScore.toFixed(1)} />
         <Metric label="Public Delay" value={`${signals.publicDelaySeconds}s`} />
       </div>
       <section className="scout-panel scout-panel--table"><SignalTable signals={completed} /></section>
@@ -174,6 +176,7 @@ export function ReceiptsView() {
   return (
     <div className="scout-page">
       <PageHeading eyebrow="Cat Receipts" title="Verify every drop." body="Each settled holder drop links back to its epoch, wallet count, token amount, and transaction proof." />
+      <CatScanner />
       <div className="scout-overview-grid">
         <Metric label="Settled Epochs" value={stats.totalEpochs.toLocaleString()} />
         <Metric label="Cat Dropped" value={formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)} />
@@ -191,12 +194,12 @@ export function ReceiptsView() {
                   <td>#{row.epoch}</td><td>{formatTime(row.startedAt)}</td><td>{row.eligibleCount.toLocaleString()}</td>
                   <td>{formatToken(row.rewardBought, scoutPublicConfig.rewardSymbol)}</td><td>{formatToken(row.distributedPump, scoutPublicConfig.rewardSymbol)}</td>
                   <td>{row.solValueAirdropped.toFixed(4)} SOL</td><td><StatusBadge label={row.status} /></td>
-                  <td>{row.txSig ? <a className="scout-icon-link" href={`https://solscan.io/tx/${row.txSig}`} target="_blank" rel="noreferrer"><ExternalLink size={15} /></a> : "Pending"}</td>
+                  <td>{row.txSig ? <a className="scout-icon-link" href={`https://solscan.io/tx/${row.txSig}`} target="_blank" rel="noreferrer"><ExternalLink size={15} /></a> : "NOT RECORDED"}</td>
                 </tr>
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="Awaiting first settled cat drop" body="Epochs appear here only after holder payouts are recorded as settled." />}
+        ) : <EmptyState title="The first settled cat drop appears after launch" body="Epochs appear here only after holder payouts are recorded as settled." />}
       </section>
       <section className="scout-panel scout-panel--table">
         <div className="scout-panel__head"><div><span className="scout-kicker">Wallet feed</span><h2>Recent cat drops</h2></div><Users size={20} /></div>
@@ -208,7 +211,7 @@ export function ReceiptsView() {
                 <tr key={`${row.wallet}-${row.epoch}-${index}`}>
                   <td>{shortWallet(row.wallet)}</td><td>#{row.epoch}</td><td>{formatToken(row.rewardAmount, scoutPublicConfig.rewardSymbol)}</td>
                   <td>{formatTime(row.time)}</td><td>{row.status}</td>
-                  <td>{row.txSig ? <a className="scout-icon-link" href={`https://solscan.io/tx/${row.txSig}`} target="_blank" rel="noreferrer"><ExternalLink size={15} /></a> : "Pending"}</td>
+                  <td>{row.txSig ? <a className="scout-icon-link" href={`https://solscan.io/tx/${row.txSig}`} target="_blank" rel="noreferrer"><ExternalLink size={15} /></a> : "NOT RECORDED"}</td>
                 </tr>
               ))}</tbody>
             </table>
@@ -291,26 +294,26 @@ export function AdminView() {
 }
 
 export function TerminalPageView() {
-  const { signals, stats, state, error, refresh } = useScout();
+  const { launchState, signals, stats, state, error, refresh } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const active = signals.active;
   const factors = active ? [
     ["Liquidity", formatMoney(active.liquidity_usd)],
     ["24h Volume", formatMoney(active.volume_24h_usd)],
     ["1h Move", formatPercent(Number(active.metrics.change1h ?? Number.NaN))],
-    ["Token Age", active.token_age_seconds === null ? "Unavailable" : `${Math.max(1, Math.round(active.token_age_seconds / 60))}m`]
+    ["Token Age", active.token_age_seconds === null ? "NOT RECORDED" : `${Math.max(1, Math.round(active.token_age_seconds / 60))}m`]
   ] : [];
 
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Cat Terminal" title="Track the active cat runner." body="Monitor the active cat-token target, holder weights, and the next distribution." action={<StatusBadge label="Cat Strategy live" tone="live" />} />
-      {state === "loading" ? <div className="runner-terminal-state"><i /><strong>SYNCING</strong><span>CONNECTING CAT STRATEGY DATA</span></div> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : (
+      <PageHeading eyebrow="Cat Terminal" title="Track the active cat runner." body="Monitor the active cat-token target, holder weights, and the next distribution." action={<StatusBadge label={launchState === "live" ? "Cat Strategy live" : "Prelaunch"} tone={launchState === "live" ? "live" : "muted"} />} />
+      {launchState === "prelaunch" ? <PrelaunchNotice /> : state === "loading" ? <div className="runner-terminal-state"><i /><strong>CONNECTING</strong><span>CAT STRATEGY DATA</span></div> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : (
         <div className="scout-desk-layout">
           <section className="scout-panel scout-desk-primary">
-            <div className="scout-terminal-bar"><span><i /> {active ? "ACTIVE CAT RUNNER" : "CAT STRATEGY ONLINE"}</span><small>{active ? formatClock(active.detected_at) : "AWAITING"}</small></div>
+            <div className="scout-terminal-bar"><span><i /> {active ? "ACTIVE CAT RUNNER" : "CAT STRATEGY ONLINE"}</span><small>{active ? formatClock(active.detected_at) : "NO LIVE RUNNER"}</small></div>
             {active ? (
               <>
-                <div className="scout-desk-token"><SignalLogo signal={active} small /><div><span>Active cat runner</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "--"}{active.scout_score === null ? null : <small>/100</small>}</strong></div>
+                <div className="scout-desk-token"><SignalLogo signal={active} small /><div><span>Active cat runner</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "NOT RECORDED"}{active.scout_score === null ? null : <small>/100</small>}</strong></div>
                 <div className="scout-desk-factors">{factors.map(([label, value]) => <Metric label={label} value={value} key={label} />)}</div>
                 <div className="scout-panel__footer"><span>{shortAddress(active.mint)}</span><a href={`https://dexscreener.com/solana/${active.mint}`} target="_blank" rel="noreferrer">Chart <ExternalLink size={14} /></a></div>
               </>
@@ -318,7 +321,7 @@ export function TerminalPageView() {
               <div className="runner-terminal-empty" role="status">
                 <div className="scout-desk-factors">
                   <Metric label="Active Cat" value="Not assigned" />
-                  <Metric label="Status" value="Awaiting signal" />
+                  <Metric label="Status" value="NO LIVE RUNNER" />
                   <Metric label="Minimum" value={`${scoutPublicConfig.minimumHolding.toLocaleString()} CSTR`} />
                   <Metric label="Multiplier" value="Base until streak builds" />
                 </div>

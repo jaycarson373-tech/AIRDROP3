@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, Cat, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
+import { scoutPublicConfig } from "../../lib/scout-public";
 import { formatToken } from "./format";
 import { useCountdown } from "./hooks";
 import { ScoutProvider, useScout } from "./scout-provider";
+import { PrelaunchNotice } from "./ui";
 
 const primaryNav = [
   { href: "/terminal", label: "Strategy" },
@@ -20,16 +21,21 @@ const productNav = [
 ];
 
 function TopTicker() {
-  const { stats, signals, state } = useScout();
+  const { launchState, stats, signals, state } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const active = signals.active;
+
+  if (launchState === "prelaunch") {
+    return <PrelaunchNotice compact />;
+  }
+
   const metrics = [
-    ["LIVE", state === "loading" ? "STARTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
-    ["ACTIVE CAT", active ? `$${active.symbol}` : "AWAITING"],
+    ["LIVE", state === "loading" ? "CONNECTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
+    ["ACTIVE CAT", active ? `$${active.symbol}` : "NO LIVE RUNNER"],
     ["NEXT DROP", countdown.label],
     ["ELIGIBLE HOLDERS", stats.latestEligibleHolders.toLocaleString()],
     ["CAT DROPPED", formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)],
-    ["EPOCH", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "--"],
+    ["EPOCH", stats.currentEpoch > 0 ? `#${stats.currentEpoch.toLocaleString()}` : "NOT RECORDED"],
     ["AVG MULTIPLIER", stats.averageMultiplier ? `${(stats.averageMultiplier / 10000).toFixed(2)}x` : "BASE"]
   ];
 
@@ -71,7 +77,6 @@ function Header() {
           </span>
           <span>
             <strong>CAT STRATEGY</strong>
-            <small>CSTR · CAT FAMILY PROTOCOL</small>
           </span>
         </Link>
 
@@ -84,16 +89,17 @@ function Header() {
         </nav>
 
         <div className="scout-header__actions">
-          <button
-            className="scout-ca-button"
-            type="button"
-            onClick={copyContract}
-            disabled={!scoutPublicConfig.contractAddress}
-            title={scoutPublicConfig.contractAddress || "Cat Strategy contract pending"}
-          >
-            {copied ? <Check size={15} /> : <Copy size={15} />}
-            <span>{shortAddress(scoutPublicConfig.contractAddress)}</span>
-          </button>
+          {scoutPublicConfig.contractAddress ? (
+            <button
+              className="scout-ca-button"
+              type="button"
+              onClick={copyContract}
+              title="Copy full contract address"
+            >
+              {copied ? <Check size={15} /> : <Copy size={15} />}
+              <span>{scoutPublicConfig.contractAddress}</span>
+            </button>
+          ) : null}
           {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Cat Strategy on X">X</a> : null}
           {scoutPublicConfig.buyUrl ? <a className="scout-header-link scout-header-link--buy" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">Buy</a> : null}
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
@@ -171,6 +177,11 @@ function ShellContent({ children }: { children: React.ReactNode }) {
             <span key={index}><Cat /></span>
           ))}
         </div>
+        <div className="cat-digital-pops">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <pre key={index}>{"/\\_/\\\n( o.o )\n > ^ <"}</pre>
+          ))}
+        </div>
       </div>
       <TopTicker />
       <Header />
@@ -180,9 +191,15 @@ function ShellContent({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function ScoutShell({ children }: { children: React.ReactNode }) {
+export function ScoutShell({
+  children,
+  launchState
+}: {
+  children: React.ReactNode;
+  launchState: "prelaunch" | "live";
+}) {
   return (
-    <ScoutProvider>
+    <ScoutProvider launchState={launchState}>
       <ShellContent>{children}</ShellContent>
     </ScoutProvider>
   );

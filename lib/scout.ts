@@ -178,7 +178,7 @@ export function scoreDexPair(pair: DexPair | null) {
   if (!pair) {
     return {
       score: null,
-      reasons: ["Market data is still loading"],
+      reasons: ["Market data connection in progress"],
       riskFlags: ["No live liquidity data"],
       metrics: {}
     };
@@ -446,7 +446,7 @@ export async function ingestScoutSignal(input: SignalInput) {
   const resolvedName = input.name?.trim() || token?.name?.trim();
   const resolvedSymbol = (input.symbol?.trim() || token?.symbol?.trim())?.replace(/^\$/, "");
   if (!resolvedName || !resolvedSymbol) {
-    throw new Error("Verified token identity is unavailable; signal was not ingested");
+    throw new Error("Verified token identity was not recorded; signal was not ingested");
   }
   const row = {
     mint,
@@ -780,7 +780,7 @@ export function formatSignalTelegram(signal: ScoutSignal, premium: boolean) {
   const marketCap = signal.market_cap_usd ? `$${Math.round(signal.market_cap_usd).toLocaleString()}` : "Calculating";
   const liquidity = signal.liquidity_usd ? `$${Math.round(signal.liquidity_usd).toLocaleString()}` : "Calculating";
   const escape = (value: string) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
-  const reasons = signal.reasons.length ? signal.reasons.map((reason) => `• ${escape(reason)}`).join("\n") : "• Market data is still loading";
+  const reasons = signal.reasons.length ? signal.reasons.map((reason) => `• ${escape(reason)}`).join("\n") : "• Market data connection in progress";
   return [
     `<b>${premium ? "CAT STRATEGY EARLY BASKET ASSET" : "CAT STRATEGY PUBLIC BASKET ASSET"}</b>`,
     `<b>$${escape(signal.symbol)}</b> · ${escape(signal.name)}`,
