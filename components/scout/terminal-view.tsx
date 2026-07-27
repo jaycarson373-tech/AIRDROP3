@@ -52,10 +52,10 @@ function Hero() {
         </div>
         {launchState === "live" ? (
           <div className="cat-hero__strip">
+            <Metric label="Next Airdrop" value={countdown.label} />
+            <Metric label="SOL Value Airdropped" value={`${stats.totalSolValueAirdropped.toFixed(4)} SOL`} />
+            <Metric label="Completed Epochs" value={stats.totalEpochs.toLocaleString()} />
             <Metric label="Active Cat" value={activeName(active)} />
-            <Metric label="Next Drop" value={countdown.label} />
-            <Metric label="Eligible" value={stats.latestEligibleHolders.toLocaleString()} />
-            <Metric label="Epoch" value={stats.currentEpoch > 0 ? `#${stats.currentEpoch}` : "NOT RECORDED"} />
           </div>
         ) : null}
       </div>
