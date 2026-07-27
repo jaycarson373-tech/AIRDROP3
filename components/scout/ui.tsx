@@ -2,6 +2,14 @@
 
 import { AlertCircle, LoaderCircle, RefreshCw } from "lucide-react";
 
+export function PrelaunchNotice({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={`scout-prelaunch-line${compact ? " scout-prelaunch-line--compact" : ""}`}>
+      FIRST CAT RUNNER SELECTED AT LAUNCH. REAL RECEIPTS ONLY.
+    </div>
+  );
+}
+
 export function StatusBadge({
   label,
   tone = "live"
@@ -54,7 +62,7 @@ export function ErrorState({ message, retry }: { message: string; retry?: () => 
 
 export function Skeleton({ rows = 4 }: { rows?: number }) {
   return (
-    <div className="scout-skeleton" aria-label="Loading">
+    <div className="scout-skeleton" aria-label="Connecting">
       <LoaderCircle className="scout-spin" size={18} />
       {Array.from({ length: rows }).map((_, index) => (
         <span key={index} style={{ width: `${92 - index * 9}%` }} />

@@ -50,6 +50,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("CAT STRATEGY search failed", error);
-    return NextResponse.json({ error: "Search is temporarily unavailable", results: [] }, { status: 503 });
+    return NextResponse.json({ error: "Search connection failed", results: [] }, { status: 503 });
   }
 }

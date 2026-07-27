@@ -67,10 +67,12 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const launchState = process.env.LAUNCH_STATE?.trim().toLowerCase() === "live" ? "live" : "prelaunch";
+
   return (
     <html lang="en">
       <body className={`${terminalFont.variable} ${displayFont.variable}`}>
-        <ScoutShell>{children}</ScoutShell>
+        <ScoutShell launchState={launchState}>{children}</ScoutShell>
       </body>
     </html>
   );

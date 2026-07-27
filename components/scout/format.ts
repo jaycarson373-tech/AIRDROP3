@@ -1,5 +1,5 @@
 export function formatMoney(value: number | null | undefined, compact = true) {
-  if (value === null || value === undefined || !Number.isFinite(Number(value))) return "Unavailable";
+  if (value === null || value === undefined || !Number.isFinite(Number(value))) return "NOT RECORDED";
   const amount = Number(value);
   if (amount === 0) return "$0";
   if (amount > 0 && amount < 0.01) {
@@ -13,7 +13,7 @@ export function formatMoney(value: number | null | undefined, compact = true) {
   });
 }
 export function formatToken(value: number | null | undefined, symbol = "") {
-  if (value === null || value === undefined || !Number.isFinite(Number(value))) return "Unavailable";
+  if (value === null || value === undefined || !Number.isFinite(Number(value))) return "NOT RECORDED";
   const formatted = Number(value).toLocaleString(undefined, {
     notation: Math.abs(Number(value)) >= 10_000 ? "compact" : "standard",
     maximumFractionDigits: 2
@@ -22,14 +22,14 @@ export function formatToken(value: number | null | undefined, symbol = "") {
 }
 
 export function formatPercent(value: number | null | undefined) {
-  if (value === null || value === undefined || !Number.isFinite(Number(value))) return "Unavailable";
+  if (value === null || value === undefined || !Number.isFinite(Number(value))) return "NOT RECORDED";
   const number = Number(value);
   return `${number > 0 ? "+" : ""}${number.toFixed(1)}%`;
 }
 
 export function formatTime(value: string | null | undefined) {
   const time = Date.parse(value ?? "");
-  if (!Number.isFinite(time)) return "Unavailable";
+  if (!Number.isFinite(time)) return "NOT RECORDED";
   return new Intl.DateTimeFormat(undefined, {
     month: "short",
     day: "numeric",
@@ -40,7 +40,7 @@ export function formatTime(value: string | null | undefined) {
 
 export function formatClock(value: string | Date | null | undefined) {
   const time = value instanceof Date ? value.getTime() : Date.parse(value ?? "");
-  if (!Number.isFinite(time)) return "--:--:--";
+  if (!Number.isFinite(time)) return "NO TIME";
   return new Intl.DateTimeFormat(undefined, {
     hour: "2-digit",
     minute: "2-digit",
@@ -51,7 +51,7 @@ export function formatClock(value: string | Date | null | undefined) {
 
 export function relativeTime(value: string | null | undefined) {
   const time = Date.parse(value ?? "");
-  if (!Number.isFinite(time)) return "Unavailable";
+  if (!Number.isFinite(time)) return "NOT RECORDED";
   const seconds = Math.round((time - Date.now()) / 1000);
   const formatter = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
   if (Math.abs(seconds) < 60) return formatter.format(seconds, "second");

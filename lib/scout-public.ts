@@ -21,13 +21,10 @@ function cleanPublicUrl(value: string | undefined, configuredMint: string) {
   return trimmed;
 }
 
-function cleanRewardSymbol(value: string | undefined) {
-  const trimmed = value?.trim() ?? "";
-  if (!trimmed) return "CAT";
-  return trimmed;
-}
-
-const configuredCa = cleanPublicCa(process.env.NEXT_PUBLIC_CA || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT);
+const defaultCstrCa = "3h2DwifvFhxhVvR7MesbMo9xb13QTF5ZtTAyqz8Cpump";
+const configuredCa = cleanPublicCa(
+  process.env.NEXT_PUBLIC_CA || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT || defaultCstrCa
+);
 const configuredBuyUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_BUY_URL, configuredCa);
 const configuredDexUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_DEXSCREENER_URL, configuredCa);
 
@@ -35,10 +32,10 @@ export const scoutPublicConfig = {
   name: "Cat Strategy",
   ticker: "CSTR",
   tokenLabel: "$CSTR",
-  rewardSymbol: cleanRewardSymbol(process.env.NEXT_PUBLIC_REWARD_SYMBOL),
+  rewardSymbol: "TOKENS",
   basketLabel: "Active cat runner",
   basketAssets: ["CAT"],
-  contractAddress: configuredCa,
+  contractAddress: configuredCa || null,
   minimumHolding: (() => {
     const parsed = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 1_000_000;
@@ -55,14 +52,14 @@ export const scoutPublicConfig = {
     );
     return Number.isFinite(parsed) && parsed >= 0 ? parsed : 60;
   })(),
-  xUrl: process.env.NEXT_PUBLIC_X_URL?.trim() || "",
+  xUrl: "https://x.com/CSTR_sol",
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
-  buyUrl: configuredBuyUrl || (configuredCa ? `https://pump.fun/coin/${configuredCa}` : ""),
-  dexScreenerUrl: configuredDexUrl || (configuredCa ? `https://dexscreener.com/solana/${configuredCa}` : "")
+  buyUrl: configuredBuyUrl || (configuredCa ? `https://pump.fun/coin/${configuredCa}` : null),
+  dexScreenerUrl: configuredDexUrl || (configuredCa ? `https://dexscreener.com/solana/${configuredCa}` : null)
 } as const;
 
 export function shortAddress(value: string, head = 5, tail = 5) {
-  if (!value) return "CA pending";
+  if (!value) return "No address";
   if (value.length <= head + tail + 3) return value;
   return `${value.slice(0, head)}...${value.slice(-tail)}`;
 }

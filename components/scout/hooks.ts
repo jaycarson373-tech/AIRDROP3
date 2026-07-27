@@ -12,7 +12,7 @@ export function useCountdown(target: string | null | undefined) {
     return () => window.clearInterval(interval);
   }, []);
 
-  if (!Number.isFinite(targetMs)) return { label: "SYNCING", seconds: null, progress: 0, processing: false };
+  if (!Number.isFinite(targetMs)) return { label: "NOT SCHEDULED", seconds: null, progress: 0, processing: false };
   const remainingMs = targetMs - now;
   if (remainingMs <= 0) return { label: "PROCESSING", seconds: 0, progress: 1, processing: true };
   const totalSeconds = Math.ceil(remainingMs / 1000);

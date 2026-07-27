@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { Activity, ArrowRight, Cat, ExternalLink, Radio, Terminal } from "lucide-react";
+import { useEffect, useState } from "react";
+import { cateCall, type CatScannerCall } from "../../lib/cat-scanner-public";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { formatClock, formatMoney, formatTime, formatToken, shortWallet } from "./format";
 import { useCountdown } from "./hooks";
 import { useScout } from "./scout-provider";
 import { SignalLogo } from "./signal-logo";
 import type { ScoutSignal } from "./types";
-import { Metric, StatusBadge } from "./ui";
+import { Metric, PrelaunchNotice, StatusBadge } from "./ui";
 
 function signalMetric(signal: ScoutSignal | null, key: string) {
   const raw = signal?.metrics?.[key];
@@ -18,11 +20,11 @@ function signalMetric(signal: ScoutSignal | null, key: string) {
 }
 
 function activeName(signal: ScoutSignal | null) {
-  return signal ? `$${signal.symbol}` : "Awaiting cat runner";
+  return signal ? `$${signal.symbol}` : "No runner selected";
 }
 
 function Hero() {
-  const { signals, stats, state } = useScout();
+  const { launchState, signals, stats } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const active = signals.active;
 
@@ -35,8 +37,7 @@ function Hero() {
         alt="Cat Strategy"
       />
       <div className="cat-hero__copy">
-        <StatusBadge label={state === "loading" ? "Cat strat starting" : "Cat strat online"} />
-        <p className="scout-kicker">CSTR // CAT FAMILY RUNNER STRATEGY</p>
+        <p className="scout-kicker">CSTR // CAT RUNNER STRATEGY</p>
         <h1>Own the cat runner. Do not chase it.</h1>
         <p className="cat-hero__body">
           Cat Strategy tracks cat-token momentum, buys the active cat runner, and drops it to the eligible $CSTR family on five-minute epochs.
@@ -46,23 +47,23 @@ function Hero() {
             <a className="scout-button scout-button--primary" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
               Buy $CSTR <ArrowRight size={18} />
             </a>
-          ) : (
-            <button className="scout-button scout-button--primary" type="button" disabled>Buy link pending</button>
-          )}
+          ) : null}
           <Link className="scout-button scout-button--secondary" href="/airdrop-history">View Cat Drops</Link>
         </div>
-        <div className="cat-hero__strip">
-          <Metric label="Active Cat" value={activeName(active)} />
-          <Metric label="Next Drop" value={countdown.label} />
-          <Metric label="Eligible" value={stats.latestEligibleHolders.toLocaleString()} />
-          <Metric label="Epoch" value={stats.currentEpoch > 0 ? `#${stats.currentEpoch}` : "--"} />
-        </div>
+        {launchState === "live" ? (
+          <div className="cat-hero__strip">
+            <Metric label="Active Cat" value={activeName(active)} />
+            <Metric label="Next Drop" value={countdown.label} />
+            <Metric label="Eligible" value={stats.latestEligibleHolders.toLocaleString()} />
+            <Metric label="Epoch" value={stats.currentEpoch > 0 ? `#${stats.currentEpoch}` : "NOT RECORDED"} />
+          </div>
+        ) : null}
       </div>
 
-      <div className="cat-live-card">
+      {launchState === "prelaunch" ? <PrelaunchNotice /> : <div className="cat-live-card">
         <div className="cat-live-card__brand">
           <img src="/brand/cat-strategy-logo.jpg" alt="" />
-          <span><strong>CAT STRATEGY</strong><small>LIVE CAT META ENGINE</small></span>
+          <span><strong>CAT STRATEGY</strong><small>CAT META ENGINE</small></span>
         </div>
         <div className="scout-panel__head">
           <div><span className="scout-kicker">Current Strategy</span><h2>{activeName(active)}</h2></div>
@@ -79,12 +80,12 @@ function Hero() {
         ) : (
           <div className="cat-empty-target">
             <Cat size={42} />
-            <strong>Awaiting first cat runner</strong>
+            <strong>The first runner is selected at launch.</strong>
             <span>The active token appears here once the strategy has a live signal.</span>
           </div>
         )}
         <div className="scout-metric-grid scout-metric-grid--two">
-          <Metric label="Price" value={active?.price_usd ? `$${active.price_usd.toPrecision(5)}` : "Pending"} />
+          <Metric label="Price" value={active?.price_usd ? `$${active.price_usd.toPrecision(5)}` : "NOT RECORDED"} />
           <Metric label="Market Cap" value={formatMoney(active?.market_cap_usd)} />
           <Metric label="Liquidity" value={formatMoney(active?.liquidity_usd)} />
           <Metric label="24h Volume" value={formatMoney(active?.volume_24h_usd)} />
@@ -94,13 +95,13 @@ function Hero() {
           <strong>{countdown.label}</strong>
           <i style={{ width: `${Math.round(countdown.progress * 100)}%` }} />
         </div>
-      </div>
+      </div>}
     </section>
   );
 }
 
 function LiveTreasury() {
-  const { signals, stats, state } = useScout();
+  const { launchState, signals, stats, state } = useScout();
   const active = signals.active;
   const countdown = useCountdown(stats.nextDropTime);
 
@@ -112,11 +113,11 @@ function LiveTreasury() {
         <p>The active cat-token runner, holder snapshot, and verified distribution state.</p>
       </div>
 
-      <div className="cat-dashboard">
+      {launchState === "prelaunch" ? <PrelaunchNotice /> : <div className="cat-dashboard">
         <article className="scout-panel cat-dashboard__primary">
           <div className="scout-panel__head">
             <div><span className="scout-kicker">Current Cat Runner</span><h2>{activeName(active)}</h2></div>
-            <StatusBadge label={active ? "Selected by Cat Strategy" : state === "loading" ? "Starting" : "Scanning cats"} tone={active ? "live" : "queued"} />
+            <StatusBadge label={active ? "Selected by Cat Strategy" : state === "loading" ? "Connecting" : "Scanning cats"} tone={active ? "live" : "queued"} />
           </div>
           {active ? (
             <>
@@ -128,13 +129,13 @@ function LiveTreasury() {
                 </div>
               </div>
               <div className="scout-metric-grid scout-metric-grid--four">
-                <Metric label="Token Price" value={active.price_usd ? `$${active.price_usd.toPrecision(5)}` : "Unavailable"} />
+                <Metric label="Token Price" value={active.price_usd ? `$${active.price_usd.toPrecision(5)}` : "NOT RECORDED"} />
                 <Metric label="Market Cap" value={formatMoney(active.market_cap_usd)} />
                 <Metric label="Liquidity" value={formatMoney(active.liquidity_usd)} />
-                <Metric label="Holders" value={active.holder_count?.toLocaleString() ?? "Unavailable"} />
-                <Metric label="Buy Pressure" value={signalMetric(active, "buys1h") ?? "Unavailable"} />
-                <Metric label="Cat Score" value={active.scout_score === null ? "--" : `${active.scout_score}/100`} />
-                <Metric label="Selected" value={active.selected_at ? formatTime(active.selected_at) : "Pending"} />
+                <Metric label="Holders" value={active.holder_count?.toLocaleString() ?? "NOT RECORDED"} />
+                <Metric label="Buy Pressure" value={signalMetric(active, "buys1h") ?? "NOT RECORDED"} />
+                <Metric label="Cat Score" value={active.scout_score === null ? "NOT RECORDED" : `${active.scout_score}/100`} />
+                <Metric label="Selected" value={active.selected_at ? formatTime(active.selected_at) : "NOT RECORDED"} />
                 <Metric label="Public Delay" value={`${scoutPublicConfig.publicDelaySeconds}s`} />
               </div>
               <div className="cat-panel-actions">
@@ -145,7 +146,7 @@ function LiveTreasury() {
           ) : (
             <div className="cat-empty-target cat-empty-target--wide">
               <Terminal size={40} />
-              <strong>Strategy is live. Cat runner pending.</strong>
+              <strong>The first runner is selected at launch.</strong>
               <span>Once a cat-token target is selected, this card shows token, chart, snapshot, and drop state.</span>
             </div>
           )}
@@ -164,6 +165,69 @@ function LiveTreasury() {
             <Metric label="Avg Multiplier" value={stats.averageMultiplier ? `${(stats.averageMultiplier / 10000).toFixed(2)}x` : "1.00x"} />
           </div>
         </aside>
+      </div>}
+    </section>
+  );
+}
+
+function formatScannerTime(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/Toronto",
+    timeZoneName: "short"
+  }).format(new Date(value));
+}
+
+export function CatScanner() {
+  const [calls, setCalls] = useState<CatScannerCall[]>([cateCall]);
+
+  useEffect(() => {
+    let mounted = true;
+    void fetch("/api/cat-scanner", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((payload: { calls?: CatScannerCall[] }) => {
+        if (mounted && payload.calls?.length) setCalls(payload.calls);
+      })
+      .catch(() => undefined);
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  return (
+    <section className="scout-section cat-scanner-section" id="cat-scanner">
+      <div className="scout-section__head">
+        <span className="scout-kicker">CAT Scanner</span>
+        <h2>Every call. Every receipt.</h2>
+        <p>Entry market cap is fixed at call time. Current market cap updates from the verified live pair once its contract is configured. Epoch and distribution totals update from settled receipts.</p>
+      </div>
+      <div className="cat-scanner-table" role="table" aria-label="Cat Strategy call ledger">
+        <div className="cat-scanner-table__head" role="row">
+          <span>Call</span><span>Token</span><span>Called</span><span>Entry MC</span><span>Current MC</span><span>Multiple</span><span>Epochs</span><span>Total Airdropped</span><span>Status</span><span />
+        </div>
+        {calls.map((call, index) => {
+          const multiple = call.calledMarketCapUsd > 0 ? call.currentMarketCapUsd / call.calledMarketCapUsd : null;
+          return (
+            <article className="cat-scanner-row" role="row" key={call.id}>
+              <span className="cat-scanner-call">#{String(index + 1).padStart(2, "0")}</span>
+              <span className="cat-scanner-token">
+                {call.logoUrl ? <img src={call.logoUrl} alt="" referrerPolicy="no-referrer" /> : <i>{call.symbol.slice(0, 2)}</i>}
+                <strong>${call.symbol}<small>{call.name}</small></strong>
+              </span>
+              <time dateTime={call.calledAt}>{formatScannerTime(call.calledAt)}</time>
+              <strong>{formatMoney(call.calledMarketCapUsd)}</strong>
+              <strong className="cat-scanner-current">{formatMoney(call.currentMarketCapUsd)}<small>{call.currentValueSource.toUpperCase()}</small></strong>
+              <strong className="cat-scanner-return">{multiple ? `${multiple.toFixed(1)}x` : "NOT RECORDED"}</strong>
+              <strong>{call.epochCount}</strong>
+              <strong>{formatToken(call.totalAirdropped, "TOKENS")}</strong>
+              <span className="cat-scanner-status">{call.rewardStatus === "next" ? "NEXT REWARD" : "DISTRIBUTED"}</span>
+              <span>{call.chartUrl ? <a href={call.chartUrl} target="_blank" rel="noreferrer" aria-label={`Open ${call.symbol} chart`}><ExternalLink size={15} /></a> : null}</span>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
@@ -227,7 +291,7 @@ function HolderWeight() {
 }
 
 export function ActivityFeed() {
-  const { stats, state, lastUpdated } = useScout();
+  const { launchState, stats, state, lastUpdated } = useScout();
   const countdown = useCountdown(stats.nextDropTime);
   const updatedAt = lastUpdated ?? new Date();
   const walletLines = stats.recentRewards.slice(0, 8).map((reward) => ({
@@ -244,13 +308,18 @@ export function ActivityFeed() {
   const lines = settledLines.length
     ? settledLines
     : state === "loading"
-      ? [{ time: formatClock(updatedAt), status: "CAT TAPE", output: "LOADING SETTLED RECEIPTS" }]
+      ? [{ time: formatClock(updatedAt), status: "CAT TAPE", output: "CONNECTING TO RECEIPTS" }]
       : state === "error" || state === "stale"
         ? [{ time: formatClock(updatedAt), status: "CAT TAPE", output: "RECONNECTING TO SUPABASE" }]
         : [
-            { time: formatClock(updatedAt), status: "CAT TAPE", output: "AWAITING FIRST SETTLED CAT DROP" },
+            { time: formatClock(updatedAt), status: "CAT TAPE", output: "NO SETTLED CAT DROPS YET" },
             { time: formatClock(updatedAt), status: "NEXT DROP", output: countdown.label }
           ];
+
+  if (launchState === "prelaunch") {
+    return <PrelaunchNotice />;
+  }
+
   return (
     <section className="scout-panel scout-panel--feed">
       <div className="scout-panel__head">
@@ -286,13 +355,13 @@ function ReceiptsPreview() {
             <Metric label="Tokens" value={formatToken(epoch.distributedPump, scoutPublicConfig.rewardSymbol)} />
             <Metric label="SOL Value" value={`${epoch.solValueAirdropped.toLocaleString(undefined, { maximumFractionDigits: 3 })} SOL`} />
             <Metric label="Holders" value={epoch.eligibleCount.toLocaleString()} />
-            {epoch.txSig ? <a href={`https://solscan.io/tx/${epoch.txSig}`} target="_blank" rel="noreferrer">Proof <ExternalLink size={14} /></a> : <span>Pending proof</span>}
+            {epoch.txSig ? <a href={`https://solscan.io/tx/${epoch.txSig}`} target="_blank" rel="noreferrer">Proof <ExternalLink size={14} /></a> : <span>NOT RECORDED</span>}
           </article>
         ))}
         {!stats.roundHistory.length ? (
           <div className="scout-panel cat-empty-target cat-empty-target--wide">
             <Radio size={36} />
-            <strong>Awaiting first settled cat epoch.</strong>
+            <strong>The first settled cat epoch appears after launch.</strong>
             <span>Receipts appear here as soon as a distribution is recorded.</span>
           </div>
         ) : null}
@@ -320,6 +389,7 @@ export function ScoutTerminalView() {
     <>
       <Hero />
       <LiveTreasury />
+      <CatScanner />
       <HowItWorks />
       <HolderWeight />
       <ActivityFeed />
