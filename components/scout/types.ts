@@ -152,3 +152,56 @@ export type ScoutWalletPayload = {
 };
 
 export type LoadState = "loading" | "loaded" | "empty" | "stale" | "error";
+
+export type CasinoLiveResult = {
+  wallet: string;
+  playIndex: number;
+  score: string;
+  summary: string;
+  outcome: Record<string, string | number | boolean>;
+  resultHash: string;
+  scheduledAt: string;
+};
+
+export type CasinoLivePayload = {
+  status:
+    | "offline"
+    | "waiting_for_round"
+    | "awaiting_proof"
+    | "playing"
+    | "awaiting_settlement"
+    | "settled"
+    | "failed"
+    | "skipped";
+  round: {
+    roundId: string;
+    roundNumber: number;
+    game: string;
+    eligibleCount: number;
+    startedAt: string;
+    playbackStartedAt: string | null;
+    playbackEndsAt: string | null;
+    resultsHash: string | null;
+    proofVerified: boolean;
+    randomnessAccount: string | null;
+    settlementTxSig: string | null;
+    settledAt: string | null;
+  } | null;
+  completedCount: number;
+  currentPlay: (CasinoLiveResult & { startedAt: string }) | null;
+  latestPlays: CasinoLiveResult[];
+  leaderboard: CasinoLiveResult[];
+};
+
+export type CasinoChatMessage = {
+  id: string;
+  author: string;
+  body: string;
+  createdAt: string;
+};
+
+export type CasinoChatPayload = {
+  enabled: boolean;
+  canPost: boolean;
+  messages: CasinoChatMessage[];
+};

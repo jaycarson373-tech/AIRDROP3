@@ -2,8 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   allocateCasinoFees,
+  casinoResultsHash,
   gameForRound,
+  scheduleCasinoPlayback,
   selectCasinoWinners,
+  simulateCasinoRound,
   snapshotHash,
   type CasinoFeePolicy
 } from "./casino-policy.js";
@@ -53,6 +56,58 @@ test("winner selection is deterministic, unique, and bound to the round", () => 
   assert.deepEqual(first, replay);
   assert.equal(new Set(first.map((winner) => winner.wallet)).size, 3);
   assert.notDeepEqual(first, nextRound);
+});
+
+test("every game deterministically simulates every eligible wallet", () => {
+  const entrants = Array.from({ length: 12 }, (_, index) => ({ wallet: `wallet-${index}` }));
+  const randomness = "4d".repeat(32);
+  for (let sequence = 1; sequence <= 10; sequence += 1) {
+    const game = gameForRound(sequence);
+    const results = simulateCasinoRound(`CS-${sequence}`, game, randomness, entrants);
+    const replay = simulateCasinoRound(`CS-${sequence}`, game, randomness, entrants);
+    assert.deepEqual(results, replay);
+    assert.equal(results.length, entrants.length);
+    assert.deepEqual(
+      results.map((result) => result.playIndex),
+      Array.from({ length: entrants.length }, (_, index) => index + 1)
+    );
+    assert.equal(new Set(results.map((result) => result.wallet)).size, entrants.length);
+    assert.ok(results.every((result) => /^\d+$/.test(result.score) && result.summary.length > 0));
+    assert.equal(casinoResultsHash(results), casinoResultsHash(replay));
+  }
+});
+
+test("crash uses one verified crash point and wallet-specific auto cashouts", () => {
+  const entrants = Array.from({ length: 20 }, (_, index) => ({ wallet: `crash-wallet-${index}` }));
+  const results = simulateCasinoRound("CS-CRASH", "CRASH", "7f".repeat(32), entrants);
+  const crashPoints = new Set(results.map((result) => result.outcome.crashMultiplier));
+  const cashouts = new Set(results.map((result) => result.outcome.cashoutTarget));
+  assert.equal(crashPoints.size, 1);
+  assert.ok(cashouts.size > 1);
+  assert.ok(
+    results.every(
+      (result) =>
+        typeof result.outcome.cashedOut === "boolean" &&
+        Number(result.outcome.crashMultiplier) >= 1 &&
+        Number(result.outcome.cashoutTarget) >= 1.01
+    )
+  );
+});
+
+test("playback schedules every entrant inside the round window", () => {
+  const results = simulateCasinoRound(
+    "CS-SCHEDULE",
+    "HI-LO",
+    "12".repeat(32),
+    Array.from({ length: 150 }, (_, index) => ({ wallet: `wallet-${index}` }))
+  );
+  const start = new Date("2026-01-01T00:00:00.000Z");
+  const end = new Date("2026-01-01T00:15:00.000Z");
+  const scheduled = scheduleCasinoPlayback(results, start, end);
+  assert.equal(scheduled.length, 150);
+  assert.ok(Date.parse(scheduled[0].scheduledAt) > start.getTime());
+  assert.equal(scheduled.at(-1)?.scheduledAt, end.toISOString());
+  assert.ok(scheduled.every((result, index) => index === 0 || result.scheduledAt >= scheduled[index - 1].scheduledAt));
 });
 
 test("snapshot commitment is order-independent", () => {

@@ -9,8 +9,11 @@ import {
 import { airdropRewards, type Allocation } from "./airdrop.js";
 import {
   allocateCasinoFees,
+  casinoResultsHash,
   gameForRound,
+  scheduleCasinoPlayback,
   selectCasinoWinners,
+  simulateCasinoRound,
   snapshotHash,
   type CasinoFeePolicy
 } from "./casino-policy.js";
@@ -23,11 +26,13 @@ import {
   createCasinoRound,
   failCasinoRound,
   failEpoch,
+  getCasinoRoundForEpoch,
   getEpoch,
   markCasinoRoundReady,
   markCasinoRoundBroadcast,
   pendingCasinoRounds,
   planPayout,
+  persistCasinoGameResults,
   persistSnapshot,
   recordCasinoWinner,
   setCasinoRoundClaim,
@@ -264,14 +269,38 @@ async function settleOneCasinoRound(round: CasinoRoundRow) {
 
   const openingJackpot = await casinoJackpotOpening(sequence);
   const fees = allocateCasinoFees(BigInt(round.claimed_lamports), openingJackpot, sequence, casinoPolicy());
-  await markCasinoRoundReady(round.round_id, {
-    roundPoolLamports: fees.roundPoolLamports,
-    jackpotOpeningLamports: openingJackpot,
-    jackpotContributionLamports: fees.jackpotContributionLamports,
-    jackpotPayoutLamports: fees.jackpotPayoutLamports,
-    jackpotClosingLamports: fees.jackpotClosingLamports,
-    isJackpotRound: fees.isJackpotRound
-  });
+  const results = simulateCasinoRound(round.round_id, game, round.randomness_hex!, snapshotRows);
+  const resultsHash = casinoResultsHash(results);
+  if (round.results_hash && round.results_hash !== resultsHash) {
+    throw new Error(`Committed game result verification failed for ${round.round_id}`);
+  }
+  const roundStartedAtMs = Date.parse(round.started_at);
+  const randomnessVerifiedAtMs = Date.parse(round.randomness_verified_at!);
+  if (!Number.isFinite(roundStartedAtMs) || !Number.isFinite(randomnessVerifiedAtMs)) {
+    throw new Error(`Round ${round.round_id} has invalid playback timestamps`);
+  }
+  const hardRoundEndMs = roundStartedAtMs + config.casinoRoundMinutes * 60_000;
+  const playbackStartedAtMs = Math.max(roundStartedAtMs, randomnessVerifiedAtMs);
+  const playbackEndsAtMs = Math.max(playbackStartedAtMs, hardRoundEndMs);
+  const playbackStartedAt = new Date(playbackStartedAtMs);
+  const playbackEndsAt = new Date(playbackEndsAtMs);
+  const scheduledResults = scheduleCasinoPlayback(results, playbackStartedAt, playbackEndsAt);
+  await persistCasinoGameResults(round.round_id, game, scheduledResults);
+  if (!round.results_hash) {
+    await markCasinoRoundReady(round.round_id, {
+      roundPoolLamports: fees.roundPoolLamports,
+      jackpotOpeningLamports: openingJackpot,
+      jackpotContributionLamports: fees.jackpotContributionLamports,
+      jackpotPayoutLamports: fees.jackpotPayoutLamports,
+      jackpotClosingLamports: fees.jackpotClosingLamports,
+      isJackpotRound: fees.isJackpotRound,
+      playbackStartedAt: playbackStartedAt.toISOString(),
+      playbackEndsAt: playbackEndsAt.toISOString(),
+      resultsHash
+    });
+  }
+
+  if (Date.now() < playbackEndsAtMs) return "playing" as const;
 
   const winners = selectCasinoWinners(round.round_id, game, round.randomness_hex!, snapshotRows);
   const allocations = winners.map((winner, index) =>
@@ -337,7 +366,7 @@ export async function settlePendingCasinoRounds() {
   for (const round of pending) {
     try {
       const result = await settleOneCasinoRound(round);
-      if (result === "waiting" || result === "dry_run") break;
+      if (result === "waiting" || result === "playing" || result === "dry_run") break;
     } catch (error) {
       await failCasinoRound(round.round_id, error).catch(() => undefined);
       await failEpoch(round.epoch_id, error).catch(() => undefined);
@@ -363,6 +392,8 @@ async function committedEligibleHolders(epochId: string): Promise<Holder[]> {
 }
 
 export async function openCasinoRound(epochId: string) {
+  const existingRound = await getCasinoRoundForEpoch(epochId);
+  if (existingRound) return;
   const existingEpoch = await getEpoch(epochId);
   if (existingEpoch?.status === "completed" || existingEpoch?.status === "skipped") return;
 

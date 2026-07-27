@@ -1,10 +1,11 @@
 "use client";
 
 import { ArrowUpRight, CheckCircle2, Circle, Clock3, Radio, ShieldCheck } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { scoutPublicConfig } from "../../lib/scout-public";
 import { shortWallet } from "./format";
 import { useScout } from "./scout-provider";
+import type { CasinoChatMessage, CasinoChatPayload, CasinoLivePayload } from "./types";
 
 const ROUND_MS = 15 * 60 * 1000;
 
@@ -21,6 +22,8 @@ const games = [
   { name: "SLOTS", code: "10", rule: "Highest settled line" }
 ] as const;
 
+type CasinoGameName = (typeof games)[number]["name"];
+
 function pad(value: number) {
   return String(value).padStart(2, "0");
 }
@@ -30,7 +33,15 @@ function clockLabel(milliseconds: number) {
   return `${pad(Math.floor(totalSeconds / 60))}:${pad(totalSeconds % 60)}`;
 }
 
-function GameVisual({ game }: { game: (typeof games)[number]["name"] }) {
+function GameVisual({
+  game,
+  currentPlay,
+  now
+}: {
+  game: CasinoGameName;
+  currentPlay: CasinoLivePayload["currentPlay"];
+  now: number;
+}) {
   if (game === "PONG") {
     return (
       <div className="casino-game casino-game--pong" aria-label="Animated Pong game">
@@ -44,13 +55,33 @@ function GameVisual({ game }: { game: (typeof games)[number]["name"] }) {
   }
 
   if (game === "CRASH") {
+    const crashPoint = Number(currentPlay?.outcome.crashMultiplier ?? 1);
+    const cashoutTarget = Number(currentPlay?.outcome.cashoutTarget ?? 1);
+    const startedAt = Date.parse(currentPlay?.startedAt ?? "");
+    const scheduledAt = Date.parse(currentPlay?.scheduledAt ?? "");
+    const playProgress =
+      currentPlay && Number.isFinite(startedAt) && Number.isFinite(scheduledAt) && scheduledAt > startedAt
+        ? Math.min(1, Math.max(0, (now - startedAt) / (scheduledAt - startedAt)))
+        : 0;
+    const liveMultiplier = 1 + Math.max(0, crashPoint - 1) * Math.pow(playProgress, 1.75);
+    const playComplete = Boolean(currentPlay && playProgress >= 1);
     return (
-      <div className="casino-game casino-game--crash" aria-label="Animated crash graph">
+      <div className={`casino-game casino-game--crash${currentPlay ? " is-live" : ""}`} aria-label="Live deterministic crash simulation">
         <svg viewBox="0 0 600 260" role="img">
           <path className="casino-crash-grid" d="M0 52H600M0 104H600M0 156H600M0 208H600M120 0V260M240 0V260M360 0V260M480 0V260" />
-          <path className="casino-crash-line" d="M8 244 C105 235 144 218 214 190 S322 130 380 110 S481 61 592 12" />
+          <path
+            className="casino-crash-line"
+            d="M8 244 C105 235 144 218 214 190 S322 130 380 110 S481 61 592 12"
+            pathLength="100"
+            style={currentPlay ? { strokeDasharray: 100, strokeDashoffset: 100 - playProgress * 100 } : undefined}
+          />
         </svg>
-        <strong>LIVE CURVE</strong>
+        <strong>{currentPlay ? `${liveMultiplier.toFixed(2)}×` : "PROOF REQUIRED"}</strong>
+        {currentPlay ? (
+          <small className="casino-crash-readout">
+            AUTO EXIT {cashoutTarget.toFixed(2)}× / {playComplete ? `CRASHED ${crashPoint.toFixed(2)}×` : "CURVE LIVE"}
+          </small>
+        ) : null}
       </div>
     );
   }
@@ -136,6 +167,174 @@ function GameVisual({ game }: { game: (typeof games)[number]["name"] }) {
   );
 }
 
+function liveStatusLabel(status: CasinoLivePayload["status"]) {
+  switch (status) {
+    case "playing":
+      return "PLAYING VERIFIED QUEUE";
+    case "awaiting_proof":
+      return "AWAITING VERIFIED RANDOMNESS";
+    case "awaiting_settlement":
+      return "QUEUE COMPLETE / SETTLEMENT PENDING";
+    case "settled":
+      return "ROUND SETTLED";
+    case "failed":
+      return "ROUND HALTED";
+    case "skipped":
+      return "ROUND SKIPPED";
+    case "offline":
+      return "LIVE FEED OFFLINE";
+    default:
+      return "WAITING FOR FIRST ROUND";
+  }
+}
+
+function LiveGameFeed({ live }: { live: CasinoLivePayload }) {
+  const total = live.round?.eligibleCount ?? 0;
+  const current = live.currentPlay;
+  return (
+    <section className="casino-live-feed" aria-labelledby="live-game-feed-title">
+      <div className="casino-live-feed__head">
+        <div>
+          <span>VERIFIED GAME STREAM</span>
+          <h2 id="live-game-feed-title">HOLDER SPEED RUN</h2>
+        </div>
+        <strong><i /> {liveStatusLabel(live.status)}</strong>
+      </div>
+      <div className="casino-live-feed__meter">
+        <span>COMPLETED {live.completedCount.toLocaleString()} / {total.toLocaleString()}</span>
+        <i><b style={{ width: total ? `${Math.min(100, (live.completedCount / total) * 100)}%` : "0%" }} /></i>
+      </div>
+      <div className="casino-current-play">
+        <span>{current ? `PLAY ${String(current.playIndex).padStart(3, "0")}` : "CURRENT PLAY"}</span>
+        <strong>{current ? shortWallet(current.wallet) : "NO VERIFIED PLAYER"}</strong>
+        <b>{current ? live.round?.game : "—"}</b>
+        <small>{current ? "SIMULATING..." : "RESULTS APPEAR AFTER VERIFIED PROOF"}</small>
+      </div>
+      <div className="casino-feed-columns">
+        <div>
+          <h3>LIVE LEADERBOARD</h3>
+          {[0, 1, 2].map((index) => {
+            const result = live.leaderboard[index];
+            return (
+              <div className="casino-feed-row" key={index}>
+                <span>0{index + 1}</span>
+                <strong>{result ? shortWallet(result.wallet) : "OPEN"}</strong>
+                <small>{result?.summary ?? "NO VERIFIED RESULT"}</small>
+              </div>
+            );
+          })}
+        </div>
+        <div>
+          <h3>RECENT PLAYS</h3>
+          {live.latestPlays.length ? live.latestPlays.slice(0, 5).map((result) => (
+            <div className="casino-feed-row" key={result.resultHash}>
+              <span>{String(result.playIndex).padStart(3, "0")}</span>
+              <strong>{shortWallet(result.wallet)}</strong>
+              <small>{result.summary}</small>
+            </div>
+          )) : (
+            <div className="casino-feed-empty">NO COMPLETED VERIFIED PLAYS</div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LiveChat() {
+  const [chat, setChat] = useState<CasinoChatPayload>({ enabled: false, canPost: false, messages: [] });
+  const [author, setAuthor] = useState("");
+  const [body, setBody] = useState("");
+  const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("casino_chat_author");
+    const generated = `PLAYER-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    setAuthor(saved || generated);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const refresh = async () => {
+      try {
+        const response = await fetch("/api/casino/chat", { cache: "no-store" });
+        const payload = (await response.json()) as CasinoChatPayload;
+        if (active) setChat(payload);
+      } catch {
+        if (active) setChat({ enabled: false, canPost: false, messages: [] });
+      }
+    };
+    void refresh();
+    const interval = window.setInterval(() => void refresh(), 4_000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!body.trim() || sending) return;
+    setSending(true);
+    setError("");
+    try {
+      const response = await fetch("/api/casino/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ author, body })
+      });
+      const payload = (await response.json()) as { error?: string; message?: CasinoChatMessage };
+      if (!response.ok) throw new Error(payload.error || "Message could not be posted");
+      window.localStorage.setItem("casino_chat_author", author);
+      setBody("");
+      const refreshed = await fetch("/api/casino/chat", { cache: "no-store" });
+      setChat((await refreshed.json()) as CasinoChatPayload);
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Message could not be posted");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <section className="casino-chat" aria-labelledby="casino-chat-title">
+      <div className="casino-chat__head">
+        <div><span>PUBLIC CHANNEL</span><h2 id="casino-chat-title">LIVE CHAT</h2></div>
+        <strong><i /> {chat.enabled ? "CONNECTED" : "LOCKED"}</strong>
+      </div>
+      <div className="casino-chat__messages" aria-live="polite">
+        {chat.messages.length ? chat.messages.map((message) => (
+          <div key={message.id}>
+            <span>{new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}</span>
+            <strong>{message.author}</strong>
+            <p>{message.body}</p>
+          </div>
+        )) : <p className="casino-chat__empty">CHAT OPENS WITH THE VERIFIED LIVE ENGINE.</p>}
+      </div>
+      <form className="casino-chat__form" onSubmit={submit}>
+        <input
+          aria-label="Chat name"
+          disabled={!chat.canPost}
+          maxLength={24}
+          onChange={(event) => setAuthor(event.target.value.replace(/[^A-Za-z0-9_-]/g, ""))}
+          value={author}
+        />
+        <input
+          aria-label="Chat message"
+          disabled={!chat.canPost}
+          maxLength={240}
+          onChange={(event) => setBody(event.target.value)}
+          placeholder={chat.canPost ? "MESSAGE THE FLOOR" : "CHAT NOT ENABLED"}
+          value={body}
+        />
+        <button disabled={!chat.canPost || sending || !body.trim()} type="submit">{sending ? "..." : "SEND"}</button>
+      </form>
+      {error ? <p className="casino-chat__error">{error}</p> : null}
+    </section>
+  );
+}
+
 function ResultBoard() {
   const { stats } = useScout();
   const latestRound = stats.casinoWinners.reduce((highest, item) => Math.max(highest, item.roundNumber), 0);
@@ -180,21 +379,57 @@ function ResultBoard() {
 export function CasinoTerminalView() {
   const { launchState, stats, state, lastUpdated } = useScout();
   const [now, setNow] = useState<number | null>(null);
+  const [live, setLive] = useState<CasinoLivePayload>({
+    status: "waiting_for_round",
+    round: null,
+    completedCount: 0,
+    currentPlay: null,
+    latestPlays: [],
+    leaderboard: []
+  });
 
   useEffect(() => {
     const update = () => setNow(Date.now());
     update();
-    const interval = window.setInterval(update, 1000);
+    const interval = window.setInterval(update, 100);
     return () => window.clearInterval(interval);
   }, []);
 
-  const roundNumber = now === null ? 0 : Math.floor(now / ROUND_MS);
-  const gameIndex = roundNumber % games.length;
+  useEffect(() => {
+    let active = true;
+    const refreshLive = async () => {
+      try {
+        const response = await fetch("/api/casino/live", { cache: "no-store" });
+        const payload = (await response.json()) as CasinoLivePayload;
+        if (active) setLive(payload);
+      } catch {
+        if (active) {
+          setLive((current) => ({ ...current, status: "offline" }));
+        }
+      }
+    };
+    void refreshLive();
+    const interval = window.setInterval(() => void refreshLive(), 2_000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  const scheduledRoundNumber = now === null ? 0 : Math.floor(now / ROUND_MS);
+  const scheduledGameIndex = scheduledRoundNumber % games.length;
+  const liveGameIndex = games.findIndex((game) => game.name === live.round?.game);
+  const gameIndex = liveGameIndex >= 0 ? liveGameIndex : scheduledGameIndex;
   const activeGame = games[gameIndex];
   const nextGame = games[(gameIndex + 1) % games.length];
   const remaining = now === null ? ROUND_MS : ROUND_MS - (now % ROUND_MS);
-  const progress = now === null ? 0 : (now % ROUND_MS) / ROUND_MS;
-  const roundId = `CS-${String(roundNumber).slice(-8).padStart(8, "0")}`;
+  const playbackStart = Date.parse(live.round?.playbackStartedAt ?? "");
+  const playbackEnd = Date.parse(live.round?.playbackEndsAt ?? "");
+  const progress =
+    now !== null && Number.isFinite(playbackStart) && Number.isFinite(playbackEnd) && playbackEnd > playbackStart
+      ? Math.min(1, Math.max(0, (now - playbackStart) / (playbackEnd - playbackStart)))
+      : 0;
+  const roundId = live.round?.roundId ?? `CS-${String(scheduledRoundNumber).slice(-8).padStart(8, "0")}`;
   const displayTime = useMemo(
     () => lastUpdated?.toLocaleTimeString([], { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }) ?? "OFF-CHAIN",
     [lastUpdated]
@@ -207,8 +442,9 @@ export function CasinoTerminalView() {
           <div className="casino-eyebrow"><span>CASINO STRATEGY</span><i /> ROUND {roundId}</div>
           <h1>EVERY 15 MINUTES.<br /><span>A NEW GAME.</span></h1>
           <p>
-            Ten autonomous games rotate on a fifteen-minute clock. Eighty percent of each round&apos;s
-            creator fees goes to the verified top three; twenty percent builds the jackpot.
+            Every eligible {scoutPublicConfig.tokenLabel}{" "}wallet is automatically speed-run through the
+            active game. Eighty percent of each round&apos;s creator fees goes to the verified top three;
+            twenty percent builds the jackpot.
           </p>
           <div className="casino-hero__actions">
             <a className="casino-button casino-button--solid" href="#live-round">ENTER LIVE ROUND <ArrowUpRight size={16} /></a>
@@ -224,19 +460,23 @@ export function CasinoTerminalView() {
 
         <div className="casino-stage" id="live-round">
           <div className="casino-stage__bar">
-            <span><i /> ROUND LIVE</span>
+            <span><i /> {live.status === "playing" ? "ROUND LIVE" : "ENGINE READY"}</span>
             <strong>{activeGame.code} / {activeGame.name}</strong>
             <small>{clockLabel(remaining)}</small>
           </div>
           <div className="casino-stage__screen">
-            <GameVisual game={activeGame.name} />
+            <GameVisual game={activeGame.name} currentPlay={live.currentPlay} now={now ?? 0} />
+            <div className="casino-stage__playback">
+              <span>{live.currentPlay ? `PLAY ${live.currentPlay.playIndex}/${live.round?.eligibleCount ?? 0}` : "VERIFIED QUEUE"}</span>
+              <strong>{live.currentPlay ? shortWallet(live.currentPlay.wallet) : liveStatusLabel(live.status)}</strong>
+            </div>
             <div className="casino-screen-corners" aria-hidden="true"><i /><i /><i /><i /></div>
           </div>
           <div className="casino-stage__footer">
             <span>{activeGame.rule.toUpperCase()}</span>
             <span>NEXT: {nextGame.name}</span>
             <span>
-              SETTLEMENT: {state === "error" ? "OFFLINE" : stats.casinoLatestRound ? "VERIFIED FEED" : "PROOF REQUIRED"}
+              SETTLEMENT: {state === "error" || live.status === "offline" ? "OFFLINE" : live.round?.proofVerified ? "PROOF VERIFIED" : "PROOF REQUIRED"}
             </span>
           </div>
           <div className="casino-round-progress"><i style={{ width: `${progress * 100}%` }} /></div>
@@ -256,12 +496,17 @@ export function CasinoTerminalView() {
         <div className="casino-console__grid">
           <div><span>ROUND ID</span><strong>{roundId}</strong></div>
           <div><span>GAME</span><strong>{activeGame.name}</strong></div>
-          <div><span>PHASE</span><strong>{remaining < 30_000 ? "LOCKING" : "OPEN"}</strong></div>
-          <div><span>RESULT</span><strong>NOT SETTLED</strong></div>
-          <div><span>INTEGRITY</span><strong>SWITCHBOARD PROOF</strong></div>
+          <div><span>PHASE</span><strong>{liveStatusLabel(live.status)}</strong></div>
+          <div><span>PLAYERS</span><strong>{live.round ? live.round.eligibleCount.toLocaleString() : "NO ROUND"}</strong></div>
+          <div><span>INTEGRITY</span><strong>{live.round?.proofVerified ? "PROOF VERIFIED" : "PROOF REQUIRED"}</strong></div>
           <div><span>NEXT ROTATION</span><strong>{clockLabel(remaining)}</strong></div>
         </div>
       </section>
+
+      <div className="casino-live-grid">
+        <LiveGameFeed live={live} />
+        <LiveChat />
+      </div>
 
       <section className="casino-games" id="games">
         <div className="casino-section-heading">

@@ -167,6 +167,7 @@ export const config = {
   casinoJackpotBps,
   casinoTopThreeSplitBps,
   casinoJackpotInterval: Math.max(1, intEnv("CASINO_JACKPOT_INTERVAL", 25)),
+  casinoPollMs: Math.max(2_000, intEnv("CASINO_WORKER_POLL_MS", 5_000)),
 
   epochMinutes: configuredEpochMinutes,
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),

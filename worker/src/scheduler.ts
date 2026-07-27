@@ -38,12 +38,12 @@ if (config.pfpRewardWallet && config.pfpRewardBps > 0) {
 
 async function loop() {
   await runEpoch();
-  const waitMs = msUntilNextEpoch(new Date()) + 500;
+  const waitMs = config.casinoModeEnabled ? config.casinoPollMs : msUntilNextEpoch(new Date()) + 500;
   setTimeout(loop, waitMs);
 }
 
 function scheduleFirstRun() {
-  const waitMs = msUntilNextEpoch(new Date()) + 500;
+  const waitMs = config.casinoModeEnabled ? 250 : msUntilNextEpoch(new Date()) + 500;
   console.log(`First epoch run scheduled in ${Math.round(waitMs / 1000)}s.`);
   setTimeout(() => {
     loop().catch((error) => {

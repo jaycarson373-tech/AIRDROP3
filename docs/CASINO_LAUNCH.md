@@ -9,7 +9,7 @@ Casino Strategy runs fifteen-minute rounds with this fixed policy:
 
 ## Required before enabling payouts
 
-1. Apply `supabase/migrations/010_casino_rounds.sql`.
+1. Apply `supabase/migrations/010_casino_rounds.sql` and `supabase/migrations/011_casino_gameplay_chat.sql`.
 2. Deploy an app-owned Switchboard commit/reveal integration that:
    - commits the round ID and eligible-wallet snapshot before reveal;
    - writes the Switchboard account, commit slot, commit transaction, reveal transaction, and 32-byte revealed value to `casino_rounds`;
@@ -21,6 +21,10 @@ Casino Strategy runs fifteen-minute rounds with this fixed policy:
 
 The worker deliberately refuses to select or display winners without the complete Switchboard proof. It also writes the signed top-three settlement transaction before broadcast, allowing a restart to recover or safely replay the same transaction instead of double-paying.
 
+After a proof is verified, the worker deterministically speed-runs every wallet in the immutable eligibility snapshot through the active game. The persisted playback schedule divides the remaining round window across all entrants, so the public feed can reveal each completed result without client timing affecting the winners. The ten game engines are PONG, CRASH, ROULETTE, DUEL, COINFLIP, DICE, PLINKO, MINES, HI-LO, and SLOTS.
+
+Live chat is disabled by default. To enable it after migration 011, set `CASINO_CHAT_ENABLED=true`, keep the Supabase service role server-side, and set a long random `CASINO_CHAT_RATE_LIMIT_SALT`. The server stores only a salted client fingerprint for rate limiting; it does not store raw IP addresses.
+
 ## Worker policy
 
 ```dotenv
@@ -31,9 +35,12 @@ CASINO_ROUND_PAYOUT_BPS=8000
 CASINO_JACKPOT_BPS=2000
 CASINO_TOP3_SPLIT_BPS=5000,3000,2000
 CASINO_JACKPOT_INTERVAL=25
+CASINO_WORKER_POLL_MS=5000
 
 CASINO_MODE_ENABLED=false
 CASINO_PAYOUTS_ENABLED=false
+CASINO_CHAT_ENABLED=false
+CASINO_CHAT_RATE_LIMIT_SALT=
 CLAIM_ENABLED=false
 BUY_ENABLED=false
 AIRDROP_ENABLED=false

@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
+import { createHash } from "crypto";
 import { config } from "./config.js";
+import type { ScheduledCasinoGameResult } from "./casino-policy.js";
 
 export const supabase = createClient(config.supabaseUrl, config.supabaseServiceRole, {
   auth: { persistSession: false }
@@ -39,6 +41,11 @@ export type CasinoRoundRow = {
   settlement_tx_sig: string | null;
   settlement_transaction_base64: string | null;
   settlement_last_valid_block_height: number | string | null;
+  started_at: string;
+  playback_started_at: string | null;
+  playback_ends_at: string | null;
+  results_committed_at: string | null;
+  results_hash: string | null;
 };
 
 function assertNoError<T>(result: { data: T; error: unknown }, label: string): T {
@@ -321,6 +328,11 @@ export async function createCasinoRound(
   return assertNoError(result, "create casino round") as CasinoRoundRow;
 }
 
+export async function getCasinoRoundForEpoch(epochId: string) {
+  const result = await supabase.from("casino_rounds").select("*").eq("epoch_id", epochId).maybeSingle();
+  return assertNoError(result, "get casino round for epoch") as CasinoRoundRow | null;
+}
+
 export async function setCasinoRoundGame(roundId: string, game: string): Promise<CasinoRoundRow> {
   const result = await supabase
     .from("casino_rounds")
@@ -389,6 +401,9 @@ export async function markCasinoRoundReady(
     jackpotPayoutLamports: bigint;
     jackpotClosingLamports: bigint;
     isJackpotRound: boolean;
+    playbackStartedAt: string;
+    playbackEndsAt: string;
+    resultsHash: string;
   }
 ) {
   const result = await supabase
@@ -401,10 +416,53 @@ export async function markCasinoRoundReady(
       jackpot_payout_lamports: fields.jackpotPayoutLamports.toString(),
       jackpot_closing_lamports: fields.jackpotClosingLamports.toString(),
       is_jackpot_round: fields.isJackpotRound,
+      playback_started_at: fields.playbackStartedAt,
+      playback_ends_at: fields.playbackEndsAt,
+      results_committed_at: new Date().toISOString(),
+      results_hash: fields.resultsHash,
       error: null
     })
     .eq("round_id", roundId);
   assertNoError(result, "mark casino round ready");
+}
+
+export async function persistCasinoGameResults(
+  roundId: string,
+  game: string,
+  results: ScheduledCasinoGameResult[]
+) {
+  if (!results.length) return;
+  const rows = results.map((result) => {
+    const resultHash = createHash("sha256")
+      .update(
+        [
+          roundId,
+          game,
+          result.playIndex,
+          result.wallet,
+          result.score,
+          result.tieBreak,
+          result.summary,
+          JSON.stringify(result.outcome),
+          result.scheduledAt
+        ].join(":")
+      )
+      .digest("hex");
+    return {
+      round_id: roundId,
+      wallet: result.wallet,
+      sequence_index: result.playIndex,
+      game,
+      score: result.score,
+      tie_break: result.tieBreak,
+      summary: result.summary,
+      outcome: result.outcome,
+      result_hash: resultHash,
+      scheduled_at: result.scheduledAt
+    };
+  });
+  const result = await supabase.from("casino_game_results").upsert(rows, { onConflict: "round_id,wallet" });
+  assertNoError(result, "persist casino game results");
 }
 
 export async function markCasinoRoundSettling(roundId: string) {
