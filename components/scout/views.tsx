@@ -2,6 +2,7 @@
 
 import { ExternalLink, Filter, Radio, Search, Send, Settings2, ShieldCheck, Users } from "lucide-react";
 import { FormEvent, useState } from "react";
+import { cateCall } from "../../lib/cat-scanner-public";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { formatClock, formatMoney, formatPercent, formatTime, formatToken, shortWallet } from "./format";
 import { useCountdown } from "./hooks";
@@ -320,8 +321,8 @@ export function TerminalPageView() {
             ) : (
               <div className="runner-terminal-empty" role="status">
                 <div className="scout-desk-factors">
-                  <Metric label="Active Cat" value="Not assigned" />
-                  <Metric label="Status" value="NO LIVE RUNNER" />
+                  <Metric label="Active Cat" value={`$${cateCall.symbol}`} />
+                  <Metric label="Status" value="FIRST AIRDROP" />
                   <Metric label="Minimum" value={`${scoutPublicConfig.minimumHolding.toLocaleString()} CSTR`} />
                   <Metric label="Multiplier" value="Base until streak builds" />
                 </div>

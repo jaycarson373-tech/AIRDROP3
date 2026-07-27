@@ -20,7 +20,7 @@ function signalMetric(signal: ScoutSignal | null, key: string) {
 }
 
 function activeName(signal: ScoutSignal | null) {
-  return signal ? `$${signal.symbol}` : "No runner selected";
+  return signal ? `$${signal.symbol}` : `$${cateCall.symbol}`;
 }
 
 function Hero() {
@@ -67,7 +67,7 @@ function Hero() {
         </div>
         <div className="scout-panel__head">
           <div><span className="scout-kicker">Current Strategy</span><h2>{activeName(active)}</h2></div>
-          <StatusBadge label={active ? "Active cat" : "Waiting"} tone={active ? "live" : "queued"} />
+          <StatusBadge label={active ? "Active cat" : "First airdrop"} tone={active ? "live" : "queued"} />
         </div>
         {active ? (
           <div className="cat-active-signal">
@@ -80,8 +80,8 @@ function Hero() {
         ) : (
           <div className="cat-empty-target">
             <Cat size={42} />
-            <strong>The first runner is selected at launch.</strong>
-            <span>The active token appears here once the strategy has a live signal.</span>
+            <strong>$CATE // FIRST AIRDROP</strong>
+            <span>The first Cat Strategy call and the first runner being airdropped.</span>
           </div>
         )}
         <div className="scout-metric-grid scout-metric-grid--two">
@@ -117,7 +117,7 @@ function LiveTreasury() {
         <article className="scout-panel cat-dashboard__primary">
           <div className="scout-panel__head">
             <div><span className="scout-kicker">Current Cat Runner</span><h2>{activeName(active)}</h2></div>
-            <StatusBadge label={active ? "Selected by Cat Strategy" : state === "loading" ? "Connecting" : "Scanning cats"} tone={active ? "live" : "queued"} />
+            <StatusBadge label={active ? "Selected by Cat Strategy" : "First airdrop"} tone={active ? "live" : "queued"} />
           </div>
           {active ? (
             <>
@@ -146,8 +146,8 @@ function LiveTreasury() {
           ) : (
             <div className="cat-empty-target cat-empty-target--wide">
               <Terminal size={40} />
-              <strong>The first runner is selected at launch.</strong>
-              <span>Once a cat-token target is selected, this card shows token, chart, snapshot, and drop state.</span>
+              <strong>$CATE // FIRST AIRDROP</strong>
+              <span>The first recorded Cat Strategy call and the first token being distributed to eligible holders.</span>
             </div>
           )}
         </article>
@@ -223,7 +223,7 @@ export function CatScanner() {
               <strong className="cat-scanner-return">{multiple ? `${multiple.toFixed(1)}x` : "NOT RECORDED"}</strong>
               <strong>{call.epochCount}</strong>
               <strong>{formatToken(call.totalAirdropped, "TOKENS")}</strong>
-              <span className="cat-scanner-status">{call.rewardStatus === "next" ? "NEXT REWARD" : "DISTRIBUTED"}</span>
+              <span className="cat-scanner-status">{call.rewardStatus === "next" ? "FIRST AIRDROP" : "DISTRIBUTED"}</span>
               <span>{call.chartUrl ? <a href={call.chartUrl} target="_blank" rel="noreferrer" aria-label={`Open ${call.symbol} chart`}><ExternalLink size={15} /></a> : null}</span>
             </article>
           );

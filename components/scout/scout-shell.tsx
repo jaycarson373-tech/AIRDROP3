@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { cateCall } from "../../lib/cat-scanner-public";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { formatToken } from "./format";
 import { useCountdown } from "./hooks";
@@ -31,7 +32,7 @@ function TopTicker() {
 
   const metrics = [
     ["LIVE", state === "loading" ? "CONNECTING" : state === "error" || state === "stale" ? "RECONNECTING" : "ONLINE"],
-    ["ACTIVE CAT", active ? `$${active.symbol}` : "NO LIVE RUNNER"],
+    ["FIRST AIRDROP", active ? `$${active.symbol}` : `$${cateCall.symbol}`],
     ["NEXT DROP", countdown.label],
     ["ELIGIBLE HOLDERS", stats.latestEligibleHolders.toLocaleString()],
     ["CAT DROPPED", formatToken(stats.totalRewardAirdropped, scoutPublicConfig.rewardSymbol)],
