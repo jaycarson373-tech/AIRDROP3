@@ -17,7 +17,7 @@ function finiteNumber(value: unknown) {
 }
 
 export async function GET() {
-  const mint = process.env.CAT_SCANNER_CATE_MINT?.trim() || "";
+  const mint = process.env.CAT_SCANNER_CATE_MINT?.trim() || cateCall.mint || "";
   if (!mint) {
     return NextResponse.json({ calls: [cateCall] }, {
       headers: { "Cache-Control": "public, s-maxage=30, stale-while-revalidate=120" }

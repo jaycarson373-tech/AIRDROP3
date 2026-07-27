@@ -175,7 +175,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
         <div className="cat-real-drift">
           {Array.from({ length: 5 }).map((_, index) => (
             <img
-              src="/brand/cat-walker-v1.png"
+              src="/brand/cat-walker-pixel-v2.png"
               alt=""
               decoding="async"
               draggable={false}

@@ -21,7 +21,10 @@ function cleanPublicUrl(value: string | undefined, configuredMint: string) {
   return trimmed;
 }
 
-const configuredCa = cleanPublicCa(process.env.NEXT_PUBLIC_CA || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT);
+const defaultCstrCa = "3h2DwifvFhxhVvR7MesbMo9xb13QTF5ZtTAyqz8Cpump";
+const configuredCa = cleanPublicCa(
+  process.env.NEXT_PUBLIC_CA || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT || defaultCstrCa
+);
 const configuredBuyUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_BUY_URL, configuredCa);
 const configuredDexUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_DEXSCREENER_URL, configuredCa);
 

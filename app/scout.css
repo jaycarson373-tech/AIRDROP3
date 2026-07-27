@@ -4600,9 +4600,10 @@
   left: 108%;
   width: var(--cat-walk-width);
   height: auto;
+  image-rendering: pixelated;
   mix-blend-mode: screen;
   opacity: 0;
-  filter: grayscale(1) contrast(1.1);
+  filter: contrast(1.4);
   animation:
     cat-real-cross var(--cat-walk-duration) linear infinite,
     cat-real-step 0.72s steps(2, end) infinite;
