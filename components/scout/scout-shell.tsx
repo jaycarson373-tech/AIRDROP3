@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { scoutPublicConfig } from "../../lib/scout-public";
+import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { formatToken } from "./format";
 import { useCountdown } from "./hooks";
 import { ScoutProvider, useScout } from "./scout-provider";
@@ -97,7 +97,8 @@ function Header() {
               title="Copy full contract address"
             >
               {copied ? <Check size={15} /> : <Copy size={15} />}
-              <span>{scoutPublicConfig.contractAddress}</span>
+              <span className="scout-ca-button__full">{scoutPublicConfig.contractAddress}</span>
+              <span className="scout-ca-button__short">{shortAddress(scoutPublicConfig.contractAddress, 4, 5)}</span>
             </button>
           ) : null}
           {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Cat Strategy on X">X</a> : null}

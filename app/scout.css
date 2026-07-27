@@ -4797,6 +4797,10 @@
   gap: 6px !important;
 }
 
+.scout-ca-button__short {
+  display: none;
+}
+
 .scout-ca-button,
 .scout-header-link,
 .scout-menu-button,
@@ -5620,8 +5624,12 @@
   }
 
   .scout-brand small,
-  .scout-ca-button span {
+  .scout-ca-button__full {
     display: none !important;
+  }
+
+  .scout-ca-button__short {
+    display: inline !important;
   }
 
   .cat-hero,
