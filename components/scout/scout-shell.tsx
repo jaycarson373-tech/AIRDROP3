@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Cat, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
+import { BookOpen, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { scoutPublicConfig } from "../../lib/scout-public";
 import { formatToken } from "./format";
@@ -131,7 +131,7 @@ function Footer() {
         <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/cat-strategy-logo.jpg" alt="" /></span>
         <div>
           <strong>CAT STRATEGY</strong>
-          <p>Built for the cat family. Verified onchain.</p>
+          <p>Verified calls. Verified onchain.</p>
         </div>
       </div>
       <nav aria-label="Product links">
@@ -172,14 +172,15 @@ function ShellContent({ children }: { children: React.ReactNode }) {
     <div className="scout-app" ref={appRef}>
       <div className="scout-background" aria-hidden="true">
         <i /><i /><i />
-        <div className="cat-family-drift">
-          {Array.from({ length: 9 }).map((_, index) => (
-            <span key={index}><Cat /></span>
-          ))}
-        </div>
-        <div className="cat-digital-pops">
+        <div className="cat-real-drift">
           {Array.from({ length: 5 }).map((_, index) => (
-            <pre key={index}>{"/\\_/\\\n( o.o )\n > ^ <"}</pre>
+            <img
+              src="/brand/cat-walker-v1.png"
+              alt=""
+              decoding="async"
+              draggable={false}
+              key={index}
+            />
           ))}
         </div>
       </div>
