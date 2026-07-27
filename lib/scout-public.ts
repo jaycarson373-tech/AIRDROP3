@@ -32,7 +32,7 @@ const configuredBuyUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_BUY_URL, configu
 const configuredDexUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_DEXSCREENER_URL, configuredCa);
 
 export const scoutPublicConfig = {
-  name: "Cat Strat",
+  name: "Cat Strategy",
   ticker: "CSTR",
   tokenLabel: "$CSTR",
   rewardSymbol: cleanRewardSymbol(process.env.NEXT_PUBLIC_REWARD_SYMBOL),

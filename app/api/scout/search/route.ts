@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
       results
     });
   } catch (error) {
-    console.error("CAT STRAT search failed", error);
+    console.error("CAT STRATEGY search failed", error);
     return NextResponse.json({ error: "Search is temporarily unavailable", results: [] }, { status: 503 });
   }
 }

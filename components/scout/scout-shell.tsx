@@ -34,7 +34,7 @@ function TopTicker() {
   ];
 
   return (
-    <div className="scout-ticker" aria-label="Cat Strat live metrics">
+    <div className="scout-ticker" aria-label="Cat Strategy live metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -65,13 +65,13 @@ function Header() {
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/" aria-label="Cat Strat home">
+        <Link className="scout-brand" href="/" aria-label="Cat Strategy home">
           <span className="scout-brand__mark" aria-hidden="true">
-            <img src="/brand/cat-strat-mark.svg" alt="" />
+            <img src="/brand/cat-strategy-logo.jpg" alt="" />
           </span>
           <span>
-            <strong>CAT STRAT</strong>
-            <small>CSTR cat runner meta</small>
+            <strong>CAT STRATEGY</strong>
+            <small>CSTR · CAT RUNNER PROTOCOL</small>
           </span>
         </Link>
 
@@ -89,12 +89,12 @@ function Header() {
             type="button"
             onClick={copyContract}
             disabled={!scoutPublicConfig.contractAddress}
-            title={scoutPublicConfig.contractAddress || "Cat Strat contract pending"}
+            title={scoutPublicConfig.contractAddress || "Cat Strategy contract pending"}
           >
             {copied ? <Check size={15} /> : <Copy size={15} />}
             <span>{shortAddress(scoutPublicConfig.contractAddress)}</span>
           </button>
-          {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Cat Strat on X">X</a> : null}
+          {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Cat Strategy on X">X</a> : null}
           {scoutPublicConfig.buyUrl ? <a className="scout-header-link scout-header-link--buy" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">Buy</a> : null}
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
@@ -122,10 +122,10 @@ function Footer() {
   return (
     <footer className="scout-footer">
       <div className="scout-footer__brand">
-        <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/cat-strat-mark.svg" alt="" /></span>
+        <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/cat-strategy-logo.jpg" alt="" /></span>
         <div>
-          <strong>CAT STRAT</strong>
-          <p>Cat runner strategy, verified onchain.</p>
+          <strong>CAT STRATEGY</strong>
+          <p>Cat runner strategy. Verified onchain.</p>
         </div>
       </div>
       <nav aria-label="Product links">
@@ -135,7 +135,7 @@ function Footer() {
         {scoutPublicConfig.xUrl ? <a href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer">X <ExternalLink size={13} /></a> : null}
       </nav>
       <p className="scout-footer__risk">
-        Cat Strat is an experimental cat-token runner reward protocol. Digital assets are volatile. Selling resets holder multiplier progress back to base weight. Verify every address, eligibility rule, and onchain transaction independently.
+        Cat Strategy is an experimental cat-token runner reward protocol. Digital assets are volatile. Selling resets holder multiplier progress back to base weight. Verify every address, eligibility rule, and onchain transaction independently.
       </p>
     </footer>
   );

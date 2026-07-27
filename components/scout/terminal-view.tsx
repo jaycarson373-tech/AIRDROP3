@@ -29,16 +29,17 @@ function Hero() {
   return (
     <section className="cat-hero">
       <div className="cat-hero__grid" aria-hidden="true" />
-      <div className="cat-orbit" aria-hidden="true">
-        <span>CAT</span><span>CSTR</span><span>MEOW</span><span>RUN</span>
-      </div>
+      <img
+        className="cat-hero__banner"
+        src="/brand/cat-strategy-banner.jpg"
+        alt="Cat Strategy"
+      />
       <div className="cat-hero__copy">
         <StatusBadge label={state === "loading" ? "Cat strat starting" : "Cat strat online"} />
-        <img className="cat-hero__logo" src="/brand/cat-strat-mark.svg" alt="Cat Strat" />
-        <p className="scout-kicker">CSTR CAT RUNNER META</p>
+        <p className="scout-kicker">CSTR // CAT RUNNER STRATEGY</p>
         <h1>Own the cat runner. Do not chase it.</h1>
         <p className="cat-hero__body">
-          Cat Strat tracks cat-token momentum, buys the active cat runner, and drops it to eligible $CSTR holders on five-minute epochs.
+          Cat Strategy tracks cat-token momentum, buys the active cat runner, and drops it to eligible $CSTR holders on five-minute epochs.
         </p>
         <div className="cat-hero__actions">
           {scoutPublicConfig.buyUrl ? (
@@ -59,6 +60,10 @@ function Hero() {
       </div>
 
       <div className="cat-live-card">
+        <div className="cat-live-card__brand">
+          <img src="/brand/cat-strategy-logo.jpg" alt="" />
+          <span><strong>CAT STRATEGY</strong><small>LIVE CAT META ENGINE</small></span>
+        </div>
         <div className="scout-panel__head">
           <div><span className="scout-kicker">Current Strategy</span><h2>{activeName(active)}</h2></div>
           <StatusBadge label={active ? "Active cat" : "Waiting"} tone={active ? "live" : "queued"} />
@@ -111,7 +116,7 @@ function LiveTreasury() {
         <article className="scout-panel cat-dashboard__primary">
           <div className="scout-panel__head">
             <div><span className="scout-kicker">Current Cat Runner</span><h2>{activeName(active)}</h2></div>
-            <StatusBadge label={active ? "Selected by Cat Strat" : state === "loading" ? "Starting" : "Scanning cats"} tone={active ? "live" : "queued"} />
+            <StatusBadge label={active ? "Selected by Cat Strategy" : state === "loading" ? "Starting" : "Scanning cats"} tone={active ? "live" : "queued"} />
           </div>
           {active ? (
             <>
@@ -166,7 +171,7 @@ function LiveTreasury() {
 
 function HowItWorks() {
   const steps = [
-    ["01", "Track cat meta", "Cat Strat watches the active cat-token lane and keeps one current runner in focus."],
+    ["01", "Track cat meta", "Cat Strategy watches the active cat-token lane and keeps one current runner in focus."],
     ["02", "Buy the active cat", "Treasury buyback flow points at the configured reward token for that epoch."],
     ["03", "Snapshot holders", `Wallets holding ${scoutPublicConfig.minimumHolding.toLocaleString()}+ $CSTR are included in the holder snapshot.`],
     ["04", "Drop receipts", "The cat runner is distributed by weight, with settled receipts published onchain."]
@@ -249,10 +254,10 @@ export function ActivityFeed() {
   return (
     <section className="scout-panel scout-panel--feed">
       <div className="scout-panel__head">
-        <div><span className="scout-kicker">Live Tape</span><h2>Cat Strat Feed</h2></div>
+        <div><span className="scout-kicker">Live Tape</span><h2>Cat Strategy Feed</h2></div>
         <Activity size={21} aria-hidden="true" />
       </div>
-      <div className="runner-terminal-log" aria-label="Live Cat Strat feed">
+      <div className="runner-terminal-log" aria-label="Live Cat Strategy feed">
         <div className="runner-terminal-log__track">
           {[...lines, ...lines].map((line, index) => (
             <span aria-hidden={index >= lines.length} key={`${line.time}-${line.status}-${index}`}>

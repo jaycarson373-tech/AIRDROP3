@@ -43,7 +43,7 @@ function watchOwner(message: TelegramMessage) {
 }
 
 function shortSignalList(signals: Awaited<ReturnType<typeof listScoutSignals>>, heading: string) {
-  if (!signals.length) return `<b>${heading}</b>\nNo released CAT STRAT basket assets yet.`;
+  if (!signals.length) return `<b>${heading}</b>\nNo released CAT STRATEGY basket assets yet.`;
   return [
     `<b>${heading}</b>`,
     ...signals.slice(0, 8).map((signal, index) => {
@@ -57,15 +57,15 @@ async function runCommand(message: TelegramMessage, name: string, args: string, 
   const chatId = String(message.chat.id);
   if (name === "runner") {
     const active = await getActiveScoutSignal({ premium });
-    return active ? formatSignalTelegram(active, premium) : "<b>CAT STRAT</b>\nCalculating the first verified basket asset.";
+    return active ? formatSignalTelegram(active, premium) : "<b>CAT STRATEGY</b>\nCalculating the first verified basket asset.";
   }
   if (name === "top") {
     const signals = (await listScoutSignals({ premium, limit: 30 }))
       .sort((a, b) => Number(b.scout_score ?? -1) - Number(a.scout_score ?? -1));
-    return shortSignalList(signals, "TOP CAT STRAT POOLS");
+    return shortSignalList(signals, "TOP CAT STRATEGY POOLS");
   }
   if (name === "new") {
-    return shortSignalList(await listScoutSignals({ premium, limit: 8 }), "NEW CAT STRAT POOLS");
+    return shortSignalList(await listScoutSignals({ premium, limit: 8 }), "NEW CAT STRATEGY POOLS");
   }
   if (name === "search") {
     const signals = await listScoutSignals({ premium, limit: 60 });
@@ -87,11 +87,11 @@ async function runCommand(message: TelegramMessage, name: string, args: string, 
   }
   if (name === "performance") {
     const signals = (await listScoutSignals({ premium, limit: 20 })).filter((signal) => signal.selected_at);
-    return shortSignalList(signals, "CAT STRAT BASKET HISTORY");
+    return shortSignalList(signals, "CAT STRATEGY BASKET HISTORY");
   }
   if (name === "help") {
     return [
-      "<b>CAT STRAT COMMANDS</b>",
+      "<b>CAT STRATEGY COMMANDS</b>",
       "/runner · active signal",
       "/top · highest scores",
       "/new · latest signals",
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Cat Strat Telegram webhook failed", error);
+    console.error("Cat Strategy Telegram webhook failed", error);
     return NextResponse.json({ ok: true });
   }
 }

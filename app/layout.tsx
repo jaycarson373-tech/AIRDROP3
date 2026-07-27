@@ -32,36 +32,36 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Cat Strat — Cat Runner Strategy",
-    template: "%s | Cat Strat"
+    default: "Cat Strategy — Cat Runner Strategy",
+    template: "%s | Cat Strategy"
   },
-  description: "Cat Strat tracks cat-token runner momentum and drops the active cat runner to eligible CSTR holders with onchain receipts.",
-  applicationName: "Cat Strat",
-  keywords: ["Cat Strat", "CSTR", "cat tokens", "runner rewards", "holder rewards", "Solana"],
+  description: "Cat Strategy tracks cat-token runner momentum and drops the active cat runner to eligible CSTR holders with onchain receipts.",
+  applicationName: "Cat Strategy",
+  keywords: ["Cat Strategy", "CSTR", "cat tokens", "runner rewards", "holder rewards", "Solana"],
   openGraph: {
-    title: "Cat Strat — Cat Runner Strategy",
-    description: "Hold CSTR. Receive the active cat-token runner as Cat Strat rotates through the cat meta.",
+    title: "Cat Strategy — Cat Runner Strategy",
+    description: "Hold CSTR. Receive the active cat-token runner as Cat Strategy rotates through the cat meta.",
     url: siteUrl,
-    siteName: "Cat Strat",
+    siteName: "Cat Strategy",
     type: "website",
     images: [
       {
-        url: "/brand/cat-strat-og.svg",
-        width: 1200,
-        height: 630,
-        alt: "Cat Strat — Cat Runner Strategy"
+        url: "/brand/cat-strategy-banner.jpg",
+        width: 1280,
+        height: 426,
+        alt: "Cat Strategy"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cat Strat — Cat Runner Strategy",
+    title: "Cat Strategy — Cat Runner Strategy",
     description: "A live cat-token runner reward terminal for CSTR holders.",
-    images: ["/brand/cat-strat-og.svg"]
+    images: ["/brand/cat-strategy-banner.jpg"]
   },
   icons: {
-    icon: "/brand/cat-strat-mark.svg",
-    apple: "/brand/cat-strat-mark.svg"
+    icon: "/brand/cat-strategy-logo.jpg",
+    apple: "/brand/cat-strategy-logo.jpg"
   },
   robots: { index: true, follow: true }
 };

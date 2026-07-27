@@ -39,7 +39,7 @@ function marketCapPerformance(signal: ScoutSignal) {
 }
 
 function SignalTable({ signals, compact = false }: { signals: ScoutSignal[]; compact?: boolean }) {
-  if (!signals.length) return <EmptyState title="No cat runners yet" body="The first active cat-token runner appears here once Cat Strat has a live signal." />;
+  if (!signals.length) return <EmptyState title="No cat runners yet" body="The first active cat-token runner appears here once Cat Strategy has a live signal." />;
   return (
     <div className="scout-table-wrap">
       <table className="scout-table">
@@ -75,7 +75,7 @@ export function SignalsView() {
     : signals.signals.filter((signal) => signal.status === filter || (filter === "archived" && ["passed", "rejected", "archived"].includes(signal.status)));
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Cat Board" title="Cat runners." body="Track the active cat-token runner and every signal recorded by Cat Strat." />
+      <PageHeading eyebrow="Cat Board" title="Cat runners." body="Track the active cat-token runner and every signal recorded by Cat Strategy." />
       <div className="scout-filter-bar">
         <Filter size={16} />
         {(["all", "active", "queued", "archived"] as const).map((value) => (
@@ -86,7 +86,7 @@ export function SignalsView() {
       <section className="scout-panel scout-panel--table">
         {state === "loading" ? <Skeleton rows={6} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : <SignalTable signals={rows} />}
       </section>
-      <div className="scout-page-note"><ShieldCheck size={17} /><p>Cat Strat data reflects records currently connected to the protocol. It is informational, not a promise of future performance.</p></div>
+      <div className="scout-page-note"><ShieldCheck size={17} /><p>Cat Strategy data reflects records currently connected to the protocol. It is informational, not a promise of future performance.</p></div>
     </div>
   );
 }
@@ -123,7 +123,7 @@ export function SearchView() {
 
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Cat Search" title="Search cat-runner records." body="Filter the Cat Strat signal table by token, market cap, status, or record time." action={<StatusBadge label="Public data" tone="muted" />} />
+      <PageHeading eyebrow="Cat Search" title="Search cat-runner records." body="Filter the Cat Strategy signal table by token, market cap, status, or record time." action={<StatusBadge label="Public data" tone="muted" />} />
       <form className="scout-search-form" onSubmit={search}>
         <Search size={21} />
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Show active cat runners" aria-label="Search cat runners" />
@@ -157,7 +157,7 @@ export function PerformanceView() {
   const averageScore = scored.length ? scored.reduce((sum, signal) => sum + Number(signal.scout_score), 0) / scored.length : null;
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="History" title="Cat Strat record." body="Review previous cat runners as they were recorded by the protocol." />
+      <PageHeading eyebrow="History" title="Cat Strategy record." body="Review previous cat runners as they were recorded by the protocol." />
       <div className="scout-overview-grid">
         <Metric label="Records" value={completed.length.toLocaleString()} />
         <Metric label="Active Now" value={signals.active ? `$${signals.active.symbol}` : "Awaiting"} />
@@ -213,7 +213,7 @@ export function ReceiptsView() {
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="No wallet drops yet" body="Individual receipts will populate after the first completed Cat Strat epoch." />}
+        ) : <EmptyState title="No wallet drops yet" body="Individual receipts will populate after the first completed Cat Strategy epoch." />}
       </section>
     </div>
   );
@@ -222,11 +222,11 @@ export function ReceiptsView() {
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How Cat Strat works." body="The short version: hold CSTR, build weight, receive the active cat-token runner when epochs settle." />
+      <PageHeading eyebrow="Documentation" title="How Cat Strategy works." body="The short version: hold CSTR, build weight, receive the active cat-token runner when epochs settle." />
       <div className="scout-doc-layout">
         <aside><a href="#lifecycle">Lifecycle</a><a href="#weight">Holder Weight</a><a href="#treasury">Cat Runner</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Cat lifecycle</h2><p>Cat Strat keeps one active cat-token runner in focus. Each epoch snapshots holders and records settled drops.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Cat lifecycle</h2><p>Cat Strategy keeps one active cat-token runner in focus. Each epoch snapshots holders and records settled drops.</p></section>
           <section id="weight"><span className="scout-kicker">02</span><h2>Holder Weight</h2><p>Hold at least {formatToken(scoutPublicConfig.minimumHolding, "CSTR")} to qualify. Selling or transferring resets multiplier progress to base weight.</p></section>
           <section id="treasury"><span className="scout-kicker">03</span><h2>Cat Runner</h2><p>The active reward token is configured through the reward mint. When the worker buys and distributes it, receipts appear publicly.</p></section>
         </div>
@@ -271,7 +271,7 @@ export function AdminView() {
 
   return (
     <div className="scout-page scout-page--narrow">
-      <PageHeading eyebrow="Restricted console" title="Add a cat runner." body="Submit a Solana mint for the Cat Strat public board." action={<StatusBadge label="Protected" tone="risk" />} />
+      <PageHeading eyebrow="Restricted console" title="Add a cat runner." body="Submit a Solana mint for the Cat Strategy public board." action={<StatusBadge label="Protected" tone="risk" />} />
       <section className="scout-panel scout-admin-panel">
         <div className="scout-panel__head"><div><span className="scout-kicker">Cat intake</span><h2>Queue the next cat runner</h2></div><Settings2 size={21} /></div>
         <form onSubmit={submit}>
@@ -303,11 +303,11 @@ export function TerminalPageView() {
 
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Cat Terminal" title="Track the active cat runner." body="Monitor the active cat-token target, holder weights, and the next distribution." action={<StatusBadge label="Cat Strat live" tone="live" />} />
-      {state === "loading" ? <div className="runner-terminal-state"><i /><strong>SYNCING</strong><span>CONNECTING CAT STRAT DATA</span></div> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : (
+      <PageHeading eyebrow="Cat Terminal" title="Track the active cat runner." body="Monitor the active cat-token target, holder weights, and the next distribution." action={<StatusBadge label="Cat Strategy live" tone="live" />} />
+      {state === "loading" ? <div className="runner-terminal-state"><i /><strong>SYNCING</strong><span>CONNECTING CAT STRATEGY DATA</span></div> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : (
         <div className="scout-desk-layout">
           <section className="scout-panel scout-desk-primary">
-            <div className="scout-terminal-bar"><span><i /> {active ? "ACTIVE CAT RUNNER" : "CAT STRAT ONLINE"}</span><small>{active ? formatClock(active.detected_at) : "AWAITING"}</small></div>
+            <div className="scout-terminal-bar"><span><i /> {active ? "ACTIVE CAT RUNNER" : "CAT STRATEGY ONLINE"}</span><small>{active ? formatClock(active.detected_at) : "AWAITING"}</small></div>
             {active ? (
               <>
                 <div className="scout-desk-token"><SignalLogo signal={active} small /><div><span>Active cat runner</span><h2>${active.symbol}</h2><p>{active.name}</p></div><strong>{active.scout_score ?? "--"}{active.scout_score === null ? null : <small>/100</small>}</strong></div>
