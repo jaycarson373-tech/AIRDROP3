@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
+import { BookOpen, Cat, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { formatToken } from "./format";
@@ -71,7 +71,7 @@ function Header() {
           </span>
           <span>
             <strong>CAT STRATEGY</strong>
-            <small>CSTR · CAT RUNNER PROTOCOL</small>
+            <small>CSTR · CAT FAMILY PROTOCOL</small>
           </span>
         </Link>
 
@@ -125,7 +125,7 @@ function Footer() {
         <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/cat-strategy-logo.jpg" alt="" /></span>
         <div>
           <strong>CAT STRATEGY</strong>
-          <p>Cat runner strategy. Verified onchain.</p>
+          <p>Built for the cat family. Verified onchain.</p>
         </div>
       </div>
       <nav aria-label="Product links">
@@ -166,6 +166,11 @@ function ShellContent({ children }: { children: React.ReactNode }) {
     <div className="scout-app" ref={appRef}>
       <div className="scout-background" aria-hidden="true">
         <i /><i /><i />
+        <div className="cat-family-drift">
+          {Array.from({ length: 9 }).map((_, index) => (
+            <span key={index}><Cat /></span>
+          ))}
+        </div>
       </div>
       <TopTicker />
       <Header />

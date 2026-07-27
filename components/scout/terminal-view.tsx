@@ -36,10 +36,10 @@ function Hero() {
       />
       <div className="cat-hero__copy">
         <StatusBadge label={state === "loading" ? "Cat strat starting" : "Cat strat online"} />
-        <p className="scout-kicker">CSTR // CAT RUNNER STRATEGY</p>
+        <p className="scout-kicker">CSTR // CAT FAMILY RUNNER STRATEGY</p>
         <h1>Own the cat runner. Do not chase it.</h1>
         <p className="cat-hero__body">
-          Cat Strategy tracks cat-token momentum, buys the active cat runner, and drops it to eligible $CSTR holders on five-minute epochs.
+          Cat Strategy tracks cat-token momentum, buys the active cat runner, and drops it to the eligible $CSTR family on five-minute epochs.
         </p>
         <div className="cat-hero__actions">
           {scoutPublicConfig.buyUrl ? (
