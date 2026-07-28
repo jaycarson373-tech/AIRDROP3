@@ -1,3 +1,6 @@
+export const CASINO_MINT = "Fj7i3US5BkNsUxzzWG5kYXvemNRwcYnYs4r2BbUgpump";
+export const CASINO_X_URL = "https://x.com/CasinoStrategy_";
+
 const OLD_PROJECT_MINTS = new Set([
   "EWdDQyqHoUaSd93MwCpCaYygEPpF8deqLU87Cq5Bpump",
   "3dFiGivB2wRHQPXybNQTK2w2dHS6dR769cuJsVwypump",
@@ -30,7 +33,7 @@ function cleanPublicUrl(value: string | undefined, configuredMint: string) {
 
 const configuredCa = cleanPublicCa(
   process.env.NEXT_PUBLIC_CA || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT
-);
+) || CASINO_MINT;
 const configuredBuyUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_BUY_URL, configuredCa);
 const configuredDexUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_DEXSCREENER_URL, configuredCa);
 const configuredXUrl = (() => {
@@ -44,7 +47,7 @@ const configuredXUrl = (() => {
   } catch {
     return "";
   }
-})();
+})() || CASINO_X_URL;
 
 export const scoutPublicConfig = {
   name: "Casino Strategy",
@@ -59,7 +62,7 @@ export const scoutPublicConfig = {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 1_000_000;
   })(),
   epochMinutes: (() => {
-    const parsed = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 15);
+    const parsed = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 15;
   })(),
   publicDelaySeconds: (() => {
@@ -72,7 +75,7 @@ export const scoutPublicConfig = {
   })(),
   xUrl: configuredXUrl,
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
-  buyUrl: configuredBuyUrl || (configuredCa ? `https://pump.fun/coin/${configuredCa}` : null),
+  buyUrl: configuredBuyUrl || (configuredCa ? `https://jup.ag/swap/SOL-${configuredCa}` : null),
   dexScreenerUrl: configuredDexUrl || (configuredCa ? `https://dexscreener.com/solana/${configuredCa}` : null)
 } as const;
 

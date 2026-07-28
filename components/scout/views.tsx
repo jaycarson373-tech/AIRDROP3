@@ -223,11 +223,11 @@ export function ReceiptsView() {
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How Casino Strategy works." body="Ten two-dimensional games rotate on a shared fifteen-minute clock. Results publish only after settlement." />
+      <PageHeading eyebrow="Documentation" title="How Casino Strategy works." body="Ten two-dimensional games rotate on a shared five-minute clock. Results publish only after settlement." />
       <div className="scout-doc-layout">
         <aside><a href="#lifecycle">Round cycle</a><a href="#weight">Eligibility</a><a href="#treasury">Settlement</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Round cycle</h2><p>Casino Strategy rotates through ten games. A new game begins on each fifteen-minute UTC boundary.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Round cycle</h2><p>Casino Strategy rotates through ten games. A new game begins on each five-minute UTC boundary.</p></section>
           <section id="weight"><span className="scout-kicker">02</span><h2>Eligibility</h2><p>Eligibility is read from the configured strategy rules. Never infer eligibility from an unverified screen state.</p></section>
           <section id="treasury"><span className="scout-kicker">03</span><h2>Settlement</h2><p>Recipients and amounts appear publicly only after a real transaction receipt is available.</p></section>
         </div>

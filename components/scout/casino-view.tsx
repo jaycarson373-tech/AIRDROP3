@@ -1,13 +1,13 @@
 "use client";
 
-import { ArrowUpRight, CheckCircle2, Circle, Clock3, Radio, ShieldCheck } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { ArrowUpRight, Bomb, CheckCircle2, Circle, Clock3, Gem, Radio, ShieldCheck } from "lucide-react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { scoutPublicConfig } from "../../lib/scout-public";
 import { shortWallet } from "./format";
 import { useScout } from "./scout-provider";
 import type { CasinoChatMessage, CasinoChatPayload, CasinoLivePayload } from "./types";
 
-const ROUND_MS = 15 * 60 * 1000;
+const ROUND_MS = 5 * 60 * 1000;
 
 const games = [
   { name: "PONG", code: "01", rule: "Last paddle standing" },
@@ -139,13 +139,19 @@ function GameVisual({
   }
 
   if (game === "MINES") {
+    const mineIndexes = new Set([6, 18]);
+    const clearedIndexes = new Set([0, 2, 4, 10, 12, 14, 20, 22, 24]);
     return (
       <div className="casino-game casino-game--mines" aria-label="Animated mines grid">
-        {Array.from({ length: 20 }).map((_, index) => (
-          <i className={index === 6 || index === 14 ? "is-mine" : index < 10 ? "is-cleared" : ""} key={index}>
-            {index === 6 || index === 14 ? "×" : index < 10 ? "·" : ""}
-          </i>
-        ))}
+        {Array.from({ length: 25 }).map((_, index) => {
+          const isMine = mineIndexes.has(index);
+          const isCleared = clearedIndexes.has(index);
+          return (
+            <i className={isMine ? "is-mine" : isCleared ? "is-cleared" : ""} key={index}>
+              {isMine ? <Bomb aria-hidden="true" /> : isCleared ? <Gem aria-hidden="true" /> : null}
+            </i>
+          );
+        })}
       </div>
     );
   }
@@ -249,6 +255,7 @@ function LiveGameFeed({ live }: { live: CasinoLivePayload }) {
 
 function LiveChat() {
   const [chat, setChat] = useState<CasinoChatPayload>({ enabled: false, canPost: false, messages: [] });
+  const [loaded, setLoaded] = useState(false);
   const [author, setAuthor] = useState("");
   const [body, setBody] = useState("");
   const [error, setError] = useState("");
@@ -257,27 +264,28 @@ function LiveChat() {
   useEffect(() => {
     const saved = window.localStorage.getItem("casino_chat_author");
     const generated = `PLAYER-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-    setAuthor(saved || generated);
+    const nextAuthor = saved || generated;
+    setAuthor(nextAuthor);
+    window.localStorage.setItem("casino_chat_author", nextAuthor);
+  }, []);
+
+  const refresh = useCallback(async () => {
+    try {
+      const response = await fetch("/api/casino/chat", { cache: "no-store" });
+      if (!response.ok) throw new Error(`Chat refresh failed (${response.status})`);
+      setChat((await response.json()) as CasinoChatPayload);
+    } catch {
+      setChat({ enabled: false, canPost: false, messages: [] });
+    } finally {
+      setLoaded(true);
+    }
   }, []);
 
   useEffect(() => {
-    let active = true;
-    const refresh = async () => {
-      try {
-        const response = await fetch("/api/casino/chat", { cache: "no-store" });
-        const payload = (await response.json()) as CasinoChatPayload;
-        if (active) setChat(payload);
-      } catch {
-        if (active) setChat({ enabled: false, canPost: false, messages: [] });
-      }
-    };
     void refresh();
-    const interval = window.setInterval(() => void refresh(), 4_000);
-    return () => {
-      active = false;
-      window.clearInterval(interval);
-    };
-  }, []);
+    const interval = window.setInterval(() => void refresh(), 2_000);
+    return () => window.clearInterval(interval);
+  }, [refresh]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -294,14 +302,21 @@ function LiveChat() {
       if (!response.ok) throw new Error(payload.error || "Message could not be posted");
       window.localStorage.setItem("casino_chat_author", author);
       setBody("");
-      const refreshed = await fetch("/api/casino/chat", { cache: "no-store" });
-      setChat((await refreshed.json()) as CasinoChatPayload);
+      if (payload.message) {
+        setChat((current) => ({
+          ...current,
+          messages: [...current.messages.filter((message) => message.id !== payload.message?.id), payload.message!].slice(-60)
+        }));
+      }
+      void refresh();
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Message could not be posted");
     } finally {
       setSending(false);
     }
   }
+
+  if (!loaded || !chat.enabled) return null;
 
   return (
     <section className="casino-chat" aria-labelledby="casino-chat-title">
@@ -329,7 +344,7 @@ function LiveChat() {
         <input
           aria-label="Chat message"
           disabled={!chat.canPost}
-          maxLength={240}
+          maxLength={140}
           onChange={(event) => setBody(event.target.value)}
           placeholder={chat.canPost ? "MESSAGE THE FLOOR" : "CHAT NOT ENABLED"}
           value={body}
@@ -361,12 +376,12 @@ function HowItWorks() {
       <div className="casino-how__steps">
         <article><span>01</span><strong>HOLD 1M+ $CASINO</strong><p>Your on-chain balance is your entry. One eligible wallet, one tournament position.</p></article>
         <article><span>02</span><strong>FIELD LOCKS</strong><p>A snapshot and verifiable randomness commitment lock the players before the game begins.</p></article>
-        <article><span>03</span><strong>15-MINUTE SPEED RUN</strong><p>Large fields move in fast batches. The clock slows as the tournament reaches its final wallets.</p></article>
-        <article><span>04</span><strong>TOP THREE PAID</strong><p>The verified podium receives the round pool automatically after the settlement transaction confirms.</p></article>
+        <article><span>03</span><strong>5-MINUTE SPEED RUN</strong><p>Large fields move in fast batches. The clock slows as the tournament reaches its final wallets.</p></article>
+        <article><span>04</span><strong>ONE CHAMPION. TOP THREE PAID.</strong><p>First place wins the round and takes the largest share. Second and third also receive verified rewards after settlement confirms.</p></article>
       </div>
 
       <div className="casino-scale" aria-label="Adaptive tournament examples">
-        <div className="casino-scale__head"><span>STARTING FIELD</span><span>15-MINUTE CUT PATH</span><span>PLAYBACK MODE</span></div>
+        <div className="casino-scale__head"><span>STARTING FIELD</span><span>5-MINUTE CUT PATH</span><span>PLAYBACK MODE</span></div>
         {scales.map((scale) => (
           <div className="casino-scale__row" key={scale.field}>
             <strong>{scale.field}</strong>
@@ -438,9 +453,9 @@ function ResultBoard() {
       <div className="casino-section-heading">
         <div>
           <span>VERIFIED SETTLEMENT</span>
-          <h2 id="casino-results-title">TOP THREE</h2>
+          <h2 id="casino-results-title">ONE CHAMPION. THREE PAID.</h2>
         </div>
-        <p>Top-three fee recipients publish only after settlement is confirmed on-chain.</p>
+        <p>First place is the round winner. The complete paid podium publishes only after settlement is confirmed on-chain.</p>
       </div>
       <div className="casino-podium">
         {[0, 1, 2].map((index) => {
@@ -552,10 +567,11 @@ export function CasinoTerminalView() {
             height={1254}
           />
           <div className="casino-eyebrow"><span>CASINO STRATEGY</span><i /> ROUND {displayRoundNumber.toLocaleString()}</div>
-          <h1>EVERY 15 MINUTES.<br /><span>A NEW GAME.</span></h1>
+          <h1>EVERY 5 MINUTES.<br /><span>A NEW GAME.</span></h1>
           <p>
             Hold 1M+ {scoutPublicConfig.tokenLabel} before the snapshot and your wallet is entered automatically.
-            No connection. No click. Every round eliminates the field until three verified winners remain.
+            No connection. No click. Every round eliminates the field until one champion remains.
+            First place wins the round; second and third also receive verified rewards.
           </p>
           <div className="casino-hero__actions">
             <a className="casino-button casino-button--solid" href="#live-round">ENTER LIVE ROUND <ArrowUpRight size={16} /></a>
@@ -627,7 +643,7 @@ export function CasinoTerminalView() {
             <span>ROTATING ARCADE</span>
             <h2>TEN GAMES. ONE CLOCK.</h2>
           </div>
-          <p>The game changes automatically at each fifteen-minute UTC boundary.</p>
+          <p>The game changes automatically at each five-minute UTC boundary.</p>
         </div>
         <div className="casino-game-list">
           {games.map((game, index) => (
@@ -675,7 +691,7 @@ export function CasinoTerminalView() {
       <section className="casino-final">
         <span>CASINO STRATEGY / {scoutPublicConfig.tokenLabel}</span>
         <h2>THE HOUSE RUNS<br />ON A CLOCK.</h2>
-        <p>Ten games. Fifteen-minute rounds. 80% to the top three. 20% to the jackpot.</p>
+        <p>One champion every five minutes. First, second, and third share 80% of the round fees; 20% builds the jackpot.</p>
         {scoutPublicConfig.buyUrl ? (
           <a className="casino-button casino-button--solid" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
             BUY {scoutPublicConfig.tokenLabel} <ArrowUpRight size={16} />

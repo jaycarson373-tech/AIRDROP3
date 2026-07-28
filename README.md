@@ -4,7 +4,7 @@ Casino Strategy is a monochrome, pixel-era Solana tournament interface. Every
 eligible holder is entered automatically—there is no wallet connection or
 manual game entry.
 
-Each round lasts fifteen minutes and rotates through one of ten deterministic
+Each round lasts five minutes and rotates through one of ten deterministic
 game simulations. Verified randomness commits the field and results. The
 weakest results are revealed first, with the top three reserved for the podium.
 
