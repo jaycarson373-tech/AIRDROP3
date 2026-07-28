@@ -62,7 +62,7 @@ export const scoutPublicConfig = {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 1_000_000;
   })(),
   epochMinutes: (() => {
-    const parsed = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 15);
+    const parsed = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 15;
   })(),
   publicDelaySeconds: (() => {

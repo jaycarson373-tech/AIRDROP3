@@ -1,6 +1,6 @@
 # Casino settlement launch checklist
 
-Casino Strategy runs fifteen-minute rounds with this fixed policy:
+Casino Strategy runs five-minute rounds with this fixed policy:
 
 - 80% of each round's net claimed creator fees funds the top three.
 - The round pool splits 50% / 30% / 20%.
@@ -21,7 +21,7 @@ Casino Strategy runs fifteen-minute rounds with this fixed policy:
 
 The worker deliberately refuses to select or display winners without the complete Switchboard proof. It also writes the signed top-three settlement transaction before broadcast, allowing a restart to recover or safely replay the same transaction instead of double-paying.
 
-After a proof is verified, the worker deterministically speed-runs every wallet in the immutable eligibility snapshot through the active game. The persisted fifteen-minute tournament schedule eliminates the weakest verified results first and reserves the top three for the final reveal. Ten-player fields cut to 8, 5, and 3; 100-player fields cut to 32, 10, and 3; 1,000-player fields cut to 100, 25, 10, and 3. Client timing cannot affect the winners. The ten game engines are PONG, CRASH, ROULETTE, DUEL, COINFLIP, DICE, PLINKO, MINES, HI-LO, and SLOTS.
+After a proof is verified, the worker deterministically speed-runs every wallet in the immutable eligibility snapshot through the active game. The persisted five-minute tournament schedule eliminates the weakest verified results first and reserves the top three for the final reveal. Ten-player fields cut to 8, 5, and 3; 100-player fields cut to 32, 10, and 3; 1,000-player fields cut to 100, 25, 10, and 3. Client timing cannot affect the winners. The ten game engines are PONG, CRASH, ROULETTE, DUEL, COINFLIP, DICE, PLINKO, MINES, HI-LO, and SLOTS.
 
 Live chat is disabled by default. To enable it after migration 011, set `CASINO_CHAT_ENABLED=true`, keep the Supabase service role server-side, and set a long random `CASINO_CHAT_RATE_LIMIT_SALT`. The server stores only a salted client fingerprint for rate limiting; it does not store raw IP addresses.
 
@@ -31,8 +31,8 @@ Live chat is disabled by default. To enable it after migration 011, set `CASINO_
 REWARD_MODE=sol
 WORKER_ENABLED=false
 SOLANA_CLUSTER=mainnet-beta
-EPOCH_MINUTES=15
-CASINO_ROUND_MINUTES=15
+EPOCH_MINUTES=5
+CASINO_ROUND_MINUTES=5
 CASINO_ROUND_PAYOUT_BPS=8000
 CASINO_JACKPOT_BPS=2000
 CASINO_TOP3_SPLIT_BPS=5000,3000,2000
@@ -46,7 +46,7 @@ SWITCHBOARD_RETRY_DELAY_MS=2000
 
 CASINO_MODE_ENABLED=false
 CASINO_PAYOUTS_ENABLED=false
-CASINO_CHAT_ENABLED=false
+CASINO_CHAT_ENABLED=true
 CASINO_CHAT_RATE_LIMIT_SALT=
 CLAIM_ENABLED=false
 BUY_ENABLED=false

@@ -21,12 +21,12 @@ const productNav = [
 
 function TopTicker() {
   const { launchState, stats, state } = useScout();
-  const [remaining, setRemaining] = useState(15 * 60);
+  const [remaining, setRemaining] = useState(5 * 60);
   const [roundEnd, setRoundEnd] = useState<number | null>(null);
 
   useEffect(() => {
     const update = () => {
-      const boundaryRemaining = 15 * 60 * 1000 - (Date.now() % (15 * 60 * 1000));
+      const boundaryRemaining = 5 * 60 * 1000 - (Date.now() % (5 * 60 * 1000));
       const milliseconds = roundEnd === null ? boundaryRemaining : Math.max(0, roundEnd - Date.now());
       setRemaining(Math.ceil(milliseconds / 1000));
     };
@@ -55,7 +55,7 @@ function TopTicker() {
     ["ROUND", "LIVE"],
     ["ROTATION", "10 GAMES"],
     ["NEXT GAME", `${minutes}:${seconds}`],
-    ["ROUND LENGTH", "15:00"],
+    ["ROUND LENGTH", "05:00"],
     ["VERIFIED ROUNDS", stats.totalEpochs.toLocaleString()],
     ["SETTLEMENT", "ON-CHAIN"]
   ];
@@ -155,7 +155,7 @@ function Footer() {
         </span>
         <div>
           <strong>CASINO STRATEGY</strong>
-          <p>Fifteen-minute holder tournaments. Verified on-chain.</p>
+          <p>Five-minute holder tournaments. Verified on-chain.</p>
         </div>
       </div>
       <nav aria-label="Product links">

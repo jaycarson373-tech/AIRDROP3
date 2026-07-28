@@ -11,6 +11,12 @@ type ChatRow = {
   created_at: string;
 };
 
+const MAX_MESSAGE_LENGTH = 140;
+const MIN_POST_INTERVAL_MS = 3_000;
+const RATE_WINDOW_MS = 5 * 60_000;
+const MAX_POSTS_PER_WINDOW = 20;
+const PROFANITY_PATTERN = /\b(?:fuck|shit|bitch|cunt|nigg(?:er|a)|faggot)\b/i;
+
 function enabled() {
   return ["1", "true", "yes", "on"].includes((process.env.CASINO_CHAT_ENABLED ?? "false").toLowerCase());
 }
@@ -55,6 +61,8 @@ export async function GET() {
       enabled: true,
       canPost: Boolean(config()?.salt && config()?.serviceRole),
       messages: rows.reverse().map(publicRow)
+    }, {
+      headers: { "Cache-Control": "no-store, max-age=0" }
     });
   } catch (error) {
     console.warn("casino chat unavailable", error);
@@ -79,8 +87,11 @@ function cleanBody(value: unknown) {
     .replace(/[\u0000-\u001f\u007f]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-  if (!body || body.length > 240) throw new Error("Messages must be 1–240 characters");
+  if (!body || body.length > MAX_MESSAGE_LENGTH) {
+    throw new Error(`Messages must be 1–${MAX_MESSAGE_LENGTH} characters`);
+  }
   if (/(https?:\/\/|www\.|t\.me\/)/i.test(body)) throw new Error("Links are disabled in live chat");
+  if (PROFANITY_PATTERN.test(body)) throw new Error("That message cannot be posted");
   return body;
 }
 
@@ -96,13 +107,25 @@ export async function POST(request: NextRequest) {
     const author = cleanAuthor(input.author);
     const body = cleanBody(input.body);
     const authorHash = clientFingerprint(request, database.salt);
-    const recentResponse = await databaseRequest(
-      `casino_chat_messages?select=created_at&author_hash=eq.${authorHash}&order=created_at.desc&limit=1`
-    );
-    if (!recentResponse.ok) throw new Error(`Casino chat rate check failed (${recentResponse.status})`);
+    const rateWindowStart = encodeURIComponent(new Date(Date.now() - RATE_WINDOW_MS).toISOString());
+    const [recentResponse, windowResponse] = await Promise.all([
+      databaseRequest(
+        `casino_chat_messages?select=created_at&author_hash=eq.${authorHash}&order=created_at.desc&limit=1`
+      ),
+      databaseRequest(
+        `casino_chat_messages?select=id&author_hash=eq.${authorHash}&created_at=gte.${rateWindowStart}&limit=${MAX_POSTS_PER_WINDOW + 1}`
+      )
+    ]);
+    if (!recentResponse.ok || !windowResponse.ok) {
+      throw new Error(`Casino chat rate check failed (${recentResponse.ok ? windowResponse.status : recentResponse.status})`);
+    }
     const recent = (await recentResponse.json()) as Array<{ created_at: string }>;
-    if (recent[0] && Date.now() - Date.parse(recent[0].created_at) < 5_000) {
-      return NextResponse.json({ error: "Please wait five seconds before posting again" }, { status: 429 });
+    const windowPosts = (await windowResponse.json()) as Array<{ id: string | number }>;
+    if (recent[0] && Date.now() - Date.parse(recent[0].created_at) < MIN_POST_INTERVAL_MS) {
+      return NextResponse.json({ error: "Please wait three seconds before posting again" }, { status: 429 });
+    }
+    if (windowPosts.length >= MAX_POSTS_PER_WINDOW) {
+      return NextResponse.json({ error: "Chat rate limit reached. Try again in a few minutes" }, { status: 429 });
     }
 
     const insertResponse = await databaseRequest("casino_chat_messages?select=id,author,body,created_at", {
@@ -123,7 +146,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: publicRow(rows[0]) });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Message could not be posted";
-    const clientError = /Use 2|Messages must|Links are/.test(message);
+    const clientError = /Use 2|Messages must|Links are|cannot be posted/.test(message);
     return NextResponse.json({ error: message }, { status: clientError ? 400 : 503 });
   }
 }

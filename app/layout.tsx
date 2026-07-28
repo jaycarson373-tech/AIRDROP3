@@ -42,12 +42,12 @@ export const metadata: Metadata = {
     default: "Casino Strategy — On-Chain Casino Arcade",
     template: "%s | Casino Strategy"
   },
-  description: "Casino Strategy automatically enters eligible holders into a fifteen-minute on-chain arcade tournament with verifiable results.",
+  description: "Casino Strategy automatically enters eligible holders into a five-minute on-chain arcade tournament with verifiable results.",
   applicationName: "Casino Strategy",
   keywords: ["Casino Strategy", "CASINO", "on-chain games", "Pong", "Solana", "verifiable results"],
   openGraph: {
-    title: "Casino Strategy — Every 15 Minutes, A New Game",
-    description: "Hold to enter ten rotating fifteen-minute tournaments with public on-chain settlement receipts.",
+    title: "Casino Strategy — Every 5 Minutes, A New Game",
+    description: "Hold to enter ten rotating five-minute tournaments with public on-chain settlement receipts.",
     url: siteUrl,
     siteName: "Casino Strategy",
     type: "website",
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Casino Strategy — Every 15 Minutes, A New Game",
+    title: "Casino Strategy — Every 5 Minutes, A New Game",
     description: "A pixel-era on-chain arcade where eligible holders enter automatically.",
     images: ["/brand/og-image.png"]
   },
