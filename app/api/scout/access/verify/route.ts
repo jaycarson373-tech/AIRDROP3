@@ -16,7 +16,7 @@ function rpcUrl() {
 }
 
 function sourceMint() {
-  return process.env.SOURCE_TOKEN_MINT ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? process.env.NEXT_PUBLIC_CA ?? "";
+  return process.env.SOURCE_TOKEN_MINT ?? "";
 }
 
 function eligibilityMinimum() {

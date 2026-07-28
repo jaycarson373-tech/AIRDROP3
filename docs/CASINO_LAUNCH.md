@@ -1,6 +1,6 @@
 # Casino settlement launch checklist
 
-Casino Strategy runs five-minute rounds with this fixed policy:
+Casino runs five-minute rounds with this fixed policy:
 
 - 80% of each round's net claimed creator fees funds the top three.
 - The round pool splits 50% / 30% / 20%.

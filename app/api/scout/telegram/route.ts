@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Casino Strategy Telegram webhook failed", error);
+    console.error("Casino Telegram webhook failed", error);
     return NextResponse.json({ ok: true });
   }
 }

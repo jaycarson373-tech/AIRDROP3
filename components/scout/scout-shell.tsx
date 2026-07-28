@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Check, Copy, ExternalLink, Menu, X } from "lucide-react";
+import { BookOpen, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { scoutPublicConfig, shortAddress } from "../../lib/scout-public";
 import { ScoutProvider, useScout } from "./scout-provider";
 import { PrelaunchNotice } from "./ui";
 
@@ -61,7 +60,7 @@ function TopTicker() {
   ];
 
   return (
-    <div className="scout-ticker" aria-label="Casino Strategy live metrics">
+    <div className="scout-ticker" aria-label="Casino live metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -78,26 +77,18 @@ function TopTicker() {
 function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => setOpen(false), [pathname]);
-
-  async function copyContract() {
-    if (!scoutPublicConfig.contractAddress) return;
-    await navigator.clipboard.writeText(scoutPublicConfig.contractAddress);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1400);
-  }
 
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/" aria-label="Casino Strategy home">
+        <Link className="scout-brand" href="/" aria-label="Casino home">
           <span className="scout-brand__mark casino-brand-mark" aria-hidden="true">
-            <img src="/brand/casino-strategy-logo.jpg" alt="" />
+            <img src="/brand/casino-logo.png" alt="" />
           </span>
           <span>
-            <strong>CASINO STRATEGY</strong>
+            <strong>CASINO</strong>
           </span>
         </Link>
 
@@ -110,20 +101,6 @@ function Header() {
         </nav>
 
         <div className="scout-header__actions">
-          {scoutPublicConfig.contractAddress ? (
-            <button
-              className="scout-ca-button"
-              type="button"
-              onClick={copyContract}
-              title="Copy full contract address"
-            >
-              {copied ? <Check size={15} /> : <Copy size={15} />}
-              <span className="scout-ca-button__full">{scoutPublicConfig.contractAddress}</span>
-              <span className="scout-ca-button__short">{shortAddress(scoutPublicConfig.contractAddress, 4, 5)}</span>
-            </button>
-          ) : null}
-          {scoutPublicConfig.xUrl ? <a className="scout-header-link" href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer" aria-label="Casino Strategy on X">X</a> : null}
-          {scoutPublicConfig.buyUrl ? <a className="scout-header-link scout-header-link--buy" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">Buy</a> : null}
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -135,11 +112,6 @@ function Header() {
           {[...primaryNav, ...productNav].map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
-          {scoutPublicConfig.buyUrl ? (
-            <a href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
-              Buy $CASINO <ExternalLink size={15} />
-            </a>
-          ) : null}
         </div>
       ) : null}
     </header>
@@ -151,21 +123,20 @@ function Footer() {
     <footer className="scout-footer">
       <div className="scout-footer__brand">
         <span className="scout-brand__mark casino-brand-mark" aria-hidden="true">
-          <img src="/brand/casino-strategy-logo.jpg" alt="" />
+          <img src="/brand/casino-logo.png" alt="" />
         </span>
         <div>
-          <strong>CASINO STRATEGY</strong>
-          <p>Five-minute holder tournaments. Verified on-chain.</p>
+          <strong>CASINO</strong>
+          <p>Five-minute holder tournaments. Verifiable results.</p>
         </div>
       </div>
       <nav aria-label="Product links">
         {productNav.map(({ href, label, icon: Icon }) => (
           <Link href={href} key={href}><Icon size={14} /> {label}</Link>
         ))}
-        {scoutPublicConfig.xUrl ? <a href={scoutPublicConfig.xUrl} target="_blank" rel="noreferrer">X <ExternalLink size={13} /></a> : null}
       </nav>
       <p className="scout-footer__risk">
-        Casino Strategy is an experimental on-chain game interface. Digital assets are volatile. No result is final until its settlement transaction is confirmed. Verify every address, rule, and on-chain transaction independently.
+        Casino is an experimental on-chain tournament interface. Digital assets are volatile. No result is final until its settlement transaction is confirmed. Verify every rule and on-chain transaction independently.
       </p>
     </footer>
   );
