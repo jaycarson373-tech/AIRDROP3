@@ -8,8 +8,9 @@ For the existing project, run these files in the Supabase SQL editor in order:
 
 1. `supabase/migrations/010_casino_rounds.sql`
 2. `supabase/migrations/011_casino_gameplay_chat.sql`
+3. `supabase/migrations/012_casino_tournament_feed.sql`
 
-For an empty Supabase project, apply every numbered migration from `001` through `011` in order because the casino tables reference the base `epochs`, `snapshots`, `payouts`, and holder-state tables.
+For an empty Supabase project, apply every numbered migration from `001` through `012` in order because the casino tables reference the base `epochs`, `snapshots`, `payouts`, and holder-state tables.
 
 Migration 011 creates:
 
@@ -18,6 +19,8 @@ Migration 011 creates:
 - `casino_public_rounds`
 - `casino_public_current_play`
 - playback/result-commitment columns on `casino_rounds`
+
+Migration 012 narrows the public current-play view so the upcoming wallet can be animated without exposing its score or outcome before reveal.
 
 ## Railway worker
 

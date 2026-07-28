@@ -188,6 +188,9 @@ export type CasinoLivePayload = {
     settledAt: string | null;
   } | null;
   completedCount: number;
+  remainingCount: number;
+  tournamentStage: string;
+  nextCutCount: number;
   currentPlay: (CasinoLiveResult & { startedAt: string }) | null;
   latestPlays: CasinoLiveResult[];
   leaderboard: CasinoLiveResult[];

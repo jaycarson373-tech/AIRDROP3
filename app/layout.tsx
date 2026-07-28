@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, Press_Start_2P, Space_Grotesk } from "next/font/google";
 import { ScoutShell } from "../components/scout/scout-shell";
 import "./globals.css";
 import "./scout.css";
@@ -15,6 +15,13 @@ const displayFont = Space_Grotesk({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
   variable: "--font-runner-display",
+  display: "swap"
+});
+
+const pixelFont = Press_Start_2P({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-casino-pixel",
   display: "swap"
 });
 
@@ -35,12 +42,12 @@ export const metadata: Metadata = {
     default: "Casino Strategy — On-Chain Casino Arcade",
     template: "%s | Casino Strategy"
   },
-  description: "Casino Strategy is a monochrome on-chain arcade rotating through ten verifiable games every fifteen minutes.",
+  description: "Casino Strategy automatically enters eligible holders into a fifteen-minute on-chain arcade tournament with verifiable results.",
   applicationName: "Casino Strategy",
   keywords: ["Casino Strategy", "CASINO", "on-chain games", "Pong", "Solana", "verifiable results"],
   openGraph: {
     title: "Casino Strategy — Every 15 Minutes, A New Game",
-    description: "Ten rotating two-dimensional games with public on-chain settlement receipts.",
+    description: "Hold to enter ten rotating fifteen-minute tournaments with public on-chain settlement receipts.",
     url: siteUrl,
     siteName: "Casino Strategy",
     type: "website",
@@ -48,7 +55,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Casino Strategy — Every 15 Minutes, A New Game",
-    description: "A monochrome on-chain casino arcade with verifiable results."
+    description: "A pixel-era on-chain arcade where eligible holders enter automatically."
   },
   robots: { index: true, follow: true }
 };
@@ -58,7 +65,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   return (
     <html lang="en">
-      <body className={`${terminalFont.variable} ${displayFont.variable}`}>
+      <body className={`${terminalFont.variable} ${displayFont.variable} ${pixelFont.variable}`}>
         <ScoutShell launchState={launchState}>{children}</ScoutShell>
       </body>
     </html>

@@ -1,4 +1,5 @@
 import { createHash } from "crypto";
+import { casinoTournamentRevealProgress } from "./casino-tournament.js";
 
 export const CASINO_GAMES = [
   "PONG",
@@ -441,10 +442,16 @@ export function scheduleCasinoPlayback(
   }
   if (!results.length) return [];
   const duration = endsAt - startedAt;
-  return results.map((result, index) => ({
-    ...result,
-    scheduledAt: new Date(startedAt + Math.floor((duration * (index + 1)) / results.length)).toISOString()
-  }));
+  const eliminationOrder = [...results].sort(compareResults).reverse();
+  return eliminationOrder.map((result, index) => {
+    const playIndex = index + 1;
+    const progress = casinoTournamentRevealProgress(eliminationOrder.length, playIndex);
+    return {
+      ...result,
+      playIndex,
+      scheduledAt: new Date(startedAt + Math.floor(duration * progress)).toISOString()
+    };
+  });
 }
 
 export function casinoResultsHash(results: CasinoGameResult[]) {

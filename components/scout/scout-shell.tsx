@@ -10,7 +10,7 @@ import { PrelaunchNotice } from "./ui";
 
 const primaryNav = [
   { href: "/#live-round", label: "Live Round" },
-  { href: "/#games", label: "Games" },
+  { href: "/#how-it-works", label: "How It Works" },
   { href: "/#leaderboard", label: "Leaderboard" },
   { href: "/airdrop-history", label: "Results" }
 ];
@@ -22,12 +22,26 @@ const productNav = [
 function TopTicker() {
   const { launchState, stats, state } = useScout();
   const [remaining, setRemaining] = useState(15 * 60);
+  const [roundEnd, setRoundEnd] = useState<number | null>(null);
 
   useEffect(() => {
-    const update = () => setRemaining(Math.ceil((15 * 60 * 1000 - (Date.now() % (15 * 60 * 1000))) / 1000));
+    const update = () => {
+      const boundaryRemaining = 15 * 60 * 1000 - (Date.now() % (15 * 60 * 1000));
+      const milliseconds = roundEnd === null ? boundaryRemaining : Math.max(0, roundEnd - Date.now());
+      setRemaining(Math.ceil(milliseconds / 1000));
+    };
     update();
     const interval = window.setInterval(update, 1000);
     return () => window.clearInterval(interval);
+  }, [roundEnd]);
+
+  useEffect(() => {
+    const updateRoundEnd = (event: Event) => {
+      const nextRoundEnd = (event as CustomEvent<number | null>).detail;
+      setRoundEnd(typeof nextRoundEnd === "number" && Number.isFinite(nextRoundEnd) ? nextRoundEnd : null);
+    };
+    window.addEventListener("casino-live-round-end", updateRoundEnd);
+    return () => window.removeEventListener("casino-live-round-end", updateRoundEnd);
   }, []);
 
   if (launchState === "prelaunch") {
@@ -137,7 +151,7 @@ function Footer() {
         <span className="scout-brand__mark casino-brand-mark" aria-hidden="true"><i /><b>CS</b></span>
         <div>
           <strong>CASINO STRATEGY</strong>
-          <p>Fifteen-minute games. Verified on-chain.</p>
+          <p>Fifteen-minute holder tournaments. Verified on-chain.</p>
         </div>
       </div>
       <nav aria-label="Product links">

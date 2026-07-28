@@ -10,6 +10,7 @@ import {
   snapshotHash,
   type CasinoFeePolicy
 } from "./casino-policy.js";
+import { casinoTournamentStages, casinoTournamentState } from "./casino-tournament.js";
 
 const policy: CasinoFeePolicy = {
   roundPayoutBps: 8_000,
@@ -108,6 +109,43 @@ test("playback schedules every entrant inside the round window", () => {
   assert.ok(Date.parse(scheduled[0].scheduledAt) > start.getTime());
   assert.equal(scheduled.at(-1)?.scheduledAt, end.toISOString());
   assert.ok(scheduled.every((result, index) => index === 0 || result.scheduledAt >= scheduled[index - 1].scheduledAt));
+});
+
+test("adaptive tournament cuts scale from ten to one thousand players", () => {
+  assert.deepEqual(
+    casinoTournamentStages(10).map((stage) => stage.targetRemaining),
+    [8, 5, 3]
+  );
+  assert.deepEqual(
+    casinoTournamentStages(100).map((stage) => stage.targetRemaining),
+    [32, 10, 3]
+  );
+  assert.deepEqual(
+    casinoTournamentStages(1_000).map((stage) => stage.targetRemaining),
+    [100, 25, 10, 3]
+  );
+  assert.deepEqual(casinoTournamentState(1_000, 900), {
+    stage: "ROUND OF 100",
+    remainingCount: 100,
+    nextCutCount: 25
+  });
+});
+
+test("tournament playback saves the podium for the final reveal", () => {
+  const entrants = Array.from({ length: 100 }, (_, index) => ({ wallet: `podium-wallet-${index}` }));
+  const randomness = "9a".repeat(32);
+  const results = simulateCasinoRound("CS-PODIUM", "DICE", randomness, entrants);
+  const winners = selectCasinoWinners("CS-PODIUM", "DICE", randomness, entrants);
+  const scheduled = scheduleCasinoPlayback(
+    results,
+    new Date("2026-01-01T00:00:00.000Z"),
+    new Date("2026-01-01T00:15:00.000Z")
+  );
+  assert.deepEqual(
+    scheduled.slice(-3).map((result) => result.wallet),
+    winners.map((winner) => winner.wallet).reverse()
+  );
+  assert.equal(scheduled.at(-1)?.scheduledAt, "2026-01-01T00:15:00.000Z");
 });
 
 test("snapshot commitment is order-independent", () => {

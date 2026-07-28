@@ -537,6 +537,18 @@ export async function settleCasinoRound(roundId: string, txSig: string) {
   assertNoError(result, "settle casino round");
 }
 
+export async function completeCasinoDryRun(roundId: string) {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({
+      status: "skipped",
+      settled_at: new Date().toISOString(),
+      error: "Verified dry run completed; settlement was disabled"
+    })
+    .eq("round_id", roundId);
+  assertNoError(result, "complete casino dry run");
+}
+
 export async function skipCasinoRound(
   roundId: string,
   jackpotOpeningLamports: bigint,

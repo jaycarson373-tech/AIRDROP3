@@ -33,8 +33,8 @@ export async function runEpoch(date = new Date()) {
 
   try {
     if (config.casinoModeEnabled) {
-      await settlePendingCasinoRounds();
-      await openCasinoRound(epochId);
+      const roundInProgress = await settlePendingCasinoRounds();
+      if (!roundInProgress) await openCasinoRound(epochId);
       return;
     }
 

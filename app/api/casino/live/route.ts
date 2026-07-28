@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { casinoTournamentState } from "../../../../worker/src/casino-tournament";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+const LIVE_CACHE = "public, s-maxage=1, stale-while-revalidate=2";
 
 type RoundRow = {
   round_id: string;
@@ -34,6 +36,8 @@ type ResultRow = {
   scheduled_at: string;
 };
 
+type CurrentPlayRow = Pick<ResultRow, "wallet" | "sequence_index" | "game" | "scheduled_at">;
+
 function config() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
@@ -43,7 +47,7 @@ function config() {
   return url && key ? { url: url.replace(/\/$/, ""), key } : null;
 }
 
-async function query<T>(path: string, extraHeaders?: HeadersInit) {
+async function queryResponse(path: string, extraHeaders?: HeadersInit) {
   const database = config();
   if (!database) throw new Error("Casino database is not configured");
   const response = await fetch(`${database.url}/rest/v1/${path}`, {
@@ -55,23 +59,24 @@ async function query<T>(path: string, extraHeaders?: HeadersInit) {
     cache: "no-store"
   });
   if (!response.ok) throw new Error(`Casino database request failed (${response.status})`);
+  return response;
+}
+
+async function query<T>(path: string, extraHeaders?: HeadersInit) {
+  const response = await queryResponse(path, extraHeaders);
   return (await response.json()) as T;
 }
 
-async function completedResults(roundId: string, nowIso: string) {
-  const rows: ResultRow[] = [];
-  const pageSize = 1000;
-  for (let offset = 0; ; offset += pageSize) {
-    const page = await query<ResultRow[]>(
-      `casino_game_results?select=wallet,sequence_index,game,score,tie_break,summary,outcome,result_hash,scheduled_at&round_id=eq.${encodeURIComponent(
-        roundId
-      )}&scheduled_at=lte.${encodeURIComponent(nowIso)}&order=sequence_index.asc`,
-      { Range: `${offset}-${offset + pageSize - 1}` }
-    );
-    rows.push(...page);
-    if (page.length < pageSize) break;
-  }
-  return rows;
+async function completedResultCount(roundId: string, nowIso: string) {
+  const response = await queryResponse(
+    `casino_game_results?select=wallet&round_id=eq.${encodeURIComponent(
+      roundId
+    )}&scheduled_at=lte.${encodeURIComponent(nowIso)}&limit=1`,
+    { Prefer: "count=exact", Range: "0-0" }
+  );
+  const contentRange = response.headers.get("content-range") ?? "";
+  const total = Number(contentRange.split("/").at(-1));
+  return Number.isSafeInteger(total) && total >= 0 ? total : 0;
 }
 
 function compareScore(a: ResultRow, b: ResultRow) {
@@ -98,6 +103,9 @@ function emptyPayload(status: "offline" | "waiting_for_round" = "waiting_for_rou
     status,
     round: null,
     completedCount: 0,
+    remainingCount: 0,
+    tournamentStage: "WAITING FOR FIELD",
+    nextCutCount: 0,
     currentPlay: null,
     latestPlays: [],
     leaderboard: []
@@ -106,14 +114,14 @@ function emptyPayload(status: "offline" | "waiting_for_round" = "waiting_for_rou
 
 export async function GET() {
   if (!config()) {
-    return NextResponse.json(emptyPayload("offline"), { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json(emptyPayload("offline"), { headers: { "Cache-Control": LIVE_CACHE } });
   }
   try {
     const rounds = await query<RoundRow[]>(
       "casino_public_rounds?select=round_id,round_sequence,game,status,eligible_count,started_at,playback_started_at,playback_ends_at,results_hash,randomness_provider,randomness_account,randomness_commit_tx_sig,randomness_reveal_tx_sig,randomness_verified_at,settlement_tx_sig,settled_at&order=started_at.desc&limit=1"
     );
     const round = rounds[0];
-    if (!round) return NextResponse.json(emptyPayload(), { headers: { "Cache-Control": "no-store" } });
+    if (!round) return NextResponse.json(emptyPayload(), { headers: { "Cache-Control": LIVE_CACHE } });
 
     const proofVerified = Boolean(
       round.randomness_provider === "switchboard" &&
@@ -123,12 +131,25 @@ export async function GET() {
         round.randomness_verified_at
     );
     let results: ResultRow[] = [];
-    let currentRows: ResultRow[] = [];
+    let currentRows: CurrentPlayRow[] = [];
+    let leaderboardRows: ResultRow[] = [];
+    let completedCount = 0;
     if (proofVerified && round.results_hash) {
-      [results, currentRows] = await Promise.all([
-        completedResults(round.round_id, new Date().toISOString()),
+      const nowIso = new Date().toISOString();
+      [completedCount, results, leaderboardRows, currentRows] = await Promise.all([
+        completedResultCount(round.round_id, nowIso),
         query<ResultRow[]>(
-          `casino_public_current_play?select=wallet,sequence_index,game,score,tie_break,summary,outcome,result_hash,scheduled_at&round_id=eq.${encodeURIComponent(
+          `casino_game_results?select=wallet,sequence_index,game,score,tie_break,summary,outcome,result_hash,scheduled_at&round_id=eq.${encodeURIComponent(
+            round.round_id
+          )}&scheduled_at=lte.${encodeURIComponent(nowIso)}&order=scheduled_at.desc&limit=8`
+        ),
+        query<ResultRow[]>(
+          `casino_game_results?select=wallet,sequence_index,game,score,tie_break,summary,outcome,result_hash,scheduled_at&round_id=eq.${encodeURIComponent(
+            round.round_id
+          )}&scheduled_at=lte.${encodeURIComponent(nowIso)}&order=score.desc,tie_break.asc&limit=100`
+        ),
+        query<CurrentPlayRow[]>(
+          `casino_public_current_play?select=wallet,sequence_index,game,scheduled_at&round_id=eq.${encodeURIComponent(
             round.round_id
           )}&limit=1`
         )
@@ -136,11 +157,9 @@ export async function GET() {
     }
 
     const now = Date.now();
-    const completed = results;
     const currentQueue = currentRows[0] ?? null;
-    const currentResult = currentRows[0] ?? null;
     const previousCompletion =
-      completed.at(-1)?.scheduled_at ?? round.playback_started_at ?? round.randomness_verified_at ?? round.started_at;
+      results[0]?.scheduled_at ?? round.playback_started_at ?? round.randomness_verified_at ?? round.started_at;
     const playbackEnd = Date.parse(round.playback_ends_at ?? "");
     let status = "awaiting_proof";
     if (round.status === "settled") status = "settled";
@@ -151,6 +170,7 @@ export async function GET() {
     } else if (proofVerified && round.results_hash) {
       status = "playing";
     }
+    const tournament = casinoTournamentState(round.eligible_count, completedCount);
 
     return NextResponse.json(
       {
@@ -169,26 +189,29 @@ export async function GET() {
           settlementTxSig: round.settlement_tx_sig,
           settledAt: round.settled_at
         },
-        completedCount: completed.length,
+        completedCount,
+        remainingCount: tournament.remainingCount,
+        tournamentStage: tournament.stage,
+        nextCutCount: tournament.nextCutCount,
         currentPlay: currentQueue
           ? {
               wallet: currentQueue.wallet,
               playIndex: currentQueue.sequence_index,
-              score: currentResult ? String(currentResult.score) : "",
-              summary: currentResult?.summary ?? "SIMULATION IN PROGRESS",
-              outcome: currentResult?.outcome ?? {},
-              resultHash: currentResult?.result_hash ?? "",
+              score: "",
+              summary: "SIMULATION IN PROGRESS",
+              outcome: {},
+              resultHash: "",
               scheduledAt: currentQueue.scheduled_at,
               startedAt: previousCompletion
             }
           : null,
-        latestPlays: completed.slice(-8).reverse().map(publicResult),
-        leaderboard: [...completed].sort(compareScore).slice(0, 100).map(publicResult)
+        latestPlays: results.map(publicResult),
+        leaderboard: leaderboardRows.sort(compareScore).map(publicResult)
       },
-      { headers: { "Cache-Control": "no-store, max-age=0" } }
+      { headers: { "Cache-Control": LIVE_CACHE } }
     );
   } catch (error) {
     console.warn("casino live feed unavailable", error);
-    return NextResponse.json(emptyPayload("offline"), { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json(emptyPayload("offline"), { headers: { "Cache-Control": LIVE_CACHE } });
   }
 }
