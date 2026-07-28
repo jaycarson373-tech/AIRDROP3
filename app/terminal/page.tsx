@@ -1,7 +1,5 @@
-import { TerminalPageView } from "../../components/scout/views";
-
-export const metadata = { title: "Terminal" };
+import { redirect } from "next/navigation";
 
 export default function TerminalPage() {
-  return <TerminalPageView />;
+  redirect("/");
 }

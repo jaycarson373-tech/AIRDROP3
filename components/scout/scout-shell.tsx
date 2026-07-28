@@ -93,7 +93,9 @@ function Header() {
     <header className="scout-header">
       <div className="scout-header__inner">
         <Link className="scout-brand" href="/" aria-label="Casino Strategy home">
-          <span className="scout-brand__mark casino-brand-mark" aria-hidden="true"><i /><b>CS</b></span>
+          <span className="scout-brand__mark casino-brand-mark" aria-hidden="true">
+            <img src="/brand/casino-strategy-logo.jpg" alt="" />
+          </span>
           <span>
             <strong>CASINO STRATEGY</strong>
           </span>
@@ -148,7 +150,9 @@ function Footer() {
   return (
     <footer className="scout-footer">
       <div className="scout-footer__brand">
-        <span className="scout-brand__mark casino-brand-mark" aria-hidden="true"><i /><b>CS</b></span>
+        <span className="scout-brand__mark casino-brand-mark" aria-hidden="true">
+          <img src="/brand/casino-strategy-logo.jpg" alt="" />
+        </span>
         <div>
           <strong>CASINO STRATEGY</strong>
           <p>Fifteen-minute holder tournaments. Verified on-chain.</p>

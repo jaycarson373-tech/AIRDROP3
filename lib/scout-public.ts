@@ -4,7 +4,14 @@ const OLD_PROJECT_MINTS = new Set([
   "8Ab3XVBjvRB2p6sunVJgAiHGmwJA8hSgbs36kZFxpump",
   "8ZG2jEdmEp5t31aikFFHJrYU4JxJjUGRTjxEpPSipump",
   "2B2VJHTaxBQyKTE9Cre96Aku7TuURaeEa44MiKLkpump",
-  "8TUWgrMcBMtviLyuJWUvpXLx8RUUYDKK2Bp7qUVJpump"
+  "8TUWgrMcBMtviLyuJWUvpXLx8RUUYDKK2Bp7qUVJpump",
+  "3h2DwifvFhxhVvR7MesbMo9xb13QTF5ZtTAyqz8Cpump"
+]);
+
+const OLD_PROJECT_X_URLS = new Set([
+  "https://x.com/CSTR_sol",
+  "https://x.com/RunnerPumpFun",
+  "https://x.com/PTF_sol"
 ]);
 
 function cleanPublicCa(value: string | undefined) {
@@ -21,12 +28,23 @@ function cleanPublicUrl(value: string | undefined, configuredMint: string) {
   return trimmed;
 }
 
-const defaultCstrCa = "3h2DwifvFhxhVvR7MesbMo9xb13QTF5ZtTAyqz8Cpump";
 const configuredCa = cleanPublicCa(
-  process.env.NEXT_PUBLIC_CA || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT || defaultCstrCa
+  process.env.NEXT_PUBLIC_CA || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT
 );
 const configuredBuyUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_BUY_URL, configuredCa);
 const configuredDexUrl = cleanPublicUrl(process.env.NEXT_PUBLIC_DEXSCREENER_URL, configuredCa);
+const configuredXUrl = (() => {
+  const value = process.env.NEXT_PUBLIC_X_URL?.trim() ?? "";
+  if (!value || OLD_PROJECT_X_URLS.has(value)) return "";
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && ["x.com", "www.x.com", "twitter.com", "www.twitter.com"].includes(url.hostname)
+      ? url.toString()
+      : "";
+  } catch {
+    return "";
+  }
+})();
 
 export const scoutPublicConfig = {
   name: "Casino Strategy",
@@ -41,8 +59,8 @@ export const scoutPublicConfig = {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 1_000_000;
   })(),
   epochMinutes: (() => {
-    const parsed = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5);
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : 5;
+    const parsed = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 15);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 15;
   })(),
   publicDelaySeconds: (() => {
     const parsed = Number(
@@ -52,7 +70,7 @@ export const scoutPublicConfig = {
     );
     return Number.isFinite(parsed) && parsed >= 0 ? parsed : 60;
   })(),
-  xUrl: "https://x.com/CSTR_sol",
+  xUrl: configuredXUrl,
   telegramUrl: process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "",
   buyUrl: configuredBuyUrl || (configuredCa ? `https://pump.fun/coin/${configuredCa}` : null),
   dexScreenerUrl: configuredDexUrl || (configuredCa ? `https://dexscreener.com/solana/${configuredCa}` : null)

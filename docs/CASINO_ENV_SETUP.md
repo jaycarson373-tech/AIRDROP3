@@ -27,6 +27,8 @@ Migration 012 narrows the public current-play view so the upcoming wallet can be
 Build command: `npm ci && npm run worker:build`  
 Start command: `npm run worker:start`
 
+The copy-ready Railway template is `deploy/railway.env.example`.
+
 Start with money movement disabled:
 
 ```dotenv
@@ -46,7 +48,7 @@ CASINO_TOP3_SPLIT_BPS=5000,3000,2000
 CASINO_JACKPOT_INTERVAL=25
 
 ELIGIBILITY_MIN=1000000
-MAX_WALLETS_PER_EPOCH=150
+MAX_WALLETS_PER_EPOCH=1000
 MAX_HOLDER_PCT=4
 EXCLUDE_WALLETS=
 MIN_SOL_RESERVE=0.3
@@ -89,6 +91,8 @@ CASINO_PAYOUTS_ENABLED=true
 
 ## Vercel web application
 
+The copy-ready Vercel template is `deploy/vercel.env.example`.
+
 ```dotenv
 LAUNCH_STATE=live
 NEXT_PUBLIC_PROJECT_NAME="Casino Strategy"
@@ -119,6 +123,10 @@ CASINO_CHAT_RATE_LIMIT_SALT=<LONG_RANDOM_SECRET>
 ```
 
 Never put `SUPABASE_SERVICE_ROLE`, `HELIUS_RPC_URL`, `CASINO_CHAT_RATE_LIMIT_SALT`, or `TREASURY_WALLET_SECRET` in `NEXT_PUBLIC_` variables.
+
+Do not reuse the previous CSTR contract, X account, or buy URL. Until the real
+Casino Strategy values are configured, the web application intentionally hides
+those controls instead of displaying a stale fallback.
 
 ## Required proof service
 

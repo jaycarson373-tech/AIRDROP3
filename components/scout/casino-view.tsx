@@ -544,6 +544,13 @@ export function CasinoTerminalView() {
     <div className="casino-home">
       <section className="casino-hero">
         <div className="casino-hero__copy">
+          <img
+            className="casino-hero__logo"
+            src="/brand/casino-strategy-logo.jpg"
+            alt="Casino Strategy"
+            width={1254}
+            height={1254}
+          />
           <div className="casino-eyebrow"><span>CASINO STRATEGY</span><i /> ROUND {roundId}</div>
           <h1>EVERY 15 MINUTES.<br /><span>A NEW GAME.</span></h1>
           <p>
@@ -675,6 +682,15 @@ export function CasinoTerminalView() {
           </a>
         ) : null}
       </section>
+
+      <div className="casino-brand-banner casino-brand-banner--bottom">
+        <img
+          src="/brand/casino-strategy-banner.jpg"
+          alt="Casino Strategy"
+          width={1280}
+          height={426}
+        />
+      </div>
     </div>
   );
 }

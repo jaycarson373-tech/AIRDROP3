@@ -51,11 +51,24 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: "Casino Strategy",
     type: "website",
+    images: [
+      {
+        url: "/brand/og-image.png",
+        width: 1280,
+        height: 426,
+        alt: "Casino Strategy"
+      }
+    ]
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Casino Strategy — Every 15 Minutes, A New Game",
-    description: "A pixel-era on-chain arcade where eligible holders enter automatically."
+    description: "A pixel-era on-chain arcade where eligible holders enter automatically.",
+    images: ["/brand/og-image.png"]
+  },
+  icons: {
+    icon: "/brand/casino-strategy-logo.jpg",
+    apple: "/brand/casino-strategy-logo.jpg"
   },
   robots: { index: true, follow: true }
 };

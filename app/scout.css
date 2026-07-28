@@ -6087,24 +6087,16 @@
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.42) !important;
   border-radius: 1px !important;
-  background: #f2f2ed !important;
+  background: #050505 !important;
   box-shadow: none !important;
-  color: #050505 !important;
+  color: #f2f2ed !important;
 }
 
-.casino-brand-mark i {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  border-left: 1px dashed rgba(0, 0, 0, 0.3);
-}
-
-.casino-brand-mark b {
-  position: relative;
-  z-index: 1;
-  font-size: 10px;
-  letter-spacing: -0.08em;
+.casino-brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .scout-nav a {
@@ -6162,6 +6154,27 @@
   font-variant-numeric: tabular-nums lining-nums;
 }
 
+.casino-brand-banner {
+  height: clamp(118px, 22vw, 300px);
+  margin-bottom: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  background: #020202;
+}
+
+.casino-brand-banner img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.casino-brand-banner--bottom {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
 .casino-hero {
   display: grid;
   grid-template-columns: minmax(360px, 0.82fr) minmax(540px, 1.18fr);
@@ -6176,6 +6189,15 @@
   justify-content: center;
   padding: clamp(34px, 5vw, 80px);
   border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.casino-hero__logo {
+  display: block;
+  width: 108px;
+  height: 108px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  object-fit: cover;
 }
 
 .casino-eyebrow {
@@ -6202,11 +6224,11 @@
 .casino-hero h1 {
   margin: 32px 0 0;
   color: #f5f5ef;
-  font-family: var(--font-runner-display), "Arial Narrow", sans-serif;
-  font-size: clamp(52px, 6.35vw, 104px);
-  font-weight: 700;
-  line-height: 0.86;
-  letter-spacing: -0.072em;
+  font-family: var(--font-casino-pixel), var(--font-runner-terminal), ui-monospace, monospace;
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -0.035em;
   text-shadow: 4px 4px 0 #181818;
 }
 
@@ -6285,8 +6307,10 @@
 
 .casino-hero__metrics strong {
   color: #efefe9;
-  font-size: 16px;
-  font-weight: 500;
+  font-family: var(--font-casino-pixel), var(--font-runner-terminal), ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .casino-stage {
@@ -6839,7 +6863,8 @@
 
 .casino-console__status strong {
   color: #fff;
-  font-size: 9px;
+  font-family: var(--font-casino-pixel), var(--font-runner-terminal), ui-monospace, monospace;
+  font-size: 7px;
 }
 
 .casino-console__status small {
@@ -6866,8 +6891,10 @@
 
 .casino-console__grid strong {
   color: #eaeae5;
-  font-size: 10px;
-  font-weight: 500;
+  font-family: var(--font-casino-pixel), var(--font-runner-terminal), ui-monospace, monospace;
+  font-size: 7px;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .casino-live-grid {
@@ -7178,10 +7205,11 @@
 .casino-section-heading h2 {
   margin: 8px 0 0;
   color: #f4f4ee;
-  font-family: var(--font-runner-display), "Arial Narrow", sans-serif;
-  font-size: clamp(32px, 4.2vw, 58px);
-  line-height: 0.95;
-  letter-spacing: -0.055em;
+  font-family: var(--font-casino-pixel), var(--font-runner-terminal), ui-monospace, monospace;
+  font-size: clamp(24px, 3.1vw, 42px);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
 }
 
 .casino-section-heading p {
@@ -7333,8 +7361,10 @@
 
 .casino-game-list article strong {
   color: #e9e9e4;
-  font-size: 13px;
-  font-weight: 500;
+  font-family: var(--font-casino-pixel), var(--font-runner-terminal), ui-monospace, monospace;
+  font-size: 8px;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .casino-game-list article small {
@@ -7575,10 +7605,11 @@
 .casino-final h2 {
   margin: 22px 0 0;
   color: #f2f2ed;
-  font-family: var(--font-runner-display), "Arial Narrow", sans-serif;
-  font-size: clamp(48px, 7vw, 100px);
-  line-height: 0.84;
-  letter-spacing: -0.07em;
+  font-family: var(--font-casino-pixel), var(--font-runner-terminal), ui-monospace, monospace;
+  font-size: clamp(30px, 4.4vw, 58px);
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -0.03em;
 }
 
 .casino-final p {
@@ -7814,6 +7845,12 @@
     width: calc(100% - 16px) !important;
   }
 
+  .scout-footer__brand p {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
   .scout-brand strong {
     font-size: 10px !important;
   }
@@ -7830,14 +7867,20 @@
     padding: 34px 18px 24px;
   }
 
+  .casino-hero__logo {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 20px;
+  }
+
   .casino-eyebrow {
     font-size: 7px;
   }
 
   .casino-hero h1 {
     margin-top: 26px;
-    font-size: clamp(38px, 12vw, 50px);
-    line-height: 0.9;
+    font-size: clamp(26px, 8.3vw, 34px);
+    line-height: 1.25;
   }
 
   .casino-hero__copy > p {
@@ -7855,7 +7898,7 @@
   }
 
   .casino-hero__metrics strong {
-    font-size: 13px;
+    font-size: 8px;
   }
 
   .casino-stage {
