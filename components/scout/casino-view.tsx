@@ -534,7 +534,7 @@ export function CasinoTerminalView() {
     now !== null && Number.isFinite(playbackStart) && Number.isFinite(playbackEnd) && playbackEnd > playbackStart
       ? Math.min(1, Math.max(0, (now - playbackStart) / (playbackEnd - playbackStart)))
       : 0;
-  const roundId = live.round?.roundId ?? `CS-${String(scheduledRoundNumber).slice(-8).padStart(8, "0")}`;
+  const displayRoundNumber = live.round?.roundNumber ?? Math.max(1, stats.casinoRoundCount + 1);
   const displayTime = useMemo(
     () => lastUpdated?.toLocaleTimeString([], { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }) ?? "OFF-CHAIN",
     [lastUpdated]
@@ -551,7 +551,7 @@ export function CasinoTerminalView() {
             width={1254}
             height={1254}
           />
-          <div className="casino-eyebrow"><span>CASINO STRATEGY</span><i /> ROUND {roundId}</div>
+          <div className="casino-eyebrow"><span>CASINO STRATEGY</span><i /> ROUND {displayRoundNumber.toLocaleString()}</div>
           <h1>EVERY 15 MINUTES.<br /><span>A NEW GAME.</span></h1>
           <p>
             Hold 1M+ {scoutPublicConfig.tokenLabel} before the snapshot and your wallet is entered automatically.
@@ -605,7 +605,7 @@ export function CasinoTerminalView() {
           <small>LAST INDEX {displayTime}</small>
         </div>
         <div className="casino-console__grid">
-          <div><span>ROUND ID</span><strong>{roundId}</strong></div>
+          <div><span>ROUND</span><strong>#{displayRoundNumber.toLocaleString()}</strong></div>
           <div><span>GAME</span><strong>{activeGame.name}</strong></div>
           <div><span>PHASE</span><strong>{live.tournamentStage}</strong></div>
           <div><span>PLAYERS</span><strong>{live.round ? `${live.remainingCount.toLocaleString()} / ${live.round.eligibleCount.toLocaleString()}` : "NO ROUND"}</strong></div>
