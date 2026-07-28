@@ -32,8 +32,13 @@ export type CasinoRoundRow = {
   jackpot_closing_lamports: string | number;
   is_jackpot_round: boolean;
   randomness_provider: string | null;
+  randomness_program: string | null;
+  randomness_queue: string | null;
+  randomness_authority: string | null;
   randomness_account: string | null;
   randomness_commit_slot: number | string | null;
+  randomness_reveal_slot: number | string | null;
+  randomness_binding: string | null;
   randomness_hex: string | null;
   randomness_commit_tx_sig: string | null;
   randomness_reveal_tx_sig: string | null;
@@ -349,6 +354,60 @@ export async function setCasinoRoundClaim(roundId: string, claimedLamports: bigi
     .update({ claimed_lamports: claimedLamports.toString() })
     .eq("round_id", roundId);
   assertNoError(result, "set casino round claim");
+}
+
+export async function recordCasinoRandomnessCommit(
+  roundId: string,
+  fields: {
+    program: string;
+    queue: string;
+    authority: string;
+    account: string;
+    seedSlot: number;
+    binding: string;
+    commitTxSig: string;
+  }
+): Promise<CasinoRoundRow> {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({
+      randomness_provider: "switchboard",
+      randomness_program: fields.program,
+      randomness_queue: fields.queue,
+      randomness_authority: fields.authority,
+      randomness_account: fields.account,
+      randomness_commit_slot: fields.seedSlot,
+      randomness_binding: fields.binding,
+      randomness_commit_tx_sig: fields.commitTxSig,
+      error: null
+    })
+    .eq("round_id", roundId)
+    .select()
+    .single();
+  return assertNoError(result, "record casino randomness commitment") as CasinoRoundRow;
+}
+
+export async function recordCasinoRandomnessReveal(
+  roundId: string,
+  fields: {
+    revealSlot: number;
+    randomnessHex: string;
+    revealTxSig: string;
+  }
+): Promise<CasinoRoundRow> {
+  const result = await supabase
+    .from("casino_rounds")
+    .update({
+      randomness_reveal_slot: fields.revealSlot,
+      randomness_hex: fields.randomnessHex,
+      randomness_reveal_tx_sig: fields.revealTxSig,
+      randomness_verified_at: new Date().toISOString(),
+      error: null
+    })
+    .eq("round_id", roundId)
+    .select()
+    .single();
+  return assertNoError(result, "record verified casino randomness") as CasinoRoundRow;
 }
 
 export async function casinoJackpotOpening(roundSequence: number) {

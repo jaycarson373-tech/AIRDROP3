@@ -28,8 +28,8 @@ npm run check
 - Vercel hosts the Next.js interface.
 - Railway runs the round worker.
 - Supabase stores immutable snapshots, rounds, results, winners, and chat.
-- The worker must remain payout-disabled until migrations `010`–`012`, the
-  app-owned Switchboard commitment/reveal writer, and a complete dry run are
-  verified.
+- The worker must remain payout-disabled until migrations `010`–`013`, the
+  built-in Switchboard commitment/reveal writer, and a complete proof-verified
+  dry run are verified.
 
 See `docs/CASINO_ENV_SETUP.md` and `docs/CASINO_LAUNCH.md`.

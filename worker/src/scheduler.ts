@@ -24,6 +24,9 @@ if (config.casinoModeEnabled) {
   console.log(
     `Casino payout gate: ${config.casinoPayoutsEnabled && config.airdropEnabled ? "LIVE" : "DRY-RUN"}; verified Switchboard proof required.`
   );
+  console.log(
+    `Switchboard writer: ${config.switchboardRandomnessEnabled ? "enabled" : "disabled"} on ${config.solanaCluster}.`
+  );
 }
 console.log(`Scout dynamic selection: ${config.scoutDynamicSelectionEnabled ? "enabled" : "disabled"}`);
 console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ source tokens; wallets above ${config.maxHolderPct}% are excluded.`);

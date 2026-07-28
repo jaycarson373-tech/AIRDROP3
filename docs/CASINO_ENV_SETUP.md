@@ -9,8 +9,9 @@ For the existing project, run these files in the Supabase SQL editor in order:
 1. `supabase/migrations/010_casino_rounds.sql`
 2. `supabase/migrations/011_casino_gameplay_chat.sql`
 3. `supabase/migrations/012_casino_tournament_feed.sql`
+4. `supabase/migrations/013_switchboard_round_proofs.sql`
 
-For an empty Supabase project, apply every numbered migration from `001` through `012` in order because the casino tables reference the base `epochs`, `snapshots`, `payouts`, and holder-state tables.
+For an empty Supabase project, apply every numbered migration from `001` through `013` in order because the casino tables reference the base `epochs`, `snapshots`, `payouts`, and holder-state tables.
 
 Migration 011 creates:
 
@@ -21,6 +22,9 @@ Migration 011 creates:
 - playback/result-commitment columns on `casino_rounds`
 
 Migration 012 narrows the public current-play view so the upcoming wallet can be animated without exposing its score or outcome before reveal.
+
+Migration 013 stores and locks the Switchboard program, queue, authority, account,
+commit/reveal slots, transaction signatures, round binding, and revealed 32-byte value.
 
 ## Railway worker
 
@@ -34,6 +38,7 @@ Start with money movement disabled:
 ```dotenv
 REWARD_MODE=sol
 WORKER_ENABLED=false
+SOLANA_CLUSTER=mainnet-beta
 HELIUS_RPC_URL=<NEW_PRIVATE_HELIUS_RPC_URL>
 SOURCE_TOKEN_MINT=<CASINO_TOKEN_MINT>
 TREASURY_WALLET_SECRET=<NEW_ROTATED_BASE58_SECRET>
@@ -47,6 +52,11 @@ CASINO_ROUND_PAYOUT_BPS=8000
 CASINO_JACKPOT_BPS=2000
 CASINO_TOP3_SPLIT_BPS=5000,3000,2000
 CASINO_JACKPOT_INTERVAL=25
+SWITCHBOARD_RANDOMNESS_ENABLED=false
+SWITCHBOARD_COMPUTE_UNIT_PRICE_MICROLAMPORTS=75000
+SWITCHBOARD_COMPUTE_LIMIT_MULTIPLE=1.5
+SWITCHBOARD_RETRY_ATTEMPTS=5
+SWITCHBOARD_RETRY_DELAY_MS=2000
 
 ELIGIBILITY_MIN=1000000
 MAX_WALLETS_PER_EPOCH=1000
@@ -67,15 +77,17 @@ CASINO_MODE_ENABLED=false
 CASINO_PAYOUTS_ENABLED=false
 ```
 
-After migrations and the app-owned Switchboard commitment/reveal writer are deployed, start the scheduler with settlement still disabled:
+After migrations are deployed, start the scheduler and built-in Switchboard writer with settlement still disabled:
 
 ```dotenv
 WORKER_ENABLED=true
 CASINO_MODE_ENABLED=true
-CLAIM_ENABLED=false
+SWITCHBOARD_RANDOMNESS_ENABLED=true
+CLAIM_ENABLED=true
 ```
 
-Keep every money-moving gate off until a proof-verified dry run is complete:
+The claim transaction is simulated before broadcast. Keep both payout gates off
+until the first complete proof-verified round is reviewed:
 
 ```dotenv
 AIRDROP_ENABLED=false
@@ -85,7 +97,6 @@ CASINO_PAYOUTS_ENABLED=false
 Only after reviewing a complete proof-verified dry-run round and explicitly approving mainnet fee claims and settlement:
 
 ```dotenv
-CLAIM_ENABLED=true
 AIRDROP_ENABLED=true
 CASINO_PAYOUTS_ENABLED=true
 ```

@@ -48,6 +48,11 @@ import { applyHolderState } from "./holder-state.js";
 import { connection } from "./solana.js";
 import { treasuryKeypair } from "./config.js";
 import { eligibleHoldersFromSnapshot, snapshotSourceHolders, type Holder } from "./snapshot.js";
+import {
+  advanceCasinoRandomness,
+  RandomnessPendingError,
+  verifyCasinoRandomnessProof
+} from "./switchboard-randomness.js";
 
 function lamportsToSol(lamports: bigint) {
   return Number(lamports) / LAMPORTS_PER_SOL;
@@ -68,21 +73,6 @@ function casinoPolicy(): CasinoFeePolicy {
     topThreeSplitBps: config.casinoTopThreeSplitBps as [number, number, number],
     jackpotInterval: config.casinoJackpotInterval
   };
-}
-
-function validateSwitchboardProof(round: CasinoRoundRow) {
-  if (
-    round.randomness_provider !== "switchboard" ||
-    !round.randomness_account ||
-    round.randomness_commit_slot === null ||
-    !round.randomness_hex ||
-    !round.randomness_commit_tx_sig ||
-    !round.randomness_reveal_tx_sig ||
-    !round.randomness_verified_at
-  ) {
-    return false;
-  }
-  return true;
 }
 
 function allocationForWinner(
@@ -249,7 +239,7 @@ async function sendCasinoSettlement(round: CasinoRoundRow, allocations: Allocati
 }
 
 async function settleOneCasinoRound(round: CasinoRoundRow) {
-  if (!validateSwitchboardProof(round)) return "waiting" as const;
+  if (!(await verifyCasinoRandomnessProof(round))) return "waiting" as const;
 
   const snapshotRows = await casinoSnapshot(round.epoch_id);
   const committedHash = snapshotHash(
@@ -373,9 +363,14 @@ export async function settlePendingCasinoRounds() {
   const pending = await pendingCasinoRounds();
   for (const round of pending) {
     try {
-      const result = await settleOneCasinoRound(round);
+      const currentRound = await advanceCasinoRandomness(round);
+      const result = await settleOneCasinoRound(currentRound);
       if (result === "waiting" || result === "playing") return true;
     } catch (error) {
+      if (error instanceof RandomnessPendingError) {
+        console.warn(`[${round.round_id}] Switchboard randomness pending: ${error.message}`);
+        return true;
+      }
       await failCasinoRound(round.round_id, error).catch(() => undefined);
       await failEpoch(round.epoch_id, error).catch(() => undefined);
       throw error;

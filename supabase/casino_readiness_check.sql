@@ -1,4 +1,4 @@
--- Run after migrations 001 through 012. This script is read-only.
+-- Run after migrations 001 through 013. This script is read-only.
 with expected_objects(object_name) as (
   values
     ('public.epochs'),
@@ -45,3 +45,24 @@ where schemaname = 'public'
     'casino_chat_messages'
   )
 order by tablename, policyname;
+
+select
+  column_name,
+  case when column_name in (
+    'randomness_program',
+    'randomness_queue',
+    'randomness_authority',
+    'randomness_account',
+    'randomness_commit_slot',
+    'randomness_reveal_slot',
+    'randomness_binding',
+    'randomness_hex',
+    'randomness_commit_tx_sig',
+    'randomness_reveal_tx_sig',
+    'randomness_verified_at'
+  ) then 'READY' else 'IGNORED' end as proof_column_status
+from information_schema.columns
+where table_schema = 'public'
+  and table_name = 'casino_rounds'
+  and column_name like 'randomness_%'
+order by column_name;

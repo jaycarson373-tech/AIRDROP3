@@ -9,8 +9,8 @@ Casino Strategy runs fifteen-minute rounds with this fixed policy:
 
 ## Required before enabling payouts
 
-1. Apply `supabase/migrations/010_casino_rounds.sql`, `supabase/migrations/011_casino_gameplay_chat.sql`, and `supabase/migrations/012_casino_tournament_feed.sql`.
-2. Deploy an app-owned Switchboard commit/reveal integration that:
+1. Apply `supabase/migrations/010_casino_rounds.sql` through `supabase/migrations/013_switchboard_round_proofs.sql`.
+2. Enable the built-in Switchboard commit/reveal writer only after confirming that it:
    - commits the round ID and eligible-wallet snapshot before reveal;
    - writes the Switchboard account, commit slot, commit transaction, reveal transaction, and 32-byte revealed value to `casino_rounds`;
    - sets `randomness_verified_at` only after on-chain verification;
@@ -30,6 +30,7 @@ Live chat is disabled by default. To enable it after migration 011, set `CASINO_
 ```dotenv
 REWARD_MODE=sol
 WORKER_ENABLED=false
+SOLANA_CLUSTER=mainnet-beta
 EPOCH_MINUTES=15
 CASINO_ROUND_MINUTES=15
 CASINO_ROUND_PAYOUT_BPS=8000
@@ -37,6 +38,11 @@ CASINO_JACKPOT_BPS=2000
 CASINO_TOP3_SPLIT_BPS=5000,3000,2000
 CASINO_JACKPOT_INTERVAL=25
 CASINO_WORKER_POLL_MS=5000
+SWITCHBOARD_RANDOMNESS_ENABLED=false
+SWITCHBOARD_COMPUTE_UNIT_PRICE_MICROLAMPORTS=75000
+SWITCHBOARD_COMPUTE_LIMIT_MULTIPLE=1.5
+SWITCHBOARD_RETRY_ATTEMPTS=5
+SWITCHBOARD_RETRY_DELAY_MS=2000
 
 CASINO_MODE_ENABLED=false
 CASINO_PAYOUTS_ENABLED=false
@@ -47,4 +53,4 @@ BUY_ENABLED=false
 AIRDROP_ENABLED=false
 ```
 
-Set `WORKER_ENABLED=true` and enable `CASINO_MODE_ENABLED` only after the migrations and proof writer are deployed. Enable `CLAIM_ENABLED`, `CASINO_PAYOUTS_ENABLED`, and `AIRDROP_ENABLED` only after the proof-verified dry run and an explicit mainnet transaction review. `BUY_ENABLED` remains false because casino settlements are paid in SOL.
+Set `WORKER_ENABLED=true`, `CASINO_MODE_ENABLED=true`, and `SWITCHBOARD_RANDOMNESS_ENABLED=true` only after migration 013 is deployed. The claim transaction must be explicitly authorized so a real fee pool exists for the dry run. Enable `CASINO_PAYOUTS_ENABLED` and `AIRDROP_ENABLED` only after the proof-verified dry run and an explicit mainnet settlement review. `BUY_ENABLED` remains false because casino settlements are paid in SOL.

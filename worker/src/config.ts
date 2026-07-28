@@ -110,6 +110,8 @@ const configuredRewardBuyBps = intEnv("REWARD_BUY_BPS", 5000);
 const workerEnabled = boolEnv("WORKER_ENABLED", false);
 const casinoModeEnabled = boolEnv("CASINO_MODE_ENABLED", false);
 const casinoPayoutsEnabled = boolEnv("CASINO_PAYOUTS_ENABLED", false);
+const switchboardRandomnessEnabled = boolEnv("SWITCHBOARD_RANDOMNESS_ENABLED", false);
+const solanaCluster = process.env.SOLANA_CLUSTER ?? "mainnet-beta";
 const configuredEpochMinutes = Math.max(1, intEnv("EPOCH_MINUTES", casinoModeEnabled ? 15 : 5));
 const casinoRoundMinutes = Math.max(1, intEnv("CASINO_ROUND_MINUTES", 15));
 const casinoRoundPayoutBps = Math.min(10_000, Math.max(0, intEnv("CASINO_ROUND_PAYOUT_BPS", 8_000)));
@@ -140,8 +142,14 @@ if (
 if (casinoPayoutsEnabled && !casinoModeEnabled) {
   throw new Error("CASINO_PAYOUTS_ENABLED requires CASINO_MODE_ENABLED=true");
 }
+if (casinoPayoutsEnabled && !switchboardRandomnessEnabled) {
+  throw new Error("CASINO_PAYOUTS_ENABLED requires SWITCHBOARD_RANDOMNESS_ENABLED=true");
+}
 if (casinoModeEnabled && configuredAirdropBatchSize < 3) {
   throw new Error("Casino settlement requires AIRDROP_BATCH_SIZE>=3 so the top-three payout is atomic");
+}
+if (solanaCluster !== "mainnet-beta" && solanaCluster !== "devnet") {
+  throw new Error(`Invalid SOLANA_CLUSTER=${solanaCluster}; expected mainnet-beta or devnet`);
 }
 
 export const config = {
@@ -164,6 +172,18 @@ export const config = {
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
   casinoModeEnabled,
   casinoPayoutsEnabled,
+  solanaCluster,
+  switchboardRandomnessEnabled,
+  switchboardComputeUnitPriceMicroLamports: Math.max(
+    0,
+    intEnv("SWITCHBOARD_COMPUTE_UNIT_PRICE_MICROLAMPORTS", 75_000)
+  ),
+  switchboardComputeLimitMultiple: Math.max(
+    1,
+    numberEnv("SWITCHBOARD_COMPUTE_LIMIT_MULTIPLE", 1.5)
+  ),
+  switchboardRetryAttempts: Math.max(1, intEnv("SWITCHBOARD_RETRY_ATTEMPTS", 5)),
+  switchboardRetryDelayMs: Math.max(500, intEnv("SWITCHBOARD_RETRY_DELAY_MS", 2_000)),
   casinoRoundMinutes,
   casinoRoundPayoutBps,
   casinoJackpotBps,

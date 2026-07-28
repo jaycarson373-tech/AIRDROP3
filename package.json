@@ -13,18 +13,20 @@
     "typecheck": "tsc --noEmit",
     "worker:dev": "tsx worker/src/scheduler.ts",
     "worker:build": "tsc -p worker/tsconfig.json",
-    "worker:test": "node --import tsx --test worker/src/casino-policy.test.ts",
+    "worker:test": "node --import tsx --test worker/src/*.test.ts",
     "worker:start": "node worker/dist/scheduler.js",
     "check": "npm run typecheck && npm run worker:test && npm run worker:build && npm run build"
   },
   "dependencies": {
-    "@solana/spl-token": "^0.4.14",
+    "@coral-xyz/anchor": "0.31.1",
+    "@solana/spl-token": "0.4.15",
     "@solana/web3.js": "^1.98.4",
     "@supabase/supabase-js": "^2.86.0",
+    "@switchboard-xyz/on-demand": "3.10.3",
     "bs58": "^6.0.0",
     "dotenv": "^17.2.3",
     "lucide-react": "^0.468.0",
-    "next": "16.2.9",
+    "next": "16.2.12",
     "react": "19.2.7",
     "react-dom": "19.2.7"
   },
