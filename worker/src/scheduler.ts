@@ -53,4 +53,11 @@ function scheduleFirstRun() {
   }, waitMs);
 }
 
-scheduleFirstRun();
+if (config.workerEnabled) {
+  scheduleFirstRun();
+} else {
+  console.log(
+    "WORKER_ENABLED=false. Scheduler is parked; no claims, rounds, or payouts will run."
+  );
+  setInterval(() => undefined, 60_000);
+}

@@ -107,6 +107,7 @@ const configuredBagworkRewardWallet =
   optionalPublicKeyEnv("BAGWORK_REWARD_WALLET_PUBLIC_KEY") ?? optionalPublicKeyEnv("PFP_REWARD_WALLET_PUBLIC_KEY");
 const configuredBagworkRewardBps = intEnv("BAGWORK_REWARD_BPS", intEnv("PFP_REWARD_BPS", 5000));
 const configuredRewardBuyBps = intEnv("REWARD_BUY_BPS", 5000);
+const workerEnabled = boolEnv("WORKER_ENABLED", false);
 const casinoModeEnabled = boolEnv("CASINO_MODE_ENABLED", false);
 const casinoPayoutsEnabled = boolEnv("CASINO_PAYOUTS_ENABLED", false);
 const configuredEpochMinutes = Math.max(1, intEnv("EPOCH_MINUTES", casinoModeEnabled ? 15 : 5));
@@ -157,6 +158,7 @@ export const config = {
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),
   scoutDynamicSelectionEnabled: boolEnv("SCOUT_DYNAMIC_SELECTION_ENABLED", false),
 
+  workerEnabled,
   claimEnabled: boolEnv("CLAIM_ENABLED", false),
   buyEnabled: boolEnv("BUY_ENABLED", false),
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),

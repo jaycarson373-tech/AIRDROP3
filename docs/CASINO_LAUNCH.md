@@ -29,6 +29,7 @@ Live chat is disabled by default. To enable it after migration 011, set `CASINO_
 
 ```dotenv
 REWARD_MODE=sol
+WORKER_ENABLED=false
 EPOCH_MINUTES=15
 CASINO_ROUND_MINUTES=15
 CASINO_ROUND_PAYOUT_BPS=8000
@@ -46,4 +47,4 @@ BUY_ENABLED=false
 AIRDROP_ENABLED=false
 ```
 
-Enable `CASINO_MODE_ENABLED` only after the migration and proof writer are deployed. Enable `CLAIM_ENABLED`, `CASINO_PAYOUTS_ENABLED`, and `AIRDROP_ENABLED` only after the dry run and an explicit mainnet transaction review. `BUY_ENABLED` remains false because casino settlements are paid in SOL.
+Set `WORKER_ENABLED=true` and enable `CASINO_MODE_ENABLED` only after the migrations and proof writer are deployed. Enable `CLAIM_ENABLED`, `CASINO_PAYOUTS_ENABLED`, and `AIRDROP_ENABLED` only after the proof-verified dry run and an explicit mainnet transaction review. `BUY_ENABLED` remains false because casino settlements are paid in SOL.

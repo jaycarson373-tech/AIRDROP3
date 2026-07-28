@@ -33,6 +33,7 @@ Start with money movement disabled:
 
 ```dotenv
 REWARD_MODE=sol
+WORKER_ENABLED=false
 HELIUS_RPC_URL=<NEW_PRIVATE_HELIUS_RPC_URL>
 SOURCE_TOKEN_MINT=<CASINO_TOKEN_MINT>
 TREASURY_WALLET_SECRET=<NEW_ROTATED_BASE58_SECRET>
@@ -66,23 +67,25 @@ CASINO_MODE_ENABLED=false
 CASINO_PAYOUTS_ENABLED=false
 ```
 
-After migrations, an end-to-end dry run, treasury review, and the app-owned Switchboard commitment/reveal writer are deployed, enable the worker in stages:
+After migrations and the app-owned Switchboard commitment/reveal writer are deployed, start the scheduler with settlement still disabled:
 
 ```dotenv
+WORKER_ENABLED=true
 CASINO_MODE_ENABLED=true
-CLAIM_ENABLED=true
+CLAIM_ENABLED=false
 ```
 
-Keep these off during the dry run:
+Keep every money-moving gate off until a proof-verified dry run is complete:
 
 ```dotenv
 AIRDROP_ENABLED=false
 CASINO_PAYOUTS_ENABLED=false
 ```
 
-Only after reviewing a complete verified dry-run round and explicitly approving mainnet settlement:
+Only after reviewing a complete proof-verified dry-run round and explicitly approving mainnet fee claims and settlement:
 
 ```dotenv
+CLAIM_ENABLED=true
 AIRDROP_ENABLED=true
 CASINO_PAYOUTS_ENABLED=true
 ```
