@@ -561,27 +561,40 @@ export function CasinoTerminalView() {
         <div className="casino-hero__copy">
           <img
             className="casino-hero__logo"
-            src="/brand/casino-strategy-logo.jpg"
-            alt="Casino Strategy"
+            src="/brand/casino-logo.png"
+            alt="Casino"
             width={1254}
             height={1254}
           />
-          <div className="casino-eyebrow"><span>CASINO STRATEGY</span><i /> ROUND {displayRoundNumber.toLocaleString()}</div>
+          <div className="casino-eyebrow">
+            <span>CASINO</span><i /> {launchState === "prelaunch" ? "RELAUNCH RESERVED" : `ROUND ${displayRoundNumber.toLocaleString()}`}
+          </div>
           <h1>EVERY 5 MINUTES.<br /><span>A NEW GAME.</span></h1>
           <p>
-            Hold 1M+ {scoutPublicConfig.tokenLabel} before the snapshot and your wallet is entered automatically.
-            No connection. No click. Every round eliminates the field until one champion remains.
-            First place wins the round; second and third also receive verified rewards.
+            Hold the required balance before the snapshot and your wallet enters automatically.
+            No connection. No signing. Each five-minute tournament eliminates the field until one champion remains,
+            while the top three share verified round rewards.
           </p>
           <div className="casino-hero__actions">
             <a className="casino-button casino-button--solid" href="#live-round">ENTER LIVE ROUND <ArrowUpRight size={16} /></a>
             <a className="casino-button" href="#results">VIEW RESULTS</a>
           </div>
           <div className="casino-hero__metrics">
-            <div><span>NEXT GAME</span><strong>{clockLabel(remaining)}</strong></div>
-            <div><span>PLAYERS LEFT</span><strong>{live.remainingCount.toLocaleString()}</strong></div>
-            <div><span>VERIFIED ROUNDS</span><strong>{stats.casinoRoundCount.toLocaleString()}</strong></div>
-            <div><span>DISTRIBUTED VALUE</span><strong>{stats.casinoTotalDistributedSol.toFixed(2)} SOL</strong></div>
+            {launchState === "prelaunch" ? (
+              <>
+                <div><span>LAUNCH STATE</span><strong>RELAUNCH RESERVED</strong></div>
+                <div><span>ENTRY</span><strong>HOLD TO ENTER</strong></div>
+                <div><span>ROUND LENGTH</span><strong>05:00</strong></div>
+                <div><span>RESULT STANDARD</span><strong>VERIFIED ONLY</strong></div>
+              </>
+            ) : (
+              <>
+                <div><span>NEXT GAME</span><strong>{clockLabel(remaining)}</strong></div>
+                <div><span>PLAYERS LEFT</span><strong>{live.remainingCount.toLocaleString()}</strong></div>
+                <div><span>VERIFIED ROUNDS</span><strong>{stats.casinoRoundCount.toLocaleString()}</strong></div>
+                <div><span>DISTRIBUTED VALUE</span><strong>{stats.casinoTotalDistributedSol.toFixed(2)} SOL</strong></div>
+              </>
+            )}
           </div>
         </div>
 
@@ -689,22 +702,17 @@ export function CasinoTerminalView() {
       </section>
 
       <section className="casino-final">
-        <span>CASINO STRATEGY / {scoutPublicConfig.tokenLabel}</span>
+        <span>CASINO / FIVE-MINUTE TOURNAMENTS</span>
         <h2>THE HOUSE RUNS<br />ON A CLOCK.</h2>
         <p>One champion every five minutes. First, second, and third share 80% of the round fees; 20% builds the jackpot.</p>
-        {scoutPublicConfig.buyUrl ? (
-          <a className="casino-button casino-button--solid" href={scoutPublicConfig.buyUrl} target="_blank" rel="noreferrer">
-            BUY {scoutPublicConfig.tokenLabel} <ArrowUpRight size={16} />
-          </a>
-        ) : null}
       </section>
 
       <div className="casino-brand-banner casino-brand-banner--bottom">
         <img
-          src="/brand/casino-strategy-banner.jpg"
-          alt="Casino Strategy"
-          width={1280}
-          height={426}
+          src="/brand/casino-banner.png"
+          alt="Casino"
+          width={2048}
+          height={682}
         />
       </div>
     </div>

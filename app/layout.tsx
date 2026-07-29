@@ -39,36 +39,36 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Casino Strategy — On-Chain Casino Arcade",
-    template: "%s | Casino Strategy"
+    default: "Casino — Five-Minute On-Chain Tournaments",
+    template: "%s | Casino"
   },
-  description: "Casino Strategy automatically enters eligible holders into a five-minute on-chain arcade tournament with verifiable results.",
-  applicationName: "Casino Strategy",
-  keywords: ["Casino Strategy", "CASINO", "on-chain games", "Pong", "Solana", "verifiable results"],
+  description: "Casino automatically enters eligible holders into five-minute on-chain tournaments with verifiable results.",
+  applicationName: "Casino",
+  keywords: ["Casino", "CASINO", "on-chain games", "five-minute tournaments", "Solana", "verifiable results"],
   openGraph: {
-    title: "Casino Strategy — Every 5 Minutes, A New Game",
+    title: "Casino — Every 5 Minutes, A New Game",
     description: "Hold to enter ten rotating five-minute tournaments with public on-chain settlement receipts.",
     url: siteUrl,
-    siteName: "Casino Strategy",
+    siteName: "Casino",
     type: "website",
     images: [
       {
         url: "/brand/og-image.png",
-        width: 1280,
-        height: 426,
-        alt: "Casino Strategy"
+        width: 2048,
+        height: 682,
+        alt: "Casino"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Casino Strategy — Every 5 Minutes, A New Game",
+    title: "Casino — Every 5 Minutes, A New Game",
     description: "A pixel-era on-chain arcade where eligible holders enter automatically.",
     images: ["/brand/og-image.png"]
   },
   icons: {
-    icon: "/brand/casino-strategy-logo.jpg",
-    apple: "/brand/casino-strategy-logo.jpg"
+    icon: "/brand/casino-logo.png",
+    apple: "/brand/casino-logo.png"
   },
   robots: { index: true, follow: true }
 };

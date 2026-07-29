@@ -1,4 +1,4 @@
-# Casino Strategy environment setup
+# Casino environment setup
 
 Use different values for placeholders. Never paste treasury secrets into Vercel, GitHub, chat, or any `NEXT_PUBLIC_` variable.
 
@@ -40,7 +40,7 @@ REWARD_MODE=sol
 WORKER_ENABLED=false
 SOLANA_CLUSTER=mainnet-beta
 HELIUS_RPC_URL=<NEW_PRIVATE_HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=Fj7i3US5BkNsUxzzWG5kYXvemNRwcYnYs4r2BbUgpump
+SOURCE_TOKEN_MINT=<NEW_CASINO_MINT>
 TREASURY_WALLET_SECRET=<NEW_ROTATED_BASE58_SECRET>
 SUPABASE_URL=<SUPABASE_PROJECT_URL>
 SUPABASE_SERVICE_ROLE=<NEW_ROTATED_SERVICE_ROLE_KEY>
@@ -108,15 +108,10 @@ CASINO_PAYOUTS_ENABLED=true
 The copy-ready Vercel template is `deploy/vercel.env.example`.
 
 ```dotenv
-LAUNCH_STATE=live
-NEXT_PUBLIC_PROJECT_NAME="Casino Strategy"
+LAUNCH_STATE=prelaunch
+NEXT_PUBLIC_PROJECT_NAME="Casino"
 NEXT_PUBLIC_SOURCE_SYMBOL=CASINO
-NEXT_PUBLIC_CA=Fj7i3US5BkNsUxzzWG5kYXvemNRwcYnYs4r2BbUgpump
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=Fj7i3US5BkNsUxzzWG5kYXvemNRwcYnYs4r2BbUgpump
-NEXT_PUBLIC_BUY_URL=https://jup.ag/swap/SOL-Fj7i3US5BkNsUxzzWG5kYXvemNRwcYnYs4r2BbUgpump
-NEXT_PUBLIC_DEXSCREENER_URL=https://dexscreener.com/solana/Fj7i3US5BkNsUxzzWG5kYXvemNRwcYnYs4r2BbUgpump
-NEXT_PUBLIC_X_URL=https://x.com/CasinoStrategy_
-NEXT_PUBLIC_SITE_URL=https://www.casinostrategy.fun
+NEXT_PUBLIC_SITE_URL=<NEW_PRODUCTION_URL>
 NEXT_PUBLIC_ELIGIBILITY_MIN=1000000
 NEXT_PUBLIC_ELIGIBILITY_LABEL=1M
 NEXT_PUBLIC_EPOCH_MINUTES=5
@@ -127,7 +122,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
 SUPABASE_URL=<SUPABASE_PROJECT_URL>
 SUPABASE_SERVICE_ROLE=<NEW_ROTATED_SERVICE_ROLE_KEY>
 
-SOURCE_TOKEN_MINT=Fj7i3US5BkNsUxzzWG5kYXvemNRwcYnYs4r2BbUgpump
+SOURCE_TOKEN_MINT=<NEW_CASINO_MINT>
 ELIGIBILITY_MIN=1000000
 MAX_HOLDER_PCT=4
 HELIUS_RPC_URL=<NEW_PRIVATE_HELIUS_RPC_URL>
@@ -138,9 +133,9 @@ CASINO_CHAT_RATE_LIMIT_SALT=<LONG_RANDOM_SECRET>
 
 Never put `SUPABASE_SERVICE_ROLE`, `HELIUS_RPC_URL`, `CASINO_CHAT_RATE_LIMIT_SALT`, or `TREASURY_WALLET_SECRET` in `NEXT_PUBLIC_` variables.
 
-Do not reuse the previous CSTR contract, X account, or buy URL. Until the real
-Casino Strategy values are configured, the web application intentionally hides
-those controls instead of displaying a stale fallback.
+The relaunch intentionally has no public contract, buy control, or social link.
+Set the new mint only in server-side worker variables after the replacement
+token is ready.
 
 ## Required proof service
 

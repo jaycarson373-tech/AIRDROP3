@@ -38,7 +38,7 @@ function marketCapPerformance(signal: ScoutSignal) {
 }
 
 function SignalTable({ signals, compact = false }: { signals: ScoutSignal[]; compact?: boolean }) {
-  if (!signals.length) return <EmptyState title="No verified records yet" body="Records appear only after Casino Strategy receives a verified settlement signal." />;
+  if (!signals.length) return <EmptyState title="No verified records yet" body="Records appear only after Casino receives a verified settlement signal." />;
   return (
     <div className="scout-table-wrap">
       <table className="scout-table">
@@ -74,7 +74,7 @@ export function SignalsView() {
     : signals.signals.filter((signal) => signal.status === filter || (filter === "archived" && ["passed", "rejected", "archived"].includes(signal.status)));
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Casino Ledger" title="Verified records." body="Track every public record connected to Casino Strategy settlement." />
+      <PageHeading eyebrow="Casino Ledger" title="Verified records." body="Track every public record connected to Casino settlement." />
       {launchState === "prelaunch" ? <PrelaunchNotice /> : <>
       <div className="scout-filter-bar">
         <Filter size={16} />
@@ -86,7 +86,7 @@ export function SignalsView() {
       <section className="scout-panel scout-panel--table">
         {state === "loading" ? <Skeleton rows={6} /> : state === "error" && error ? <ErrorState message={error} retry={() => void refresh()} /> : <SignalTable signals={rows} />}
       </section>
-      <div className="scout-page-note"><ShieldCheck size={17} /><p>Casino Strategy displays only records currently connected to the protocol. No result is final until its on-chain settlement is confirmed.</p></div>
+      <div className="scout-page-note"><ShieldCheck size={17} /><p>Casino displays only records currently connected to the protocol. No result is final until its on-chain settlement is confirmed.</p></div>
       </>}
     </div>
   );
@@ -124,7 +124,7 @@ export function SearchView() {
 
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Record Search" title="Search settlement records." body="Filter the Casino Strategy public ledger by asset, status, or record time." action={<StatusBadge label="Public data" tone="muted" />} />
+      <PageHeading eyebrow="Record Search" title="Search settlement records." body="Filter the Casino public ledger by asset, status, or record time." action={<StatusBadge label="Public data" tone="muted" />} />
       <form className="scout-search-form" onSubmit={search}>
         <Search size={21} />
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Show verified records" aria-label="Search records" />
@@ -158,10 +158,10 @@ export function PerformanceView() {
   const averageScore = scored.length ? scored.reduce((sum, signal) => sum + Number(signal.scout_score), 0) / scored.length : null;
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="History" title="Casino Strategy record." body="Review previous public records as they were received by the protocol." />
+      <PageHeading eyebrow="History" title="Casino record." body="Review previous public records as they were received by the protocol." />
       <div className="scout-overview-grid">
         <Metric label="Records" value={completed.length.toLocaleString()} />
-        <Metric label="Active Now" value={signals.active ? `$${signals.active.symbol}` : "NO LIVE RUNNER"} />
+        <Metric label="Active Now" value={signals.active ? `$${signals.active.symbol}` : "NO LIVE ROUND"} />
         <Metric label="Average Score" value={averageScore === null ? "NOT RECORDED" : averageScore.toFixed(1)} />
         <Metric label="Public Delay" value={`${signals.publicDelaySeconds}s`} />
       </div>
@@ -214,7 +214,7 @@ export function ReceiptsView() {
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="No recipient receipts yet" body="Individual proofs populate after the first completed Casino Strategy settlement." />}
+        ) : <EmptyState title="No recipient receipts yet" body="Individual proofs populate after the first completed Casino settlement." />}
       </section>
     </div>
   );
@@ -223,11 +223,11 @@ export function ReceiptsView() {
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How Casino Strategy works." body="Ten two-dimensional games rotate on a shared five-minute clock. Results publish only after settlement." />
+      <PageHeading eyebrow="Documentation" title="How Casino works." body="Ten two-dimensional games rotate on a shared five-minute clock. Results publish only after settlement." />
       <div className="scout-doc-layout">
         <aside><a href="#lifecycle">Round cycle</a><a href="#weight">Eligibility</a><a href="#treasury">Settlement</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Round cycle</h2><p>Casino Strategy rotates through ten games. A new game begins on each five-minute UTC boundary.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Round cycle</h2><p>Casino rotates through ten games. A new game begins on each five-minute UTC boundary.</p></section>
           <section id="weight"><span className="scout-kicker">02</span><h2>Eligibility</h2><p>Eligibility is read from the configured strategy rules. Never infer eligibility from an unverified screen state.</p></section>
           <section id="treasury"><span className="scout-kicker">03</span><h2>Settlement</h2><p>Recipients and amounts appear publicly only after a real transaction receipt is available.</p></section>
         </div>
@@ -272,7 +272,7 @@ export function AdminView() {
 
   return (
     <div className="scout-page scout-page--narrow">
-      <PageHeading eyebrow="Restricted console" title="Add a settlement asset." body="Submit a Solana mint to the Casino Strategy public ledger." action={<StatusBadge label="Protected" tone="risk" />} />
+      <PageHeading eyebrow="Restricted console" title="Add a settlement asset." body="Submit a Solana mint to the Casino public ledger." action={<StatusBadge label="Protected" tone="risk" />} />
       <section className="scout-panel scout-admin-panel">
         <div className="scout-panel__head"><div><span className="scout-kicker">Asset intake</span><h2>Queue a settlement asset</h2></div><Settings2 size={21} /></div>
         <form onSubmit={submit}>

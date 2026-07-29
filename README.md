@@ -1,6 +1,6 @@
-# Casino Strategy
+# Casino
 
-Casino Strategy is a monochrome, pixel-era Solana tournament interface. Every
+Casino is a red-and-black, pixel-era Solana tournament interface. Every
 eligible holder is entered automatically—there is no wallet connection or
 manual game entry.
 
