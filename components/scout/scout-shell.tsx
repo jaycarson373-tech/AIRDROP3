@@ -2,45 +2,30 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ScoutProvider, useScout } from "./scout-provider";
 import { PrelaunchNotice } from "./ui";
 
 const primaryNav = [
-  { href: "/#live-round", label: "Live Round" },
-  { href: "/#how-it-works", label: "How It Works" },
-  { href: "/#leaderboard", label: "Leaderboard" },
-  { href: "/airdrop-history", label: "Results" }
-];
-
-const productNav = [
-  { href: "/docs", label: "Docs", icon: BookOpen }
+  { href: "/#flip-index", label: "Flip Index" },
+  { href: "/#airdrops", label: "Airdrops" },
+  { href: "/#mechanics-title", label: "Mechanism" },
+  { href: "/#gallery", label: "Campaign" }
 ];
 
 function TopTicker() {
   const { launchState, stats, state } = useScout();
   const [remaining, setRemaining] = useState(5 * 60);
-  const [roundEnd, setRoundEnd] = useState<number | null>(null);
 
   useEffect(() => {
     const update = () => {
       const boundaryRemaining = 5 * 60 * 1000 - (Date.now() % (5 * 60 * 1000));
-      const milliseconds = roundEnd === null ? boundaryRemaining : Math.max(0, roundEnd - Date.now());
-      setRemaining(Math.ceil(milliseconds / 1000));
+      setRemaining(Math.ceil(boundaryRemaining / 1000));
     };
     update();
     const interval = window.setInterval(update, 1000);
     return () => window.clearInterval(interval);
-  }, [roundEnd]);
-
-  useEffect(() => {
-    const updateRoundEnd = (event: Event) => {
-      const nextRoundEnd = (event as CustomEvent<number | null>).detail;
-      setRoundEnd(typeof nextRoundEnd === "number" && Number.isFinite(nextRoundEnd) ? nextRoundEnd : null);
-    };
-    window.addEventListener("casino-live-round-end", updateRoundEnd);
-    return () => window.removeEventListener("casino-live-round-end", updateRoundEnd);
   }, []);
 
   if (launchState === "prelaunch") {
@@ -50,17 +35,17 @@ function TopTicker() {
   const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
   const seconds = String(remaining % 60).padStart(2, "0");
   const metrics = [
-    ["CASINO", state === "error" ? "OFFLINE" : "ONLINE"],
-    ["ROUND", "LIVE"],
-    ["ROTATION", "10 GAMES"],
-    ["NEXT GAME", `${minutes}:${seconds}`],
-    ["ROUND LENGTH", "05:00"],
-    ["VERIFIED ROUNDS", stats.totalEpochs.toLocaleString()],
-    ["SETTLEMENT", "ON-CHAIN"]
+    ["SNDK6900", state === "error" ? "OFFLINE" : state === "stale" ? "DEGRADED" : "ONLINE"],
+    ["REWARD", "SNDK"],
+    ["NEXT DROP", `${minutes}:${seconds}`],
+    ["CYCLE", "05:00"],
+    ["VERIFIED DROPS", stats.totalEpochs > 0 ? stats.totalEpochs.toLocaleString() : "PENDING"],
+    ["DELIVERY", "AUTOMATIC"],
+    ["RECEIPTS", "ON-CHAIN"]
   ];
 
   return (
-    <div className="scout-ticker" aria-label="Casino live metrics">
+    <div className="scout-ticker" aria-label="SNDK6900 live metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -83,12 +68,12 @@ function Header() {
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/" aria-label="Casino home">
-          <span className="scout-brand__mark casino-brand-mark" aria-hidden="true">
-            <img src="/brand/casino-logo.png" alt="" />
+        <Link className="scout-brand" href="/" aria-label="SNDK6900 home">
+          <span className="scout-brand__mark sndk-brand-mark" aria-hidden="true">
+            <img src="/brand/sndk6900-logo.png" alt="" />
           </span>
           <span>
-            <strong>CASINO</strong>
+            <strong>SNDK6900</strong>
           </span>
         </Link>
 
@@ -109,7 +94,7 @@ function Header() {
 
       {open ? (
         <div className="scout-mobile-nav">
-          {[...primaryNav, ...productNav].map((item) => (
+          {primaryNav.map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
         </div>
@@ -122,21 +107,21 @@ function Footer() {
   return (
     <footer className="scout-footer">
       <div className="scout-footer__brand">
-        <span className="scout-brand__mark casino-brand-mark" aria-hidden="true">
-          <img src="/brand/casino-logo.png" alt="" />
+        <span className="scout-brand__mark sndk-brand-mark" aria-hidden="true">
+          <img src="/brand/sndk6900-logo.png" alt="" />
         </span>
         <div>
-          <strong>CASINO</strong>
-          <p>Five-minute holder tournaments. Verifiable results.</p>
+          <strong>SNDK6900</strong>
+          <p>Hold SNDK6900. Receive SNDK every five minutes.</p>
         </div>
       </div>
-      <nav aria-label="Product links">
-        {productNav.map(({ href, label, icon: Icon }) => (
-          <Link href={href} key={href}><Icon size={14} /> {label}</Link>
-        ))}
+      <nav aria-label="Footer links">
+        <Link href="/#flip-index">Flip Index</Link>
+        <Link href="/#airdrops">Airdrops</Link>
+        <Link href="/#gallery">Campaign</Link>
       </nav>
       <p className="scout-footer__risk">
-        Casino is an experimental on-chain tournament interface. Digital assets are volatile. No result is final until its settlement transaction is confirmed. Verify every rule and on-chain transaction independently.
+        SNDK6900 is an independent community experiment and is not affiliated with Sandisk Corporation or Nasdaq. SNDK equity market data is shown only as a public comparison target; distributions refer to the configured on-chain SNDK reward token, not equity. Digital assets are volatile—verify every transfer independently.
       </p>
     </footer>
   );
@@ -165,11 +150,9 @@ function ShellContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="scout-app" ref={appRef}>
-      <div className="scout-background casino-background" aria-hidden="true">
-        <i className="casino-bg-net" />
-        <i className="casino-bg-paddle casino-bg-paddle--left" />
-        <i className="casino-bg-paddle casino-bg-paddle--right" />
-        <i className="casino-bg-ball" />
+      <div className="scout-background sndk-background" aria-hidden="true">
+        <i className="sndk-bg-grid" />
+        <i className="sndk-bg-scan" />
       </div>
       <TopTicker />
       <Header />

@@ -1,7 +1,5 @@
-import { PerformanceView } from "../../components/scout/views";
-
-export const metadata = { title: "Performance" };
+import { redirect } from "next/navigation";
 
 export default function PerformancePage() {
-  return <PerformanceView />;
+  redirect("/#flip-index");
 }

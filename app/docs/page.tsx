@@ -1,7 +1,5 @@
-import { DocsView } from "../../components/scout/views";
-
-export const metadata = { title: "Documentation" };
+import { redirect } from "next/navigation";
 
 export default function DocsPage() {
-  return <DocsView />;
+  redirect("/#mechanics-title");
 }

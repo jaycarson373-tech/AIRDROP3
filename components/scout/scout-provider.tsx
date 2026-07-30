@@ -126,7 +126,7 @@ export function ScoutProvider({
       setState((current) =>
         current === "loaded" || current === "empty" || current === "stale" ? "stale" : "error"
       );
-      setError(nextError instanceof Error ? nextError.message : "CASINO STRATEGY data connection failed");
+      setError(nextError instanceof Error ? nextError.message : "SNDK6900 data connection failed");
     }
   }, [accessToken]);
 
@@ -179,7 +179,7 @@ export function ScoutProvider({
       window.localStorage.setItem("scout_access_token", session.token);
       setAccessToken(session.token);
     } catch (nextError) {
-      setAccessError(nextError instanceof Error ? nextError.message : "CASINO STRATEGY access could not be verified");
+      setAccessError(nextError instanceof Error ? nextError.message : "SNDK6900 access could not be verified");
     } finally {
       setAccessBusy(false);
     }

@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Press_Start_2P, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import { ScoutShell } from "../components/scout/scout-shell";
 import "./globals.css";
 import "./scout.css";
+import "./sndk.css";
 
 const terminalFont = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -15,13 +16,6 @@ const displayFont = Space_Grotesk({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
   variable: "--font-runner-display",
-  display: "swap"
-});
-
-const pixelFont = Press_Start_2P({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-casino-pixel",
   display: "swap"
 });
 
@@ -39,36 +33,36 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Casino — Five-Minute On-Chain Tournaments",
-    template: "%s | Casino"
+    default: "SNDK6900 — Flip SNDK",
+    template: "%s | SNDK6900"
   },
-  description: "Casino automatically enters eligible holders into five-minute on-chain tournaments with verifiable results.",
-  applicationName: "Casino",
-  keywords: ["Casino", "CASINO", "on-chain games", "five-minute tournaments", "Solana", "verifiable results"],
+  description: "Hold SNDK6900. Eligible holders receive SNDK automatically every five minutes, with verifiable on-chain distribution receipts.",
+  applicationName: "SNDK6900",
+  keywords: ["SNDK6900", "SNDK", "five-minute airdrops", "Solana", "holder rewards", "on-chain receipts"],
   openGraph: {
-    title: "Casino — Every 5 Minutes, A New Game",
-    description: "Hold to enter ten rotating five-minute tournaments with public on-chain settlement receipts.",
+    title: "SNDK6900 — Flip SNDK",
+    description: "Hold SNDK6900. Receive SNDK every five minutes.",
     url: siteUrl,
-    siteName: "Casino",
+    siteName: "SNDK6900",
     type: "website",
     images: [
       {
         url: "/brand/og-image.png",
-        width: 2048,
-        height: 682,
-        alt: "Casino"
+        width: 1280,
+        height: 426,
+        alt: "SNDK6900"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Casino — Every 5 Minutes, A New Game",
-    description: "A pixel-era on-chain arcade where eligible holders enter automatically.",
+    title: "SNDK6900 — Flip SNDK",
+    description: "Hold SNDK6900. Receive SNDK every five minutes.",
     images: ["/brand/og-image.png"]
   },
   icons: {
-    icon: "/brand/casino-logo.png",
-    apple: "/brand/casino-logo.png"
+    icon: "/brand/sndk6900-logo.png",
+    apple: "/brand/sndk6900-logo.png"
   },
   robots: { index: true, follow: true }
 };
@@ -78,7 +72,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   return (
     <html lang="en">
-      <body className={`${terminalFont.variable} ${displayFont.variable} ${pixelFont.variable}`}>
+      <body className={`${terminalFont.variable} ${displayFont.variable}`}>
         <ScoutShell launchState={launchState}>{children}</ScoutShell>
       </body>
     </html>

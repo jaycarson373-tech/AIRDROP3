@@ -1,5 +1,5 @@
-import { CasinoTerminalView } from "../components/scout/casino-view";
+import { SndkHomeView } from "../components/sndk/sndk-home";
 
 export default function Page() {
-  return <CasinoTerminalView />;
+  return <SndkHomeView />;
 }

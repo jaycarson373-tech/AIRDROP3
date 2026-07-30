@@ -1,7 +1,5 @@
-import { SearchView } from "../../components/scout/views";
-
-export const metadata = { title: "Search" };
+import { redirect } from "next/navigation";
 
 export default function SearchPage() {
-  return <SearchView />;
+  redirect("/#flip-index");
 }

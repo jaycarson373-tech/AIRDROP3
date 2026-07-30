@@ -1,7 +1,5 @@
-import { SignalsView } from "../../components/scout/views";
-
-export const metadata = { title: "Signals" };
+import { redirect } from "next/navigation";
 
 export default function RunnersPage() {
-  return <SignalsView />;
+  redirect("/#airdrops");
 }

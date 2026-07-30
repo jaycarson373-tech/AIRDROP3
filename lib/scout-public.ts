@@ -1,12 +1,12 @@
 const unavailablePublicLink: string | null = null;
 
 export const scoutPublicConfig = {
-  name: "Casino",
-  ticker: "CASINO",
-  tokenLabel: "$CASINO",
-  rewardSymbol: "TOKENS",
-  basketLabel: "Active casino round",
-  basketAssets: ["PONG", "CRASH", "ROULETTE", "DUEL", "COINFLIP"],
+  name: "SNDK6900",
+  ticker: "SNDK6900",
+  tokenLabel: "$SNDK6900",
+  rewardSymbol: "SNDK",
+  basketLabel: "Five-minute SNDK distribution",
+  basketAssets: ["SNDK"],
   contractAddress: unavailablePublicLink,
   minimumHolding: (() => {
     const parsed = Number(process.env.NEXT_PUBLIC_ELIGIBILITY_MIN ?? 1_000_000);
@@ -14,7 +14,7 @@ export const scoutPublicConfig = {
   })(),
   epochMinutes: (() => {
     const parsed = Number(process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? 5);
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : 15;
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 5;
   })(),
   publicDelaySeconds: (() => {
     const parsed = Number(
