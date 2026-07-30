@@ -70,7 +70,7 @@ function Header() {
       <div className="scout-header__inner">
         <Link className="scout-brand" href="/" aria-label="SNDK6900 home">
           <span className="scout-brand__mark sndk-brand-mark" aria-hidden="true">
-            <img src="/brand/sndk6900-logo.png" alt="" />
+            <img src="/brand/sndk6900-logo-red-square.png" alt="" />
           </span>
           <span>
             <strong>SNDK6900</strong>
@@ -108,7 +108,7 @@ function Footer() {
     <footer className="scout-footer">
       <div className="scout-footer__brand">
         <span className="scout-brand__mark sndk-brand-mark" aria-hidden="true">
-          <img src="/brand/sndk6900-logo.png" alt="" />
+          <img src="/brand/sndk6900-logo-red-square.png" alt="" />
         </span>
         <div>
           <strong>SNDK6900</strong>

@@ -61,8 +61,8 @@ export const metadata: Metadata = {
     images: ["/brand/og-image.png"]
   },
   icons: {
-    icon: "/brand/sndk6900-logo.png",
-    apple: "/brand/sndk6900-logo.png"
+    icon: "/brand/sndk6900-logo-red-square.png",
+    apple: "/brand/sndk6900-logo-red-square.png"
   },
   robots: { index: true, follow: true }
 };
