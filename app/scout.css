@@ -3458,6 +3458,35 @@
   }
 }
 
+.goat-header-ca {
+  display: inline-flex;
+  height: 38px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 11px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #efefe9;
+  cursor: pointer;
+  font-family: var(--scout-mono);
+  font-size: 8px;
+  letter-spacing: 0.06em;
+}
+
+.goat-header-ca span { color: var(--goat-gold-bright); font-weight: 700; }
+.goat-header-ca strong { font-weight: 600; }
+.goat-header-ca:hover { border-color: var(--goat-gold-bright); }
+
+@media (max-width: 700px) {
+  .goat-header-ca {
+    max-width: 108px;
+    height: 36px;
+    padding: 0 8px;
+    gap: 5px;
+    font-size: 7px;
+  }
+}
+
 /* Legacy presentation foundation */
 .scout-app {
   --scout-bg: #050504;
