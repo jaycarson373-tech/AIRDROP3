@@ -220,7 +220,7 @@ export const config = {
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),
   maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 150)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 4),
-  excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
+  excludeWallets: workerEnabled ? optionalWallets("EXCLUDE_WALLETS") : [],
 
   swapBalanceBps: Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 9000))),
   rewardBuyBps: Math.min(10_000, Math.max(0, configuredRewardBuyBps)),
