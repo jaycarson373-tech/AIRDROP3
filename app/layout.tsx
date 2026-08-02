@@ -39,15 +39,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "GOAT — The GOAT of the Cycle",
+    default: "GOAT — The 2026 Goat Coin",
     template: "%s | GOAT"
   },
-  description: "Hold the GOAT. Receive the GOAT's biggest convictions through transparent on-chain reward drops.",
+  description: "A GOAT emerged onchain. Hold GOAT and receive ANSEM + CATE distributions every five minutes.",
   applicationName: "GOAT",
   keywords: ["GOAT", "ANSEM", "CATE", "PoorGoat", "Solana", "holder rewards", "five-minute distributions"],
   openGraph: {
-    title: "GOAT — The GOAT of the Cycle",
-    description: "Hold the GOAT. Receive the GOAT's biggest convictions.",
+    title: "THE 2026 GOAT COIN.",
+    description: "Hold GOAT. Receive the GOAT's conviction plays.",
     url: siteUrl,
     siteName: "GOAT",
     type: "website",
@@ -56,14 +56,14 @@ export const metadata: Metadata = {
         url: "/brand/goat-hero.jpg",
         width: 1280,
         height: 720,
-        alt: "GOAT — The GOAT of the Cycle"
+        alt: "GOAT — The 2026 Goat Coin"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "GOAT — The GOAT of the Cycle",
-    description: "Hold the GOAT. Receive the GOAT's biggest convictions.",
+    title: "THE 2026 GOAT COIN.",
+    description: "Hold GOAT. Receive the GOAT's conviction plays.",
     images: ["/brand/goat-hero.jpg"]
   },
   icons: {

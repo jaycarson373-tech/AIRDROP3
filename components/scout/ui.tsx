@@ -5,7 +5,7 @@ import { AlertCircle, LoaderCircle, RefreshCw } from "lucide-react";
 export function PrelaunchNotice({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`scout-prelaunch-line${compact ? " scout-prelaunch-line--compact" : ""}`}>
-      GOAT DISTRIBUTIONS OPEN AT LAUNCH. 50% ANSEM / 50% CATE. REAL RECEIPTS ONLY.
+      PRELAUNCH. REWARD HISTORY BEGINS AT LAUNCH. REAL RECEIPTS ONLY.
     </div>
   );
 }

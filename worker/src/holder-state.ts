@@ -1,5 +1,6 @@
 import { config } from "./config.js";
 import { supabase } from "./db.js";
+import { hasDetectedSale, holderMultiplierBps } from "./holder-policy.js";
 import type { Holder } from "./snapshot.js";
 
 type HolderStateRow = {
@@ -12,16 +13,8 @@ type HolderStateRow = {
   current_multiplier_bps: number | null;
   permanently_ineligible: boolean | null;
   ineligible_reason: string | null;
+  ineligible_at: string | null;
 };
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const FIFTEEN_MIN_MS = 15 * 60 * 1000;
-const HOUR_MS = 60 * 60 * 1000;
-const FOUR_HOUR_MS = 4 * HOUR_MS;
-const TWELVE_HOUR_MS = 12 * HOUR_MS;
-const THREE_DAY_MS = 3 * DAY_MS;
-const SEVEN_DAY_MS = 7 * DAY_MS;
-const THIRTY_DAY_MS = 30 * DAY_MS;
 
 function parseRaw(value: unknown) {
   try {
@@ -36,27 +29,11 @@ function isMissingHolderStateTable(error: unknown) {
   return message.includes("holder_states") || message.includes("42P01") || message.includes("PGRST205");
 }
 
-function holderMultiplierBps(eligibleSince: string | null, nowMs: number) {
-  const sinceMs = Date.parse(eligibleSince ?? "");
-  if (!Number.isFinite(sinceMs)) return 10_000;
-
-  const heldMs = Math.max(0, nowMs - sinceMs);
-  if (heldMs >= THIRTY_DAY_MS) return 250_000;
-  if (heldMs >= SEVEN_DAY_MS) return 100_000;
-  if (heldMs >= THREE_DAY_MS) return 50_000;
-  if (heldMs >= DAY_MS) return 30_000;
-  if (heldMs >= TWELVE_HOUR_MS) return 25_000;
-  if (heldMs >= FOUR_HOUR_MS) return 20_000;
-  if (heldMs >= HOUR_MS) return 15_000;
-  if (heldMs >= FIFTEEN_MIN_MS) return 12_000;
-  return 10_000;
-}
-
 async function getHolderStates() {
   const result = await supabase
     .from("holder_states")
     .select(
-      "wallet,source_balance,source_balance_raw,highest_source_balance_raw,eligible_since,current_streak_epochs,current_multiplier_bps,permanently_ineligible,ineligible_reason"
+      "wallet,source_balance,source_balance_raw,highest_source_balance_raw,eligible_since,current_streak_epochs,current_multiplier_bps,permanently_ineligible,ineligible_reason,ineligible_at"
     )
     .limit(10000);
 
@@ -88,19 +65,19 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
       const current = currentByWallet.get(state.wallet);
       const previousRaw = parseRaw(state.source_balance_raw);
       const currentRaw = current?.rawBalance ?? 0n;
-      const soldAnyAmount = previousRaw > 0n && currentRaw < previousRaw;
+      const soldAnyAmount = hasDetectedSale(previousRaw, currentRaw);
       const droppedBelowThreshold = !current || current.uiBalance < config.eligibilityMin;
 
-      if (soldAnyAmount || state.ineligible_reason === "balance_decreased") {
+      if (state.permanently_ineligible || soldAnyAmount || state.ineligible_reason === "balance_decreased") {
         updates.push({
           wallet: state.wallet,
           source_balance: current?.uiBalance.toString() ?? state.source_balance ?? "0",
           source_balance_raw: current?.rawBalance.toString() ?? state.source_balance_raw ?? "0",
           highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
           eligible_since: null,
-          permanently_ineligible: false,
-          ineligible_reason: droppedBelowThreshold ? "dropped_below_threshold" : null,
-          ineligible_at: now,
+          permanently_ineligible: true,
+          ineligible_reason: "balance_decreased",
+          ineligible_at: state.ineligible_at ?? now,
           last_seen_at: now,
           last_epoch_id: epochId,
           updated_at: now,
@@ -149,26 +126,24 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
 
       const previousRaw = parseRaw(existing?.source_balance_raw);
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
-      const soldAnyAmount = existing && holder.rawBalance < previousRaw;
+      const soldAnyAmount = existing ? hasDetectedSale(previousRaw, holder.rawBalance) : false;
 
-      if (soldAnyAmount || existing?.ineligible_reason === "balance_decreased") {
-        const resetEligibleSince = now;
+      if (existing?.permanently_ineligible || soldAnyAmount || existing?.ineligible_reason === "balance_decreased") {
         updates.push({
           wallet: holder.wallet,
           source_balance: holder.uiBalance.toString(),
           source_balance_raw: holder.rawBalance.toString(),
           highest_source_balance_raw: highestRaw > holder.rawBalance ? highestRaw.toString() : holder.rawBalance.toString(),
-          eligible_since: resetEligibleSince,
-          permanently_ineligible: false,
-          ineligible_reason: null,
-          ineligible_at: null,
+          eligible_since: null,
+          permanently_ineligible: true,
+          ineligible_reason: "balance_decreased",
+          ineligible_at: existing?.ineligible_at ?? now,
           last_seen_at: now,
           last_epoch_id: epochId,
           updated_at: now,
-          current_streak_epochs: 1,
+          current_streak_epochs: 0,
           current_multiplier_bps: 10_000
         });
-        eligible.push({ ...holder, eligibleSince: resetEligibleSince, holdMultiplierBps: 10_000 });
         continue;
       }
 
@@ -198,15 +173,15 @@ export async function applyHolderState(epochId: string, eligibleHolders: Holder[
 
     await upsertHolderStates(updates);
 
-    const reset = eligibleHolders.filter((holder) => {
+    const disqualified = eligibleHolders.filter((holder) => {
       const previous = stateByWallet.get(holder.wallet);
-      return previous ? holder.rawBalance < parseRaw(previous.source_balance_raw) : false;
+      return previous ? hasDetectedSale(parseRaw(previous.source_balance_raw), holder.rawBalance) : false;
     }).length;
-    if (reset > 0) console.log(`[${epochId}] holder-state reset ${reset} balance-decrease wallets to base multiplier`);
+    if (disqualified > 0) console.log(`[${epochId}] holder-state disqualified ${disqualified} balance-decrease wallets`);
     return eligible;
   } catch (error) {
     if (isMissingHolderStateTable(error)) {
-      console.warn(`[${epochId}] holder_states table missing; never-sold eligibility tracking is disabled`);
+      console.warn(`[${epochId}] holder_states table missing; sell-once eligibility tracking is disabled`);
       return eligibleHolders;
     }
     throw error;

@@ -4,18 +4,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, Menu, Radio, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { projectConfig } from "./project-config";
 import { ScoutProvider, useScout } from "./scout-provider";
 import { PrelaunchNotice } from "./ui";
 
 const primaryNav = [
-  { href: "/#terminal", label: "Terminal" },
-  { href: "/#mechanism", label: "How It Works" },
-  { href: "/#origins", label: "Origins" },
-  { href: "/#portfolio", label: "The GOAT" },
-  { href: "/rewards", label: "Rewards" }
+  { href: "/#portfolio", label: "THE GOAT" },
+  { href: "/#origins", label: "ORIGINS" },
+  { href: "/#terminal", label: "TERMINAL" },
+  { href: "/leaderboard", label: "LEADERBOARD" },
+  { href: "/rewards", label: "REWARDS" }
 ];
 
 const productNav = [
+  { href: "/leaderboard", label: "Leaderboard", icon: Radio },
   { href: "/rewards", label: "Rewards", icon: Radio },
   { href: "/docs", label: "Docs", icon: BookOpen }
 ];
@@ -45,9 +47,9 @@ function TopTicker() {
     ["REWARD SPLIT", "50 / 50"],
     ["ASSET 01", "$ANSEM"],
     ["ASSET 02", "$CATE"],
-    ["NEXT DROP", `${minutes}:${seconds}`],
+    ["NEXT EPOCH", `${minutes}:${seconds}`],
     ["CYCLE", "05:00"],
-    ["SETTLED CYCLES", stats.totalEpochs ? stats.totalEpochs.toLocaleString() : "NONE YET"]
+    ["SETTLED EPOCHS", stats.totalEpochs ? stats.totalEpochs.toLocaleString() : "AWAITING FIRST EPOCH"]
   ];
 
   return (
@@ -68,6 +70,7 @@ function TopTicker() {
 function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const headerBuyUrl = projectConfig.buyUrl || (projectConfig.goatMint ? `https://jup.ag/swap/SOL-${projectConfig.goatMint}` : null);
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -92,6 +95,8 @@ function Header() {
         </nav>
 
         <div className="scout-header__actions">
+          {projectConfig.poorGoatXUrl ? <a className="scout-header-link scout-header-link--profile" href={projectConfig.poorGoatXUrl} target="_blank" rel="noopener noreferrer">POOR GOAT ↗</a> : null}
+          {headerBuyUrl ? <a className="scout-header-link scout-header-link--buy" href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY</a> : null}
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -103,6 +108,8 @@ function Header() {
           {[...primaryNav, ...productNav.filter((item) => !primaryNav.some((primary) => primary.href === item.href))].map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
+          {projectConfig.poorGoatXUrl ? <a href={projectConfig.poorGoatXUrl} target="_blank" rel="noopener noreferrer">POOR GOAT ↗</a> : null}
+          {headerBuyUrl ? <a href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY GOAT ↗</a> : null}
         </div>
       ) : null}
     </header>
@@ -118,7 +125,7 @@ function Footer() {
         </span>
         <div>
           <strong>GOAT</strong>
-          <p>The GOAT of the cycle. Conviction rewards, verified on-chain.</p>
+          <p>The 2026 Goat Coin. Inspired by conviction, verified onchain.</p>
         </div>
       </div>
       <nav aria-label="Product links">
@@ -127,7 +134,7 @@ function Footer() {
         ))}
       </nav>
       <p className="scout-footer__risk">
-        GOAT is an experimental token distribution protocol. Digital assets are volatile. Reward figures are final only after their Solana transactions confirm. Verify every rule and on-chain transaction independently.
+        GOAT is an experimental community token and holder-distribution project. Reward timing, eligibility, and availability may change. Nothing on this site is financial advice.
       </p>
     </footer>
   );

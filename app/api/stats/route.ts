@@ -59,6 +59,12 @@ type HolderStateRow = {
   ineligible_reason: string | null;
 };
 
+type LeaderboardHolderRow = HolderStateRow & {
+  wallet: string;
+  source_balance: string | number | null;
+  current_streak_epochs: number | null;
+};
+
 type EpochPayoutSummary = {
   rewardAmount: number;
   normalRewardAmount: number;
@@ -202,11 +208,66 @@ async function averageHolderMultiplier(config: SupabaseConfig) {
   }
 }
 
+async function holderLeaderboard(config: SupabaseConfig, payouts: PayoutRow[]) {
+  try {
+    const rows = await getSupabaseJson<LeaderboardHolderRow[]>(
+      config,
+      "holder_states?select=wallet,source_balance,eligible_since,current_streak_epochs,current_multiplier_bps,permanently_ineligible,ineligible_reason&order=source_balance.desc&limit=500"
+    );
+    const activeRows = rows.filter(
+      (row) => !row.permanently_ineligible && !row.ineligible_reason && toNumber(row.source_balance) > 0
+    );
+    if (!activeRows.length) return [];
+
+    const payoutEpochs = new Map<string, Set<string>>();
+    const rewardTotals = new Map<string, Map<string, number>>();
+    const receiptCounts = new Map<string, number>();
+    for (const payout of payouts) {
+      const epochs = payoutEpochs.get(payout.wallet) ?? new Set<string>();
+      epochs.add(payout.epoch_id);
+      payoutEpochs.set(payout.wallet, epochs);
+
+      const totals = rewardTotals.get(payout.wallet) ?? new Map<string, number>();
+      const asset = (payout.reward_asset || "TOKEN").toUpperCase();
+      totals.set(asset, (totals.get(asset) ?? 0) + toNumber(payout.reward_amount));
+      rewardTotals.set(payout.wallet, totals);
+      receiptCounts.set(payout.wallet, (receiptCounts.get(payout.wallet) ?? 0) + 1);
+    }
+
+    const maxBalance = Math.max(...activeRows.map((row) => toNumber(row.source_balance)), 1);
+    const maxEpochs = Math.max(...activeRows.map((row) => payoutEpochs.get(row.wallet)?.size ?? 0), 1);
+    const maxStreak = Math.max(...activeRows.map((row) => toNumber(row.current_streak_epochs)), 1);
+    const scored = activeRows.map((row) => {
+      const goatBalance = toNumber(row.source_balance);
+      const qualifiedEpochs = payoutEpochs.get(row.wallet)?.size ?? 0;
+      const holdingStreak = toNumber(row.current_streak_epochs);
+      const convictionScore = Math.round(
+        (goatBalance / maxBalance) * 50
+        + (qualifiedEpochs / maxEpochs) * 30
+        + (holdingStreak / maxStreak) * 20
+      );
+      return {
+        wallet: row.wallet,
+        goatBalance,
+        qualifiedEpochs,
+        holdingStreak,
+        totalRewards: Object.fromEntries(rewardTotals.get(row.wallet) ?? []),
+        rewardReceipts: receiptCounts.get(row.wallet) ?? 0,
+        convictionScore
+      };
+    });
+
+    return scored
+      .sort((a, b) => b.convictionScore - a.convictionScore || b.goatBalance - a.goatBalance)
+      .slice(0, 100)
+      .map((entry, index) => ({ ...entry, rank: index + 1 }));
+  } catch (error) {
+    console.warn("stats route could not build holder leaderboard", error);
+    return [];
+  }
+}
+
 const DAY_MS = 24 * 60 * 60 * 1000;
-const FIFTEEN_MIN_MS = 15 * 60 * 1000;
-const HOUR_MS = 60 * 60 * 1000;
-const FOUR_HOUR_MS = 4 * HOUR_MS;
-const TWELVE_HOUR_MS = 12 * HOUR_MS;
 const THREE_DAY_MS = 3 * DAY_MS;
 const SEVEN_DAY_MS = 7 * DAY_MS;
 const THIRTY_DAY_MS = 30 * DAY_MS;
@@ -215,14 +276,10 @@ function fallbackMultiplierBps(eligibleSince: string | null) {
   const sinceMs = Date.parse(eligibleSince ?? "");
   if (!Number.isFinite(sinceMs)) return 10_000;
   const heldMs = Math.max(0, Date.now() - sinceMs);
-  if (heldMs >= THIRTY_DAY_MS) return 250_000;
-  if (heldMs >= SEVEN_DAY_MS) return 100_000;
-  if (heldMs >= THREE_DAY_MS) return 50_000;
-  if (heldMs >= DAY_MS) return 30_000;
-  if (heldMs >= TWELVE_HOUR_MS) return 25_000;
-  if (heldMs >= FOUR_HOUR_MS) return 20_000;
-  if (heldMs >= HOUR_MS) return 15_000;
-  if (heldMs >= FIFTEEN_MIN_MS) return 12_000;
+  if (heldMs >= THIRTY_DAY_MS) return 13_500;
+  if (heldMs >= SEVEN_DAY_MS) return 12_000;
+  if (heldMs >= THREE_DAY_MS) return 11_000;
+  if (heldMs >= DAY_MS) return 10_500;
   return 10_000;
 }
 
@@ -465,12 +522,14 @@ export async function GET() {
       averageMultiplier: null,
       nextDropTime: nextDropTime(),
       totalSolValueAirdropped: 0,
+      totalHoldersRewarded: 0,
       totalPfpRewardSol: 0,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       epochHistory: [],
       roundHistory: [],
       recentRewards: [],
-      rewardBreakdown: []
+      rewardBreakdown: [],
+      leaderboard: []
     });
   }
 
@@ -493,6 +552,7 @@ export async function GET() {
     const claimsByEpoch = new Map(claimRows.map((claim) => [claim.epoch_id, claim]));
     const payoutRows = await getSettledPayouts(config);
     const averageMultiplier = await averageHolderMultiplier(config);
+    const leaderboard = await holderLeaderboard(config, payoutRows);
     const payoutsByEpoch = new Map<string, EpochPayoutSummary>();
 
     for (const payout of payoutRows) {
@@ -601,6 +661,7 @@ export async function GET() {
       (sum, summary) => sum + summary.rewardAmount,
       0
     );
+    const totalHoldersRewarded = new Set(payoutRows.map((row) => row.wallet)).size;
     const storedEligibleHolders = toNumber(latestRealRow?.eligible_count);
     const latestEligibleHolders =
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
@@ -613,13 +674,15 @@ export async function GET() {
       latestEligibleHolders,
       nextDropTime: nextDropTime(),
       totalSolValueAirdropped,
+      totalHoldersRewarded,
       totalPfpRewardSol,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       averageMultiplier,
       epochHistory,
       roundHistory,
       recentRewards,
-      rewardBreakdown
+      rewardBreakdown,
+      leaderboard
     });
   } catch (error) {
     console.error("stats route failed", error);
@@ -633,12 +696,14 @@ export async function GET() {
       averageMultiplier: null,
       nextDropTime: nextDropTime(),
       totalSolValueAirdropped: 0,
+      totalHoldersRewarded: 0,
       totalPfpRewardSol: 0,
       pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       epochHistory: [],
       roundHistory: [],
       recentRewards: [],
-      rewardBreakdown: []
+      rewardBreakdown: [],
+      leaderboard: []
     });
   }
 }

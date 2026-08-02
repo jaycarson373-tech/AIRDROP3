@@ -7,6 +7,7 @@ export type ScoutStats = {
   averageMultiplier: number | null;
   nextDropTime: string | null;
   totalSolValueAirdropped: number;
+  totalHoldersRewarded: number;
   roundHistory: Array<{
     epoch: number;
     status: string;
@@ -34,6 +35,18 @@ export type ScoutStats = {
     transfers: number;
     baseSpentSol: number;
   }>;
+  leaderboard: LeaderboardEntry[];
+};
+
+export type LeaderboardEntry = {
+  rank: number;
+  wallet: string;
+  goatBalance: number;
+  qualifiedEpochs: number;
+  holdingStreak: number;
+  totalRewards: Record<string, number>;
+  rewardReceipts: number;
+  convictionScore: number;
 };
 
 export type LoadState = "loading" | "loaded" | "empty" | "stale" | "error";
