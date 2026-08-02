@@ -8722,11 +8722,32 @@
 .goat-lore__mark { display: grid; place-items: center; overflow: hidden; border-right: 1px solid rgba(255, 255, 255, 0.15); }
 .goat-lore__mark img { width: min(82%, 520px); height: auto; filter: drop-shadow(0 28px 70px rgba(0, 0, 0, 0.65)); }
 .goat-lore__copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(38px, 7vw, 98px); }
-.goat-lore__copy > div { display: grid; grid-template-columns: auto 1fr; gap: 0; margin-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.13); }
-.goat-lore__copy > div strong,
-.goat-lore__copy > div small { min-height: 45px; display: flex; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.13); }
-.goat-lore__copy > div strong { padding-right: 30px; color: #fff; font-size: 11px; }
-.goat-lore__copy > div small { color: #70787b; font-size: 8px; }
+
+.goat-lore__proof {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: clamp(14px, 2.4vw, 34px);
+  margin: 5px 0 28px;
+  padding: 18px 0;
+  border: solid rgba(184, 145, 25, 0.44);
+  border-width: 1px 0;
+}
+.goat-lore__proof > span,
+.goat-lore__proof > small {
+  color: #8d9496;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+.goat-lore__proof > strong {
+  color: var(--goat-gold-bright);
+  font: 700 clamp(34px, 4.2vw, 62px)/0.92 var(--scout-display);
+  letter-spacing: -0.055em;
+  white-space: nowrap;
+}
+.goat-lore__proof > strong i { color: #686f71; font-style: normal; }
+.goat-lore__proof > small { text-align: right; }
 
 .goat-lore__copy > p + p { margin-top: 9px; }
 .goat-lore__action {
@@ -8919,6 +8940,10 @@
   .goat-lore { grid-template-columns: 1fr; }
   .goat-lore__mark { min-height: 300px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.15); }
   .goat-lore__copy { padding: 32px 20px; }
+  .goat-lore__proof { grid-template-columns: 1fr auto; gap: 8px 14px; margin-bottom: 22px; }
+  .goat-lore__proof > span { grid-column: 1 / -1; }
+  .goat-lore__proof > strong { font-size: clamp(38px, 13vw, 52px); }
+  .goat-lore__proof > small { max-width: 92px; line-height: 1.5; }
   .goat-receipts__table { overflow-x: auto; }
   .goat-receipts__row { min-width: 680px; }
   .goat-final { padding: 58px 0; }

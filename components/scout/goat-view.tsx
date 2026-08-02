@@ -8,6 +8,7 @@ import { useScout } from "./scout-provider";
 const CYCLE_MS = 5 * 60 * 1000;
 const AWAITING_LAUNCH = "Awaiting launch.";
 const POORGOAT_X_URL = "https://x.com/PoorGoat_";
+const POORGOAT_PUBLIC_WALLET_URL = "https://solscan.io/account/HDixbrzwwLXczhDBk1JVrurPQsuLE8FUKnW2pucSXN3o";
 
 function pad(value: number) {
   return String(value).padStart(2, "0");
@@ -56,7 +57,7 @@ export function GoatTerminalView() {
   const sourceMint = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim();
   const configuredBuyUrl = process.env.NEXT_PUBLIC_BUY_URL?.trim();
   const buyUrl = configuredBuyUrl || (sourceMint ? `https://jup.ag/swap/SOL-${sourceMint}` : null);
-  const portfolioWalletUrl = process.env.NEXT_PUBLIC_POORGOAT_WALLET_URL?.trim() || null;
+  const portfolioWalletUrl = process.env.NEXT_PUBLIC_POORGOAT_WALLET_URL?.trim() || POORGOAT_PUBLIC_WALLET_URL;
 
   const rewardTotal = (symbol: "ANSEM" | "CATE") => {
     const row = stats.rewardBreakdown.find((entry) => entry.asset.trim().toUpperCase() === symbol);
@@ -190,14 +191,19 @@ export function GoatTerminalView() {
           <img src="/brand/goat-logo.png" alt="GOAT emblem" width={1254} height={1254} />
         </div>
         <div className="goat-lore__copy">
-          <span>THE PORTFOLIO</span>
+          <span>POOR GOAT / THE PORTFOLIO</span>
           <h2>THE GOAT</h2>
-          <p>If you&apos;ve been on CT this cycle, you&apos;ve seen the portfolio.</p>
-          <p>Poor Goat became one of the timeline&apos;s most recognizable holders through conviction in CATE and ANSEM.</p>
+          <div className="goat-lore__proof">
+            <span>THE RUN</span>
+            <strong>$0 <i>→</i> $2M</strong>
+            <small>IN TWO MONTHS</small>
+          </div>
+          <p>From zero to $2 million in two months. Poor Goat turned conviction into one of the most recognizable portfolios on Crypto Twitter.</p>
+          <p>His highest-conviction positions in CATE and ANSEM became the thesis behind GOAT.</p>
           <p>The timeline crowned the GOAT.</p>
           <p>GOAT gave him the coin.</p>
           <div className="goat-lore__action">
-            <ActionLink href={portfolioWalletUrl}>VIEW WALLET <ArrowUpRight size={13} /></ActionLink>
+            <ActionLink href={portfolioWalletUrl} solid>VIEW PUBLIC WALLET <ArrowUpRight size={13} /></ActionLink>
             <ActionLink href={POORGOAT_X_URL}>FOLLOW @POORGOAT_ <ArrowUpRight size={13} /></ActionLink>
           </div>
         </div>
