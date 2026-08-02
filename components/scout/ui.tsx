@@ -5,7 +5,7 @@ import { AlertCircle, LoaderCircle, RefreshCw } from "lucide-react";
 export function PrelaunchNotice({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`scout-prelaunch-line${compact ? " scout-prelaunch-line--compact" : ""}`}>
-      FIRST CASINO ROUND OPENS AT LAUNCH. VERIFIED RESULTS ONLY.
+      GOAT DISTRIBUTIONS OPEN AT LAUNCH. 50% ANSEM / 50% CATE. REAL RECEIPTS ONLY.
     </div>
   );
 }

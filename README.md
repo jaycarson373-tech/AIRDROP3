@@ -1,35 +1,33 @@
-# Casino
+# GOAT
 
-Casino is a red-and-black, pixel-era Solana tournament interface. Every
-eligible holder is entered automatically—there is no wallet connection or
-manual game entry.
+GOAT is a five-minute Solana holder-distribution protocol built around the
+PoorGoat story. Each completed cycle uses one immutable GOAT holder snapshot
+and splits the configured reward-buy budget exactly 50/50:
 
-Each round lasts five minutes and rotates through one of ten deterministic
-game simulations. Verified randomness commits the field and results. The
-weakest results are revealed first, with the top three reserved for the podium.
+- 50% buys and distributes `$ANSEM`.
+- 50% buys and distributes `$CATE`.
+- Both assets use the same eligible holder set.
+- Public amounts appear only after their Solana transactions settle.
+- No wallet connection, signature, approval, or manual claim is required.
 
-## Round policy
+The final GOAT mint and eligibility threshold are intentionally unset until
+the token supply is confirmed.
 
-- 80% of claimed creator fees funds the current round.
-- The top three split the round pool 50% / 30% / 20%.
-- 20% accumulates in the jackpot ledger.
-- Every 25th settled round adds the jackpot to first place.
-- Eligibility begins at 1,000,000 `$CASINO`.
+## Safety gates
 
-## Local checks
+Money-moving worker flags default off. Apply every numbered Supabase migration
+through `014_dual_reward_split.sql`, configure the final GOAT mint and holder
+threshold, run a dry cycle, and inspect both asset allocations before enabling
+claims, buys, airdrops, and the worker.
+
+## Commands
 
 ```bash
-npm ci
-npm run check
+npm run typecheck
+npm run worker:test
+npm run worker:build
+npm run build
 ```
 
-## Deployment
-
-- Vercel hosts the Next.js interface.
-- Railway runs the round worker.
-- Supabase stores immutable snapshots, rounds, results, winners, and chat.
-- The worker must remain payout-disabled until migrations `010`–`013`, the
-  built-in Switchboard commitment/reveal writer, and a complete proof-verified
-  dry run are verified.
-
-See `docs/CASINO_ENV_SETUP.md` and `docs/CASINO_LAUNCH.md`.
+Platform-specific variable templates live in `deploy/vercel.env.example` and
+`deploy/railway.env.example`.

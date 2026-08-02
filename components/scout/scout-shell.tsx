@@ -8,10 +8,10 @@ import { ScoutProvider, useScout } from "./scout-provider";
 import { PrelaunchNotice } from "./ui";
 
 const primaryNav = [
-  { href: "/#live-round", label: "Live Round" },
-  { href: "/#how-it-works", label: "How It Works" },
-  { href: "/#leaderboard", label: "Leaderboard" },
-  { href: "/airdrop-history", label: "Results" }
+  { href: "/#distribution", label: "Distribution" },
+  { href: "/#mechanism", label: "How It Works" },
+  { href: "/#lore", label: "The Lore" },
+  { href: "/airdrop-history", label: "Receipts" }
 ];
 
 const productNav = [
@@ -21,26 +21,15 @@ const productNav = [
 function TopTicker() {
   const { launchState, stats, state } = useScout();
   const [remaining, setRemaining] = useState(5 * 60);
-  const [roundEnd, setRoundEnd] = useState<number | null>(null);
 
   useEffect(() => {
     const update = () => {
       const boundaryRemaining = 5 * 60 * 1000 - (Date.now() % (5 * 60 * 1000));
-      const milliseconds = roundEnd === null ? boundaryRemaining : Math.max(0, roundEnd - Date.now());
-      setRemaining(Math.ceil(milliseconds / 1000));
+      setRemaining(Math.ceil(boundaryRemaining / 1000));
     };
     update();
     const interval = window.setInterval(update, 1000);
     return () => window.clearInterval(interval);
-  }, [roundEnd]);
-
-  useEffect(() => {
-    const updateRoundEnd = (event: Event) => {
-      const nextRoundEnd = (event as CustomEvent<number | null>).detail;
-      setRoundEnd(typeof nextRoundEnd === "number" && Number.isFinite(nextRoundEnd) ? nextRoundEnd : null);
-    };
-    window.addEventListener("casino-live-round-end", updateRoundEnd);
-    return () => window.removeEventListener("casino-live-round-end", updateRoundEnd);
   }, []);
 
   if (launchState === "prelaunch") {
@@ -50,17 +39,17 @@ function TopTicker() {
   const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
   const seconds = String(remaining % 60).padStart(2, "0");
   const metrics = [
-    ["CASINO", state === "error" ? "OFFLINE" : "ONLINE"],
-    ["ROUND", "LIVE"],
-    ["ROTATION", "10 GAMES"],
-    ["NEXT GAME", `${minutes}:${seconds}`],
-    ["ROUND LENGTH", "05:00"],
-    ["VERIFIED ROUNDS", stats.totalEpochs.toLocaleString()],
-    ["SETTLEMENT", "ON-CHAIN"]
+    ["GOAT", state === "error" ? "OFFLINE" : "ONLINE"],
+    ["REWARD SPLIT", "50 / 50"],
+    ["ASSET 01", "$ANSEM"],
+    ["ASSET 02", "$CATE"],
+    ["NEXT DROP", `${minutes}:${seconds}`],
+    ["CYCLE", "05:00"],
+    ["SETTLED CYCLES", stats.totalEpochs ? stats.totalEpochs.toLocaleString() : "NONE YET"]
   ];
 
   return (
-    <div className="scout-ticker" aria-label="Casino live metrics">
+    <div className="scout-ticker" aria-label="GOAT live distribution metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -83,12 +72,12 @@ function Header() {
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/" aria-label="Casino home">
-          <span className="scout-brand__mark casino-brand-mark" aria-hidden="true">
-            <img src="/brand/casino-logo.png" alt="" />
+        <Link className="scout-brand" href="/" aria-label="GOAT home">
+          <span className="scout-brand__mark goat-brand-mark" aria-hidden="true">
+            <img src="/brand/goat-logo.png" alt="" />
           </span>
           <span>
-            <strong>CASINO</strong>
+            <strong>GOAT</strong>
           </span>
         </Link>
 
@@ -122,12 +111,12 @@ function Footer() {
   return (
     <footer className="scout-footer">
       <div className="scout-footer__brand">
-        <span className="scout-brand__mark casino-brand-mark" aria-hidden="true">
-          <img src="/brand/casino-logo.png" alt="" />
+        <span className="scout-brand__mark goat-brand-mark" aria-hidden="true">
+          <img src="/brand/goat-logo.png" alt="" />
         </span>
         <div>
-          <strong>CASINO</strong>
-          <p>Five-minute holder tournaments. Verifiable results.</p>
+          <strong>GOAT</strong>
+          <p>Five-minute ANSEM + CATE holder distributions.</p>
         </div>
       </div>
       <nav aria-label="Product links">
@@ -136,7 +125,7 @@ function Footer() {
         ))}
       </nav>
       <p className="scout-footer__risk">
-        Casino is an experimental on-chain tournament interface. Digital assets are volatile. No result is final until its settlement transaction is confirmed. Verify every rule and on-chain transaction independently.
+        GOAT is an experimental token distribution protocol. Digital assets are volatile. Reward figures are final only after their Solana transactions confirm. Verify every rule and on-chain transaction independently.
       </p>
     </footer>
   );
@@ -150,7 +139,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
     let frame = 0;
     const updateParallax = () => {
       frame = 0;
-      appRef.current?.style.setProperty("--runner-parallax-y", `${-Math.min(window.scrollY * 0.045, 72)}px`);
+      appRef.current?.style.setProperty("--goat-parallax-y", `${-Math.min(window.scrollY * 0.045, 72)}px`);
     };
     const onScroll = () => {
       if (!frame) frame = window.requestAnimationFrame(updateParallax);
@@ -165,11 +154,11 @@ function ShellContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="scout-app" ref={appRef}>
-      <div className="scout-background casino-background" aria-hidden="true">
-        <i className="casino-bg-net" />
-        <i className="casino-bg-paddle casino-bg-paddle--left" />
-        <i className="casino-bg-paddle casino-bg-paddle--right" />
-        <i className="casino-bg-ball" />
+      <div className="scout-background goat-background" aria-hidden="true">
+        <i className="goat-bg-grid" />
+        <i className="goat-bg-peak goat-bg-peak--one" />
+        <i className="goat-bg-peak goat-bg-peak--two" />
+        <i className="goat-bg-line" />
       </div>
       <TopTicker />
       <Header />

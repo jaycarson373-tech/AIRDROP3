@@ -91,6 +91,7 @@ function parseSecret(raw: string) {
 }
 
 let cachedTreasury: Keypair | null = null;
+const workerEnabled = boolEnv("WORKER_ENABLED", false);
 const rewardMode = rewardModeEnv();
 const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
 const configuredRewardTokenMints = publicKeyListEnv("REWARD_TOKEN_MINTS");
@@ -99,17 +100,20 @@ const rewardTokenMints = configuredRewardTokenMints.length
   : configuredRewardTokenMint
     ? [configuredRewardTokenMint]
     : [];
-if (rewardMode === "token" && !rewardTokenMints.length) {
+if (workerEnabled && rewardMode === "token" && !rewardTokenMints.length) {
   throw new Error("Missing required env REWARD_TOKEN_MINT or REWARD_TOKEN_MINTS when REWARD_MODE=token");
 }
 const configuredRewardTokenSymbols = stringListEnv("REWARD_TOKEN_SYMBOLS");
+const configuredRewardTokenSplitBps = stringListEnv("REWARD_TOKEN_SPLIT_BPS").map((value) => Number(value));
+const rewardSplitEnabled = configuredRewardTokenSplitBps.length > 0;
 const configuredBagworkRewardWallet =
   optionalPublicKeyEnv("BAGWORK_REWARD_WALLET_PUBLIC_KEY") ?? optionalPublicKeyEnv("PFP_REWARD_WALLET_PUBLIC_KEY");
 const configuredBagworkRewardBps = intEnv("BAGWORK_REWARD_BPS", intEnv("PFP_REWARD_BPS", 5000));
 const configuredRewardBuyBps = intEnv("REWARD_BUY_BPS", 5000);
-const workerEnabled = boolEnv("WORKER_ENABLED", false);
-const casinoModeEnabled = boolEnv("CASINO_MODE_ENABLED", false);
-const casinoPayoutsEnabled = boolEnv("CASINO_PAYOUTS_ENABLED", false);
+// The Casino product is archived on its checkpoint branch. GOAT never enters
+// tournament settlement mode, even if a stale deployment variable remains.
+const casinoModeEnabled = false;
+const casinoPayoutsEnabled = false;
 const switchboardRandomnessEnabled = boolEnv("SWITCHBOARD_RANDOMNESS_ENABLED", false);
 const solanaCluster = process.env.SOLANA_CLUSTER ?? "mainnet-beta";
 const configuredEpochMinutes = Math.max(1, intEnv("EPOCH_MINUTES", 5));
@@ -120,6 +124,23 @@ const casinoTopThreeSplitBps = stringListEnv("CASINO_TOP3_SPLIT_BPS").length
   ? stringListEnv("CASINO_TOP3_SPLIT_BPS").map((value) => Number(value))
   : [5_000, 3_000, 2_000];
 const configuredAirdropBatchSize = Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4));
+
+if (
+  rewardSplitEnabled &&
+  (configuredRewardTokenSplitBps.some((value) => !Number.isInteger(value) || value < 0) ||
+    configuredRewardTokenSplitBps.reduce((sum, value) => sum + value, 0) !== 10_000)
+) {
+  throw new Error("REWARD_TOKEN_SPLIT_BPS must contain non-negative integers totaling 10000");
+}
+if (rewardSplitEnabled && rewardTokenMints.length > 0 && configuredRewardTokenSplitBps.length !== rewardTokenMints.length) {
+  throw new Error("REWARD_TOKEN_SPLIT_BPS must match REWARD_TOKEN_MINTS");
+}
+if (workerEnabled && rewardSplitEnabled && rewardTokenMints.length < 2) {
+  throw new Error("REWARD_TOKEN_SPLIT_BPS requires at least two REWARD_TOKEN_MINTS");
+}
+if (rewardSplitEnabled && configuredBagworkRewardWallet && configuredBagworkRewardBps > 0) {
+  throw new Error("Multi-asset reward splitting cannot be combined with BAGWORK/PFP reward routing");
+}
 
 if (casinoModeEnabled && rewardMode !== "sol") {
   throw new Error("CASINO_MODE_ENABLED requires REWARD_MODE=sol");
@@ -154,12 +175,16 @@ if (solanaCluster !== "mainnet-beta" && solanaCluster !== "devnet") {
 
 export const config = {
   heliusRpcUrl: required("HELIUS_RPC_URL"),
-  sourceTokenMint: publicKeyEnv("SOURCE_TOKEN_MINT"),
+  sourceTokenMint: workerEnabled
+    ? publicKeyEnv("SOURCE_TOKEN_MINT")
+    : optionalPublicKeyEnv("SOURCE_TOKEN_MINT") ?? new PublicKey("11111111111111111111111111111111"),
   rewardMode,
   rewardTokenMint: rewardTokenMints[0] ?? new PublicKey("So11111111111111111111111111111111111111112"),
   rewardTokenMints,
   rewardTokenSymbol: configuredRewardTokenSymbols[0] ?? process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "reward",
   rewardTokenSymbols: configuredRewardTokenSymbols,
+  rewardTokenSplitBps: configuredRewardTokenSplitBps,
+  rewardSplitEnabled,
   rewardRotationOffset: intEnv("REWARD_ROTATION_OFFSET", 0),
   treasuryWalletSecret: required("TREASURY_WALLET_SECRET"),
   supabaseUrl: required("SUPABASE_URL"),
@@ -211,7 +236,7 @@ export const config = {
 };
 
 export function activateRewardForEpoch(epochId: string) {
-  if (config.rewardMode !== "token" || config.rewardTokenMints.length <= 1) return;
+  if (config.rewardMode !== "token" || config.rewardSplitEnabled || config.rewardTokenMints.length <= 1) return;
   const epochMs = config.epochMinutes * 60_000;
   const epochNumber = Math.floor(Date.parse(epochId) / epochMs);
   const index =
@@ -226,7 +251,7 @@ export function activateRewardForEpoch(epochId: string) {
 
 export function activateRewardMint(mint: PublicKey, symbol: string) {
   config.rewardTokenMint = mint;
-  config.rewardTokenSymbol = symbol.replace(/^\$/, "") || "SCOUT signal";
+  config.rewardTokenSymbol = symbol.replace(/^\$/, "") || "GOAT asset";
 }
 
 export function treasuryKeypair() {

@@ -2,43 +2,6 @@ import { runEpoch } from "./epoch.js";
 import { config } from "./config.js";
 import { msUntilNextEpoch } from "./time.js";
 
-console.log(`Scout worker started. Schedule: every ${config.epochMinutes} minutes.`);
-console.log(
-  `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
-);
-console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
-if (config.rewardMode === "token") {
-  console.log(
-    `Reward rotation: ${config.rewardTokenMints
-      .map((mint, index) => `${config.rewardTokenSymbols[index] ?? `asset ${index + 1}`}=${mint.toBase58()}`)
-      .join(" -> ")}`
-  );
-}
-console.log(`Eligibility minimum: ${config.eligibilityMin.toLocaleString()} source tokens`);
-if (config.casinoModeEnabled) {
-  console.log(
-    `Casino settlement: ${config.casinoRoundPayoutBps / 100}% top-three pool (${config.casinoTopThreeSplitBps.join(
-      "/"
-    )} bps), ${config.casinoJackpotBps / 100}% jackpot, jackpot every ${config.casinoJackpotInterval} rounds.`
-  );
-  console.log(
-    `Casino payout gate: ${config.casinoPayoutsEnabled && config.airdropEnabled ? "LIVE" : "DRY-RUN"}; verified Switchboard proof required.`
-  );
-  console.log(
-    `Switchboard writer: ${config.switchboardRandomnessEnabled ? "enabled" : "disabled"} on ${config.solanaCluster}.`
-  );
-}
-console.log(`Scout dynamic selection: ${config.scoutDynamicSelectionEnabled ? "enabled" : "disabled"}`);
-console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ source tokens; wallets above ${config.maxHolderPct}% are excluded.`);
-console.log(`Scout distribution allocation: ${config.rewardBuyBps} bps of usable creator fees is available for the active signal token after reserves.`);
-if (config.pfpRewardWallet && config.pfpRewardBps > 0) {
-  console.log(
-    `Bagworking split: ${config.pfpRewardBps} bps routes to ${config.pfpRewardWallet.toBase58()}; remaining buy allocation goes to holder airdrops.`
-  );
-} else {
-  console.log("Bagworking split disabled: 100% of configured buy allocation stays on the holder airdrop path.");
-}
-
 async function loop() {
   await runEpoch();
   const waitMs = config.casinoModeEnabled ? config.casinoPollMs : msUntilNextEpoch(new Date()) + 500;
@@ -57,10 +20,21 @@ function scheduleFirstRun() {
 }
 
 if (config.workerEnabled) {
+  console.log(`GOAT worker started. Schedule: every ${config.epochMinutes} minutes.`);
+  console.log(
+    `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
+  );
+  console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
+  console.log(
+    `Reward split: ${config.rewardTokenMints
+      .map((mint, index) => `${config.rewardTokenSymbols[index] ?? `asset ${index + 1}`}=${mint.toBase58()} (${config.rewardTokenSplitBps[index] ?? 0} bps)`)
+      .join(" + ")}`
+  );
+  console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ GOAT; wallets above ${config.maxHolderPct}% are excluded.`);
   scheduleFirstRun();
 } else {
   console.log(
-    "WORKER_ENABLED=false. Scheduler is parked; no claims, rounds, or payouts will run."
+    "WORKER_ENABLED=false. GOAT scheduler is parked; no claims, swaps, or distributions will run."
   );
   setInterval(() => undefined, 60_000);
 }

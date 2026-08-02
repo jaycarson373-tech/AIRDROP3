@@ -178,6 +178,32 @@ export async function recordBuy(
   assertNoError(result, "record buy");
 }
 
+export async function recordRewardBuy(
+  epochId: string,
+  splitBps: number,
+  baseSpentLamports: string,
+  rewardReceivedRaw: string,
+  rewardReceived: string,
+  txSig: string | null,
+  status: "settled" | "dry_run"
+) {
+  const result = await supabase.from("reward_buys").upsert(
+    {
+      epoch_id: epochId,
+      reward_mint: config.rewardTokenMint.toBase58(),
+      reward_asset: config.rewardTokenSymbol,
+      split_bps: splitBps,
+      base_spent_lamports: baseSpentLamports,
+      reward_received_raw: rewardReceivedRaw,
+      reward_received: rewardReceived,
+      tx_sig: txSig,
+      status
+    },
+    { onConflict: "epoch_id,reward_mint" }
+  );
+  assertNoError(result, "record split reward buy");
+}
+
 export async function getBuy(epochId: string) {
   const result = await supabase.from("buys").select("*").eq("epoch_id", epochId).maybeSingle();
   return assertNoError(result, "get buy");
@@ -212,11 +238,6 @@ function payoutMetadataFields(metadata: PayoutMetadata | undefined, rewardAmount
   };
 }
 
-function withoutRewardIdentity<T extends Record<string, unknown>>(row: T) {
-  const { reward_mint: _rewardMint, reward_asset: _rewardAsset, ...rest } = row;
-  return rest;
-}
-
 export async function planPayout(
   epochId: string,
   wallet: string,
@@ -224,13 +245,15 @@ export async function planPayout(
   rewardAmount: string,
   metadata?: PayoutMetadata
 ) {
-  const idempotencyKey = `${epochId}:${wallet}`;
+  const rewardMint = metadata?.rewardMint ?? config.rewardTokenMint.toBase58();
+  const rewardAsset = metadata?.rewardAsset ?? config.rewardTokenSymbol;
+  const idempotencyKey = `${epochId}:${rewardMint}:${wallet}`;
   const row = {
     epoch_id: epochId,
     wallet,
     reward_amount_raw: rewardAmountRaw,
     reward_amount: rewardAmount,
-    ...payoutMetadataFields(metadata, rewardAmountRaw, rewardAmount),
+    ...payoutMetadataFields({ ...metadata, rewardMint, rewardAsset }, rewardAmountRaw, rewardAmount),
     idempotency_key: idempotencyKey,
     status: "planned",
     updated_at: new Date().toISOString()
@@ -240,15 +263,6 @@ export async function planPayout(
     .upsert(row, { onConflict: "idempotency_key", ignoreDuplicates: true })
     .select()
     .maybeSingle();
-  if (result.error) {
-    warnNonFatal("plan payout with reward identity failed; retrying minimal payout row", result.error);
-    const fallback = await supabase
-      .from("payouts")
-      .upsert(withoutRewardIdentity(row), { onConflict: "idempotency_key", ignoreDuplicates: true })
-      .select()
-      .maybeSingle();
-    return assertNoError(fallback, "plan payout fallback");
-  }
   return assertNoError(result, "plan payout");
 }
 
@@ -259,36 +273,43 @@ export async function dryRunPayout(
   rewardAmount: string,
   metadata?: PayoutMetadata
 ) {
+  const rewardMint = metadata?.rewardMint ?? config.rewardTokenMint.toBase58();
+  const rewardAsset = metadata?.rewardAsset ?? config.rewardTokenSymbol;
   const row = {
     epoch_id: epochId,
     wallet,
     reward_amount_raw: rewardAmountRaw,
     reward_amount: rewardAmount,
-    ...payoutMetadataFields(metadata, rewardAmountRaw, rewardAmount),
-    idempotency_key: `${epochId}:${wallet}`,
+    ...payoutMetadataFields({ ...metadata, rewardMint, rewardAsset }, rewardAmountRaw, rewardAmount),
+    idempotency_key: `${epochId}:${rewardMint}:${wallet}`,
     status: "dry_run",
     updated_at: new Date().toISOString()
   };
   const result = await supabase.from("payouts").upsert(row);
-  if (result.error) {
-    warnNonFatal("dry-run payout with reward identity failed; retrying minimal payout row", result.error);
-    const fallback = await supabase.from("payouts").upsert(withoutRewardIdentity(row));
-    assertNoError(fallback, "dry-run payout fallback");
-    return;
-  }
   assertNoError(result, "dry-run payout");
 }
 
-export async function settlePayout(epochId: string, wallet: string, txSig: string) {
+export async function settlePayout(
+  epochId: string,
+  wallet: string,
+  txSig: string,
+  rewardMint = config.rewardTokenMint.toBase58()
+) {
   const result = await supabase
     .from("payouts")
     .update({ status: "settled", tx_sig: txSig, updated_at: new Date().toISOString() })
     .eq("epoch_id", epochId)
-    .eq("wallet", wallet);
+    .eq("wallet", wallet)
+    .eq("reward_mint", rewardMint);
   assertNoError(result, "settle payout");
 }
 
-export async function failPayout(epochId: string, wallet: string, error: unknown) {
+export async function failPayout(
+  epochId: string,
+  wallet: string,
+  error: unknown,
+  rewardMint = config.rewardTokenMint.toBase58()
+) {
   const result = await supabase
     .from("payouts")
     .update({
@@ -297,7 +318,8 @@ export async function failPayout(epochId: string, wallet: string, error: unknown
       updated_at: new Date().toISOString()
     })
     .eq("epoch_id", epochId)
-    .eq("wallet", wallet);
+    .eq("wallet", wallet)
+    .eq("reward_mint", rewardMint);
   assertNoError(result, "fail payout");
 }
 

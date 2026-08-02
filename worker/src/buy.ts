@@ -209,3 +209,63 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
     txSig
   };
 }
+
+export async function buyRewardForAmount(epochId: string, amount: bigint): Promise<BuyResult> {
+  if (config.rewardMode !== "token") throw new Error("Explicit reward buys require REWARD_MODE=token");
+
+  const treasury = treasuryKeypair();
+  const decimals = await rewardDecimals();
+  if (amount <= 0n) {
+    return {
+      baseSpentLamports: 0n,
+      rewardReceivedRaw: 0n,
+      rewardReceivedUi: 0,
+      usableLamports: 0n,
+      solLongReserveLamports: 0n,
+      pfpRewardLamports: 0n,
+      pfpRewardTxSig: null,
+      txSig: null
+    };
+  }
+
+  const { quote, swap } = await jupiterSwap(amount, treasury.publicKey.toBase58());
+  const rewardReceivedRaw = BigInt(quote.outAmount);
+  const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
+  console.log(
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}${config.rewardTokenSymbol} split buy: ${amount.toString()} lamports -> ${rewardReceivedRaw.toString()} raw`
+  );
+
+  if (!config.buyEnabled) {
+    return {
+      baseSpentLamports: amount,
+      rewardReceivedRaw,
+      rewardReceivedUi,
+      usableLamports: amount,
+      solLongReserveLamports: 0n,
+      pfpRewardLamports: 0n,
+      pfpRewardTxSig: null,
+      txSig: null
+    };
+  }
+
+  const tx = VersionedTransaction.deserialize(Buffer.from(swap.swapTransaction, "base64"));
+  tx.sign([treasury]);
+  const simulation = await connection.simulateTransaction(tx, { replaceRecentBlockhash: true, sigVerify: false });
+  if (simulation.value.err) {
+    console.error(simulation.value.logs?.join("\n"));
+    throw new Error(`Swap simulation failed for ${config.rewardTokenSymbol}: ${JSON.stringify(simulation.value.err)}`);
+  }
+
+  const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
+  await connection.confirmTransaction(txSig, "confirmed");
+  return {
+    baseSpentLamports: amount,
+    rewardReceivedRaw,
+    rewardReceivedUi,
+    usableLamports: amount,
+    solLongReserveLamports: 0n,
+    pfpRewardLamports: 0n,
+    pfpRewardTxSig: null,
+    txSig
+  };
+}

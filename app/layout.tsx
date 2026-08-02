@@ -7,21 +7,21 @@ import "./scout.css";
 const terminalFont = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-runner-terminal",
+  variable: "--font-goat-terminal",
   display: "swap"
 });
 
 const displayFont = Space_Grotesk({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
-  variable: "--font-runner-display",
+  variable: "--font-goat-display",
   display: "swap"
 });
 
 const pixelFont = Press_Start_2P({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-casino-pixel",
+  variable: "--font-goat-accent",
   display: "swap"
 });
 
@@ -39,36 +39,36 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Casino — Five-Minute On-Chain Tournaments",
-    template: "%s | Casino"
+    default: "GOAT — Memecoins Believe Again",
+    template: "%s | GOAT"
   },
-  description: "Casino automatically enters eligible holders into five-minute on-chain tournaments with verifiable results.",
-  applicationName: "Casino",
-  keywords: ["Casino", "CASINO", "on-chain games", "five-minute tournaments", "Solana", "verifiable results"],
+  description: "GOAT distributes ANSEM and CATE to eligible holders every five minutes through an even 50/50 reward split.",
+  applicationName: "GOAT",
+  keywords: ["GOAT", "ANSEM", "CATE", "PoorGoat", "Solana", "holder rewards", "five-minute distributions"],
   openGraph: {
-    title: "Casino — Every 5 Minutes, A New Game",
-    description: "Hold to enter ten rotating five-minute tournaments with public on-chain settlement receipts.",
+    title: "GOAT — Memecoins Believe Again",
+    description: "Hold GOAT. Receive ANSEM and CATE through five-minute 50/50 distributions.",
     url: siteUrl,
-    siteName: "Casino",
+    siteName: "GOAT",
     type: "website",
     images: [
       {
-        url: "/brand/og-image.png",
-        width: 2048,
-        height: 682,
-        alt: "Casino"
+        url: "/brand/goat-banner.png",
+        width: 2172,
+        height: 724,
+        alt: "GOAT"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Casino — Every 5 Minutes, A New Game",
-    description: "A pixel-era on-chain arcade where eligible holders enter automatically.",
-    images: ["/brand/og-image.png"]
+    title: "GOAT — Memecoins Believe Again",
+    description: "Five-minute holder distributions split evenly between ANSEM and CATE.",
+    images: ["/brand/goat-banner.png"]
   },
   icons: {
-    icon: "/brand/casino-logo.png",
-    apple: "/brand/casino-logo.png"
+    icon: "/brand/goat-logo.png",
+    apple: "/brand/goat-logo.png"
   },
   robots: { index: true, follow: true }
 };

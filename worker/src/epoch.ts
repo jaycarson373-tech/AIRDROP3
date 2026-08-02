@@ -1,19 +1,20 @@
 import { claimFees } from "./claim.js";
-import { buyReward } from "./buy.js";
-import { activateRewardForEpoch, config } from "./config.js";
+import { buyReward, buyRewardForAmount, treasurySwapAmount } from "./buy.js";
+import { activateRewardForEpoch, activateRewardMint, config } from "./config.js";
 import {
   airdropRewards,
   computeAllocations,
   estimatePayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
-import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
+import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, recordRewardBuy, startEpoch } from "./db.js";
 import { applyHolderState } from "./holder-state.js";
 import { currentEpochId } from "./time.js";
 import { activateScoutSignalForEpoch } from "./scout.js";
 import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { openCasinoRound, settlePendingCasinoRounds } from "./casino-engine.js";
+import { allocateRewardBudget } from "./reward-split.js";
 
 let running = false;
 
@@ -38,7 +39,7 @@ export async function runEpoch(date = new Date()) {
       return;
     }
 
-    const scoutSignal = await activateScoutSignalForEpoch(epochId);
+    const scoutSignal = config.rewardSplitEnabled ? null : await activateScoutSignalForEpoch(epochId);
     const existing = await getEpoch(epochId);
     if (existing?.status === "completed") {
       console.log(`[${epochId}] already completed, skipping`);
@@ -88,6 +89,82 @@ export async function runEpoch(date = new Date()) {
         status: "skipped"
       });
       console.log(`[${epochId}] no reward-ready holders, skipped reward distribution`);
+      return;
+    }
+
+    if (config.rewardMode === "token" && config.rewardSplitEnabled) {
+      const wallets = holders.map((holder) => holder.wallet);
+      let payoutReserveLamports = 0n;
+      for (const [index, mint] of config.rewardTokenMints.entries()) {
+        activateRewardMint(mint, config.rewardTokenSymbols[index] ?? `asset ${index + 1}`);
+        payoutReserveLamports += await estimatePayoutReserveLamports(wallets);
+      }
+      if (config.rewardTokenMints.length > 1) {
+        const sharedReserveLamports =
+          BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL)) +
+          BigInt(Math.floor(config.airdropSolReserve * LAMPORTS_PER_SOL));
+        payoutReserveLamports -= sharedReserveLamports * BigInt(config.rewardTokenMints.length - 1);
+      }
+
+      const plan = await treasurySwapAmount(payoutReserveLamports);
+      if (plan.amount <= 0n) {
+        await completeEpoch(epochId, {
+          eligible_count: eligibleHolders.length,
+          reward_bought: "0",
+          reward_distributed: "0",
+          status: "skipped"
+        });
+        console.log(`[${epochId}] no SOL available for the configured multi-asset reward split`);
+        return;
+      }
+
+      const rewardBudgets = allocateRewardBudget(plan.amount, config.rewardTokenSplitBps);
+      let settledAssets = 0;
+      let settledTransfers = 0;
+      for (const [index, mint] of config.rewardTokenMints.entries()) {
+        const splitBps = config.rewardTokenSplitBps[index];
+        const baseAmount = rewardBudgets[index];
+        activateRewardMint(mint, config.rewardTokenSymbols[index] ?? `asset ${index + 1}`);
+
+        const buy = await buyRewardForAmount(epochId, baseAmount);
+        await recordRewardBuy(
+          epochId,
+          splitBps,
+          buy.baseSpentLamports.toString(),
+          buy.rewardReceivedRaw.toString(),
+          buy.rewardReceivedUi.toString(),
+          buy.txSig,
+          config.buyEnabled ? "settled" : "dry_run"
+        );
+
+        const rewardPoolRaw = (buy.rewardReceivedRaw * BigInt(config.airdropRewardBps)) / 10_000n;
+        if (rewardPoolRaw <= config.minRewardRawToAirdrop) {
+          console.log(`[${epochId}] ${config.rewardTokenSymbol} split below minimum; no payout planned`);
+          continue;
+        }
+
+        const allocations = await computeAllocations(holders, rewardPoolRaw);
+        if (!allocations.length) continue;
+        const airdrop = await airdropRewards(epochId, allocations);
+        if (airdrop.stoppedForReserve && airdrop.settledCount === 0) {
+          throw new Error(`${config.rewardTokenSymbol} airdrop stopped before sending any payouts`);
+        }
+        if (airdrop.settledCount > 0) settledAssets += 1;
+        settledTransfers += airdrop.settledCount;
+        console.log(
+          `[${epochId}] ${config.rewardTokenSymbol} summary: split=${splitBps}bps, bought=${buy.rewardReceivedUi}, recipients=${airdrop.settledCount}/${allocations.length}`
+        );
+      }
+
+      await completeEpoch(epochId, {
+        eligible_count: eligibleHolders.length,
+        reward_bought: "0",
+        reward_distributed: "0",
+        status: settledAssets === config.rewardTokenMints.length ? "completed" : "skipped"
+      });
+      console.log(
+        `[${epochId}] dual-reward summary: assets=${settledAssets}/${config.rewardTokenMints.length}, transfers=${settledTransfers}`
+      );
       return;
     }
 

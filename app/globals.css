@@ -11,8 +11,8 @@
   --scout-risk: #ff7979;
   --scout-line: rgba(255, 255, 255, 0.13);
   --scout-line-green: rgba(237, 49, 79, 0.42);
-  --scout-mono: var(--font-runner-terminal), "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
-  --scout-display: var(--font-runner-display), "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --scout-mono: var(--font-goat-terminal), "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --scout-display: var(--font-goat-display), "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
 }
 
 * {
