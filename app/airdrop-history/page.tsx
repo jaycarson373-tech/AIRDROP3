@@ -1,7 +1,5 @@
-import { ReceiptsView } from "../../components/scout/views";
-
-export const metadata = { title: "Distribution Receipts" };
+import { redirect } from "next/navigation";
 
 export default function AirdropHistoryPage() {
-  return <ReceiptsView />;
+  redirect("/rewards");
 }

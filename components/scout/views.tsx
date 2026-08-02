@@ -15,14 +15,15 @@ function PageHeading({ eyebrow, title, body }: { eyebrow: string; title: string;
 
 export function ReceiptsView() {
   const { stats, state } = useScout();
+  const awaitingLaunch = "Awaiting launch.";
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="GOAT Receipts" title="Verify every distribution." body="Every settled reward links to its cycle, asset, amount, recipient, and Solana transaction." />
+      <PageHeading eyebrow="GOAT Rewards" title="Every reward. Every receipt." body="History, epochs, distributions, and settled Solana transactions—all in one verifiable ledger." />
       <div className="scout-overview-grid">
-        <Metric label="Settled Cycles" value={stats.totalEpochs ? stats.totalEpochs.toLocaleString() : "NONE YET"} />
+        <Metric label="Settled Epochs" value={stats.totalEpochs ? stats.totalEpochs.toLocaleString() : awaitingLaunch} />
         <Metric label="Reward Assets" value="ANSEM + CATE" />
         <Metric label="Budget Split" value="50 / 50" />
-        <Metric label="Distributed Value" value={stats.totalEpochs ? `${stats.totalSolValueAirdropped.toFixed(4)} SOL` : "NONE YET"} />
+        <Metric label="Distributed Value" value={stats.totalEpochs ? `${stats.totalSolValueAirdropped.toFixed(4)} SOL` : awaitingLaunch} />
       </div>
       <section className="scout-panel scout-panel--table">
         <div className="scout-panel__head"><div><span className="scout-kicker">Cycle history</span><h2>Verified settlements</h2></div><Radio size={20} /></div>

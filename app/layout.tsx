@@ -39,32 +39,32 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "GOAT — Memecoins Believe Again",
+    default: "GOAT — The GOAT of the Cycle",
     template: "%s | GOAT"
   },
-  description: "GOAT distributes ANSEM and CATE to eligible holders every five minutes through an even 50/50 reward split.",
+  description: "Hold the GOAT. Receive the GOAT's biggest convictions through transparent on-chain reward drops.",
   applicationName: "GOAT",
   keywords: ["GOAT", "ANSEM", "CATE", "PoorGoat", "Solana", "holder rewards", "five-minute distributions"],
   openGraph: {
-    title: "GOAT — Memecoins Believe Again",
-    description: "Hold GOAT. Receive ANSEM and CATE through five-minute 50/50 distributions.",
+    title: "GOAT — The GOAT of the Cycle",
+    description: "Hold the GOAT. Receive the GOAT's biggest convictions.",
     url: siteUrl,
     siteName: "GOAT",
     type: "website",
     images: [
       {
-        url: "/brand/goat-banner.png",
-        width: 2172,
-        height: 724,
-        alt: "GOAT"
+        url: "/brand/goat-hero.jpg",
+        width: 1280,
+        height: 720,
+        alt: "GOAT — The GOAT of the Cycle"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "GOAT — Memecoins Believe Again",
-    description: "Five-minute holder distributions split evenly between ANSEM and CATE.",
-    images: ["/brand/goat-banner.png"]
+    title: "GOAT — The GOAT of the Cycle",
+    description: "Hold the GOAT. Receive the GOAT's biggest convictions.",
+    images: ["/brand/goat-hero.jpg"]
   },
   icons: {
     icon: "/brand/goat-logo.png",

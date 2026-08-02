@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Menu, X } from "lucide-react";
+import { BookOpen, Menu, Radio, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ScoutProvider, useScout } from "./scout-provider";
 import { PrelaunchNotice } from "./ui";
 
 const primaryNav = [
-  { href: "/#distribution", label: "Distribution" },
+  { href: "/#terminal", label: "Terminal" },
   { href: "/#mechanism", label: "How It Works" },
-  { href: "/#lore", label: "The Lore" },
-  { href: "/airdrop-history", label: "Receipts" }
+  { href: "/#origins", label: "Origins" },
+  { href: "/#portfolio", label: "The GOAT" },
+  { href: "/rewards", label: "Rewards" }
 ];
 
 const productNav = [
+  { href: "/rewards", label: "Rewards", icon: Radio },
   { href: "/docs", label: "Docs", icon: BookOpen }
 ];
 
@@ -98,7 +100,7 @@ function Header() {
 
       {open ? (
         <div className="scout-mobile-nav">
-          {[...primaryNav, ...productNav].map((item) => (
+          {[...primaryNav, ...productNav.filter((item) => !primaryNav.some((primary) => primary.href === item.href))].map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
         </div>
@@ -116,7 +118,7 @@ function Footer() {
         </span>
         <div>
           <strong>GOAT</strong>
-          <p>Five-minute ANSEM + CATE holder distributions.</p>
+          <p>The GOAT of the cycle. Conviction rewards, verified on-chain.</p>
         </div>
       </div>
       <nav aria-label="Product links">

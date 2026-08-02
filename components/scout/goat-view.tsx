@@ -1,11 +1,13 @@
 "use client";
 
-import { ArrowUpRight, CheckCircle2, Clock3, Coins, Radio, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Clock3, Coins, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { formatToken, shortWallet } from "./format";
 import { useScout } from "./scout-provider";
 
 const CYCLE_MS = 5 * 60 * 1000;
+const AWAITING_LAUNCH = "Awaiting launch.";
+const POORGOAT_X_URL = "https://x.com/PoorGoat_";
 
 function pad(value: number) {
   return String(value).padStart(2, "0");
@@ -26,6 +28,12 @@ function Stat({ label, value, note }: { label: string; value: string; note: stri
   );
 }
 
+function ActionLink({ href, children, solid = false }: { href: string | null; children: React.ReactNode; solid?: boolean }) {
+  const className = `goat-button${solid ? " goat-button--solid" : ""}${href ? "" : " is-disabled"}`;
+  if (!href) return <span className={className} aria-disabled="true">{children}</span>;
+  return <a className={className} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noreferrer" : undefined}>{children}</a>;
+}
+
 export function GoatTerminalView() {
   const { launchState, stats, state, lastUpdated } = useScout();
   const [now, setNow] = useState<number | null>(null);
@@ -41,48 +49,56 @@ export function GoatTerminalView() {
   const progress = now === null ? 0 : (now % CYCLE_MS) / CYCLE_MS;
   const live = launchState === "live" && state !== "error";
   const indexTime = useMemo(
-    () => lastUpdated?.toLocaleTimeString([], { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }) ?? "NOT INDEXED",
+    () => lastUpdated?.toLocaleTimeString([], { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }) ?? "AWAITING LAUNCH",
     [lastUpdated]
   );
   const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL?.trim() || "SET AFTER SUPPLY CONFIRMATION";
-  const receipts = stats.recentRewards.slice(0, 8);
+  const sourceMint = process.env.NEXT_PUBLIC_CA?.trim() || process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT?.trim();
+  const configuredBuyUrl = process.env.NEXT_PUBLIC_BUY_URL?.trim();
+  const buyUrl = configuredBuyUrl || (sourceMint ? `https://jup.ag/swap/SOL-${sourceMint}` : null);
+  const portfolioWalletUrl = process.env.NEXT_PUBLIC_POORGOAT_WALLET_URL?.trim() || null;
+
+  const rewardTotal = (symbol: "ANSEM" | "CATE") => {
+    const row = stats.rewardBreakdown.find((entry) => entry.asset.trim().toUpperCase() === symbol);
+    return row && row.transfers > 0 && row.total > 0 ? formatToken(row.total, symbol) : AWAITING_LAUNCH;
+  };
+
+  const latestReceipt = stats.recentRewards.find((receipt) => Boolean(receipt.txSig));
+  const latestTx = latestReceipt?.txSig ?? null;
 
   return (
     <div className="goat-home">
       <section className="goat-hero" id="distribution">
-        <img className="goat-hero__backdrop" src="/brand/goat-banner.png" alt="" aria-hidden="true" />
+        <img className="goat-hero__backdrop" src="/brand/goat-hero.jpg" alt="" aria-hidden="true" />
         <div className="goat-hero__shade" aria-hidden="true" />
         <div className="goat-hero__copy">
-          <div className="goat-eyebrow"><i /> THE POORGOAT THESIS</div>
-          <h1>HE MADE MEMECOINS<br /><span>BELIEVABLE AGAIN.</span></h1>
-          <p>
-            <strong>$GOAT</strong> is a holder distribution engine built around the conviction of
-            <a href="https://x.com/PoorGoat_" target="_blank" rel="noreferrer"> @PoorGoat_</a>.
-            Every five minutes, the reward budget splits evenly between <b>$ANSEM</b> and <b>$CATE</b>,
-            then moves to eligible GOAT holders.
-          </p>
+          <div className="goat-eyebrow"><i /> THE GOAT THESIS</div>
+          <h1>THE GOAT OF<br /><span>THE CYCLE.</span></h1>
+          <p className="goat-hero__subhead">Hold the GOAT.<br />Receive the GOAT&apos;s biggest convictions.</p>
+          <div className="goat-hero__body">
+            <p><a href={POORGOAT_X_URL} target="_blank" rel="noreferrer">Poor Goat</a> became one of the most recognizable portfolios on Crypto Twitter this cycle.</p>
+            <p>GOAT celebrates the meme with monthly reward drops inspired by his highest-conviction holdings.</p>
+          </div>
           <div className="goat-hero__actions">
-            <a className="goat-button goat-button--solid" href="#mechanism">SEE THE MECHANISM</a>
-            <a className="goat-button" href="https://x.com/PoorGoat_" target="_blank" rel="noreferrer">
-              FOLLOW POORGOAT <ArrowUpRight size={15} />
-            </a>
+            <ActionLink href={buyUrl} solid>BUY GOAT <ArrowUpRight size={15} /></ActionLink>
+            <ActionLink href="#terminal">VIEW GOAT TERMINAL</ActionLink>
           </div>
           <div className="goat-hero__proof">
-            <span>THE COMMUNITY-REPORTED RUN</span>
-            <strong>$2M / 2 MONTHS</strong>
-            <small>A community claim presented as the GOAT thesis—not an independently audited performance record.</small>
+            <span>THE GOAT OF THE CYCLE</span>
+            <strong>CONVICTION COMPOUNDS.</strong>
+            <small>MONTHLY CONVICTION. TRANSPARENT ON-CHAIN REWARDS.</small>
           </div>
         </div>
 
-        <div className="goat-engine">
+        <div className="goat-engine" id="terminal">
           <div className="goat-engine__head">
-            <span><i /> GOAT DISTRIBUTION ENGINE</span>
+            <span><i /> GOAT TERMINAL</span>
             <strong>{live ? "ONLINE" : "PRELAUNCH"}</strong>
           </div>
           <div className="goat-engine__clock">
             <span>NEXT 50 / 50 DISTRIBUTION</span>
-            <strong>{clockLabel(remaining)}</strong>
-            <small>FIVE-MINUTE UTC CYCLE</small>
+            <strong className={live ? undefined : "is-awaiting"}>{live ? clockLabel(remaining) : AWAITING_LAUNCH}</strong>
+            <small>{live ? "FIVE-MINUTE UTC CYCLE" : AWAITING_LAUNCH.toUpperCase()}</small>
           </div>
           <div className="goat-split" aria-label="Reward allocation: 50 percent ANSEM and 50 percent CATE">
             <article>
@@ -100,7 +116,16 @@ export function GoatTerminalView() {
           <div className="goat-engine__flow">
             <span>SNAPSHOT</span><i>→</i><span>CLAIM</span><i>→</i><span>SPLIT</span><i>→</i><span>DISTRIBUTE</span>
           </div>
-          <div className="goat-engine__progress"><i style={{ width: `${progress * 100}%` }} /></div>
+          <div className="goat-engine__metrics">
+            <div><span>TOTAL CATE DROPPED</span><strong>{rewardTotal("CATE")}</strong></div>
+            <div><span>TOTAL ANSEM DROPPED</span><strong>{rewardTotal("ANSEM")}</strong></div>
+            <div><span>NEXT EPOCH</span><strong>{live ? clockLabel(remaining) : AWAITING_LAUNCH}</strong></div>
+            <div>
+              <span>LATEST TX</span>
+              {latestTx ? <a href={`https://solscan.io/tx/${latestTx}`} target="_blank" rel="noreferrer">{shortWallet(latestTx)} <ArrowUpRight size={11} /></a> : <strong>{AWAITING_LAUNCH}</strong>}
+            </div>
+          </div>
+          <div className="goat-engine__progress"><i style={{ width: `${live ? progress * 100 : 0}%` }} /></div>
           <div className="goat-engine__foot">
             <span>INDEX {indexTime}</span>
             <span>{live ? "REAL RECEIPTS ONLY" : "WORKER GATED"}</span>
@@ -109,11 +134,11 @@ export function GoatTerminalView() {
       </section>
 
       <section className="goat-stats" aria-label="GOAT protocol status">
-        <Stat label="CYCLE" value="05:00" note="AUTOMATIC UTC BOUNDARY" />
+        <Stat label="EPOCH" value="05:00" note="AUTOMATIC UTC BOUNDARY" />
         <Stat label="REWARD SPLIT" value="50 / 50" note="$ANSEM + $CATE" />
         <Stat
-          label="SETTLED CYCLES"
-          value={stats.totalEpochs > 0 ? stats.totalEpochs.toLocaleString() : "NO SETTLED CYCLE"}
+          label="SETTLED EPOCHS"
+          value={stats.totalEpochs > 0 ? stats.totalEpochs.toLocaleString() : AWAITING_LAUNCH}
           note="VERIFIED TRANSACTIONS ONLY"
         />
         <Stat
@@ -126,7 +151,7 @@ export function GoatTerminalView() {
       <section className="goat-mechanism" id="mechanism">
         <div className="goat-section-head">
           <span>THE MECHANISM</span>
-          <h2>HOLD GOAT.<br />RECEIVE ANSEM + CATE.</h2>
+          <h2>HOLD THE GOAT.<br />RECEIVE THE CONVICTIONS.</h2>
           <p>No wallet connection. No signing. No claim transaction. Eligibility comes from the on-chain GOAT holder snapshot.</p>
         </div>
         <div className="goat-steps">
@@ -137,61 +162,52 @@ export function GoatTerminalView() {
         </div>
       </section>
 
-      <section className="goat-lore" id="lore">
+      <section className="goat-origins" id="origins">
+        <div className="goat-origins__intro">
+          <span>ORIGINS</span>
+          <h2>DOGE + GOAT.<br />A DECADE IN THE MAKING.</h2>
+        </div>
+        <div className="goat-origins__story">
+          <p>In 2014, Dogecoin co-creator Jackson Palmer created a GitHub repository called doge4goat.</p>
+          <p>Its message was simple:</p>
+          <blockquote>&ldquo;Doge + Goat = a better world.&rdquo;</blockquote>
+          <p>More than a decade later...</p>
+          <strong>GOAT finally gets its coin.</strong>
+          <div className="goat-origins__actions">
+            <a className="goat-button" href="https://web.archive.org/web/20150415202948/https://github.com/ummjackson" target="_blank" rel="noreferrer">VIEW JACKSON PALMER ARCHIVE <ArrowUpRight size={13} /></a>
+            <a className="goat-button" href="https://web.archive.org/web/20180611025950/https://github.com/ummjackson/doge4goat" target="_blank" rel="noreferrer">VIEW DOGE4GOAT ARCHIVE <ArrowUpRight size={13} /></a>
+          </div>
+        </div>
+      </section>
+
+      <section className="goat-cinematic" aria-label="The GOAT of the cycle">
+        <img src="/brand/goat-divider.jpg" alt="GOAT seated on a throne before the herd" width={1280} height={720} />
+        <div><span>THE GOAT OF THE CYCLE</span><strong>CONVICTION COMPOUNDS.</strong></div>
+      </section>
+
+      <section className="goat-lore" id="portfolio">
         <div className="goat-lore__mark">
           <img src="/brand/goat-logo.png" alt="GOAT emblem" width={1254} height={1254} />
         </div>
         <div className="goat-lore__copy">
-          <span>WHY GOAT</span>
-          <h2>THE HORNS<br />STAY ON.</h2>
-          <p>
-            PoorGoat became a symbol of high-conviction memecoin culture: backing conviction, defending the thesis,
-            and helping traders believe that real communities could run again. GOAT turns that story into a simple
-            holder mechanism—own GOAT and participate in the assets tied to the run.
-          </p>
-          <div>
-            <strong>ANSEM</strong><small>THE SIGNAL</small>
-            <strong>CATE</strong><small>THE COMEBACK</small>
-            <strong>GOAT</strong><small>THE HOLDER ENGINE</small>
+          <span>THE PORTFOLIO</span>
+          <h2>THE GOAT</h2>
+          <p>If you&apos;ve been on CT this cycle, you&apos;ve seen the portfolio.</p>
+          <p>Poor Goat became one of the timeline&apos;s most recognizable holders through conviction in CATE and ANSEM.</p>
+          <p>The timeline crowned the GOAT.</p>
+          <p>GOAT gave him the coin.</p>
+          <div className="goat-lore__action">
+            <ActionLink href={portfolioWalletUrl}>VIEW WALLET <ArrowUpRight size={13} /></ActionLink>
+            <ActionLink href={POORGOAT_X_URL}>FOLLOW @POORGOAT_ <ArrowUpRight size={13} /></ActionLink>
           </div>
-        </div>
-      </section>
-
-      <section className="goat-receipts" id="receipts">
-        <div className="goat-section-head goat-section-head--row">
-          <div><span>ON-CHAIN LEDGER</span><h2>REAL RECEIPTS.<br />NO FILLER DATA.</h2></div>
-          <Radio size={22} />
-        </div>
-        <div className="goat-receipts__table" role="table" aria-label="Recent GOAT reward receipts">
-          <div className="goat-receipts__row goat-receipts__row--head" role="row">
-            <span>WALLET</span><span>ASSET</span><span>AMOUNT</span><span>CYCLE</span><span>PROOF</span>
-          </div>
-          {receipts.length ? receipts.map((receipt, index) => (
-            <div className="goat-receipts__row" role="row" key={`${receipt.wallet}-${receipt.epoch}-${index}`}>
-              <strong>{shortWallet(receipt.wallet)}</strong>
-              <span>${receipt.rewardAsset || "TOKEN"}</span>
-              <span>{formatToken(receipt.rewardAmount, receipt.rewardAsset || "TOKENS")}</span>
-              <span>#{receipt.epoch}</span>
-              {receipt.txSig ? (
-                <a href={`https://solscan.io/tx/${receipt.txSig}`} target="_blank" rel="noreferrer">VERIFY <ArrowUpRight size={12} /></a>
-              ) : <span>NOT SETTLED</span>}
-            </div>
-          )) : (
-            <div className="goat-receipts__empty">NO SETTLED GOAT DISTRIBUTION YET. THE FIRST VERIFIED RECEIPTS WILL APPEAR HERE.</div>
-          )}
         </div>
       </section>
 
       <section className="goat-final">
-        <span>GOAT / FIVE-MINUTE HOLDER DISTRIBUTIONS</span>
-        <h2>MEMECOINS<br />BELIEVE AGAIN.</h2>
-        <p>50% ANSEM. 50% CATE. Every five minutes. Built around the trader the community calls the GOAT.</p>
+        <span>THE GOAT OF THE CYCLE</span>
+        <h2>CONVICTION<br />COMPOUNDS.</h2>
+        <p>Hold the GOAT. Receive the GOAT&apos;s biggest convictions.</p>
       </section>
-
-      <div className="goat-banner-bottom">
-        <img src="/brand/goat-banner.png" alt="GOAT market banner" width={2172} height={724} />
-        <div><span>THE GOAT THESIS</span><strong>CONVICTION COMPOUNDS.</strong></div>
-      </div>
     </div>
   );
 }
