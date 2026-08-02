@@ -42,14 +42,15 @@ export const metadata: Metadata = {
     default: "GOAT — The 2026 Goatcoin",
     template: "%s | GOAT"
   },
+  alternates: { canonical: siteUrl },
   description: "A GOAT emerged onchain. Hold GOAT and receive ANSEM + CATE distributions every five minutes.",
-  applicationName: "GOAT",
+  applicationName: "Goatcoin",
   keywords: ["GOAT", "ANSEM", "CATE", "PoorGoat", "Solana", "holder rewards", "five-minute distributions"],
   openGraph: {
     title: "THE 2026 GOATCOIN.",
     description: "Hold GOAT. Receive the GOAT's conviction plays.",
     url: siteUrl,
-    siteName: "GOAT",
+    siteName: "Goatcoin",
     type: "website",
     images: [
       {
