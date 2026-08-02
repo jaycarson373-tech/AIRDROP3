@@ -71,13 +71,13 @@ export function GoatTerminalView() {
         <img className="goat-hero__backdrop" src="/brand/goat-hero.jpg" alt="" aria-hidden="true" />
         <div className="goat-hero__shade" aria-hidden="true" />
         <div className="goat-hero__copy">
-          <div className="goat-eyebrow"><i /> THE 2026 GOAT COIN</div>
+          <div className="goat-eyebrow"><i /> THE 2026 GOATCOIN</div>
           <h1>A GOAT EMERGED<br /><span>ONCHAIN.</span></h1>
           <p className="goat-hero__subhead">Hold GOAT. Receive the GOAT&apos;s conviction plays.</p>
           <div className="goat-hero__body">
             <p>Back in 2014, Dogecoin co-creator Jackson Palmer created doge4goat with one line:</p>
             <p className="goat-hero__quote">&ldquo;doge + goat = a better world.&rdquo;</p>
-            <p>More than a decade later, Poor Goat became one of the main characters of this cycle through his conviction in ANSEM and CATE. Now comes the 2026 Goat Coin.</p>
+            <p>More than a decade later, Poor Goat became one of the main characters of this cycle through his conviction in ANSEM and CATE. Now comes the 2026 Goatcoin.</p>
           </div>
           <div className="goat-hero__actions">
             <ActionLink href={buyUrl} solid>BUY GOAT <ArrowUpRight size={15} /></ActionLink>
@@ -85,7 +85,7 @@ export function GoatTerminalView() {
           </div>
           {projectConfig.poorGoatXUrl ? <a className="goat-hero__follow" href={projectConfig.poorGoatXUrl} target="_blank" rel="noopener noreferrer">FOLLOW POOR GOAT <ArrowUpRight size={12} /></a> : null}
           <div className="goat-hero__proof">
-            <span>THE 2026 GOAT COIN</span>
+            <span>THE 2026 GOATCOIN</span>
             <strong>THE GOAT FINALLY GOT HIS COIN.</strong>
             <small>INSPIRED BY POOR GOAT&apos;S CONVICTION PLAYS.</small>
           </div>
@@ -170,7 +170,7 @@ export function GoatTerminalView() {
           <p>Its message was simple:</p>
           <blockquote>&ldquo;Doge + Goat = a better world.&rdquo;</blockquote>
           <p>More than a decade later, a new GOAT emerged onchain.</p>
-          <strong>Now comes the 2026 Goat Coin.</strong>
+          <strong>Now comes the 2026 Goatcoin.</strong>
           <div className="goat-origins__actions">
             <a className="goat-button" href="https://web.archive.org/web/20150415202948/https://github.com/ummjackson" target="_blank" rel="noopener noreferrer">VIEW JACKSON PALMER ARCHIVE <ArrowUpRight size={13} /></a>
             <a className="goat-button" href="https://web.archive.org/web/20180611025950/https://github.com/ummjackson/doge4goat" target="_blank" rel="noopener noreferrer">VIEW DOGE4GOAT ARCHIVE <ArrowUpRight size={13} /></a>
@@ -208,14 +208,14 @@ export function GoatTerminalView() {
       </section>
 
       <section className="goat-black-bull">
-        <div><span>THE BLACK BULL</span><h2>THE HORNS STAY ON.</h2><p>Poor Goat held the thesis while the timeline rotated. His conviction in ANSEM and CATE became part of the story behind the 2026 Goat Coin.</p></div>
+        <div><span>THE BLACK BULL</span><h2>THE HORNS STAY ON.</h2><p>Poor Goat held the thesis while the timeline rotated. His conviction in ANSEM and CATE became part of the story behind the 2026 Goatcoin.</p></div>
         <article><span>ANOTHER GOAT OF THE CYCLE</span><h3>ANSEM IS A GOAT TOO.</h3><p>ANSEM helped define this memecoin cycle. GOAT recognizes both sides of the conviction story—without implying official endorsement.</p></article>
       </section>
 
       <LeaderboardSection />
 
       <section className="goat-final">
-        <span>THE 2026 GOAT COIN</span>
+        <span>THE 2026 GOATCOIN</span>
         <h2>A GOAT EMERGED<br />ONCHAIN.</h2>
         <p>Hold GOAT. Receive ANSEM + CATE.</p>
       </section>

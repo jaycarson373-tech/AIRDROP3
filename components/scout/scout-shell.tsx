@@ -125,7 +125,7 @@ function Footer() {
         </span>
         <div>
           <strong>GOAT</strong>
-          <p>The 2026 Goat Coin. Inspired by conviction, verified onchain.</p>
+          <p>The 2026 Goatcoin. Inspired by conviction, verified onchain.</p>
         </div>
       </div>
       <nav aria-label="Product links">
