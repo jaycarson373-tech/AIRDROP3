@@ -95,6 +95,7 @@ function Header() {
         </nav>
 
         <div className="scout-header__actions">
+          {projectConfig.projectXUrl ? <a className="scout-header-link scout-header-link--social" href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X ↗</a> : null}
           {projectConfig.poorGoatXUrl ? <a className="scout-header-link scout-header-link--profile" href={projectConfig.poorGoatXUrl} target="_blank" rel="noopener noreferrer">POOR GOAT ↗</a> : null}
           {headerBuyUrl ? <a className="scout-header-link scout-header-link--buy" href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY</a> : null}
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
@@ -109,6 +110,7 @@ function Header() {
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
           {projectConfig.poorGoatXUrl ? <a href={projectConfig.poorGoatXUrl} target="_blank" rel="noopener noreferrer">POOR GOAT ↗</a> : null}
+          {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">GOATCOIN X ↗</a> : null}
           {headerBuyUrl ? <a href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY GOAT ↗</a> : null}
         </div>
       ) : null}
@@ -132,6 +134,7 @@ function Footer() {
         {productNav.map(({ href, label, icon: Icon }) => (
           <Link href={href} key={href}><Icon size={14} /> {label}</Link>
         ))}
+        {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X ↗</a> : null}
       </nav>
       <p className="scout-footer__risk">
         GOAT is an experimental community token and holder-distribution project. Reward timing, eligibility, and availability may change. Nothing on this site is financial advice.
