@@ -70,14 +70,7 @@ function TopTicker() {
 function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [copiedMint, setCopiedMint] = useState(false);
   const headerBuyUrl = projectConfig.buyUrl || (projectConfig.goatMint ? `https://jup.ag/swap/SOL-${projectConfig.goatMint}` : null);
-  const mintExplorerUrl = projectConfig.goatMint
-    ? `${projectConfig.explorerBaseUrl.replace(/\/$/, "")}/token/${projectConfig.goatMint}`
-    : null;
-  const shortMint = projectConfig.goatMint
-    ? `${projectConfig.goatMint.slice(0, 4)}…${projectConfig.goatMint.slice(-4)}`
-    : null;
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -102,22 +95,6 @@ function Header() {
         </nav>
 
         <div className="scout-header__actions">
-          {projectConfig.goatMint ? (
-            <button
-              className="goat-header-ca"
-              type="button"
-              onClick={async () => {
-                await navigator.clipboard.writeText(projectConfig.goatMint!);
-                setCopiedMint(true);
-                window.setTimeout(() => setCopiedMint(false), 1600);
-              }}
-              aria-label={`Copy GOAT contract address ${projectConfig.goatMint}`}
-              title="Copy GOAT contract address"
-            >
-              <span>CA</span>
-              <strong>{copiedMint ? "COPIED" : shortMint}</strong>
-            </button>
-          ) : null}
           {projectConfig.projectXUrl ? <a className="scout-header-link scout-header-link--social" href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X ↗</a> : null}
           {projectConfig.poorGoatXUrl ? <a className="scout-header-link scout-header-link--profile" href={projectConfig.poorGoatXUrl} target="_blank" rel="noopener noreferrer">POOR GOAT ↗</a> : null}
           {headerBuyUrl ? <a className="scout-header-link scout-header-link--buy" href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY</a> : null}
@@ -134,7 +111,6 @@ function Header() {
           ))}
           {projectConfig.poorGoatXUrl ? <a href={projectConfig.poorGoatXUrl} target="_blank" rel="noopener noreferrer">POOR GOAT ↗</a> : null}
           {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">GOATCOIN X ↗</a> : null}
-          {mintExplorerUrl ? <a href={mintExplorerUrl} target="_blank" rel="noopener noreferrer">VIEW CA ↗</a> : null}
           {headerBuyUrl ? <a href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY GOAT ↗</a> : null}
         </div>
       ) : null}
