@@ -50,7 +50,7 @@ export function PumpMoneyView() {
     () => lastUpdated?.toLocaleTimeString([], { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }) ?? "PRELAUNCH",
     [lastUpdated]
   );
-  const eligibilityLabel = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL?.trim() || "SET AT LAUNCH";
+  const eligibilityLabel = process.env.NEXT_PUBLIC_PUMP_MONEY_ELIGIBILITY_LABEL?.trim() || "SET AT LAUNCH";
   const buyUrl = projectConfig.buyUrl || (projectConfig.pumpMoneyMint ? `https://jup.ag/swap/SOL-${projectConfig.pumpMoneyMint}` : null);
   const pumpBreakdown = stats.rewardBreakdown.find((entry) => entry.asset.trim().toUpperCase() === "PUMP");
   const totalPump = pumpBreakdown && pumpBreakdown.transfers > 0 && pumpBreakdown.total > 0
