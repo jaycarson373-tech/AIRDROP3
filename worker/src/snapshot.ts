@@ -1,8 +1,8 @@
-import { createHash } from "crypto";
 import { PublicKey } from "@solana/web3.js";
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
+import { selectWeightedRecipients } from "./draw-policy.js";
 
 const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
 const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
@@ -69,46 +69,12 @@ function holderPct(rawBalance: bigint, rawSupply: bigint) {
   return Number((rawBalance * 1_000_000n) / rawSupply) / 10_000;
 }
 
-function recipientScoreValue(epochId: string, holder: Holder) {
-  return BigInt(
-    `0x${createHash("sha256")
-    .update(`${epochId}:${holder.wallet}:${holder.rawBalance.toString()}`)
-      .digest("hex")}`
-  );
-}
-
 export function selectRewardRecipients(epochId: string, holders: Holder[]) {
-  const balances = holders.map((holder) => holder.rawBalance).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
-  const medianRaw = balances[Math.floor(balances.length / 2)] ?? 0n;
-  const halfMedian = medianRaw / 2n;
-
-  const holderSelectionBoostBps = (holder: Holder) => {
-    if (medianRaw <= 0n) return 10_000n;
-    if (holder.rawBalance <= halfMedian) return 20_000n;
-    if (holder.rawBalance <= medianRaw) return 16_000n;
-    return 10_000n;
-  };
-
-  const combinedSelectionBoostBps = (holder: Holder) => {
-    const holdMultiplierBps = BigInt(Math.max(10_000, holder.holdMultiplierBps ?? 10_000));
-    return (holderSelectionBoostBps(holder) * holdMultiplierBps) / 10_000n;
-  };
-
-  const recipients = holders
-    .map((holder) => ({
-      holder,
-      score: recipientScoreValue(epochId, holder) / combinedSelectionBoostBps(holder)
-    }))
-    .sort((a, b) => {
-      const score = a.score < b.score ? -1 : a.score > b.score ? 1 : 0;
-      return score || a.holder.wallet.localeCompare(b.holder.wallet);
-    })
-    .slice(0, config.maxWalletsPerEpoch)
-    .map(({ holder }) => holder);
+  const recipients = selectWeightedRecipients(epochId, holders, config.drawWinnerCount);
 
   if (holders.length > recipients.length) {
     console.log(
-      `[SNAPSHOT] selected ${recipients.length} lower-balance-skewed recipients from ${holders.length} eligible holders`
+      `[DRAW] selected ${recipients.length} weighted recipients from ${holders.length} eligible holders`
     );
   }
 

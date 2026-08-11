@@ -238,27 +238,27 @@ async function holderLeaderboard(config: SupabaseConfig, payouts: PayoutRow[]) {
     const maxEpochs = Math.max(...activeRows.map((row) => payoutEpochs.get(row.wallet)?.size ?? 0), 1);
     const maxStreak = Math.max(...activeRows.map((row) => toNumber(row.current_streak_epochs)), 1);
     const scored = activeRows.map((row) => {
-      const goatBalance = toNumber(row.source_balance);
+      const tokenBalance = toNumber(row.source_balance);
       const qualifiedEpochs = payoutEpochs.get(row.wallet)?.size ?? 0;
       const holdingStreak = toNumber(row.current_streak_epochs);
-      const convictionScore = Math.round(
-        (goatBalance / maxBalance) * 50
+      const selectionScore = Math.round(
+        (tokenBalance / maxBalance) * 50
         + (qualifiedEpochs / maxEpochs) * 30
         + (holdingStreak / maxStreak) * 20
       );
       return {
         wallet: row.wallet,
-        goatBalance,
+        tokenBalance,
         qualifiedEpochs,
         holdingStreak,
         totalRewards: Object.fromEntries(rewardTotals.get(row.wallet) ?? []),
         rewardReceipts: receiptCounts.get(row.wallet) ?? 0,
-        convictionScore
+        selectionScore
       };
     });
 
     return scored
-      .sort((a, b) => b.convictionScore - a.convictionScore || b.goatBalance - a.goatBalance)
+      .sort((a, b) => b.selectionScore - a.selectionScore || b.tokenBalance - a.tokenBalance)
       .slice(0, 100)
       .map((entry, index) => ({ ...entry, rank: index + 1 }));
   } catch (error) {

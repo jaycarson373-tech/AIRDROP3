@@ -3,7 +3,7 @@ import { LeaderboardView } from "../../components/scout/leaderboard-view";
 
 export const metadata: Metadata = {
   title: "Leaderboard",
-  description: "Verified GOAT holder balances, qualified epochs, holding streaks, rewards, and conviction scores."
+  description: "Verified Pump Money holder balances, qualified draws, holding streaks, and reward receipts."
 };
 
 export default function LeaderboardPage() {

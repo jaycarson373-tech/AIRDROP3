@@ -9,10 +9,9 @@ import { ScoutProvider, useScout } from "./scout-provider";
 import { PrelaunchNotice } from "./ui";
 
 const primaryNav = [
-  { href: "/#portfolio", label: "THE GOAT" },
-  { href: "/#origins", label: "ORIGINS" },
-  { href: "/#terminal", label: "TERMINAL" },
-  { href: "/leaderboard", label: "LEADERBOARD" },
+  { href: "/#mechanism", label: "HOW IT WORKS" },
+  { href: "/#terminal", label: "LIVE DRAW" },
+  { href: "/leaderboard", label: "HOLDERS" },
   { href: "/rewards", label: "REWARDS" }
 ];
 
@@ -43,17 +42,17 @@ function TopTicker() {
   const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
   const seconds = String(remaining % 60).padStart(2, "0");
   const metrics = [
-    ["GOAT", state === "error" ? "OFFLINE" : "ONLINE"],
-    ["REWARD SPLIT", "50 / 50"],
-    ["ASSET 01", "$ANSEM"],
-    ["ASSET 02", "$CATE"],
-    ["NEXT EPOCH", `${minutes}:${seconds}`],
+    ["PUMP MONEY", state === "error" ? "OFFLINE" : "ONLINE"],
+    ["WINNERS", "10"],
+    ["REWARD", "$PUMP"],
+    ["ALLOCATION", "EQUAL SHARE"],
+    ["NEXT DRAW", `${minutes}:${seconds}`],
     ["CYCLE", "05:00"],
-    ["SETTLED EPOCHS", stats.totalEpochs ? stats.totalEpochs.toLocaleString() : "AWAITING FIRST EPOCH"]
+    ["SETTLED DRAWS", stats.totalEpochs ? stats.totalEpochs.toLocaleString() : "AWAITING FIRST DRAW"]
   ];
 
   return (
-    <div className="scout-ticker" aria-label="GOAT live distribution metrics">
+    <div className="scout-ticker" aria-label="Pump Money live draw metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -70,19 +69,19 @@ function TopTicker() {
 function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const headerBuyUrl = projectConfig.buyUrl || (projectConfig.goatMint ? `https://jup.ag/swap/SOL-${projectConfig.goatMint}` : null);
+  const headerBuyUrl = projectConfig.buyUrl || (projectConfig.pumpMoneyMint ? `https://jup.ag/swap/SOL-${projectConfig.pumpMoneyMint}` : null);
 
   useEffect(() => setOpen(false), [pathname]);
 
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/" aria-label="GOAT home">
+        <Link className="scout-brand" href="/" aria-label="Pump Money home">
           <span className="scout-brand__mark goat-brand-mark" aria-hidden="true">
-            <img src="/brand/goat-logo.png" alt="" />
+            <img src="/brand/pump-money-logo.png" alt="" />
           </span>
           <span>
-            <strong>GOAT</strong>
+            <strong>PUMP MONEY</strong>
           </span>
         </Link>
 
@@ -96,7 +95,6 @@ function Header() {
 
         <div className="scout-header__actions">
           {projectConfig.projectXUrl ? <a className="scout-header-link scout-header-link--social" href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X ↗</a> : null}
-          {projectConfig.poorGoatXUrl ? <a className="scout-header-link scout-header-link--profile" href={projectConfig.poorGoatXUrl} target="_blank" rel="noopener noreferrer">POOR GOAT ↗</a> : null}
           {headerBuyUrl ? <a className="scout-header-link scout-header-link--buy" href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY</a> : null}
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
@@ -109,9 +107,8 @@ function Header() {
           {[...primaryNav, ...productNav.filter((item) => !primaryNav.some((primary) => primary.href === item.href))].map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
-          {projectConfig.poorGoatXUrl ? <a href={projectConfig.poorGoatXUrl} target="_blank" rel="noopener noreferrer">POOR GOAT ↗</a> : null}
-          {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">GOATCOIN X ↗</a> : null}
-          {headerBuyUrl ? <a href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY GOAT ↗</a> : null}
+          {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">PUMP MONEY X ↗</a> : null}
+          {headerBuyUrl ? <a href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY PUMP MONEY ↗</a> : null}
         </div>
       ) : null}
     </header>
@@ -123,11 +120,11 @@ function Footer() {
     <footer className="scout-footer">
       <div className="scout-footer__brand">
         <span className="scout-brand__mark goat-brand-mark" aria-hidden="true">
-          <img src="/brand/goat-logo.png" alt="" />
+          <img src="/brand/pump-money-logo.png" alt="" />
         </span>
         <div>
-          <strong>GOAT</strong>
-          <p>The 2026 Goatcoin. Inspired by conviction, verified onchain.</p>
+          <strong>PUMP MONEY</strong>
+          <p>Ten holders. Equal PUMP shares. Every five minutes.</p>
         </div>
       </div>
       <nav aria-label="Product links">
@@ -137,7 +134,7 @@ function Footer() {
         {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X ↗</a> : null}
       </nav>
       <p className="scout-footer__risk">
-        GOAT is an experimental community token and holder-distribution project. Reward timing, eligibility, and availability may change. Nothing on this site is financial advice.
+        Pump Money is an experimental holder-distribution project. Selection is weighted, never guaranteed, and depends on verified eligibility. Reward timing and availability may change. Nothing on this site is financial advice.
       </p>
     </footer>
   );
@@ -166,7 +163,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="scout-app" ref={appRef}>
-      <div className="scout-background goat-background" aria-hidden="true">
+      <div className="scout-background goat-background pump-money-background" aria-hidden="true">
         <i className="goat-bg-grid" />
         <i className="goat-bg-peak goat-bg-peak--one" />
         <i className="goat-bg-peak goat-bg-peak--two" />

@@ -1,24 +1,20 @@
-# GOAT
+# Pump Money
 
-GOAT is a five-minute Solana holder-distribution protocol built around the
-PoorGoat story. Each completed cycle uses one immutable GOAT holder snapshot
-and splits the configured reward-buy budget exactly 50/50:
+Pump Money is a five-minute Solana holder-draw protocol. Each completed cycle:
 
-- 50% buys and distributes `$ANSEM`.
-- 50% buys and distributes `$CATE`.
-- Both assets use the same eligible holder set.
-- Public amounts appear only after their Solana transactions settle.
-- No wallet connection, signature, approval, or manual claim is required.
+1. snapshots the eligible Pump Money holder set;
+2. applies a weighted draw where balance and continuous holding improve selection weight;
+3. selects up to ten unique wallets;
+4. divides the available PUMP reward pool equally across those wallets; and
+5. publishes only settled, verifiable Solana receipts.
 
-The final GOAT mint and eligibility threshold are intentionally unset until
-the token supply is confirmed.
+Detected selling is handled by the holder-state policy before the draw. Selection is weighted, deterministic for audit/replay, and never guaranteed. No wallet connection, signature, approval, or manual claim is required.
+
+The final Pump Money mint, PUMP reward mint, X account, and eligibility threshold remain unset until confirmed.
 
 ## Safety gates
 
-Money-moving worker flags default off. Apply every numbered Supabase migration
-through `014_dual_reward_split.sql`, configure the final GOAT mint and holder
-threshold, run a dry cycle, and inspect both asset allocations before enabling
-claims, buys, airdrops, and the worker.
+All money-moving worker flags default off. Configure the final source mint, PUMP reward mint, holder threshold, exclusions, and Supabase schema; run and inspect a dry cycle before enabling claims, buys, airdrops, or the worker.
 
 ## Commands
 
@@ -29,5 +25,4 @@ npm run worker:build
 npm run build
 ```
 
-Platform-specific variable templates live in `deploy/vercel.env.example` and
-`deploy/railway.env.example`.
+Platform-specific variable templates live in `deploy/vercel.env.example` and `deploy/railway.env.example`.

@@ -41,12 +41,12 @@ export type ScoutStats = {
 export type LeaderboardEntry = {
   rank: number;
   wallet: string;
-  goatBalance: number;
+  tokenBalance: number;
   qualifiedEpochs: number;
   holdingStreak: number;
   totalRewards: Record<string, number>;
   rewardReceipts: number;
-  convictionScore: number;
+  selectionScore: number;
 };
 
 export type LoadState = "loading" | "loaded" | "empty" | "stale" | "error";

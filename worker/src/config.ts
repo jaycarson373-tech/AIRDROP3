@@ -110,19 +110,8 @@ const configuredBagworkRewardWallet =
   optionalPublicKeyEnv("BAGWORK_REWARD_WALLET_PUBLIC_KEY") ?? optionalPublicKeyEnv("PFP_REWARD_WALLET_PUBLIC_KEY");
 const configuredBagworkRewardBps = intEnv("BAGWORK_REWARD_BPS", intEnv("PFP_REWARD_BPS", 5000));
 const configuredRewardBuyBps = intEnv("REWARD_BUY_BPS", 5000);
-// The Casino product is archived on its checkpoint branch. GOAT never enters
-// tournament settlement mode, even if a stale deployment variable remains.
-const casinoModeEnabled = false;
-const casinoPayoutsEnabled = false;
-const switchboardRandomnessEnabled = boolEnv("SWITCHBOARD_RANDOMNESS_ENABLED", false);
 const solanaCluster = process.env.SOLANA_CLUSTER ?? "mainnet-beta";
 const configuredEpochMinutes = Math.max(1, intEnv("EPOCH_MINUTES", 5));
-const casinoRoundMinutes = Math.max(1, intEnv("CASINO_ROUND_MINUTES", 5));
-const casinoRoundPayoutBps = Math.min(10_000, Math.max(0, intEnv("CASINO_ROUND_PAYOUT_BPS", 8_000)));
-const casinoJackpotBps = Math.min(10_000, Math.max(0, intEnv("CASINO_JACKPOT_BPS", 2_000)));
-const casinoTopThreeSplitBps = stringListEnv("CASINO_TOP3_SPLIT_BPS").length
-  ? stringListEnv("CASINO_TOP3_SPLIT_BPS").map((value) => Number(value))
-  : [5_000, 3_000, 2_000];
 const configuredAirdropBatchSize = Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4));
 
 if (
@@ -142,33 +131,6 @@ if (rewardSplitEnabled && configuredBagworkRewardWallet && configuredBagworkRewa
   throw new Error("Multi-asset reward splitting cannot be combined with BAGWORK/PFP reward routing");
 }
 
-if (casinoModeEnabled && rewardMode !== "sol") {
-  throw new Error("CASINO_MODE_ENABLED requires REWARD_MODE=sol");
-}
-if (casinoModeEnabled && configuredEpochMinutes !== casinoRoundMinutes) {
-  throw new Error(
-    `Casino schedule mismatch: EPOCH_MINUTES=${configuredEpochMinutes} but CASINO_ROUND_MINUTES=${casinoRoundMinutes}`
-  );
-}
-if (casinoRoundPayoutBps + casinoJackpotBps !== 10_000) {
-  throw new Error("CASINO_ROUND_PAYOUT_BPS + CASINO_JACKPOT_BPS must equal 10000");
-}
-if (
-  casinoTopThreeSplitBps.length !== 3 ||
-  casinoTopThreeSplitBps.some((value) => !Number.isInteger(value) || value < 0) ||
-  casinoTopThreeSplitBps.reduce((sum, value) => sum + value, 0) !== 10_000
-) {
-  throw new Error("CASINO_TOP3_SPLIT_BPS must contain three non-negative integers totaling 10000");
-}
-if (casinoPayoutsEnabled && !casinoModeEnabled) {
-  throw new Error("CASINO_PAYOUTS_ENABLED requires CASINO_MODE_ENABLED=true");
-}
-if (casinoPayoutsEnabled && !switchboardRandomnessEnabled) {
-  throw new Error("CASINO_PAYOUTS_ENABLED requires SWITCHBOARD_RANDOMNESS_ENABLED=true");
-}
-if (casinoModeEnabled && configuredAirdropBatchSize < 3) {
-  throw new Error("Casino settlement requires AIRDROP_BATCH_SIZE>=3 so the top-three payout is atomic");
-}
 if (solanaCluster !== "mainnet-beta" && solanaCluster !== "devnet") {
   throw new Error(`Invalid SOLANA_CLUSTER=${solanaCluster}; expected mainnet-beta or devnet`);
 }
@@ -195,30 +157,27 @@ export const config = {
   claimEnabled: boolEnv("CLAIM_ENABLED", false),
   buyEnabled: boolEnv("BUY_ENABLED", false),
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
-  casinoModeEnabled,
-  casinoPayoutsEnabled,
+  // Archived tournament modules remain type-safe for migration replay, but are
+  // unreachable from the Pump Money scheduler and cannot be enabled by env.
+  casinoModeEnabled: false,
+  casinoPayoutsEnabled: false,
   solanaCluster,
-  switchboardRandomnessEnabled,
-  switchboardComputeUnitPriceMicroLamports: Math.max(
-    0,
-    intEnv("SWITCHBOARD_COMPUTE_UNIT_PRICE_MICROLAMPORTS", 75_000)
-  ),
-  switchboardComputeLimitMultiple: Math.max(
-    1,
-    numberEnv("SWITCHBOARD_COMPUTE_LIMIT_MULTIPLE", 1.5)
-  ),
-  switchboardRetryAttempts: Math.max(1, intEnv("SWITCHBOARD_RETRY_ATTEMPTS", 5)),
-  switchboardRetryDelayMs: Math.max(500, intEnv("SWITCHBOARD_RETRY_DELAY_MS", 2_000)),
-  casinoRoundMinutes,
-  casinoRoundPayoutBps,
-  casinoJackpotBps,
-  casinoTopThreeSplitBps,
-  casinoJackpotInterval: Math.max(1, intEnv("CASINO_JACKPOT_INTERVAL", 25)),
-  casinoPollMs: Math.max(2_000, intEnv("CASINO_WORKER_POLL_MS", 5_000)),
+  switchboardRandomnessEnabled: false,
+  switchboardComputeUnitPriceMicroLamports: 0,
+  switchboardComputeLimitMultiple: 1,
+  switchboardRetryAttempts: 1,
+  switchboardRetryDelayMs: 2_000,
+  casinoRoundMinutes: configuredEpochMinutes,
+  casinoRoundPayoutBps: 0,
+  casinoJackpotBps: 0,
+  casinoTopThreeSplitBps: [0, 0, 0],
+  casinoJackpotInterval: 25,
+  casinoPollMs: 5_000,
 
   epochMinutes: configuredEpochMinutes,
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 1_000_000),
   maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 150)),
+  drawWinnerCount: Math.max(1, intEnv("DRAW_WINNER_COUNT", 10)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 4),
   excludeWallets: workerEnabled ? optionalWallets("EXCLUDE_WALLETS") : [],
 
@@ -251,7 +210,7 @@ export function activateRewardForEpoch(epochId: string) {
 
 export function activateRewardMint(mint: PublicKey, symbol: string) {
   config.rewardTokenMint = mint;
-  config.rewardTokenSymbol = symbol.replace(/^\$/, "") || "GOAT asset";
+  config.rewardTokenSymbol = symbol.replace(/^\$/, "") || "PUMP";
 }
 
 export function treasuryKeypair() {

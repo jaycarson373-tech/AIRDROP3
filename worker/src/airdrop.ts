@@ -13,6 +13,7 @@ import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
 import { dryRunPayout, failPayout, planPayout, settlePayout } from "./db.js";
 import type { Holder } from "./snapshot.js";
+import { equalRewardShares } from "./draw-policy.js";
 
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
 
@@ -36,11 +37,6 @@ export type AirdropResult = {
 type PreparedAllocation = Allocation & {
   owner: PublicKey;
   destinationAta: PublicKey;
-};
-
-type WeightedHolder = {
-  holder: Holder;
-  weight: bigint;
 };
 
 type PayoutReserve = {
@@ -81,51 +77,6 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
   );
 }
 
-async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder[]> {
-  const balances = holders.map((holder) => holder.rawBalance).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
-  const medianRaw = balances[Math.floor(balances.length / 2)] ?? 0n;
-  const ownerKeys = holders.map((holder) => new PublicKey(holder.wallet));
-  const ownerInfos = (
-    await Promise.all(chunk(ownerKeys, 100).map((keys) => connection.getMultipleAccountsInfo(keys, "confirmed")))
-  ).flat();
-
-  return holders.map((holder, index) => {
-    const solLamports = BigInt(ownerInfos[index]?.lamports ?? 0);
-    const cappedBalance = medianRaw > 0n && holder.rawBalance > medianRaw ? medianRaw : holder.rawBalance;
-    const halfMedian = medianRaw / 2n;
-    const sizeBoostBps =
-      medianRaw > 0n && holder.rawBalance <= halfMedian
-        ? 22_000n
-        : medianRaw > 0n && holder.rawBalance <= medianRaw
-          ? 18_000n
-          : medianRaw > 0n && holder.rawBalance <= medianRaw * 2n
-            ? 13_000n
-            : 10_000n;
-    const solBoostBps =
-      solLamports < 100_000_000n
-        ? 20_000n
-        : solLamports < 1_000_000_000n
-          ? 16_000n
-          : solLamports < 5_000_000_000n
-            ? 13_000n
-            : 10_000n;
-    const baseWeight = cappedBalance * 25n;
-    const returnWeight = (((cappedBalance * 75n) * sizeBoostBps) / 10_000n * solBoostBps) / 10_000n;
-    const holdMultiplierBps = BigInt(Math.max(10_000, holder.holdMultiplierBps ?? 10_000));
-    const preHoldWeight = baseWeight + returnWeight;
-    const weight = (preHoldWeight * holdMultiplierBps) / 10_000n;
-
-    console.log(
-      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} sol=${(Number(solLamports) / LAMPORTS_PER_SOL).toFixed(4)} cappedSourceRaw=${cappedBalance.toString()} sizeBoostBps=${sizeBoostBps} solBoostBps=${solBoostBps} holdMultiplierBps=${holdMultiplierBps} finalWeight=${weight.toString()}`
-    );
-
-    return {
-      holder,
-      weight
-    };
-  });
-}
-
 export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
   const treasury = treasuryKeypair();
   if (config.rewardMode === "sol") {
@@ -146,15 +97,10 @@ export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
 export async function computeAllocations(holders: Holder[], rewardRaw: bigint): Promise<Allocation[]> {
   if (!holders.length || rewardRaw <= config.minRewardRawToAirdrop) return [];
   const decimals = await rewardDecimals();
-  const weightedHolders = await computeStrategyWeights(holders);
-  const totalWeight = weightedHolders.reduce((sum, holder) => sum + holder.weight, 0n);
-  if (totalWeight <= 0n) return [];
-
-  return weightedHolders
-    .map(({ holder, weight }) => {
-      const amount = (rewardRaw * weight) / totalWeight;
+  return equalRewardShares(holders.map(({ wallet }) => wallet), rewardRaw)
+    .map(({ wallet, amount }) => {
       return {
-        wallet: holder.wallet,
+        wallet,
         amount,
         uiAmount: rawToUi(amount, decimals),
         normalAmount: amount,

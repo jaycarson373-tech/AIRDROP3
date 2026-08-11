@@ -70,7 +70,7 @@ export function ScoutProvider({
       setLastUpdated(new Date());
     } catch (nextError) {
       setState((current) => current === "loaded" || current === "empty" || current === "stale" ? "stale" : "error");
-      setError(nextError instanceof Error ? nextError.message : "GOAT data connection failed");
+      setError(nextError instanceof Error ? nextError.message : "Pump Money data connection failed");
     }
   }, []);
 

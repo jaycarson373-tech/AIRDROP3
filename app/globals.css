@@ -11,8 +11,8 @@
   --scout-risk: #ff7979;
   --scout-line: rgba(255, 255, 255, 0.13);
   --scout-line-green: rgba(184, 145, 25, 0.42);
-  --scout-mono: var(--font-goat-terminal), "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
-  --scout-display: var(--font-goat-display), "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --scout-mono: var(--font-pump-terminal), "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --scout-display: var(--font-pump-display), "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
 }
 
 * {
@@ -28,8 +28,8 @@ html {
 }
 
 body {
-  --scout-mono: var(--font-goat-terminal), "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
-  --scout-display: var(--font-goat-display), "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --scout-mono: var(--font-pump-terminal), "IBM Plex Mono", "JetBrains Mono", ui-monospace, monospace;
+  --scout-display: var(--font-pump-display), "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
   margin: 0;
   width: 100%;
   max-width: 100%;

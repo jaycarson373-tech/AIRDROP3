@@ -3746,7 +3746,7 @@
     radial-gradient(circle at 88% 4%, rgba(8, 23, 47, 0.12), transparent 34%),
     linear-gradient(180deg, #ffffff 0%, #fffaf0 42%, #f7f2e7 100%) !important;
   color: var(--catlegacy-ink) !important;
-  font-family: var(--font-goat-display), Georgia, "Times New Roman", serif !important;
+  font-family: var(--font-pump-display), Georgia, "Times New Roman", serif !important;
 }
 
 .scout-background {
@@ -3949,7 +3949,7 @@
 .runner-hero .scout-hero__body {
   max-width: 720px !important;
   color: #2f3c4d !important;
-  font-family: var(--font-goat-terminal), Inter, system-ui, sans-serif !important;
+  font-family: var(--font-pump-terminal), Inter, system-ui, sans-serif !important;
   font-size: clamp(17px, 1.55vw, 22px) !important;
   line-height: 1.72 !important;
 }
@@ -4066,7 +4066,7 @@
 .catlegacy-origin-card p {
   max-width: 760px !important;
   color: #465468 !important;
-  font-family: var(--font-goat-terminal), Inter, system-ui, sans-serif !important;
+  font-family: var(--font-pump-terminal), Inter, system-ui, sans-serif !important;
   font-size: clamp(15px, 1.3vw, 18px) !important;
   line-height: 1.7 !important;
 }
@@ -5832,7 +5832,7 @@
   min-height: 100vh;
   background: #030303 !important;
   color: #f2f2ed !important;
-  font-family: var(--font-goat-terminal), ui-monospace, monospace !important;
+  font-family: var(--font-pump-terminal), ui-monospace, monospace !important;
   letter-spacing: 0 !important;
 }
 
@@ -5957,7 +5957,7 @@
 .scout-brand strong,
 .scout-footer__brand strong {
   color: #f2f2ed !important;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 9px !important;
   font-weight: 400;
   letter-spacing: 0.1em;
@@ -5985,7 +5985,7 @@
 .scout-nav a {
   border-radius: 0 !important;
   color: #777773 !important;
-  font-family: var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 10px !important;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -6090,7 +6090,7 @@
   color: #777773;
   font-size: 9px;
   letter-spacing: 0.13em;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 7px;
 }
 
@@ -6107,7 +6107,7 @@
 .casino-hero h1 {
   margin: 32px 0 0;
   color: #f5f5ef;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: clamp(32px, 4vw, 56px);
   font-weight: 400;
   line-height: 1.22;
@@ -6143,7 +6143,7 @@
   border: 1px solid rgba(255, 255, 255, 0.28);
   background: #050505;
   color: #f5f5ef;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 8px;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -6190,7 +6190,7 @@
 
 .casino-hero__metrics strong {
   color: #efefe9;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 10px;
   font-weight: 400;
   line-height: 1.5;
@@ -6233,7 +6233,7 @@
 
 .casino-stage__bar strong {
   color: #fff;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 7px;
 }
 
@@ -6375,7 +6375,7 @@
   left: 50%;
   transform: translateX(-50%);
   color: rgba(255, 255, 255, 0.55);
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: clamp(22px, 4vw, 48px);
   letter-spacing: 0.14em;
 }
@@ -6762,7 +6762,7 @@
 
 .casino-console__status strong {
   color: #fff;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 7px;
 }
 
@@ -6790,7 +6790,7 @@
 
 .casino-console__grid strong {
   color: #eaeae5;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 7px;
   font-weight: 400;
   line-height: 1.5;
@@ -6838,7 +6838,7 @@
 .casino-chat__head h2 {
   margin: 0;
   color: #efefe9;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 8px;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -7096,7 +7096,7 @@
 
 .casino-section-heading span {
   color: #777772;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 7px;
   letter-spacing: 0.14em;
 }
@@ -7104,7 +7104,7 @@
 .casino-section-heading h2 {
   margin: 8px 0 0;
   color: #f4f4ee;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: clamp(24px, 3.1vw, 42px);
   font-weight: 400;
   line-height: 1.25;
@@ -7140,14 +7140,14 @@
 
 .casino-how__steps span {
   color: #60605c;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 9px;
 }
 
 .casino-how__steps strong {
   align-self: end;
   color: #efefe9;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 10px;
   font-weight: 400;
   line-height: 1.65;
@@ -7205,7 +7205,7 @@
 
 .casino-scale__row b {
   color: #fff;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 9px;
   letter-spacing: 0.05em;
 }
@@ -7221,7 +7221,7 @@
   border: 1px dashed rgba(255, 255, 255, 0.24);
   background: rgba(255, 255, 255, 0.025);
   color: #d3d3cd;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 8px;
   line-height: 1.6;
   text-align: center;
@@ -7260,7 +7260,7 @@
 
 .casino-game-list article strong {
   color: #e9e9e4;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: 8px;
   font-weight: 400;
   line-height: 1.5;
@@ -7504,7 +7504,7 @@
 .casino-final h2 {
   margin: 22px 0 0;
   color: #f2f2ed;
-  font-family: var(--font-goat-accent), var(--font-goat-terminal), ui-monospace, monospace;
+  font-family: var(--font-pump-accent), var(--font-pump-terminal), ui-monospace, monospace;
   font-size: clamp(30px, 4.4vw, 58px);
   font-weight: 400;
   line-height: 1.22;
@@ -8237,7 +8237,7 @@
     #030304 !important;
 }
 
-/* GOAT — five-minute dual-asset distribution surface */
+/* Pump Money — five-minute weighted holder draw surface */
 .scout-app {
   --goat-gold: #b89119;
   --goat-gold-bright: #d9b765;
@@ -9068,4 +9068,106 @@ a.goat-profile-card__image:hover img { transform: scale(1.018); }
 @media (prefers-reduced-motion: reduce) {
   .goat-eyebrow i,
   .goat-engine__head i { animation: none; }
+}
+
+/* Pump Money brand layer */
+.scout-app {
+  --goat-gold: #63e6b3;
+  --goat-gold-bright: #a6ffd8;
+  --goat-gold-soft: rgba(99, 230, 179, 0.1);
+  --goat-gold-line: rgba(99, 230, 179, 0.35);
+  --pump-cream: #f4f0dc;
+  background:
+    radial-gradient(circle at 82% 8%, rgba(99, 230, 179, 0.13), transparent 29rem),
+    radial-gradient(circle at 8% 48%, rgba(244, 240, 220, 0.035), transparent 34rem),
+    #020706 !important;
+}
+
+.scout-background.goat-background {
+  background:
+    radial-gradient(circle at 82% 14%, rgba(99, 230, 179, 0.11), transparent 31%),
+    linear-gradient(180deg, #020604 0%, #06110d 48%, #020403 100%) !important;
+}
+
+.scout-brand__mark.goat-brand-mark {
+  border-radius: 10px !important;
+  border-color: rgba(99, 230, 179, 0.46) !important;
+}
+
+.goat-brand-mark img { object-fit: contain; }
+.scout-brand strong { letter-spacing: -0.035em; }
+.goat-button--solid,
+.scout-header-link--buy {
+  color: #03110b !important;
+  background: var(--goat-gold-bright) !important;
+}
+
+.pump-money-hero .goat-hero__backdrop { opacity: 0.82; object-position: center; }
+.pump-money-hero .goat-hero__shade {
+  background:
+    linear-gradient(90deg, rgba(0, 5, 3, 0.98) 0%, rgba(0, 7, 4, 0.91) 39%, rgba(0, 6, 3, 0.28) 72%, rgba(0, 5, 3, 0.54) 100%),
+    linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,7,4,.82));
+}
+.pump-money-hero .goat-hero__quote { color: var(--goat-gold-bright); }
+.pump-draw-grid article strong { color: var(--goat-gold-bright); }
+
+.pump-money-rain {
+  position: absolute;
+  z-index: 1;
+  inset: -30% 0 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.34;
+}
+.pump-money-rain i {
+  position: absolute;
+  top: -12%;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 25px;
+  border: 1px solid rgba(166, 255, 216, 0.45);
+  border-radius: 3px;
+  color: rgba(166, 255, 216, 0.75);
+  background: rgba(25, 92, 64, 0.2);
+  font: 700 11px/1 var(--scout-mono);
+  box-shadow: inset 0 0 0 3px rgba(99, 230, 179, 0.05);
+  animation: pump-money-fall 12s linear infinite;
+}
+.pump-money-rain i:nth-child(1) { left: 4%; animation-delay: -3s; animation-duration: 13s; }
+.pump-money-rain i:nth-child(2) { left: 12%; animation-delay: -9s; animation-duration: 16s; }
+.pump-money-rain i:nth-child(3) { left: 21%; animation-delay: -5s; animation-duration: 11s; }
+.pump-money-rain i:nth-child(4) { left: 30%; animation-delay: -13s; animation-duration: 18s; }
+.pump-money-rain i:nth-child(5) { left: 39%; animation-delay: -1s; animation-duration: 14s; }
+.pump-money-rain i:nth-child(6) { left: 48%; animation-delay: -8s; animation-duration: 12s; }
+.pump-money-rain i:nth-child(7) { left: 57%; animation-delay: -4s; animation-duration: 17s; }
+.pump-money-rain i:nth-child(8) { left: 65%; animation-delay: -11s; animation-duration: 13s; }
+.pump-money-rain i:nth-child(9) { left: 73%; animation-delay: -2s; animation-duration: 15s; }
+.pump-money-rain i:nth-child(10) { left: 81%; animation-delay: -7s; animation-duration: 11s; }
+.pump-money-rain i:nth-child(11) { left: 89%; animation-delay: -15s; animation-duration: 19s; }
+.pump-money-rain i:nth-child(12) { left: 95%; animation-delay: -6s; animation-duration: 14s; }
+.pump-money-rain i:nth-child(13) { left: 52%; animation-delay: -17s; animation-duration: 21s; }
+.pump-money-rain i:nth-child(14) { left: 25%; animation-delay: -10s; animation-duration: 20s; }
+
+.pump-money-cinematic img { object-position: center 42%; filter: saturate(.92) contrast(1.05); }
+.pump-money-final { display: grid; justify-items: center; gap: 12px; }
+.pump-money-final img { width: clamp(112px, 15vw, 190px); height: auto; border: 1px solid var(--goat-gold-line); border-radius: 22px; }
+
+@keyframes pump-money-fall {
+  from { transform: translate3d(0, -8vh, 0) rotate(-12deg); }
+  to { transform: translate3d(24px, 130vh, 0) rotate(28deg); }
+}
+
+@media (max-width: 700px) {
+  .pump-money-hero .goat-hero__backdrop { height: 430px; object-position: 62% center; }
+  .pump-money-hero .goat-hero__copy { min-height: 540px; }
+  .pump-money-hero .goat-hero__shade {
+    background: linear-gradient(180deg, rgba(0,4,2,.24), rgba(0,6,3,.92) 62%, #020403 100%);
+  }
+  .pump-money-rain { opacity: .22; }
+  .pump-money-rain i { width: 42px; height: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pump-money-rain i { animation: none; opacity: .18; }
 }

@@ -13,7 +13,6 @@ import { currentEpochId } from "./time.js";
 import { activateScoutSignalForEpoch } from "./scout.js";
 import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { openCasinoRound, settlePendingCasinoRounds } from "./casino-engine.js";
 import { allocateRewardBudget } from "./reward-split.js";
 
 let running = false;
@@ -33,12 +32,6 @@ export async function runEpoch(date = new Date()) {
   activateRewardForEpoch(epochId);
 
   try {
-    if (config.casinoModeEnabled) {
-      const roundInProgress = await settlePendingCasinoRounds();
-      if (!roundInProgress) await openCasinoRound(epochId);
-      return;
-    }
-
     const scoutSignal = config.rewardSplitEnabled ? null : await activateScoutSignalForEpoch(epochId);
     const existing = await getEpoch(epochId);
     if (existing?.status === "completed") {

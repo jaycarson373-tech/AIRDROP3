@@ -3,7 +3,7 @@ import { ReceiptsView } from "../../components/scout/views";
 
 export const metadata: Metadata = {
   title: "Rewards",
-  description: "Verify GOAT reward epochs, distributions, recipients, and settled Solana transactions."
+  description: "Verify Pump Money draws, PUMP distributions, winners, and settled Solana transactions."
 };
 
 export default function RewardsPage() {
