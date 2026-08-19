@@ -18,8 +18,7 @@ export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: Ma
   const navItems = [
     ["Protocol", "#initiation"],
     ["Rewards", "#rewards"],
-    ["Hood Board", "#army"],
-    ["Proof", "#airdrops"],
+    ["Terminal", "#terminal"],
     ["FAQ", "#faq"]
   ];
 

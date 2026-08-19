@@ -64,8 +64,8 @@ const emptyStats: StatsResponse = {
 };
 
 const REFRESH_MS = 12_000;
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "TSTRAT";
+const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "WLFI + TRUMP";
 const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
 const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
 
@@ -231,7 +231,7 @@ export function HeroCountdown() {
         <strong>{stats ? formatCount(eligibleHolders) : "0"}</strong>
       </div>
       <div className="ansemfication-stat">
-        <span>Hood Board</span>
+        <span>Strategy Board</span>
         <strong>0</strong>
       </div>
       <div className="ansemfication-stat">
@@ -264,7 +264,7 @@ export function RewardExplanation() {
           <article className="ansemfy-split-card">
             <span>20%</span>
             <strong>Bagwork Fund</strong>
-            <p>Reserved for timeline grinders pushing Robinhood across Solana.</p>
+            <p>Reserved for strategy holders across Solana.</p>
           </article>
         </div>
       </div>
@@ -278,15 +278,15 @@ export function HallOfBulls() {
   return (
     <section className="section bullify-army-section" id="army">
       <div className="container">
-        <div className="section-kicker">The Hood Board</div>
+        <div className="section-kicker">Strategy Board</div>
         <div className="section-head split-head">
-          <h2>The hood stays paid.</h2>
+          <h2>The strategy keeps moving.</h2>
           <p>
             Eligible wallets, reward totals and proof links will live here as the protocol grows.
           </p>
         </div>
 
-        <div className="hall-bulls-stats" aria-label="Hood Board totals">
+        <div className="hall-bulls-stats" aria-label="Strategy Board totals">
           <article>
             <span>Total {REWARD_SYMBOL} Sent</span>
             <strong>{stats ? formatAmount(stats.totalRewardAirdropped, REWARD_SYMBOL, 4) : `0 ${REWARD_SYMBOL}`}</strong>
@@ -296,12 +296,12 @@ export function HallOfBulls() {
             <strong>{stats ? formatCount(stats.latestEligibleHolders) : "0"}</strong>
           </article>
           <article>
-            <span>Hood Board</span>
+            <span>Strategy Board</span>
             <strong>0</strong>
           </article>
         </div>
 
-        <div className="bullify-leaderboard hall-bulls-leaderboard" aria-label="Hood Board leaderboard">
+        <div className="bullify-leaderboard hall-bulls-leaderboard" aria-label="Strategy Board leaderboard">
           <div className="bullify-leaderboard-head hall-bulls-head">
             <span>Rank</span>
             <span>Wallet</span>
@@ -313,7 +313,7 @@ export function HallOfBulls() {
           </div>
           <div className="bullify-leaderboard-empty hall-bulls-empty">
             <span className="bullify-empty-pfp" aria-hidden="true" />
-            <strong>The Hood Board is warming up.</strong>
+            <strong>Strategy Board is warming up.</strong>
             <p>Eligible wallets and reward totals will appear here after live epochs settle.</p>
           </div>
         </div>
@@ -334,7 +334,7 @@ export function HowItWorks() {
   return (
     <section className="section ansemfy-how-section" id="how">
       <div className="container">
-        <div className="section-kicker">How Robinhood Works</div>
+        <div className="section-kicker">How Trump Strategy Works</div>
         <div className="section-head split-head">
           <h2>Hold {SOURCE_SYMBOL}. Watch {REWARD_SYMBOL} drop.</h2>
           <p>Automatic holder rewards, live every five minutes.</p>
@@ -396,7 +396,7 @@ export function LatestHoodActivity() {
   return (
     <section className="section bullify-latest-section" id="latest">
       <div className="container">
-        <div className="section-kicker">Hood Board</div>
+        <div className="section-kicker">Strategy Board</div>
         <div className="section-head split-head">
           <h2>Proof before hype.</h2>
           <p>The board stays empty until live reward records and holder snapshots settle.</p>
@@ -421,7 +421,7 @@ export function LatestHoodActivity() {
             ))}
           </div>
         </div>
-        <p className="bullify-profile-empty">No Hood Board activity yet.</p>
+        <p className="bullify-profile-empty">No Strategy Board activity yet.</p>
       </div>
     </section>
   );

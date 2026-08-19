@@ -1,37 +1,36 @@
-# Robinhood
+# Trump Strategy
 
-Source token: `$HOOD`
-Reward token: `$HOOD`
+Trump Strategy is a simple Solana holder-reward site.
 
-Robinhood routes creator-fee rewards into automatic HOOD buybacks and airdrops for eligible HOOD holders.
+Thesis: Trump said to just buy all crypto assets. Trump Strategy routes the holder story into the two Trump-family-connected crypto names: WLFI and TRUMP.
 
-## Reward Engine
+## Reward Intent
 
-- Snapshot eligible `$HOOD` holders.
-- Claim creator fees.
-- Buy the configured HOOD reward token.
-- Send the configured automatic reward allocation to eligible 100K+ holders.
-- Reserve the configured bagwork allocation when enabled.
-- Exclude wallets holding 5%+ of supply from reward snapshots.
-- Record proof in Supabase for the site.
+- Source token: `$TSTRAT` by default, configurable with `NEXT_PUBLIC_SOURCE_SYMBOL`.
+- Rewards: `WLFI` and `TRUMP`.
+- Target split: `50% WLFI / 50% TRUMP`.
+- Epoch: every `5` minutes by default.
+- Receipts should come from Supabase and onchain transactions only.
+
+Important: the current worker code path uses one active `REWARD_TOKEN_MINT` at a time. True same-epoch 50/50 dual-token payouts require the worker to support `REWARD_TOKEN_MINTS` plus `REWARD_TOKEN_SPLIT_BPS`, or a separate rotation/settlement pass.
 
 ## Vercel Environment
 
 ```bash
-NEXT_PUBLIC_PROJECT_NAME=Robinhood
-NEXT_PUBLIC_SOURCE_SYMBOL=HOOD
-NEXT_PUBLIC_REWARD_SYMBOL=HOOD
+NEXT_PUBLIC_PROJECT_NAME=Trump Strategy
+NEXT_PUBLIC_SOURCE_SYMBOL=TSTRAT
+NEXT_PUBLIC_REWARD_SYMBOL=WLFI + TRUMP
 NEXT_PUBLIC_CA=<SOURCE_TOKEN_MINT>
 NEXT_PUBLIC_BUY_URL=<JUPITER_BUY_URL>
 NEXT_PUBLIC_SOURCE_TOKEN_MINT=<SOURCE_TOKEN_MINT>
-NEXT_PUBLIC_REWARD_TOKEN_MINT=<REWARD_TOKEN_MINT>
+NEXT_PUBLIC_REWARD_TOKEN_MINT=<ACTIVE_REWARD_TOKEN_MINT>
+NEXT_PUBLIC_REWARD_TOKEN_SYMBOLS=WLFI,TRUMP
+NEXT_PUBLIC_REWARD_TOKEN_SPLIT_BPS=5000,5000
 NEXT_PUBLIC_ELIGIBILITY_LABEL=100K
 NEXT_PUBLIC_EPOCH_MINUTES=5
-NEXT_PUBLIC_X_URL=https://x.com/Robhinhood_sol
+NEXT_PUBLIC_X_URL=<X_URL>
 NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
-SUPABASE_URL=<SUPABASE_URL>
-SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 ```
 
 ## Railway Environment
@@ -40,7 +39,10 @@ SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
 REWARD_MODE=token
 HELIUS_RPC_URL=<HELIUS_RPC_URL>
 SOURCE_TOKEN_MINT=<SOURCE_TOKEN_MINT>
-REWARD_TOKEN_MINT=<REWARD_TOKEN_MINT>
+REWARD_TOKEN_MINT=<ACTIVE_REWARD_TOKEN_MINT>
+REWARD_TOKEN_MINTS=<WLFI_MINT>,<TRUMP_MINT>
+REWARD_TOKEN_SYMBOLS=WLFI,TRUMP
+REWARD_TOKEN_SPLIT_BPS=5000,5000
 TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
 SUPABASE_URL=<SUPABASE_URL>
 SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
@@ -57,21 +59,8 @@ MIN_SOL_RESERVE=0.3
 AIRDROP_SOL_RESERVE=0.05
 AIRDROP_BATCH_SIZE=4
 AIRDROP_REWARD_BPS=10000
-ANSEM_BUY_BPS=8000
 PRIORITY_FEE_SOL=0.000001
 MIN_REWARD_RAW_TO_AIRDROP=1
-```
-
-`MIN_SOL_RESERVE` and `AIRDROP_SOL_RESERVE` protect SOL needed for fee claims, swaps, payout fees, and token-account rent.
-
-## Commands
-
-```bash
-npm install
-npm run dev
-npm run build
-npm run worker:build
-npm run worker:dev
 ```
 
 Railway should use:

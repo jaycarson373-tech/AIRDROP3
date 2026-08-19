@@ -1,15 +1,18 @@
-import { HallOfBulls, HeroCountdown, HowItWorks, LatestHoodActivity, LiveAnsemAirdrops, RewardExplanation } from "./home-strategy-data";
 import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Robinhood";
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "soon";
-const X_URL = "https://x.com/Robhinhood_sol";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "HOOD";
-const SOURCE_LABEL = `$${SOURCE_SYMBOL}`;
-const REWARD_SYMBOL = process.env.NEXT_PUBLIC_REWARD_SYMBOL ?? "HOOD";
-const ELIGIBILITY_LABEL = process.env.NEXT_PUBLIC_ELIGIBILITY_LABEL ?? "100K";
-const LOGO_SRC = "/brand/robin-hood-logo.png";
+const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Trump Strategy";
+const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "TSTRAT";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
+const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "#";
+const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/";
+const EPOCH_MINUTES = process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? "5";
+const LOGO_SRC = "/brand/trump-strategy-logo.svg";
+
+const rewards = [
+  { symbol: "WLFI", split: "50%" },
+  { symbol: "TRUMP", split: "50%" }
+];
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -18,160 +21,99 @@ function compactAddress(address: string) {
 
 export default function Page() {
   return (
-    <div className="page ansemfy-page robin-page hood-page has-market-ticker">
-      <MarketTicker
-        logoSrc={LOGO_SRC}
-        projectName={PROJECT_NAME}
-        xUrl={X_URL}
-        contractAddress={CONTRACT_ADDRESS}
-      />
+    <div className="page trump-strategy-page has-market-ticker">
+      <MarketTicker logoSrc={LOGO_SRC} projectName={PROJECT_NAME} xUrl={X_URL} contractAddress={CONTRACT_ADDRESS} />
 
       <main>
-        <section className="hero ansemfy-hero ansemfication-hero bullify-hero" id="initiation">
-          <div className="ansemfy-army-bg" aria-hidden="true" />
-          <div className="ansemfy-aurora" aria-hidden="true" />
-          <div className="ansemfy-grid" aria-hidden="true" />
-          <div className="hero-shade" aria-hidden="true" />
+        <section className="trump-hero" id="initiation">
+          <div className="trump-rain" aria-hidden="true" />
+          <div className="container trump-hero-inner">
+            <div className="trump-copy">
+              <div className="trump-kicker">TRUMP STRATEGY ON SOLANA</div>
+              <h1>BUY ALL CRYPTO ASSETS.</h1>
+              <p className="trump-subtitle">Hold {SOURCE_SYMBOL}. Receive WLFI + TRUMP every {EPOCH_MINUTES} minutes.</p>
+              <p className="trump-lead">
+                Trump Strategy turns the thesis into a simple holder machine: creator-fee rewards route into the two
+                Trump-family-connected crypto names, split evenly between WLFI and TRUMP, then distributed to eligible
+                holders on a live epoch schedule.
+              </p>
+              <div className="trump-actions">
+                <a className="trump-button" href={BUY_URL}>
+                  Buy {SOURCE_SYMBOL}
+                </a>
+                {CONTRACT_ADDRESS ? <CopyCaButton address={CONTRACT_ADDRESS} label={compactAddress(CONTRACT_ADDRESS)} /> : null}
+                <a className="trump-button secondary" href="#terminal">
+                  View Strategy
+                </a>
+              </div>
+            </div>
 
-          <div className="container ansemfication-hero-inner">
-            <div className="ansemfication-copy">
-              <div className="bullify-signal-card">
-                <img className="ansemfication-hero-logo bullify-hero-logo" src={LOGO_SRC} alt="Robinhood logo" />
+            <div className="trump-terminal" id="terminal" aria-label="Trump Strategy terminal">
+              <div className="terminal-topline">
+                <span>STRATEGY LIVE</span>
+                <span>{EPOCH_MINUTES}M EPOCH</span>
+              </div>
+              <div className="terminal-logo-lockup">
+                <img src={LOGO_SRC} alt={`${PROJECT_NAME} logo`} />
                 <div>
-                  <em><span aria-hidden="true">●</span> Live</em>
-                  <span>Robinhood on Solana</span>
-                  <strong>HOOD drops live</strong>
+                  <strong>{PROJECT_NAME}</strong>
+                  <span>{SOURCE_SYMBOL} HOLDER REWARDS</span>
                 </div>
               </div>
-              <div className="bullify-history-punch" aria-label="Robinhood thesis">
-                <span>Steal from the rich</span>
-                <span>Give to the trenches</span>
-                <span>80% HOOD buybacks</span>
-                <span>20% bagwork fund</span>
-                <span>Hood belongs on Sol</span>
-              </div>
-              <div className="section-kicker">Robinhood on Solana</div>
-              <h1>ROBINHOOD</h1>
-              <p className="hero-subtitle">Steal from the rich. Give to the trenches.</p>
-              <p className="hero-lead">
-                Robinhood belongs on Solana. Last year they removed SOL; now the trenches are taking the hood back.
-                <br />
-                <br />
-                Every 5 minutes, creator fees buy {REWARD_SYMBOL} and airdrop it to eligible {SOURCE_LABEL} holders.
-                <br />
-                <br />
-                The rich get clipped, the hood gets paid. Wallets above 5% are excluded and 20% is reserved for bagwork.
-              </p>
-              <div className="bullify-brief-grid" aria-label="Robinhood reward structure">
-                <article>
-                  <span>Holder floor</span>
-                  <strong>{ELIGIBILITY_LABEL}+ {SOURCE_LABEL}</strong>
-                </article>
-                <article>
-                  <span>Epoch</span>
-                  <strong>5 minutes</strong>
-                </article>
-                <article>
-                  <span>Split</span>
-                  <strong>80 / 20</strong>
-                </article>
-              </div>
-              <div className="ansemfication-steps" aria-label="Robinhood flow">
-                {[
-                  ["01", `Hold ${SOURCE_LABEL}`],
-                  ["02", "Fees buy HOOD"],
-                  ["03", "Drops settle"]
-                ].map(([number, label]) => (
-                  <article className="ansemfication-step" key={label}>
-                    <span>{number}</span>
-                    <strong>{label}</strong>
+              <div className="terminal-grid">
+                {rewards.map((reward) => (
+                  <article key={reward.symbol}>
+                    <span>{reward.symbol}</span>
+                    <strong>{reward.split}</strong>
                   </article>
                 ))}
+                <article>
+                  <span>Cadence</span>
+                  <strong>{EPOCH_MINUTES} MIN</strong>
+                </article>
+                <article>
+                  <span>Mode</span>
+                  <strong>HOLDER DROP</strong>
+                </article>
               </div>
-              <div className="hero-actions">
-                <a className="cta" href={X_URL} target="_blank" rel="noreferrer">
-                  Join Robinhood
-                </a>
-                {CONTRACT_ADDRESS !== "soon" ? <CopyCaButton address={CONTRACT_ADDRESS} label={compactAddress(CONTRACT_ADDRESS)} /> : null}
-                <a className="cta secondary" href="#airdrops">
-                  View Airdrops
-                </a>
+              <div className="terminal-log">
+                <p>THESIS: JUST BUY ALL CRYPTO ASSETS.</p>
+                <p>REWARD ROUTE: 50% WLFI / 50% TRUMP.</p>
+                <p>STATUS: AWAITING LIVE RECEIPTS.</p>
               </div>
             </div>
-
-            <HeroCountdown />
           </div>
         </section>
-        <HowItWorks />
-        <RewardExplanation />
-        <HallOfBulls />
-        <LatestHoodActivity />
-        <LiveAnsemAirdrops />
-        <FallenBulls />
 
-        <section className="section faq-section ansemfy-faq" id="faq">
+        <section className="trump-band" id="rewards">
+          <div className="container trump-band-grid">
+            <article>
+              <span>01</span>
+              <h2>Hold {SOURCE_SYMBOL}</h2>
+              <p>Eligible wallets are read directly from holder snapshots. No forms, no claim page, no manual entry.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h2>Split the rewards</h2>
+              <p>Every reward epoch is positioned around a clean 50/50 route into WLFI and TRUMP.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h2>Publish receipts</h2>
+              <p>Live distributions should be backed by real transaction receipts once the worker is active.</p>
+            </article>
+          </div>
+        </section>
+
+        <section className="trump-thesis" id="faq">
           <div className="container">
-            <div className="section-kicker">FAQ</div>
-            <h2>Robinhood mechanics.</h2>
-            <div className="faq-grid bullify-faq-grid">
-              <FaqItem title="How do I qualify?" body={`Hold ${ELIGIBILITY_LABEL}+ ${SOURCE_LABEL} and stay under the 5% wallet cap.`} />
-              <FaqItem title="What gets airdropped?" body={`Usable creator fees buy ${REWARD_SYMBOL}, then ${REWARD_SYMBOL} is distributed to eligible holders every 5 minutes.`} />
-              <FaqItem title="What is the Hood Board?" body="The Hood Board is the live proof layer for holders, drops, reward totals and transaction receipts." />
-              <FaqItem title="Do I need to claim?" body="No. Holder drops settle automatically after each epoch." />
-              <FaqItem title="Who is excluded?" body="Wallets holding more than 5% of supply are excluded from reward snapshots." />
-              <FaqItem title="How are rewards sized?" body={`Rewards are proportional to eligible ${SOURCE_LABEL} held at the snapshot.`} />
-              <FaqItem title="Where is proof?" body="Latest reward rounds, holder transfers and Solscan links appear in the live airdrop section." />
-            </div>
+            <p>
+              Trump Strategy is an experimental community token and holder-distribution project. Reward availability,
+              eligibility, timing, and token routing depend on live backend configuration.
+            </p>
           </div>
         </section>
-
       </main>
-
-      <footer className="footer ansemfy-footer">
-        <div className="container footer-grid">
-          <div className="footer-brand">
-            <img className="brand-logo" src={LOGO_SRC} alt={`${PROJECT_NAME} logo`} />
-            <strong>Robinhood</strong>
-          </div>
-          <p>Robinhood on Solana. HOOD airdrops for eligible holders with proof on every drop.</p>
-          <div className="footer-links">
-            <a href="#initiation">Protocol</a>
-            <a href="#rewards">Rewards</a>
-            <a href="#army">Hood Board</a>
-            <a href="#airdrops">Proof</a>
-            <a href={X_URL} target="_blank" rel="noreferrer">
-              X
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
-  );
-}
-
-function FallenBulls() {
-  return (
-    <section className="section bullify-fallen-section" id="fallen">
-      <div className="container">
-        <div className="section-kicker">Out of the Hood</div>
-        <div className="section-head split-head">
-          <h2>Sell once. Out forever.</h2>
-          <p>Robinhood keeps the board clean by showing wallets removed by holder-state rules.</p>
-        </div>
-        <div className="bullify-fallen-empty">
-          <strong>No wallets out of the hood yet.</strong>
-          <p>Wallets removed by holder-state rules will appear here when Supabase records them.</p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FaqItem({ title, body }: { title: string; body: string }) {
-  return (
-    <article className="faq-item">
-      <h3>{title}</h3>
-      <p>{body}</p>
-    </article>
   );
 }
