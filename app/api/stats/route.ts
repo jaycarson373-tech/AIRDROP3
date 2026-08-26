@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 
 export const runtime = "nodejs";
 
@@ -23,7 +23,6 @@ type ClaimRow = {
 type BuyRow = {
   epoch_id: string;
   tx_sig: string | null;
-  pfp_reward_lamports?: string | number | null;
 };
 
 type SupabaseConfig = {
@@ -50,6 +49,11 @@ type EpochPayoutSummary = {
   latestTxSig: string | null;
 };
 
+type WorkerHeartbeatRow = {
+  status: string;
+  updated_at: string;
+};
+
 type ParsedTokenAccountInfo = {
   owner?: string;
   tokenAmount?: {
@@ -60,7 +64,6 @@ type ParsedTokenAccountInfo = {
 const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
 const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
 const LIVE_ELIGIBLE_CACHE_MS = 90_000;
-const PFP_REWARD_WALLET_FALLBACK = "76tk5Hyk6kDZn9YG7nd1JBjH2EkcbxoWund9A8GBkGei";
 
 let liveEligibleCache: { key: string; value: number; expiresAt: number } | null = null;
 
@@ -151,7 +154,10 @@ function toNumber(value: unknown) {
 }
 
 function sourceTokenMint() {
-  const value = process.env.SOURCE_TOKEN_MINT ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT;
+  const value =
+    process.env.SOURCE_TOKEN_MINT ??
+    process.env.NEXT_PUBLIC_PMONEY_MINT ??
+    process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT;
   if (!value) return null;
   try {
     return new PublicKey(value);
@@ -161,34 +167,9 @@ function sourceTokenMint() {
   }
 }
 
-function pfpRewardWallet() {
-  const value =
-    process.env.PFP_REWARD_WALLET_PUBLIC_KEY ??
-    process.env.NEXT_PUBLIC_PFP_REWARD_WALLET_PUBLIC_KEY ??
-    PFP_REWARD_WALLET_FALLBACK;
-  try {
-    return new PublicKey(value);
-  } catch {
-    console.warn("stats route could not parse PFP reward wallet");
-    return null;
-  }
-}
-
-async function pfpRewardWalletBalanceSol() {
-  const wallet = pfpRewardWallet();
-  if (!wallet) return null;
-  try {
-    const connection = new Connection(rpcUrl(), "confirmed");
-    return (await connection.getBalance(wallet, "confirmed")) / LAMPORTS_PER_SOL;
-  } catch (error) {
-    console.warn("stats route could not fetch PFP reward wallet balance", error);
-    return null;
-  }
-}
-
 function epochNumber(epochId: string, fallback: number) {
   const timestamp = Date.parse(epochId);
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
   return Number.isFinite(timestamp) ? Math.floor(timestamp / epochMs) : fallback;
 }
 
@@ -201,7 +182,7 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function nextDropTime() {
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 10)) * 60_000;
+  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
   return new Date(Math.ceil(Date.now() / epochMs) * epochMs).toISOString();
 }
 
@@ -351,8 +332,6 @@ function durationLabel(startedAt: string | null, completedAt: string | null) {
 
 export async function GET() {
   const config = supabaseConfig();
-  const pfpRewardWalletSol = await pfpRewardWalletBalanceSol();
-
   if (!config) {
     const latestEligibleHolders = await liveEligibleHolderCountOrNull();
     return NextResponse.json({
@@ -362,15 +341,21 @@ export async function GET() {
       totalRewardAirdropped: 0,
       latestEligibleHolders: latestEligibleHolders ?? 0,
       nextDropTime: nextDropTime(),
-      totalPfpRewardSol: 0,
-      pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       epochHistory: [],
       roundHistory: [],
-      recentRewards: []
+      recentRewards: [],
+      workerStatus: "offline"
     });
   }
 
   try {
+    const heartbeatRows = await getSupabaseJson<WorkerHeartbeatRow[]>(
+      config,
+      "worker_heartbeat?select=status,updated_at&id=eq.pump-money&limit=1"
+    ).catch(() => []);
+    const heartbeat = heartbeatRows[0];
+    const heartbeatFresh = heartbeat ? Date.now() - Date.parse(heartbeat.updated_at) < 90_000 : false;
+    const workerStatus = heartbeatFresh ? heartbeat.status : heartbeat ? "degraded" : "offline";
     const rows = await getSupabaseJson<EpochRow[]>(
       config,
       "epochs?select=epoch_id,status,eligible_count,reward_bought,reward_distributed,started_at,completed_at&order=started_at.desc&limit=50"
@@ -388,14 +373,13 @@ export async function GET() {
     const claimRows = claims?.ok ? ((await claims.json()) as ClaimRow[]) : [];
     const claimsByEpoch = new Map(claimRows.map((claim) => [claim.epoch_id, claim]));
     const buys = epochIds.length
-      ? await fetch(`${config.url}/rest/v1/buys?select=epoch_id,tx_sig,pfp_reward_lamports&epoch_id=in.(${epochIds.map(encodeURIComponent).join(",")})`, {
+      ? await fetch(`${config.url}/rest/v1/buys?select=epoch_id,tx_sig&epoch_id=in.(${epochIds.map(encodeURIComponent).join(",")})`, {
           headers: supabaseHeaders(config.key),
           cache: "no-store"
         })
       : null;
     const buyRows = buys?.ok ? ((await buys.json()) as BuyRow[]) : [];
     const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
-    const totalPfpRewardSol = buyRows.reduce((sum, buy) => sum + toNumber(buy.pfp_reward_lamports) / LAMPORTS_PER_SOL, 0);
     const payoutRows = await getSettledPayouts(config);
     const payoutsByEpoch = new Map<string, EpochPayoutSummary>();
 
@@ -492,11 +476,10 @@ export async function GET() {
       totalRewardAirdropped,
       latestEligibleHolders,
       nextDropTime: nextDropTime(),
-      totalPfpRewardSol,
-      pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       epochHistory,
       roundHistory,
-      recentRewards
+      recentRewards,
+      workerStatus
     });
   } catch (error) {
     console.error("stats route failed", error);
@@ -508,11 +491,10 @@ export async function GET() {
       totalRewardAirdropped: 0,
       latestEligibleHolders: latestEligibleHolders ?? 0,
       nextDropTime: nextDropTime(),
-      totalPfpRewardSol: 0,
-      pfpRewardWalletBalanceSol: pfpRewardWalletSol,
       epochHistory: [],
       roundHistory: [],
-      recentRewards: []
+      recentRewards: [],
+      workerStatus: "offline"
     });
   }
 }

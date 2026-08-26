@@ -7,6 +7,17 @@ export const supabase = createClient(config.supabaseUrl, config.supabaseServiceR
 
 export type EpochStatus = "running" | "completed" | "failed" | "skipped";
 
+export async function recordWorkerHeartbeat(status: "online" | "running" | "paused" | "degraded", lastEpochId?: string, error?: unknown) {
+  const result = await supabase.from("worker_heartbeat").upsert({
+    id: "pump-money",
+    status,
+    last_epoch_id: lastEpochId ?? null,
+    last_error: error ? (error instanceof Error ? error.message : String(error)) : null,
+    updated_at: new Date().toISOString()
+  });
+  assertNoError(result, "record worker heartbeat");
+}
+
 export type PayoutMetadata = {
   normalRewardAmountRaw?: string;
   normalRewardAmount?: string;
@@ -69,7 +80,15 @@ export async function failEpoch(epochId: string, error: unknown) {
 
 export async function persistSnapshot(
   epochId: string,
-  rows: { wallet: string; source_balance: string; source_balance_raw: string; holder_pct: string }[]
+  rows: {
+    wallet: string;
+    source_balance: string;
+    source_balance_raw: string;
+    holder_pct: string;
+    holding_multiplier_bps: number;
+    selection_weight_bps: number;
+    selected: boolean;
+  }[]
 ) {
   if (!rows.length) return;
   const result = await supabase.from("snapshots").upsert(
@@ -77,6 +96,19 @@ export async function persistSnapshot(
     { onConflict: "epoch_id,wallet" }
   );
   assertNoError(result, "persist snapshot");
+}
+
+export async function recordSelection(epochId: string, seed: string, selectedCount: number, rewardTokenMint: string) {
+  const result = await supabase
+    .from("epochs")
+    .update({
+      selection_seed: seed,
+      selection_method: "finalized_blockhash_weighted_v1",
+      selected_count: selectedCount,
+      reward_token_mint: rewardTokenMint
+    })
+    .eq("epoch_id", epochId);
+  assertNoError(result, "record selection");
 }
 
 export async function getClaim(epochId: string) {
@@ -97,54 +129,21 @@ export async function recordBuy(
   rewardReceivedRaw: string,
   rewardReceived: string,
   txSig: string | null,
-  metadata?: {
-    pfpRewardLamports?: string;
-    pfpRewardTxSig?: string | null;
-  }
 ) {
   const row = {
     epoch_id: epochId,
     base_spent_lamports: baseSpentLamports,
     reward_received_raw: rewardReceivedRaw,
     reward_received: rewardReceived,
-    tx_sig: txSig,
-    ...(metadata?.pfpRewardLamports !== undefined ? { pfp_reward_lamports: metadata.pfpRewardLamports } : {}),
-    ...(metadata?.pfpRewardTxSig !== undefined ? { pfp_reward_tx_sig: metadata.pfpRewardTxSig } : {})
+    tx_sig: txSig
   };
   const result = await supabase.from("buys").upsert(row);
-  if (result.error && metadata) {
-    warnNonFatal("record buy with PFP metadata failed; retrying without PFP metadata", result.error);
-    const fallback = await supabase.from("buys").upsert({
-      epoch_id: epochId,
-      base_spent_lamports: baseSpentLamports,
-      reward_received_raw: rewardReceivedRaw,
-      reward_received: rewardReceived,
-      tx_sig: txSig
-    });
-    assertNoError(fallback, "record buy fallback");
-    return;
-  }
   assertNoError(result, "record buy");
 }
 
 export async function getBuy(epochId: string) {
   const result = await supabase.from("buys").select("*").eq("epoch_id", epochId).maybeSingle();
   return assertNoError(result, "get buy");
-}
-
-export async function recordPfpReward(epochId: string, pfpRewardLamports: string, pfpRewardTxSig: string | null) {
-  const result = await supabase.from("buys").upsert({
-    epoch_id: epochId,
-    base_spent_lamports: "0",
-    reward_received_raw: "0",
-    reward_received: "0",
-    tx_sig: null,
-    pfp_reward_lamports: pfpRewardLamports,
-    pfp_reward_tx_sig: pfpRewardTxSig
-  });
-  if (result.error) {
-    warnNonFatal("record PFP reward failed; continuing epoch", result.error);
-  }
 }
 
 function payoutMetadataFields(metadata: PayoutMetadata | undefined, rewardAmountRaw: string, rewardAmount: string) {
@@ -180,11 +179,36 @@ export async function planPayout(
         status: "planned",
         updated_at: new Date().toISOString()
       },
-      { onConflict: "idempotency_key", ignoreDuplicates: true }
+      { onConflict: "idempotency_key" }
     )
     .select()
     .maybeSingle();
   return assertNoError(result, "plan payout");
+}
+
+export type ExistingPayout = {
+  wallet: string;
+  reward_amount: string | number;
+  reward_amount_raw: string;
+  status: "planned" | "submitted" | "settled" | "failed" | "dry_run";
+  tx_sig: string | null;
+};
+
+export async function getPayoutsForEpoch(epochId: string) {
+  const result = await supabase
+    .from("payouts")
+    .select("wallet,reward_amount,reward_amount_raw,status,tx_sig")
+    .eq("epoch_id", epochId);
+  return assertNoError(result, "get epoch payouts") as ExistingPayout[];
+}
+
+export async function markPayoutSubmitted(epochId: string, wallet: string, txSig: string) {
+  const result = await supabase
+    .from("payouts")
+    .update({ status: "submitted", tx_sig: txSig, updated_at: new Date().toISOString() })
+    .eq("epoch_id", epochId)
+    .eq("wallet", wallet);
+  assertNoError(result, "mark payout submitted");
 }
 
 export async function dryRunPayout(

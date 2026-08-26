@@ -7,10 +7,10 @@ import {
   estimatePayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
-import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, startEpoch } from "./db.js";
+import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, recordSelection, startEpoch } from "./db.js";
 import { applyHolderState } from "./holder-state.js";
 import { currentEpochId } from "./time.js";
-import { eligibleHoldersFromSnapshot, selectRewardRecipients, snapshotSourceHolders } from "./snapshot.js";
+import { eligibleHoldersFromSnapshot, selectRewardRecipients, selectionSeed, snapshotSourceHolders } from "./snapshot.js";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 let running = false;
@@ -41,20 +41,26 @@ export async function runEpoch(date = new Date()) {
     const sourceHolders = await snapshotSourceHolders();
     const balanceEligibleHolders = await eligibleHoldersFromSnapshot(sourceHolders);
     const eligibleHolders = await applyHolderState(epochId, balanceEligibleHolders, sourceHolders);
+    console.log(
+      `[${epochId}] snapshot eligible holders: ${eligibleHolders.length}/${balanceEligibleHolders.length} after holder-state rules`
+    );
+    const seed = await selectionSeed(epochId);
+    const selectedHolders = selectRewardRecipients(seed, eligibleHolders);
+    const holders = selectedHolders;
+    const selectedWallets = new Set(holders.map((holder) => holder.wallet));
     await persistSnapshot(
       epochId,
       eligibleHolders.map((holder) => ({
         wallet: holder.wallet,
         source_balance: holder.uiBalance.toString(),
         source_balance_raw: holder.rawBalance.toString(),
-        holder_pct: holder.holderPct.toString()
+        holder_pct: holder.holderPct.toString(),
+        holding_multiplier_bps: holder.holdingMultiplierBps ?? 10_000,
+        selection_weight_bps: holder.selectionWeightBps ?? holder.holdingMultiplierBps ?? 10_000,
+        selected: selectedWallets.has(holder.wallet)
       }))
     );
-    console.log(
-      `[${epochId}] snapshot eligible holders: ${eligibleHolders.length}/${balanceEligibleHolders.length} after holder-state rules`
-    );
-    const selectedHolders = selectRewardRecipients(epochId, eligibleHolders);
-    const holders = selectedHolders;
+    await recordSelection(epochId, seed, holders.length, config.rewardTokenMint.toBase58());
     console.log(`[${epochId}] selected reward recipients: ${holders.length}`);
 
     if (!holders.length) {
@@ -75,9 +81,7 @@ export async function runEpoch(date = new Date()) {
       rewardReceivedRaw: 0n,
       rewardReceivedUi: 0,
       usableLamports: 0n,
-      solLongReserveLamports: 0n,
-      pfpRewardLamports: 0n,
-      pfpRewardTxSig: null as string | null,
+      protectedLamports: 0n,
       txSig: null as string | null
     };
 
@@ -88,17 +92,15 @@ export async function runEpoch(date = new Date()) {
         buy.baseSpentLamports.toString(),
         buy.rewardReceivedRaw.toString(),
         buy.rewardReceivedUi.toString(),
-        buy.txSig,
-        {
-          pfpRewardLamports: buy.pfpRewardLamports.toString(),
-          pfpRewardTxSig: buy.pfpRewardTxSig
-        }
+        buy.txSig
       );
     } else {
       console.log(`[${epochId}] REWARD_MODE=sol, skipping buy; creator fees remain SOL for direct airdrop`);
     }
 
-    const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports);
+    const availableRewardRaw = config.rewardMode === "token"
+      ? buy.rewardReceivedRaw
+      : await treasuryRewardBalanceRaw(payoutReserveLamports);
     const rewardPoolRaw = (availableRewardRaw * BigInt(config.airdropRewardBps)) / 10_000n;
     if (config.rewardMode === "sol") {
       buy = {
@@ -106,9 +108,7 @@ export async function runEpoch(date = new Date()) {
         rewardReceivedRaw: rewardPoolRaw,
         rewardReceivedUi: lamportsToSol(rewardPoolRaw),
         usableLamports: rewardPoolRaw,
-        solLongReserveLamports: 0n,
-        pfpRewardLamports: 0n,
-        pfpRewardTxSig: null,
+        protectedLamports: 0n,
         txSig: null
       };
       await recordBuy(epochId, "0", rewardPoolRaw.toString(), buy.rewardReceivedUi.toString(), null);

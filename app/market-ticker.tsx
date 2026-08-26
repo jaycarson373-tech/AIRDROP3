@@ -3,9 +3,9 @@
 import { CopyCaButton } from "./copy-ca-button";
 
 type MarketTickerProps = {
-  logoSrc: string;
+  logoSrc?: string;
   projectName: string;
-  xUrl: string;
+  xUrl?: string;
   contractAddress?: string;
 };
 
@@ -26,7 +26,7 @@ export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: Ma
     <div className="market-ticker market-ticker-minimal" aria-label={`${projectName} header`}>
       <div className="container market-ticker-inner">
         <a className="ticker-brand" href="/" aria-label={`${projectName} home`}>
-          <img src={logoSrc} alt="" />
+          {logoSrc ? <img src={logoSrc} alt="" /> : <span className="ticker-money-mark" aria-hidden="true">$</span>}
           <strong>{projectName}</strong>
         </a>
         <nav className="ticker-nav" aria-label="Main navigation">
@@ -38,9 +38,7 @@ export function MarketTicker({ logoSrc, projectName, xUrl, contractAddress }: Ma
         </nav>
         <div className="ticker-actions" aria-label="Project links">
           {contractAddress ? <CopyCaButton address={contractAddress} label={compactAddress(contractAddress)} /> : null}
-          <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label={`Open ${projectName} on X`}>
-            X
-          </a>
+          {xUrl ? <a className="ticker-action" href={xUrl} target="_blank" rel="noreferrer" aria-label={`Open ${projectName} on X`}>X</a> : null}
         </div>
       </div>
     </div>

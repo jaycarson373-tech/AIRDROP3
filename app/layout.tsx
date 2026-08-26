@@ -1,54 +1,20 @@
-import type { Metadata } from "next";
-import type { Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { AppPolish } from "./app-polish";
 import "./globals.css";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pumpmoney.fun";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://trumpstrategy.fun"),
-  title: "Trump Strategy",
-  description: "Trump Strategy splits holder rewards 50% WLFI and 50% TRUMP every five minutes.",
-  openGraph: {
-    title: "Trump Strategy",
-    description: "Hold the strategy. Receive WLFI + TRUMP.",
-    url: "https://trumpstrategy.fun",
-    siteName: "Trump Strategy",
-    images: [
-      {
-        url: "/brand/trump-strategy-logo.svg",
-        width: 512,
-        height: 512,
-        alt: "Trump Strategy"
-      }
-    ],
-    type: "website"
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Trump Strategy",
-    description: "50% WLFI. 50% TRUMP. Holder rewards every five minutes.",
-    images: ["/brand/trump-strategy-logo.svg"]
-  },
-  icons: {
-    icon: [
-      { url: "/brand/trump-strategy-logo.svg", type: "image/svg+xml" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
-      { url: "/logo.png", type: "image/png" }
-    ],
-    apple: "/apple-touch-icon.png"
-  }
+  metadataBase: new URL(SITE_URL),
+  title: "Pump Money — The pump.fun Money Printer",
+  description: "Hold PMONEY. Every five minutes, ten eligible wallets split a PUMP reward round.",
+  alternates: { canonical: "/" },
+  openGraph: { title: "PUMP MONEY.", description: "Hold longer. Sell less. Strengthen your odds.", url: SITE_URL, siteName: "Pump Money", type: "website" },
+  twitter: { card: "summary_large_image", title: "PUMP MONEY.", description: "Ten wallets. Equal share. Every five minutes." }
 };
 
-export const viewport: Viewport = {
-  themeColor: "#090909"
-};
+export const viewport: Viewport = { themeColor: "#37ff73" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="en">
-      <body>
-        <AppPolish />
-        {children}
-      </body>
-    </html>
-  );
+  return <html lang="en"><body><AppPolish />{children}</body></html>;
 }

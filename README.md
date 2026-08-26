@@ -1,70 +1,47 @@
-# Trump Strategy
+# Pump Money
 
-Trump Strategy is a simple Solana holder-reward site.
+Pump Money turns confirmed pump.fun creator fees into automatic PUMP reward rounds for eligible PMONEY holders.
 
-Thesis: Trump said to just buy all crypto assets. Trump Strategy routes the holder story into the two Trump-family-connected crypto names: WLFI and TRUMP.
+## Round
 
-## Reward Intent
+Every five minutes the Railway worker:
 
-- Source token: `$TSTRAT` by default, configurable with `NEXT_PUBLIC_SOURCE_SYMBOL`.
-- Rewards: `WLFI` and `TRUMP`.
-- Target split: `50% WLFI / 50% TRUMP`.
-- Epoch: every `5` minutes by default.
-- Receipts should come from Supabase and onchain transactions only.
+1. Claims creator fees and measures the treasury balance increase.
+2. Snapshots eligible PMONEY holders.
+3. Updates each wallet's uninterrupted holding multiplier.
+4. Buys the configured, verified PUMP mint through Jupiter.
+5. Selects up to ten wallets using a finalized Solana blockhash seed and loyalty-weighted odds.
+6. Splits only the PUMP purchased in that round equally between the selected wallets.
+7. Simulates transfers, confirms settlement, and publishes receipts through Supabase.
 
-Important: the current worker code path uses one active `REWARD_TOKEN_MINT` at a time. True same-epoch 50/50 dual-token payouts require the worker to support `REWARD_TOKEN_MINTS` plus `REWARD_TOKEN_SPLIT_BPS`, or a separate rotation/settlement pass.
+A balance decrease resets the wallet's holding streak and multiplier to 1.0x. It does not permanently ban the wallet.
 
-## Vercel Environment
+## Safety
 
-```bash
-NEXT_PUBLIC_PROJECT_NAME=Trump Strategy
-NEXT_PUBLIC_SOURCE_SYMBOL=TSTRAT
-NEXT_PUBLIC_REWARD_SYMBOL=WLFI + TRUMP
-NEXT_PUBLIC_CA=<SOURCE_TOKEN_MINT>
-NEXT_PUBLIC_BUY_URL=<JUPITER_BUY_URL>
-NEXT_PUBLIC_SOURCE_TOKEN_MINT=<SOURCE_TOKEN_MINT>
-NEXT_PUBLIC_REWARD_TOKEN_MINT=<ACTIVE_REWARD_TOKEN_MINT>
-NEXT_PUBLIC_REWARD_TOKEN_SYMBOLS=WLFI,TRUMP
-NEXT_PUBLIC_REWARD_TOKEN_SPLIT_BPS=5000,5000
-NEXT_PUBLIC_ELIGIBILITY_LABEL=100K
-NEXT_PUBLIC_EPOCH_MINUTES=5
-NEXT_PUBLIC_X_URL=<X_URL>
-NEXT_PUBLIC_SUPABASE_URL=<SUPABASE_URL>
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<SUPABASE_ANON_KEY>
-```
+- `WORKER_ENABLED=false` is the default.
+- Claim, buy, and airdrop gates default to false in code.
+- The creator-fee transaction must name the treasury as its only signer and fee payer.
+- Fee-claim transactions using address lookup tables or unknown programs are rejected.
+- Claim, swap, and payout transactions are simulated before broadcast.
+- Pre-existing PUMP in the treasury is not included in a round's reward pool.
+- Real payouts are the only payouts exposed through the public Supabase policy.
 
-## Railway Environment
+## Launch order
 
-```bash
-REWARD_MODE=token
-HELIUS_RPC_URL=<HELIUS_RPC_URL>
-SOURCE_TOKEN_MINT=<SOURCE_TOKEN_MINT>
-REWARD_TOKEN_MINT=<ACTIVE_REWARD_TOKEN_MINT>
-REWARD_TOKEN_MINTS=<WLFI_MINT>,<TRUMP_MINT>
-REWARD_TOKEN_SYMBOLS=WLFI,TRUMP
-REWARD_TOKEN_SPLIT_BPS=5000,5000
-TREASURY_WALLET_SECRET=<BASE58_OR_JSON_SECRET_KEY>
-SUPABASE_URL=<SUPABASE_URL>
-SUPABASE_SERVICE_ROLE=<SUPABASE_SERVICE_ROLE_KEY>
-CLAIM_ENABLED=true
-BUY_ENABLED=true
-AIRDROP_ENABLED=true
-EPOCH_MINUTES=5
-ELIGIBILITY_MIN=100000
-MAX_WALLETS_PER_EPOCH=150
-MAX_HOLDER_PCT=5
-SWAP_BALANCE_BPS=10000
-SWAP_SLIPPAGE_BPS=1000
-MIN_SOL_RESERVE=0.3
-AIRDROP_SOL_RESERVE=0.05
-AIRDROP_BATCH_SIZE=4
-AIRDROP_REWARD_BPS=10000
-PRIORITY_FEE_SOL=0.000001
-MIN_REWARD_RAW_TO_AIRDROP=1
-```
+1. Rotate any previously shared treasury, Helius, and Supabase service credentials.
+2. Apply `supabase/migrations/001_pump_airdrop.sql` through `006_pump_money.sql` in order.
+3. Run `supabase/reset_pump_money.sql` if the project previously stored another token's rounds.
+4. Set the verified PMONEY source mint and verified PUMP reward mint.
+5. Deploy with all worker gates false and confirm the heartbeat is `paused`.
+6. Set `WORKER_ENABLED=true` with claim, buy, and airdrop still false for one dry-run epoch.
+7. Review the snapshot and planned math.
+8. Enable claim and buy with airdrops still false for a controlled purchase test.
+9. Enable airdrops only after the transaction summary and treasury reserves are confirmed.
 
-Railway should use:
+## Commands
 
 ```bash
+npm run check
+npm run worker:dev
 npm run worker:start
 ```

@@ -1,18 +1,16 @@
+import type { CSSProperties } from "react";
 import { CopyCaButton } from "./copy-ca-button";
 import { MarketTicker } from "./market-ticker";
+import { PumpMoneyTerminal } from "./pump-money-terminal";
 
-const PROJECT_NAME = process.env.NEXT_PUBLIC_PROJECT_NAME ?? "Trump Strategy";
-const SOURCE_SYMBOL = process.env.NEXT_PUBLIC_SOURCE_SYMBOL ?? "TSTRAT";
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CA ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT ?? "";
-const BUY_URL = process.env.NEXT_PUBLIC_BUY_URL ?? "#";
-const X_URL = process.env.NEXT_PUBLIC_X_URL ?? "https://x.com/";
-const EPOCH_MINUTES = process.env.NEXT_PUBLIC_EPOCH_MINUTES ?? "5";
-const LOGO_SRC = "/brand/trump-strategy-logo.svg";
-
-const rewards = [
-  { symbol: "WLFI", split: "50%" },
-  { symbol: "TRUMP", split: "50%" }
-];
+const PROJECT_NAME = "Pump Money";
+const SOURCE_SYMBOL = "PMONEY";
+const REWARD_SYMBOL = "PUMP";
+const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_PMONEY_MINT ?? "";
+const BUY_URL = process.env.NEXT_PUBLIC_PUMP_MONEY_BUY_URL ?? "";
+const X_URL = process.env.NEXT_PUBLIC_PUMP_MONEY_X_URL ?? "";
+const EPOCH_MINUTES = 5;
+const LAUNCH_STATE = process.env.NEXT_PUBLIC_LAUNCH_STATE === "live" ? "live" : "prelaunch";
 
 function compactAddress(address: string) {
   if (address.length <= 12) return address;
@@ -21,99 +19,101 @@ function compactAddress(address: string) {
 
 export default function Page() {
   return (
-    <div className="page trump-strategy-page has-market-ticker">
-      <MarketTicker logoSrc={LOGO_SRC} projectName={PROJECT_NAME} xUrl={X_URL} contractAddress={CONTRACT_ADDRESS} />
+    <div className="page pump-money-page has-market-ticker">
+      <MarketTicker projectName={PROJECT_NAME} xUrl={X_URL} contractAddress={CONTRACT_ADDRESS} />
 
       <main>
-        <section className="trump-hero" id="initiation">
-          <div className="trump-rain" aria-hidden="true" />
-          <div className="container trump-hero-inner">
-            <div className="trump-copy">
-              <div className="trump-kicker">TRUMP STRATEGY ON SOLANA</div>
-              <h1>BUY ALL CRYPTO ASSETS.</h1>
-              <p className="trump-subtitle">Hold {SOURCE_SYMBOL}. Receive WLFI + TRUMP every {EPOCH_MINUTES} minutes.</p>
-              <p className="trump-lead">
-                Trump Strategy turns the thesis into a simple holder machine: creator-fee rewards route into the two
-                Trump-family-connected crypto names, split evenly between WLFI and TRUMP, then distributed to eligible
-                holders on a live epoch schedule.
+        <section className="pm-hero" id="initiation">
+          <div className="pm-grid" aria-hidden="true" />
+          <div className="pm-bill-rain" aria-hidden="true">
+            {Array.from({ length: 14 }, (_, index) => (
+              <span key={index} style={{ "--bill-index": index } as CSSProperties}>P$</span>
+            ))}
+          </div>
+
+          <div className="container pm-hero-inner">
+            <div className="pm-copy">
+              <div className="pm-kicker"><i /> FIVE-MINUTE HOLDER REWARDS</div>
+              <h1>PUMP<br />MONEY.</h1>
+              <p className="pm-subtitle">The money printer for pump.fun.</p>
+              <p className="pm-lead">
+                Hold ${SOURCE_SYMBOL}. Every {EPOCH_MINUTES} minutes, creator fees buy ${REWARD_SYMBOL} and ten
+                eligible wallets split the round equally. Hold longer and avoid selling to strengthen your odds.
               </p>
-              <div className="trump-actions">
-                <a className="trump-button" href={BUY_URL}>
-                  Buy {SOURCE_SYMBOL}
-                </a>
+
+              <div className="pm-actions">
+                {BUY_URL ? <a className="pm-button" href={BUY_URL} target="_blank" rel="noreferrer">BUY ${SOURCE_SYMBOL}</a> : null}
                 {CONTRACT_ADDRESS ? <CopyCaButton address={CONTRACT_ADDRESS} label={compactAddress(CONTRACT_ADDRESS)} /> : null}
-                <a className="trump-button secondary" href="#terminal">
-                  View Strategy
-                </a>
+                <a className="pm-button pm-button-ghost" href="#terminal">VIEW MONEY PRINTER</a>
+              </div>
+
+              <div className="pm-quick-proof" aria-label="Pump Money rules">
+                <span>10 WINNERS</span>
+                <span>EQUAL SHARE</span>
+                <span>NO WALLET CONNECT</span>
               </div>
             </div>
 
-            <div className="trump-terminal" id="terminal" aria-label="Trump Strategy terminal">
-              <div className="terminal-topline">
-                <span>STRATEGY LIVE</span>
-                <span>{EPOCH_MINUTES}M EPOCH</span>
-              </div>
-              <div className="terminal-logo-lockup">
-                <img src={LOGO_SRC} alt={`${PROJECT_NAME} logo`} />
-                <div>
-                  <strong>{PROJECT_NAME}</strong>
-                  <span>{SOURCE_SYMBOL} HOLDER REWARDS</span>
-                </div>
-              </div>
-              <div className="terminal-grid">
-                {rewards.map((reward) => (
-                  <article key={reward.symbol}>
-                    <span>{reward.symbol}</span>
-                    <strong>{reward.split}</strong>
-                  </article>
-                ))}
-                <article>
-                  <span>Cadence</span>
-                  <strong>{EPOCH_MINUTES} MIN</strong>
-                </article>
-                <article>
-                  <span>Mode</span>
-                  <strong>HOLDER DROP</strong>
-                </article>
-              </div>
-              <div className="terminal-log">
-                <p>THESIS: JUST BUY ALL CRYPTO ASSETS.</p>
-                <p>REWARD ROUTE: 50% WLFI / 50% TRUMP.</p>
-                <p>STATUS: AWAITING LIVE RECEIPTS.</p>
-              </div>
-            </div>
+            <PumpMoneyTerminal epochMinutes={EPOCH_MINUTES} rewardSymbol={REWARD_SYMBOL} launchState={LAUNCH_STATE} />
           </div>
         </section>
 
-        <section className="trump-band" id="rewards">
-          <div className="container trump-band-grid">
-            <article>
-              <span>01</span>
-              <h2>Hold {SOURCE_SYMBOL}</h2>
-              <p>Eligible wallets are read directly from holder snapshots. No forms, no claim page, no manual entry.</p>
-            </article>
-            <article>
-              <span>02</span>
-              <h2>Split the rewards</h2>
-              <p>Every reward epoch is positioned around a clean 50/50 route into WLFI and TRUMP.</p>
-            </article>
-            <article>
-              <span>03</span>
-              <h2>Publish receipts</h2>
-              <p>Live distributions should be backed by real transaction receipts once the worker is active.</p>
-            </article>
-          </div>
-        </section>
-
-        <section className="trump-thesis" id="faq">
+        <section className="pm-machine" id="rewards">
           <div className="container">
+            <div className="pm-section-heading">
+              <span>THE MECHANISM</span>
+              <h2>FEES IN. $PUMP OUT.</h2>
+              <p>Every round is automatic, recorded, and backed by real onchain receipts.</p>
+            </div>
+
+            <div className="pm-flow">
+              <article><b>01</b><strong>SNAPSHOT</strong><p>Read the eligible ${SOURCE_SYMBOL} holder set at the five-minute boundary.</p></article>
+              <article><b>02</b><strong>BUY</strong><p>Use the round&apos;s verified creator-fee budget to buy ${REWARD_SYMBOL}.</p></article>
+              <article><b>03</b><strong>SELECT</strong><p>Select ten wallets using a finalized Solana seed and loyalty-weighted odds.</p></article>
+              <article><b>04</b><strong>PRINT</strong><p>Split the purchased ${REWARD_SYMBOL} equally and publish every transaction.</p></article>
+            </div>
+          </div>
+        </section>
+
+        <section className="pm-loyalty" id="odds">
+          <div className="container pm-loyalty-inner">
+            <div>
+              <span className="pm-label">MONEY LIKES PATIENCE</span>
+              <h2>HOLD LONGER.<br />GET STRONGER.</h2>
+              <p>
+                Every eligible wallet starts with a base chance. Continuous holding increases the loyalty multiplier.
+                A balance decrease resets the streak to 1.0x.
+              </p>
+            </div>
+            <div className="pm-tier-grid" aria-label="Loyalty multiplier milestones">
+              <article><span>START</span><strong>1.0x</strong></article>
+              <article><span>1 DAY</span><strong>1.5x</strong></article>
+              <article><span>3 DAYS</span><strong>2.0x</strong></article>
+              <article><span>7 DAYS</span><strong>5.0x</strong></article>
+              <article><span>30 DAYS</span><strong>10.0x</strong></article>
+            </div>
+          </div>
+        </section>
+
+        <section className="pm-proof" id="faq">
+          <div className="container pm-proof-inner">
+            <span className="pm-label">REAL RECEIPTS ONLY</span>
+            <h2>IF IT DIDN&apos;T SETTLE, IT DOESN&apos;T COUNT.</h2>
             <p>
-              Trump Strategy is an experimental community token and holder-distribution project. Reward availability,
-              eligibility, timing, and token routing depend on live backend configuration.
+              Pump Money displays completed rounds only after payouts confirm. No fabricated winners, no placeholder
+              distribution totals, and no claim page. Hold the token and the worker handles the rest.
             </p>
+            {X_URL ? <a href={X_URL} target="_blank" rel="noreferrer">FOLLOW PUMP MONEY ON X</a> : null}
           </div>
         </section>
       </main>
+
+      <footer className="pm-footer">
+        <div className="container">
+          <strong>PUMP MONEY</strong>
+          <p>Experimental holder rewards. Timing and availability depend on confirmed creator fees and onchain settlement.</p>
+        </div>
+      </footer>
     </div>
   );
 }

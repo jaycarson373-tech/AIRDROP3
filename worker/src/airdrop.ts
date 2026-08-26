@@ -1,4 +1,5 @@
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import bs58 from "bs58";
 import {
   ACCOUNT_SIZE,
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -11,7 +12,8 @@ import {
 } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
-import { dryRunPayout, failPayout, planPayout, settlePayout } from "./db.js";
+import { splitEvenly } from "./selection.js";
+import { dryRunPayout, failPayout, getPayoutsForEpoch, markPayoutSubmitted, planPayout, settlePayout } from "./db.js";
 import type { Holder } from "./snapshot.js";
 
 const AIRDROP_TRANSFER_FEE_CUSHION_LAMPORTS = 25_000n;
@@ -35,11 +37,6 @@ export type AirdropResult = {
 type PreparedAllocation = Allocation & {
   owner: PublicKey;
   destinationAta: PublicKey;
-};
-
-type WeightedHolder = {
-  holder: Holder;
-  weight: bigint;
 };
 
 type PayoutReserve = {
@@ -80,47 +77,6 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
   );
 }
 
-async function computeStrategyWeights(holders: Holder[]): Promise<WeightedHolder[]> {
-  const balances = holders.map((holder) => holder.rawBalance).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
-  const medianRaw = balances[Math.floor(balances.length / 2)] ?? 0n;
-  const ownerKeys = holders.map((holder) => new PublicKey(holder.wallet));
-  const ownerInfos = (
-    await Promise.all(chunk(ownerKeys, 100).map((keys) => connection.getMultipleAccountsInfo(keys, "confirmed")))
-  ).flat();
-
-  return holders.map((holder, index) => {
-    const solLamports = BigInt(ownerInfos[index]?.lamports ?? 0);
-    const baseWeight = holder.rawBalance * 80n;
-    const smallerSeed = medianRaw > 0n && holder.rawBalance > medianRaw ? medianRaw : holder.rawBalance;
-    const halfMedian = medianRaw / 2n;
-    const sizeBoostBps =
-      medianRaw > 0n && holder.rawBalance <= halfMedian
-        ? 14_000n
-        : medianRaw > 0n && holder.rawBalance <= medianRaw
-          ? 12_500n
-          : 10_000n;
-    const solBoostBps =
-      solLamports < 100_000_000n
-        ? 14_000n
-        : solLamports < 1_000_000_000n
-          ? 12_500n
-          : solLamports < 5_000_000_000n
-            ? 11_000n
-            : 10_000n;
-    const robinWeight = (((smallerSeed * 20n) * sizeBoostBps) / 10_000n * solBoostBps) / 10_000n;
-    const weight = baseWeight + robinWeight;
-
-    console.log(
-      `[WEIGHT] wallet=${holder.wallet} source=${holder.uiBalance} sol=${(Number(solLamports) / LAMPORTS_PER_SOL).toFixed(4)} sizeBoostBps=${sizeBoostBps} solBoostBps=${solBoostBps} finalWeight=${weight.toString()}`
-    );
-
-    return {
-      holder,
-      weight
-    };
-  });
-}
-
 export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
   const treasury = treasuryKeypair();
   if (config.rewardMode === "sol") {
@@ -141,13 +97,11 @@ export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
 export async function computeAllocations(holders: Holder[], rewardRaw: bigint): Promise<Allocation[]> {
   if (!holders.length || rewardRaw <= config.minRewardRawToAirdrop) return [];
   const decimals = await rewardDecimals();
-  const weightedHolders = await computeStrategyWeights(holders);
-  const totalWeight = weightedHolders.reduce((sum, holder) => sum + holder.weight, 0n);
-  if (totalWeight <= 0n) return [];
+  const shares = splitEvenly(rewardRaw, holders.length);
 
-  return weightedHolders
-    .map(({ holder, weight }) => {
-      const amount = (rewardRaw * weight) / totalWeight;
+  return holders
+    .map((holder, index) => {
+      const amount = shares[index] ?? 0n;
       return {
         wallet: holder.wallet,
         amount,
@@ -226,6 +180,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
   let settledUi = 0;
   let settledCount = 0;
   let stoppedForReserve = false;
+  const signatures: string[] = [];
 
   console.log(`[${epochId}] proof before send: ${allocations.length} payouts`);
   for (const allocation of allocations) {
@@ -249,7 +204,34 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     };
   }
 
-  const prepared: PreparedAllocation[] = allocations.map((allocation) => {
+  const existingPayouts = await getPayoutsForEpoch(epochId);
+  const existingByWallet = new Map(existingPayouts.map((payout) => [payout.wallet, payout]));
+  const pendingAllocations: Allocation[] = [];
+  for (const allocation of allocations) {
+    const existing = existingByWallet.get(allocation.wallet);
+    if (existing?.status === "settled") {
+      settledRaw += BigInt(existing.reward_amount_raw);
+      settledUi += Number(existing.reward_amount);
+      settledCount += 1;
+      if (existing.tx_sig) signatures.push(existing.tx_sig);
+      continue;
+    }
+    if (existing?.status === "submitted" && existing.tx_sig) {
+      const signature = await connection.getSignatureStatus(existing.tx_sig, { searchTransactionHistory: true });
+      if (signature.value && !signature.value.err && (signature.value.confirmationStatus === "confirmed" || signature.value.confirmationStatus === "finalized")) {
+        await settlePayout(epochId, allocation.wallet, existing.tx_sig);
+        settledRaw += allocation.amount;
+        settledUi += allocation.uiAmount;
+        settledCount += 1;
+        signatures.push(existing.tx_sig);
+        continue;
+      }
+      throw new Error(`Payout ${existing.tx_sig} has an unresolved submitted state; refusing a duplicate send`);
+    }
+    pendingAllocations.push(allocation);
+  }
+
+  const prepared: PreparedAllocation[] = pendingAllocations.map((allocation) => {
     const owner = new PublicKey(allocation.wallet);
     return {
       ...allocation,
@@ -258,7 +240,6 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
     };
   });
 
-  const signatures: string[] = [];
   for (const allocation of prepared) {
     await planPayout(epochId, allocation.wallet, allocation.amount.toString(), allocation.uiAmount.toString(), {
       normalRewardAmountRaw: allocation.normalAmount.toString(),
@@ -287,6 +268,7 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
       break;
     }
 
+    let submittedTxSig: string | null = null;
     try {
       const tx = new Transaction();
       for (const allocation of batch) {
@@ -326,7 +308,14 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
         throw new Error(`Transfer simulation failed: ${JSON.stringify(simulation.value.err)}`);
       }
 
+      if (!tx.signature) throw new Error("Signed payout transaction did not produce a signature");
+      const predictedTxSig = bs58.encode(tx.signature);
+      submittedTxSig = predictedTxSig;
+      for (const allocation of batch) {
+        await markPayoutSubmitted(epochId, allocation.wallet, predictedTxSig);
+      }
       const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
+      if (txSig !== predictedTxSig) throw new Error(`Broadcast signature mismatch: expected ${predictedTxSig}, received ${txSig}`);
       await connection.confirmTransaction(txSig, "confirmed");
       for (const allocation of batch) {
         await settlePayout(epochId, allocation.wallet, txSig);
@@ -337,6 +326,10 @@ export async function airdropRewards(epochId: string, allocations: Allocation[])
       }
       signatures.push(txSig);
     } catch (error) {
+      if (submittedTxSig) {
+        console.error(`[${epochId}] submitted payout ${submittedTxSig} requires confirmation recovery`, error);
+        throw error;
+      }
       for (const allocation of batch) {
         await failPayout(epochId, allocation.wallet, error);
         console.error(`[${epochId}] payout failed for ${allocation.wallet}:`, error);

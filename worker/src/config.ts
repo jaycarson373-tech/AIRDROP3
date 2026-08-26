@@ -77,9 +77,6 @@ const configuredRewardTokenMint = optionalPublicKeyEnv("REWARD_TOKEN_MINT");
 if (rewardMode === "token" && !configuredRewardTokenMint) {
   throw new Error("Missing required env REWARD_TOKEN_MINT when REWARD_MODE=token");
 }
-const configuredBagworkRewardWallet =
-  optionalPublicKeyEnv("BAGWORK_REWARD_WALLET_PUBLIC_KEY") ?? optionalPublicKeyEnv("PFP_REWARD_WALLET_PUBLIC_KEY");
-const configuredBagworkRewardBps = intEnv("BAGWORK_REWARD_BPS", intEnv("PFP_REWARD_BPS", 5000));
 
 export const config = {
   heliusRpcUrl: required("HELIUS_RPC_URL"),
@@ -90,20 +87,20 @@ export const config = {
   supabaseUrl: required("SUPABASE_URL"),
   supabaseServiceRole: required("SUPABASE_SERVICE_ROLE"),
 
+  workerEnabled: boolEnv("WORKER_ENABLED", false),
   claimEnabled: boolEnv("CLAIM_ENABLED", false),
   buyEnabled: boolEnv("BUY_ENABLED", false),
   airdropEnabled: boolEnv("AIRDROP_ENABLED", false),
 
   epochMinutes: Math.max(1, intEnv("EPOCH_MINUTES", 5)),
   eligibilityMin: numberEnv("ELIGIBILITY_MIN", 100_000),
-  maxWalletsPerEpoch: Math.max(1, intEnv("MAX_WALLETS_PER_EPOCH", 150)),
+  winnersPerEpoch: Math.max(1, intEnv("WINNERS_PER_EPOCH", 10)),
   maxHolderPct: numberEnv("MAX_HOLDER_PCT", 5),
   excludeWallets: optionalWallets("EXCLUDE_WALLETS"),
+  claimAllowedProgramIds: optionalWallets("CLAIM_ALLOWED_PROGRAM_IDS"),
 
   swapBalanceBps: Math.min(10_000, Math.max(1, intEnv("SWAP_BALANCE_BPS", 9000))),
-  ansemBuyBps: Math.min(10_000, Math.max(0, intEnv("ANSEM_BUY_BPS", 5000))),
-  pfpRewardWallet: configuredBagworkRewardWallet,
-  pfpRewardBps: configuredBagworkRewardWallet ? Math.min(10_000, Math.max(0, configuredBagworkRewardBps)) : 0,
+  rewardBuyBps: Math.min(10_000, Math.max(0, intEnv("REWARD_BUY_BPS", 10_000))),
   minSolReserve: Math.max(0.3, numberEnv("MIN_SOL_RESERVE", 0.3)),
   airdropSolReserve: Math.max(0.05, numberEnv("AIRDROP_SOL_RESERVE", 0.05)),
   airdropBatchSize: Math.max(1, intEnv("AIRDROP_BATCH_SIZE", 4)),
@@ -112,6 +109,10 @@ export const config = {
   priorityFeeSol: numberEnv("PRIORITY_FEE_SOL", 0.000001),
   minRewardRawToAirdrop: BigInt(Math.max(0, intEnv("MIN_REWARD_RAW_TO_AIRDROP", 1)))
 };
+
+if (config.workerEnabled && config.rewardMode === "token" && config.airdropEnabled && !config.buyEnabled) {
+  throw new Error("Unsafe live config: BUY_ENABLED must be true when token airdrops are enabled");
+}
 
 export function treasuryKeypair() {
   cachedTreasury ??= Keypair.fromSecretKey(parseSecret(config.treasuryWalletSecret));

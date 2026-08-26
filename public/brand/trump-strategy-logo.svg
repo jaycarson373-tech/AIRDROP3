@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Trump Strategy logo">
-  <rect width="512" height="512" rx="64" fill="#090909"/>
-  <path d="M74 104h364v66H294v238h-76V170H74z" fill="#f5d26b"/>
-  <path d="M80 408h352v-54H80z" fill="#c41f2f"/>
-  <path d="M92 306h58v48H92zM184 266h58v88h-58zM276 218h58v136h-58zM368 174h58v180h-58z" fill="#f5f1e6"/>
-  <path d="M74 104h364v18H74zM80 408h352v18H80z" fill="#ffffff" opacity=".18"/>
-</svg>

@@ -3,6 +3,7 @@ import { PublicKey } from "@solana/web3.js";
 import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
+import { selectionWeightBps, weightedDeterministicSelect } from "./selection.js";
 
 const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
 const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
@@ -12,6 +13,8 @@ export type Holder = {
   rawBalance: bigint;
   uiBalance: number;
   holderPct: number;
+  holdingMultiplierBps?: number;
+  selectionWeightBps?: number;
 };
 
 async function tokenProgramForMint(mint: PublicKey) {
@@ -67,24 +70,28 @@ function holderPct(rawBalance: bigint, rawSupply: bigint) {
   return Number((rawBalance * 1_000_000n) / rawSupply) / 10_000;
 }
 
-function recipientScore(epochId: string, holder: Holder) {
-  return createHash("sha256")
-    .update(`${epochId}:${holder.wallet}:${holder.rawBalance.toString()}`)
-    .digest("hex");
+export async function selectionSeed(epochId: string) {
+  const { blockhash } = await connection.getLatestBlockhash("finalized");
+  return createHash("sha256").update(`${epochId}:${blockhash}`).digest("hex");
 }
 
-export function selectRewardRecipients(epochId: string, holders: Holder[]) {
-  const recipients = holders
-    .map((holder) => ({ holder, score: recipientScore(epochId, holder) }))
-    .sort((a, b) => {
-      const score = a.score.localeCompare(b.score);
-      return score || a.holder.wallet.localeCompare(b.holder.wallet);
-    })
-    .slice(0, config.maxWalletsPerEpoch)
-    .map(({ holder }) => holder);
+export function selectRewardRecipients(seed: string, holders: Holder[]) {
+  const recipients = weightedDeterministicSelect(
+    seed,
+    holders.map((holder) => {
+      const weightBps = selectionWeightBps(
+        holder.uiBalance,
+        config.eligibilityMin,
+        holder.holdingMultiplierBps ?? 10_000
+      );
+      holder.selectionWeightBps = weightBps;
+      return { item: holder, stableId: holder.wallet, weightBps };
+    }),
+    config.winnersPerEpoch
+  );
 
   if (holders.length > recipients.length) {
-    console.log(`[SNAPSHOT] selected ${recipients.length} random recipients from ${holders.length} eligible holders`);
+    console.log(`[SNAPSHOT] selected ${recipients.length} loyalty-weighted recipients from ${holders.length} eligible holders`);
   }
 
   return recipients;

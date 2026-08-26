@@ -1,5 +1,6 @@
 import { config } from "./config.js";
 import { supabase } from "./db.js";
+import { holdingMultiplierBps } from "./selection.js";
 import type { Holder } from "./snapshot.js";
 
 type HolderStateRow = {
@@ -11,7 +12,8 @@ type HolderStateRow = {
   current_streak_epochs: number | null;
   current_multiplier_bps: number | null;
   permanently_ineligible: boolean | null;
-  ineligible_reason: string | null;
+  sell_events: number | null;
+  last_sell_at: string | null;
 };
 
 function parseRaw(value: unknown) {
@@ -31,10 +33,9 @@ async function getHolderStates() {
   const result = await supabase
     .from("holder_states")
     .select(
-      "wallet,source_balance,source_balance_raw,highest_source_balance_raw,eligible_since,current_streak_epochs,current_multiplier_bps,permanently_ineligible,ineligible_reason"
+      "wallet,source_balance,source_balance_raw,highest_source_balance_raw,eligible_since,current_streak_epochs,current_multiplier_bps,permanently_ineligible,sell_events,last_sell_at"
     )
     .limit(10000);
-
   if (result.error) throw result.error;
   return (result.data ?? []) as HolderStateRow[];
 }
@@ -45,127 +46,71 @@ async function upsertHolderStates(rows: Record<string, unknown>[]) {
   if (result.error) throw result.error;
 }
 
-export async function applyHolderState(epochId: string, eligibleHolders: Holder[], currentHolders = eligibleHolders): Promise<Holder[]> {
+export async function applyHolderState(epochId: string, eligibleHolders: Holder[], currentHolders = eligibleHolders) {
   try {
-    const now = new Date().toISOString();
+    const now = new Date();
+    const nowIso = now.toISOString();
     const states = await getHolderStates();
     const stateByWallet = new Map(states.map((state) => [state.wallet, state]));
     const eligibleByWallet = new Map(eligibleHolders.map((holder) => [holder.wallet, holder]));
     const currentByWallet = new Map(currentHolders.map((holder) => [holder.wallet, holder]));
     const updates: Record<string, unknown>[] = [];
     const eligible: Holder[] = [];
-    const permanentlyRemoved = new Set<string>();
 
     for (const state of states) {
-      if (state.permanently_ineligible) {
-        permanentlyRemoved.add(state.wallet);
-        continue;
-      }
-
+      if (eligibleByWallet.has(state.wallet)) continue;
       const current = currentByWallet.get(state.wallet);
-      const previousRaw = parseRaw(state.source_balance_raw);
-
-      const droppedBelowThreshold = !current || current.uiBalance < config.eligibilityMin;
-      const soldAnyAmount = current ? current.rawBalance < previousRaw : true;
-
-      if (droppedBelowThreshold || soldAnyAmount) {
-        updates.push({
-          wallet: state.wallet,
-          source_balance: current?.uiBalance.toString() ?? state.source_balance ?? "0",
-          source_balance_raw: current?.rawBalance.toString() ?? state.source_balance_raw ?? "0",
-          highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
-          permanently_ineligible: true,
-          ineligible_reason: soldAnyAmount ? "balance_decreased" : "dropped_below_threshold",
-          ineligible_at: now,
-          last_seen_at: now,
-          last_epoch_id: epochId,
-          updated_at: now,
-          current_streak_epochs: 0,
-          current_multiplier_bps: 10_000
-        });
-        permanentlyRemoved.add(state.wallet);
-      } else if (!eligibleByWallet.has(state.wallet)) {
-        updates.push({
-          wallet: state.wallet,
-          source_balance: current.uiBalance.toString(),
-          source_balance_raw: current.rawBalance.toString(),
-          highest_source_balance_raw:
-            parseRaw(state.highest_source_balance_raw) > current.rawBalance
-              ? state.highest_source_balance_raw ?? current.rawBalance.toString()
-              : current.rawBalance.toString(),
-          last_seen_at: now,
-          last_epoch_id: epochId,
-          updated_at: now,
-          permanently_ineligible: false,
-          ineligible_reason: null,
-          ineligible_at: null,
-          current_streak_epochs: 0,
-          current_multiplier_bps: 10_000
-        });
-      }
+      updates.push({
+        wallet: state.wallet,
+        source_balance: current?.uiBalance.toString() ?? "0",
+        source_balance_raw: current?.rawBalance.toString() ?? "0",
+        highest_source_balance_raw: state.highest_source_balance_raw ?? state.source_balance_raw ?? "0",
+        eligible_since: null,
+        last_seen_at: nowIso,
+        last_epoch_id: epochId,
+        updated_at: nowIso,
+        current_streak_epochs: 0,
+        current_multiplier_bps: 10_000,
+        permanently_ineligible: false,
+        ineligible_reason: current ? "dropped_below_threshold" : "not_in_snapshot"
+      });
     }
 
     for (const holder of eligibleHolders) {
       const existing = stateByWallet.get(holder.wallet);
-      if (permanentlyRemoved.has(holder.wallet) || existing?.permanently_ineligible) continue;
-
       const previousRaw = parseRaw(existing?.source_balance_raw);
       const highestRaw = parseRaw(existing?.highest_source_balance_raw);
-      const soldAnyAmount = existing && holder.rawBalance < previousRaw;
-
-      if (soldAnyAmount) {
-        updates.push({
-          wallet: holder.wallet,
-          source_balance: holder.uiBalance.toString(),
-          source_balance_raw: holder.rawBalance.toString(),
-          highest_source_balance_raw: highestRaw > holder.rawBalance ? highestRaw.toString() : holder.rawBalance.toString(),
-          permanently_ineligible: true,
-          ineligible_reason: "balance_decreased",
-          ineligible_at: now,
-          last_seen_at: now,
-          last_epoch_id: epochId,
-          updated_at: now,
-          current_streak_epochs: 0,
-          current_multiplier_bps: 10_000
-        });
-        permanentlyRemoved.add(holder.wallet);
-        continue;
-      }
-
-      const nextStreak = existing ? (existing.current_streak_epochs ?? 0) + 1 : 1;
-      const eligibleSince = existing?.eligible_since ?? now;
-      const nextHighest = highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance;
+      const soldSinceLastRound = Boolean(existing && previousRaw > 0n && holder.rawBalance < previousRaw);
+      const eligibleSince = soldSinceLastRound || !existing?.eligible_since ? nowIso : existing.eligible_since;
+      const multiplierBps = holdingMultiplierBps(eligibleSince, now.getTime());
+      const streak = soldSinceLastRound ? 1 : (existing?.current_streak_epochs ?? 0) + 1;
 
       updates.push({
         wallet: holder.wallet,
         source_balance: holder.uiBalance.toString(),
         source_balance_raw: holder.rawBalance.toString(),
-        highest_source_balance_raw: nextHighest.toString(),
+        highest_source_balance_raw: (highestRaw > holder.rawBalance ? highestRaw : holder.rawBalance).toString(),
         eligible_since: eligibleSince,
-        last_seen_at: now,
+        last_seen_at: nowIso,
         last_epoch_id: epochId,
-        updated_at: now,
-        current_streak_epochs: nextStreak,
-        current_multiplier_bps: 10_000,
+        updated_at: nowIso,
+        current_streak_epochs: streak,
+        current_multiplier_bps: multiplierBps,
         permanently_ineligible: false,
         ineligible_reason: null,
-        ineligible_at: null
+        ineligible_at: null,
+        sell_events: (existing?.sell_events ?? 0) + (soldSinceLastRound ? 1 : 0),
+        last_sell_at: soldSinceLastRound ? nowIso : existing?.last_sell_at ?? null
       });
 
-      eligible.push(holder);
+      eligible.push({ ...holder, holdingMultiplierBps: multiplierBps });
     }
 
     await upsertHolderStates(updates);
-
-    const removed = eligibleHolders.length - eligible.length;
-    if (removed > 0) {
-      console.log(`[${epochId}] holder-state removed ${removed} permanently ineligible holders`);
-    }
     return eligible;
   } catch (error) {
     if (isMissingHolderStateTable(error)) {
-      console.warn(`[${epochId}] holder_states table missing; never-sold eligibility tracking is disabled`);
-      return eligibleHolders;
+      throw new Error("Pump Money holder-state migration is missing; refusing to run without loyalty tracking");
     }
     throw error;
   }
