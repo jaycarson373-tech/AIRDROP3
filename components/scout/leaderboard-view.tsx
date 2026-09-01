@@ -30,7 +30,7 @@ function LeaderboardCard({ entry }: { entry: LeaderboardEntry }) {
       <a className="goat-leaderboard-card__wallet" href={walletUrl(entry.wallet)} target="_blank" rel="noopener noreferrer">
         <span>WALLET</span><strong>{shortWallet(entry.wallet)}</strong><ArrowUpRight size={12} />
       </a>
-      <div><span>TOKEN BALANCE</span><strong>{formatToken(entry.tokenBalance, "PUMP MONEY")}</strong></div>
+      <div><span>$PMONEY BALANCE</span><strong>{formatToken(entry.tokenBalance, "PMONEY")}</strong></div>
       <div><span>QUALIFIED DRAWS</span><strong>{entry.qualifiedEpochs.toLocaleString()}</strong></div>
       <div><span>HOLDING STREAK</span><strong>{entry.holdingStreak.toLocaleString()}</strong></div>
       <div><span>TOTAL REWARDS</span><RewardTotal entry={entry} /></div>
@@ -75,7 +75,7 @@ export function LeaderboardView() {
 
   return (
     <div className="scout-page goat-leaderboard-page">
-      <div className="scout-page-heading"><div><span className="scout-kicker">PUMP MONEY HOLDERS</span><h1>HOLDER WEIGHT.</h1><p>Verified balance and holding history only. No fabricated ranks.</p></div></div>
+      <div className="scout-page-heading"><div><span className="scout-kicker">$PMONEY HOLDERS</span><h1>HOLDER WEIGHT.</h1><p>Verified balance and holding history only. No fabricated ranks.</p></div></div>
 
       <section className="goat-rank-lookup">
         <div><span>CURRENT WALLET RANK</span><strong>{walletRank ? `#${walletRank.rank}` : "ENTER A WALLET"}</strong></div>

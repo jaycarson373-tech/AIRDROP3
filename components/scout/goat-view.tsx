@@ -67,14 +67,14 @@ export function PumpMoneyView() {
         <div className="goat-hero__copy">
           <div className="goat-eyebrow"><i /> EVERY FIVE MINUTES</div>
           <h1>PUMP<br /><span>MONEY.</span></h1>
-          <p className="goat-hero__subhead">Hold PUMP. Ten holders get paid.</p>
+          <p className="goat-hero__subhead">Hold $PMONEY. Ten holders get paid.</p>
           <div className="goat-hero__body">
             <p>Every five minutes, Pump Money selects ten eligible holders and splits the PUMP reward pool equally.</p>
             <p className="goat-hero__quote">MORE BALANCE. MORE TIME. LESS SELLING. MORE WEIGHT.</p>
             <p>No wallet connect. No claim forms. Settled onchain receipts only.</p>
           </div>
           <div className="goat-hero__actions">
-            <ActionLink href={buyUrl} solid>BUY PUMP MONEY <ArrowUpRight size={15} /></ActionLink>
+            <ActionLink href={buyUrl} solid>BUY $PMONEY <ArrowUpRight size={15} /></ActionLink>
             <ActionLink href="#terminal">VIEW LIVE DRAW</ActionLink>
           </div>
           <div className="goat-hero__proof">
@@ -126,7 +126,7 @@ export function PumpMoneyView() {
           <p>Every five minutes, a verified holder snapshot enters a weighted draw. Balance and continuous holding improve selection weight. Detected selling reduces or ends eligibility under the published holder policy.</p>
         </div>
         <div className="goat-steps">
-          <article><span>01</span><Clock3 /><strong>HOLD</strong><p>Hold the Pump Money token in your wallet.</p></article>
+          <article><span>01</span><Clock3 /><strong>HOLD</strong><p>Hold $PMONEY in your wallet.</p></article>
           <article><span>02</span><ShieldCheck /><strong>SNAPSHOT</strong><p>The worker verifies the eligible holder set.</p></article>
           <article><span>03</span><Coins /><strong>DRAW TEN</strong><p>Ten unique wallets are selected by weighted draw.</p></article>
           <article><span>04</span><CheckCircle2 /><strong>PAY EQUALLY</strong><p>The PUMP pool splits equally across the winners.</p></article>

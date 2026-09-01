@@ -43,12 +43,12 @@ export const metadata: Metadata = {
     template: "%s | Pump Money"
   },
   alternates: { canonical: siteUrl },
-  description: "Hold Pump Money. Every five minutes, ten eligible holders are selected to receive equal shares of PUMP.",
+  description: "Hold PMONEY. Every five minutes, ten eligible holders are selected to receive equal shares of PUMP.",
   applicationName: "Pump Money",
-  keywords: ["Pump Money", "PUMP", "Solana", "holder rewards", "weighted draw", "five-minute distributions"],
+  keywords: ["Pump Money", "PMONEY", "PUMP", "Solana", "holder rewards", "weighted draw", "five-minute distributions"],
   openGraph: {
     title: "PUMP MONEY.",
-    description: "Hold PUMP. Ten holders get paid every five minutes.",
+    description: "Hold PMONEY. Ten holders get paid PUMP every five minutes.",
     url: siteUrl,
     siteName: "Pump Money",
     type: "website",
@@ -64,12 +64,16 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "PUMP MONEY.",
-    description: "Hold PUMP. Ten holders get paid every five minutes.",
+    description: "Hold PMONEY. Ten holders get paid PUMP every five minutes.",
     images: ["/brand/pump-money-hero.png"]
   },
   icons: {
-    icon: "/brand/pump-money-logo.png",
-    apple: "/brand/pump-money-logo.png"
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/brand/pump-money-logo.png", sizes: "1254x1254", type: "image/png" }
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
   },
   robots: { index: true, follow: true }
 };

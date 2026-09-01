@@ -42,7 +42,7 @@ function TopTicker() {
   const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
   const seconds = String(remaining % 60).padStart(2, "0");
   const metrics = [
-    ["PUMP MONEY", state === "error" ? "OFFLINE" : "ONLINE"],
+    ["$PMONEY", state === "error" ? "OFFLINE" : "ONLINE"],
     ["WINNERS", "10"],
     ["REWARD", "$PUMP"],
     ["ALLOCATION", "EQUAL SHARE"],
@@ -82,6 +82,7 @@ function Header() {
           </span>
           <span>
             <strong>PUMP MONEY</strong>
+            <small>$PMONEY</small>
           </span>
         </Link>
 
@@ -108,7 +109,7 @@ function Header() {
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
           {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">PUMP MONEY X ↗</a> : null}
-          {headerBuyUrl ? <a href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY PUMP MONEY ↗</a> : null}
+          {headerBuyUrl ? <a href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY $PMONEY ↗</a> : null}
         </div>
       ) : null}
     </header>

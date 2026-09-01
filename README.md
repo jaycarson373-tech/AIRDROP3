@@ -1,6 +1,6 @@
-# Pump Money
+# Pump Money ($PMONEY)
 
-Pump Money is a five-minute Solana holder-draw protocol. Each completed cycle:
+Pump Money is a five-minute Solana holder-draw protocol for $PMONEY holders. Each completed cycle:
 
 1. snapshots the eligible Pump Money holder set;
 2. applies a weighted draw where balance and continuous holding improve selection weight;
