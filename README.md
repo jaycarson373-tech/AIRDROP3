@@ -1,20 +1,24 @@
-# Pump Money ($PMONEY)
+# BRAINROT ($BRAINROT)
 
-Pump Money is a five-minute Solana holder-draw protocol for $PMONEY holders. Each completed cycle:
+BRAINROT is a five-minute Solana holder reward protocol. Each completed cycle:
 
-1. snapshots the eligible Pump Money holder set;
-2. applies a weighted draw where balance and continuous holding improve selection weight;
-3. selects up to ten unique wallets;
-4. divides the available PUMP reward pool equally across those wallets; and
-5. publishes only settled, verifiable Solana receipts.
+1. snapshots the eligible $BRAINROT holder set;
+2. applies the existing holder-allocation logic;
+3. claims accrued creator fees server-side;
+4. buys the verified $NEURAL PreStocks asset on Solana; and
+5. distributes settled, verifiable $NEURAL receipts to eligible holders.
 
-Detected selling is handled by the holder-state policy before the draw. Selection is weighted, deterministic for audit/replay, and never guaranteed. No wallet connection, signature, approval, or manual claim is required.
+Distributions run on fixed five-minute UTC epochs. If fees or purchased rewards are below the configured threshold, the epoch is recorded as skipped and the site displays "No distribution this epoch." No wallet signature, approval, or manual claim is required for holder rewards.
 
-The final Pump Money mint, PUMP reward mint, X account, and eligibility threshold remain unset until confirmed.
+## Safety Gates
 
-## Safety gates
+All money-moving worker flags default off. Configure the verified $BRAINROT source mint, the official $NEURAL reward mint, holder threshold, exclusions, Supabase schema, retry settings, slippage, fee reserves, and emergency pause state; then run and inspect a dry cycle before enabling claims, buys, airdrops, or the worker.
 
-All money-moving worker flags default off. Configure the final source mint, PUMP reward mint, holder threshold, exclusions, and Supabase schema; run and inspect a dry cycle before enabling claims, buys, airdrops, or the worker.
+The official $NEURAL mint configured by default is:
+
+```text
+PrekqLJvJ3qVdXmBGDiexvwUTF4rLFDa6HWS4HJbw9S
+```
 
 ## Commands
 

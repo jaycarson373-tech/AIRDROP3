@@ -5,7 +5,7 @@ import { AlertCircle, LoaderCircle, RefreshCw } from "lucide-react";
 export function PrelaunchNotice({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`scout-prelaunch-line${compact ? " scout-prelaunch-line--compact" : ""}`}>
-      PRELAUNCH. FIRST WEIGHTED HOLDER DRAW BEGINS AT LAUNCH. REAL RECEIPTS ONLY.
+      AWAITING LIVE DATA. $NEURAL DROPS WILL DISPLAY ONLY AFTER REAL RECEIPTS EXIST.
     </div>
   );
 }

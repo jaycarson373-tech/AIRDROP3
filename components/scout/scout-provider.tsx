@@ -14,11 +14,19 @@ type ScoutContextValue = {
 };
 
 const emptyStats: ScoutStats = {
+  liveDataAvailable: false,
   currentEpoch: 0,
   totalEpochs: 0,
   lastRewardAirdropped: 0,
   totalRewardAirdropped: 0,
+  totalCreatorFeesConvertedSol: null,
   latestEligibleHolders: 0,
+  latestTransaction: null,
+  sourceMint: projectConfig.brainrotMint,
+  rewardMint: projectConfig.neuralMint,
+  eligibilityMin: null,
+  maxHolderPct: null,
+  emergencyPaused: false,
   averageMultiplier: null,
   nextDropTime: null,
   totalSolValueAirdropped: 0,
@@ -70,7 +78,7 @@ export function ScoutProvider({
       setLastUpdated(new Date());
     } catch (nextError) {
       setState((current) => current === "loaded" || current === "empty" || current === "stale" ? "stale" : "error");
-      setError(nextError instanceof Error ? nextError.message : "Pump Money data connection failed");
+      setError(nextError instanceof Error ? nextError.message : "BRAINROT data connection failed");
     }
   }, []);
 

@@ -17,35 +17,35 @@ function PageHeading({ eyebrow, title, body }: { eyebrow: string; title: string;
 export function ReceiptsView() {
   const { launchState, stats, state } = useScout();
   const live = launchState === "live";
-  const awaitingLaunch = "AWAITING FIRST DRAW";
-  const pump = live ? stats.rewardBreakdown.find((entry) => entry.asset.trim().toUpperCase() === "PUMP") : undefined;
-  const rewardTotal = pump && pump.transfers > 0 && pump.total > 0 ? formatToken(pump.total, "PUMP") : awaitingLaunch;
+  const awaitingLaunch = "AWAITING LIVE DATA";
+  const neural = live ? stats.rewardBreakdown.find((entry) => entry.asset.trim().toUpperCase() === "NEURAL") : undefined;
+  const rewardTotal = neural && neural.transfers > 0 && neural.total > 0 ? formatToken(neural.total, "NEURAL") : awaitingLaunch;
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="Pump Money Rewards" title="DRAW HISTORY." body="Every settled draw, winning wallet, timestamp, and onchain receipt in one verifiable ledger." />
+      <PageHeading eyebrow="BRAINROT Rewards" title="DROP HISTORY." body="Every settled $NEURAL distribution, timestamp, and onchain receipt in one verifiable ledger." />
       <div className="scout-overview-grid">
-        <Metric label="Current Draw" value={live && stats.currentEpoch ? `#${stats.currentEpoch}` : awaitingLaunch} />
-        <Metric label="PUMP Distributed" value={rewardTotal} />
-        <Metric label="Winners per Draw" value="10" />
+        <Metric label="Current Drop" value={live && stats.currentEpoch ? `#${stats.currentEpoch}` : awaitingLaunch} />
+        <Metric label="$NEURAL Distributed" value={rewardTotal} />
+        <Metric label="Reward Asset" value="$NEURAL" />
         <Metric label="Holders Rewarded" value={live && stats.totalHoldersRewarded ? stats.totalHoldersRewarded.toLocaleString() : awaitingLaunch} />
       </div>
       <section className="scout-panel scout-panel--table">
-        <div className="scout-panel__head"><div><span className="scout-kicker">Cycle history</span><h2>Verified settlements</h2></div><Radio size={20} /></div>
+        <div className="scout-panel__head"><div><span className="scout-kicker">Distribution history</span><h2>Verified settlements</h2></div><Radio size={20} /></div>
         {live && state === "loading" ? <Skeleton rows={5} /> : live && stats.roundHistory.length ? (
           <div className="scout-table-wrap">
             <table className="scout-table scout-table--rewards">
-              <thead><tr><th>Cycle</th><th>Started</th><th>Eligible</th><th>Allocation</th><th>SOL value</th><th>Status</th><th>Transaction</th></tr></thead>
+              <thead><tr><th>Epoch</th><th>Started</th><th>Eligible</th><th>Allocation</th><th>SOL value</th><th>Status</th><th>Transaction</th></tr></thead>
               <tbody>{stats.roundHistory.map((row) => (
                 <tr key={`${row.epoch}-${row.startedAt}`}>
                   <td data-label="EPOCH">#{row.epoch}</td><td data-label="TIMESTAMP">{formatTime(row.startedAt)}</td><td data-label="ELIGIBLE SNAPSHOT">{row.eligibleCount.toLocaleString()}</td>
-                  <td data-label="ALLOCATION">10 EQUAL PUMP SHARES</td>
+                  <td data-label="ALLOCATION">EXISTING HOLDER LOGIC</td>
                   <td data-label="SOL VALUE">{row.solValueAirdropped.toFixed(4)} SOL</td><td data-label="STATUS"><StatusBadge label={row.status} /></td>
-                  <td data-label="TRANSACTION">{row.txSig ? <a className="scout-icon-link" href={explorerTxUrl(row.txSig)} target="_blank" rel="noopener noreferrer" aria-label={`Verify cycle ${row.epoch}`}><ExternalLink size={15} /></a> : awaitingLaunch}</td>
+                  <td data-label="TRANSACTION">{row.txSig ? <a className="scout-icon-link" href={explorerTxUrl(row.txSig)} target="_blank" rel="noopener noreferrer" aria-label={`Verify epoch ${row.epoch}`}><ExternalLink size={15} /></a> : awaitingLaunch}</td>
                 </tr>
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="DRAW HISTORY BEGINS AT LAUNCH." body="Draws appear only after winner transactions are recorded as settled." />}
+        ) : <EmptyState title="DROP HISTORY AWAITS LIVE DATA." body="Distributions appear only after real transactions are recorded as settled." />}
       </section>
       <section className="scout-panel scout-panel--table">
         <div className="scout-panel__head"><div><span className="scout-kicker">Recipient feed</span><h2>Recent verified payouts</h2></div><ShieldCheck size={20} /></div>
@@ -62,7 +62,7 @@ export function ReceiptsView() {
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="DRAW HISTORY BEGINS AT LAUNCH." body="Winning wallets and transaction signatures publish after the first completed distribution." />}
+        ) : <EmptyState title="DROP HISTORY AWAITS LIVE DATA." body="Wallets and transaction signatures publish after completed $NEURAL distributions." />}
       </section>
     </div>
   );
@@ -71,13 +71,13 @@ export function ReceiptsView() {
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How Pump Money works." body="Every five minutes, ten eligible holders are selected and receive equal shares of the PUMP reward pool." />
+      <PageHeading eyebrow="Documentation" title="How BRAINROT works." body="Every five minutes, accrued creator fees buy $NEURAL and are distributed to eligible $BRAINROT holders using the existing allocation logic." />
       <div className="scout-doc-layout">
         <aside><a href="#lifecycle">Distribution cycle</a><a href="#weight">Eligibility</a><a href="#treasury">Settlement</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Five-minute draw</h2><p>At each five-minute UTC boundary, Pump Money snapshots the eligible holder set and selects up to ten unique wallets.</p></section>
-          <section id="weight"><span className="scout-kicker">02</span><h2>Selection weight</h2><p>Balance and continuous holding improve a wallet&apos;s selection weight. Detected selling reduces or ends eligibility under the holder policy. Selection is never guaranteed.</p></section>
-          <section id="treasury"><span className="scout-kicker">03</span><h2>Equal settlement</h2><p>The available PUMP reward pool is divided equally among the selected wallets. Amounts publish only after real Solana transfer receipts are available.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Five-minute drop</h2><p>At each fixed five-minute UTC boundary, the worker snapshots eligible $BRAINROT holders and prepares the next $NEURAL distribution.</p></section>
+          <section id="weight"><span className="scout-kicker">02</span><h2>Eligibility</h2><p>Eligibility uses the confirmed holder rules configured for the worker. This site does not invent reward amounts or formulas.</p></section>
+          <section id="treasury"><span className="scout-kicker">03</span><h2>Settlement</h2><p>Creator fees are claimed server-side, swapped into the verified $NEURAL PreStocks asset, and distributed only when real Solana transfer receipts are available.</p></section>
         </div>
       </div>
     </div>

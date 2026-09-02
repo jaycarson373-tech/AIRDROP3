@@ -20,18 +20,18 @@ function scheduleFirstRun() {
 }
 
 if (config.workerEnabled) {
-  console.log(`Pump Money worker started. Schedule: every ${config.epochMinutes} minutes.`);
+  console.log(`BRAINROT worker started. Schedule: fixed ${config.epochMinutes}-minute UTC epochs.`);
   console.log(
-    `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}`
+    `Mode: REWARD_MODE=${config.rewardMode}. Gates: CLAIM_ENABLED=${config.claimEnabled}, BUY_ENABLED=${config.buyEnabled}, AIRDROP_ENABLED=${config.airdropEnabled}, EMERGENCY_PAUSED=${config.emergencyPaused}`
   );
-  console.log(`Source token mint: ${config.sourceTokenMint.toBase58()}`);
-  console.log(`Reward token: ${config.rewardTokenSymbol}=${config.rewardTokenMint.toBase58()}`);
-  console.log(`Draw policy: ${config.drawWinnerCount} unique weighted winners; equal PUMP allocations.`);
-  console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ Pump Money tokens; wallets above ${config.maxHolderPct}% are excluded.`);
+  console.log(`Source token: $${config.sourceTokenSymbol}=${config.sourceTokenMint.toBase58()}`);
+  console.log(`Reward token: $${config.rewardTokenSymbol}=${config.rewardTokenMint.toBase58()}`);
+  console.log(`Distribution policy: ${config.drawWinnerCount} unique weighted recipients; equal $NEURAL allocations.`);
+  console.log(`Eligibility rule: ${config.eligibilityMin.toLocaleString()}+ $BRAINROT; wallets above ${config.maxHolderPct}% are excluded.`);
   scheduleFirstRun();
 } else {
   console.log(
-    "WORKER_ENABLED=false. Pump Money scheduler is parked; no claims, swaps, or distributions will run."
+    "WORKER_ENABLED=false. BRAINROT scheduler is parked; no claims, swaps, or distributions will run."
   );
   setInterval(() => undefined, 60_000);
 }

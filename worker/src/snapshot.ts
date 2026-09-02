@@ -4,8 +4,8 @@ import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
 import { selectWeightedRecipients } from "./draw-policy.js";
 
-const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
-const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
+const PUMPFUN_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
+const PUMPFUN_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
 
 export type Holder = {
   wallet: string;
@@ -29,11 +29,11 @@ function addExcluded(excluded: Set<string>, value: PublicKey | null | undefined)
 }
 
 function pumpPda(seeds: Buffer[]) {
-  return PublicKey.findProgramAddressSync(seeds, PUMP_PROGRAM_ID)[0];
+  return PublicKey.findProgramAddressSync(seeds, PUMPFUN_PROGRAM_ID)[0];
 }
 
 function pumpAmmPda(seeds: Buffer[]) {
-  return PublicKey.findProgramAddressSync(seeds, PUMP_AMM_PROGRAM_ID)[0];
+  return PublicKey.findProgramAddressSync(seeds, PUMPFUN_AMM_PROGRAM_ID)[0];
 }
 
 function bondingCurvePda(mint: PublicKey) {

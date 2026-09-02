@@ -9,6 +9,13 @@ export const supabase = createClient(config.supabaseUrl, config.supabaseServiceR
 
 export type EpochStatus = "running" | "completed" | "failed" | "skipped";
 
+export class DuplicateEpochError extends Error {
+  constructor(epochId: string) {
+    super(`Epoch already exists: ${epochId}`);
+    this.name = "DuplicateEpochError";
+  }
+}
+
 export type PayoutMetadata = {
   normalRewardAmountRaw?: string;
   normalRewardAmount?: string;
@@ -62,6 +69,11 @@ function warnNonFatal(label: string, error: unknown) {
   console.warn(`${label}: ${JSON.stringify(error)}`);
 }
 
+function isDuplicateKeyError(error: unknown) {
+  const serialized = JSON.stringify(error);
+  return serialized.includes('"23505"') || serialized.toLowerCase().includes("duplicate key");
+}
+
 export async function getEpoch(epochId: string) {
   const result = await supabase.from("epochs").select("*").eq("epoch_id", epochId).maybeSingle();
   return assertNoError(result, "get epoch");
@@ -70,15 +82,21 @@ export async function getEpoch(epochId: string) {
 export async function startEpoch(epochId: string, scoutSignalId?: string | null) {
   const result = await supabase
     .from("epochs")
-    .upsert({ epoch_id: epochId, status: "running", started_at: new Date().toISOString(), scout_signal_id: scoutSignalId ?? null })
+    .insert({ epoch_id: epochId, status: "running", started_at: new Date().toISOString(), scout_signal_id: scoutSignalId ?? null })
     .select()
     .single();
+  if (result.error && isDuplicateKeyError(result.error)) {
+    throw new DuplicateEpochError(epochId);
+  }
   if (result.error && JSON.stringify(result.error).includes("scout_signal_id")) {
     const fallback = await supabase
       .from("epochs")
-      .upsert({ epoch_id: epochId, status: "running", started_at: new Date().toISOString() })
+      .insert({ epoch_id: epochId, status: "running", started_at: new Date().toISOString() })
       .select()
       .single();
+    if (fallback.error && isDuplicateKeyError(fallback.error)) {
+      throw new DuplicateEpochError(epochId);
+    }
     return assertNoError(fallback, "start epoch fallback");
   }
   return assertNoError(result, "start epoch");
@@ -220,7 +238,7 @@ export async function recordPfpReward(epochId: string, pfpRewardLamports: string
     pfp_reward_tx_sig: pfpRewardTxSig
   });
   if (result.error) {
-    warnNonFatal("record PFP reward failed; continuing epoch", result.error);
+    warnNonFatal("record secondary reward failed; continuing epoch", result.error);
   }
 }
 

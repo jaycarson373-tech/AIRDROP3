@@ -77,6 +77,25 @@ function rewardAtaForOwner(owner: PublicKey, tokenProgram: PublicKey) {
   );
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function withRetry<T>(epochId: string, label: string, attempts: number, operation: () => Promise<T>) {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) break;
+      console.warn(`[${epochId}] ${label} failed on attempt ${attempt}/${attempts}; retrying`, error);
+      await sleep(config.retryBaseDelayMs * attempt);
+    }
+  }
+  throw lastError;
+}
+
 export async function treasuryRewardBalanceRaw(reserveLamports = 0n) {
   const treasury = treasuryKeypair();
   if (config.rewardMode === "sol") {
@@ -278,13 +297,17 @@ export async function airdropRewards(
       tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
       tx.sign(treasury);
 
-      const simulation = await connection.simulateTransaction(tx);
-      if (simulation.value.err) {
-        throw new Error(`Transfer simulation failed: ${JSON.stringify(simulation.value.err)}`);
-      }
+      const serialized = tx.serialize();
+      const txSig = await withRetry(epochId, `token airdrop batch ${batchIndex + 1}`, config.airdropRetryAttempts, async () => {
+        const simulation = await connection.simulateTransaction(tx);
+        if (simulation.value.err) {
+          throw new Error(`Transfer simulation failed: ${JSON.stringify(simulation.value.err)}`);
+        }
 
-      const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
-      await connection.confirmTransaction(txSig, "confirmed");
+        const signature = await connection.sendRawTransaction(serialized, { maxRetries: 3, skipPreflight: false });
+        await connection.confirmTransaction(signature, "confirmed");
+        return signature;
+      });
       for (const allocation of batch) {
         await settlePayout(epochId, allocation.wallet, txSig);
         settledRaw += allocation.amount;
@@ -398,13 +421,17 @@ async function airdropSolRewards(
       tx.recentBlockhash = (await connection.getLatestBlockhash("confirmed")).blockhash;
       tx.sign(treasury);
 
-      const simulation = await connection.simulateTransaction(tx);
-      if (simulation.value.err) {
-        throw new Error(`SOL transfer simulation failed: ${JSON.stringify(simulation.value.err)}`);
-      }
+      const serialized = tx.serialize();
+      const txSig = await withRetry(epochId, `SOL airdrop batch ${batchIndex + 1}`, config.airdropRetryAttempts, async () => {
+        const simulation = await connection.simulateTransaction(tx);
+        if (simulation.value.err) {
+          throw new Error(`SOL transfer simulation failed: ${JSON.stringify(simulation.value.err)}`);
+        }
 
-      const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
-      await connection.confirmTransaction(txSig, "confirmed");
+        const signature = await connection.sendRawTransaction(serialized, { maxRetries: 3, skipPreflight: false });
+        await connection.confirmTransaction(signature, "confirmed");
+        return signature;
+      });
       for (const allocation of batch) {
         await settlePayout(epochId, allocation.wallet, txSig);
         settledRaw += allocation.amount;

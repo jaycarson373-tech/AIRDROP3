@@ -1,0 +1,31 @@
+{
+  "name": "BRAINROT",
+  "short_name": "BRAINROT",
+  "description": "Hold BRAINROT. Creator fees buy $NEURAL. Holders get airdropped every five minutes.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090015",
+  "theme_color": "#08f7ff",
+  "icons": [
+    {
+      "src": "/favicon-16x16.png?v=brainrot",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png?v=brainrot",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png?v=brainrot",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png?v=brainrot",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

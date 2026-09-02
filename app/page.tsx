@@ -1,5 +1,5 @@
-import { PumpMoneyView } from "../components/scout/goat-view";
+import { BrainrotView } from "../components/scout/brainrot-view";
 
 export default function Page() {
-  return <PumpMoneyView />;
+  return <BrainrotView />;
 }

@@ -1,5 +1,11 @@
 import { LAMPORTS_PER_SOL, SystemProgram, Transaction, VersionedTransaction, sendAndConfirmTransaction } from "@solana/web3.js";
-import { NATIVE_MINT, TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, getMint } from "@solana/spl-token";
+import {
+  NATIVE_MINT,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddressSync,
+  getMint
+} from "@solana/spl-token";
 import { config, treasuryKeypair } from "./config.js";
 import { connection } from "./solana.js";
 
@@ -39,6 +45,37 @@ function maxBigInt(a: bigint, b: bigint) {
   return a > b ? a : b;
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function withRetry<T>(epochId: string, label: string, attempts: number, operation: () => Promise<T>) {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) break;
+      console.warn(`[${epochId}] ${label} failed on attempt ${attempt}/${attempts}; retrying`, error);
+      await sleep(config.retryBaseDelayMs * attempt);
+    }
+  }
+  throw lastError;
+}
+
+async function treasuryRewardTokenBalanceRaw() {
+  const treasury = treasuryKeypair();
+  const tokenProgram = await tokenProgramForMint();
+  const ata = getAssociatedTokenAddressSync(config.rewardTokenMint, treasury.publicKey, false, tokenProgram);
+  try {
+    const balance = await connection.getTokenAccountBalance(ata, "confirmed");
+    return BigInt(balance.value.amount);
+  } catch {
+    return 0n;
+  }
+}
+
 async function postBuyReserveLamports() {
   const minReserveLamports = BigInt(Math.floor(config.minSolReserve * LAMPORTS_PER_SOL));
   if (!config.airdropEnabled) return minReserveLamports;
@@ -61,10 +98,10 @@ export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
     explicitReserveLamports === undefined ? defaultReserveLamports : maxBigInt(explicitReserveLamports, defaultReserveLamports);
   const usableLamports = balance > reserveLamports ? balance - reserveLamports : 0n;
   const splitBudgetLamports = (usableLamports * BigInt(config.swapBalanceBps)) / 10_000n;
-  const bagworkBps = config.pfpRewardWallet ? config.pfpRewardBps : 0;
-  const rewardBuyBps = config.pfpRewardWallet ? Math.max(0, Math.min(config.rewardBuyBps, 10_000 - bagworkBps)) : config.rewardBuyBps;
+  const secondaryBps = config.pfpRewardWallet ? config.pfpRewardBps : 0;
+  const rewardBuyBps = config.pfpRewardWallet ? Math.max(0, Math.min(config.rewardBuyBps, 10_000 - secondaryBps)) : config.rewardBuyBps;
   const amount = (splitBudgetLamports * BigInt(rewardBuyBps)) / 10_000n;
-  const pfpRewardLamports = (splitBudgetLamports * BigInt(bagworkBps)) / 10_000n;
+  const pfpRewardLamports = (splitBudgetLamports * BigInt(secondaryBps)) / 10_000n;
   const allocatedLamports = amount + pfpRewardLamports;
   const solLongReserveLamports = usableLamports > allocatedLamports ? usableLamports - allocatedLamports : 0n;
 
@@ -76,7 +113,7 @@ export async function treasurySwapAmount(explicitReserveLamports?: bigint) {
     usableLamports,
     solLongReserveLamports,
     rewardBuyBps,
-    bagworkBps
+    secondaryBps
   };
 }
 
@@ -112,11 +149,11 @@ async function sendPfpReward(epochId: string, amountLamports: bigint) {
   if (!config.pfpRewardWallet || amountLamports <= 0n) return null;
   const treasury = treasuryKeypair();
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}bagworking reward split: ${amountLamports.toString()} lamports to ${config.pfpRewardWallet.toBase58()}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}creator-fee secondary split: ${amountLamports.toString()} lamports to ${config.pfpRewardWallet.toBase58()}`
   );
   if (!config.buyEnabled) return null;
   if (amountLamports > BigInt(Number.MAX_SAFE_INTEGER)) {
-    throw new Error("Bagworking reward is too large for a single transfer");
+    throw new Error("Creator-fee secondary split is too large for a single transfer");
   }
   const tx = new Transaction().add(
     SystemProgram.transfer({
@@ -125,7 +162,9 @@ async function sendPfpReward(epochId: string, amountLamports: bigint) {
       lamports: Number(amountLamports)
     })
   );
-  return await sendAndConfirmTransaction(connection, tx, [treasury], { commitment: "confirmed", maxRetries: 3 });
+  return await withRetry(epochId, "creator-fee split transfer", config.swapRetryAttempts, () =>
+    sendAndConfirmTransaction(connection, tx, [treasury], { commitment: "confirmed", maxRetries: 3 })
+  );
 }
 
 export async function buyReward(epochId: string, explicitReserveLamports?: bigint): Promise<BuyResult> {
@@ -144,13 +183,13 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
   }
 
   const treasury = treasuryKeypair();
-  const { amount, pfpRewardLamports, balance, reserveLamports, usableLamports, solLongReserveLamports, rewardBuyBps, bagworkBps } =
+  const { amount, pfpRewardLamports, balance, reserveLamports, usableLamports, solLongReserveLamports, rewardBuyBps, secondaryBps } =
     await treasurySwapAmount(explicitReserveLamports);
   const decimals = await rewardDecimals();
 
   if (amount <= 0n) {
     console.log(
-      `[${epochId}] insufficient treasury after reserve/split, skipping reward buy: balance=${balance}, reserve=${reserveLamports}, usable=${usableLamports}, buyBps=${rewardBuyBps}, bagworkBps=${bagworkBps}`
+      `[${epochId}] insufficient treasury after reserve/split, skipping reward buy: balance=${balance}, reserve=${reserveLamports}, usable=${usableLamports}, buyBps=${rewardBuyBps}, secondaryBps=${secondaryBps}`
     );
     return {
       baseSpentLamports: 0n,
@@ -164,14 +203,16 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
     };
   }
 
-  const { quote, swap } = await jupiterSwap(amount, treasury.publicKey.toBase58());
+  const { quote, swap } = await withRetry(epochId, "$NEURAL swap quote/build", config.swapRetryAttempts, () =>
+    jupiterSwap(amount, treasury.publicKey.toBase58())
+  );
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}Scout signal buy: usable=${usableLamports}, holder distribution=${amount} lamports (${rewardBuyBps} bps), protocol reserve path=${pfpRewardLamports} lamports (${bagworkBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}$NEURAL buy: usable=${usableLamports}, holder distribution=${amount} lamports (${rewardBuyBps} bps), secondary split=${pfpRewardLamports} lamports (${secondaryBps} bps), remaining protected=${solLongReserveLamports} lamports, reserve=${reserveLamports}`
   );
   console.log(
-    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw reward tokens for ${amount.toString()} lamports`
+    `[${epochId}] ${config.buyEnabled ? "" : "[DRY-RUN] "}would buy ${rewardReceivedRaw.toString()} raw $NEURAL tokens for ${amount.toString()} lamports`
   );
 
   if (!config.buyEnabled) {
@@ -187,21 +228,29 @@ export async function buyReward(epochId: string, explicitReserveLamports?: bigin
     };
   }
 
-  const tx = VersionedTransaction.deserialize(Buffer.from(swap.swapTransaction, "base64"));
-  tx.sign([treasury]);
-  const simulation = await connection.simulateTransaction(tx, { replaceRecentBlockhash: true, sigVerify: false });
-  if (simulation.value.err) {
-    console.error(simulation.value.logs?.join("\n"));
-    throw new Error(`Swap simulation failed: ${JSON.stringify(simulation.value.err)}`);
-  }
+  const rewardBalanceBefore = await treasuryRewardTokenBalanceRaw();
+  const txSig = await withRetry(epochId, "$NEURAL swap execution", config.swapRetryAttempts, async () => {
+    const tx = VersionedTransaction.deserialize(Buffer.from(swap.swapTransaction, "base64"));
+    tx.sign([treasury]);
+    const simulation = await connection.simulateTransaction(tx, { replaceRecentBlockhash: true, sigVerify: false });
+    if (simulation.value.err) {
+      console.error(simulation.value.logs?.join("\n"));
+      throw new Error(`Swap simulation failed: ${JSON.stringify(simulation.value.err)}`);
+    }
 
-  const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
-  await connection.confirmTransaction(txSig, "confirmed");
+    const signature = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
+    await connection.confirmTransaction(signature, "confirmed");
+    return signature;
+  });
+  const rewardBalanceAfter = await treasuryRewardTokenBalanceRaw();
+  const actualRewardReceivedRaw =
+    rewardBalanceAfter > rewardBalanceBefore ? rewardBalanceAfter - rewardBalanceBefore : rewardReceivedRaw;
+  const actualRewardReceivedUi = rawToUi(actualRewardReceivedRaw, decimals);
   const pfpRewardTxSig = await sendPfpReward(epochId, pfpRewardLamports);
   return {
     baseSpentLamports: amount,
-    rewardReceivedRaw,
-    rewardReceivedUi,
+    rewardReceivedRaw: actualRewardReceivedRaw,
+    rewardReceivedUi: actualRewardReceivedUi,
     usableLamports,
     solLongReserveLamports,
     pfpRewardLamports,
@@ -228,7 +277,9 @@ export async function buyRewardForAmount(epochId: string, amount: bigint): Promi
     };
   }
 
-  const { quote, swap } = await jupiterSwap(amount, treasury.publicKey.toBase58());
+  const { quote, swap } = await withRetry(epochId, `${config.rewardTokenSymbol} split swap quote/build`, config.swapRetryAttempts, () =>
+    jupiterSwap(amount, treasury.publicKey.toBase58())
+  );
   const rewardReceivedRaw = BigInt(quote.outAmount);
   const rewardReceivedUi = rawToUi(rewardReceivedRaw, decimals);
   console.log(
@@ -248,20 +299,28 @@ export async function buyRewardForAmount(epochId: string, amount: bigint): Promi
     };
   }
 
-  const tx = VersionedTransaction.deserialize(Buffer.from(swap.swapTransaction, "base64"));
-  tx.sign([treasury]);
-  const simulation = await connection.simulateTransaction(tx, { replaceRecentBlockhash: true, sigVerify: false });
-  if (simulation.value.err) {
-    console.error(simulation.value.logs?.join("\n"));
-    throw new Error(`Swap simulation failed for ${config.rewardTokenSymbol}: ${JSON.stringify(simulation.value.err)}`);
-  }
+  const rewardBalanceBefore = await treasuryRewardTokenBalanceRaw();
+  const txSig = await withRetry(epochId, `${config.rewardTokenSymbol} split swap execution`, config.swapRetryAttempts, async () => {
+    const tx = VersionedTransaction.deserialize(Buffer.from(swap.swapTransaction, "base64"));
+    tx.sign([treasury]);
+    const simulation = await connection.simulateTransaction(tx, { replaceRecentBlockhash: true, sigVerify: false });
+    if (simulation.value.err) {
+      console.error(simulation.value.logs?.join("\n"));
+      throw new Error(`Swap simulation failed for ${config.rewardTokenSymbol}: ${JSON.stringify(simulation.value.err)}`);
+    }
 
-  const txSig = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
-  await connection.confirmTransaction(txSig, "confirmed");
+    const signature = await connection.sendRawTransaction(tx.serialize(), { maxRetries: 3, skipPreflight: false });
+    await connection.confirmTransaction(signature, "confirmed");
+    return signature;
+  });
+  const rewardBalanceAfter = await treasuryRewardTokenBalanceRaw();
+  const actualRewardReceivedRaw =
+    rewardBalanceAfter > rewardBalanceBefore ? rewardBalanceAfter - rewardBalanceBefore : rewardReceivedRaw;
+  const actualRewardReceivedUi = rawToUi(actualRewardReceivedRaw, decimals);
   return {
     baseSpentLamports: amount,
-    rewardReceivedRaw,
-    rewardReceivedUi,
+    rewardReceivedRaw: actualRewardReceivedRaw,
+    rewardReceivedUi: actualRewardReceivedUi,
     usableLamports: amount,
     solLongReserveLamports: 0n,
     pfpRewardLamports: 0n,

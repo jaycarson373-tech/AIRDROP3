@@ -1,9 +1,17 @@
 export type ScoutStats = {
+  liveDataAvailable?: boolean;
   currentEpoch: number;
   totalEpochs: number;
   lastRewardAirdropped: number;
   totalRewardAirdropped: number;
+  totalCreatorFeesConvertedSol?: number | null;
   latestEligibleHolders: number;
+  latestTransaction?: string | null;
+  sourceMint?: string | null;
+  rewardMint?: string | null;
+  eligibilityMin?: number | null;
+  maxHolderPct?: number | null;
+  emergencyPaused?: boolean;
   averageMultiplier: number | null;
   nextDropTime: string | null;
   totalSolValueAirdropped: number;

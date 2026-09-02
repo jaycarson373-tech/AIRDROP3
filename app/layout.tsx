@@ -28,7 +28,7 @@ const pixelFont = Press_Start_2P({
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
   ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000");
+    : "http://localhost:3001");
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -39,47 +39,52 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Pump Money — Ten Holders Paid Every Five Minutes",
-    template: "%s | Pump Money"
+    default: "BRAINROT",
+    template: "%s | BRAINROT"
   },
   alternates: { canonical: siteUrl },
-  description: "Hold PMONEY. Every five minutes, ten eligible holders are selected to receive equal shares of PUMP.",
-  applicationName: "Pump Money",
-  keywords: ["Pump Money", "PMONEY", "PUMP", "Solana", "holder rewards", "weighted draw", "five-minute distributions"],
+  description: "Hold BRAINROT. Creator fees buy $NEURAL. Holders get airdropped every five minutes.",
+  applicationName: "BRAINROT",
+  manifest: "/manifest.webmanifest",
+  keywords: ["BRAINROT", "NEURAL", "Neuralink", "PreStocks", "Solana", "holder rewards", "five-minute distributions"],
   openGraph: {
-    title: "PUMP MONEY.",
-    description: "Hold PMONEY. Ten holders get paid PUMP every five minutes.",
+    title: "BRAINROT",
+    description: "The internet's final form meets tokenized Neuralink exposure on Solana.",
     url: siteUrl,
-    siteName: "Pump Money",
+    siteName: "BRAINROT",
     type: "website",
     images: [
       {
-        url: "/brand/pump-money-hero.png",
-        width: 1536,
-        height: 1024,
-        alt: "Pump Money"
+        url: "/brand/brainrot-banner.jpg?v=brainrot",
+        width: 1280,
+        height: 417,
+        alt: "BRAINROT"
       }
     ]
   },
   twitter: {
     card: "summary_large_image",
-    title: "PUMP MONEY.",
-    description: "Hold PMONEY. Ten holders get paid PUMP every five minutes.",
-    images: ["/brand/pump-money-hero.png"]
+    title: "BRAINROT",
+    description: "Hold $BRAINROT. Creator fees buy $NEURAL. Holders get airdropped every five minutes.",
+    images: ["/brand/brainrot-banner.jpg?v=brainrot"]
   },
   icons: {
     icon: [
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/brand/pump-money-logo.png", sizes: "1254x1254", type: "image/png" }
+      { url: "/brand/brainrot-logo.jpg", type: "image/jpeg" },
+      { url: "/favicon-16x16.png?v=brainrot", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png?v=brainrot", sizes: "32x32", type: "image/png" },
+      { url: "/icon-512.png?v=brainrot", sizes: "512x512", type: "image/png" }
     ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
+    apple: [{ url: "/apple-touch-icon.png?v=brainrot", sizes: "180x180", type: "image/png" }]
   },
   robots: { index: true, follow: true }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const launchState = process.env.PUMP_MONEY_LAUNCH_STATE?.trim().toLowerCase() === "live" ? "live" : "prelaunch";
+  const rawLaunchState = (process.env.BRAINROT_LAUNCH_STATE ?? "live")
+    .trim()
+    .toLowerCase();
+  const launchState = rawLaunchState === "prelaunch" ? "prelaunch" : "live";
 
   return (
     <html lang="en">

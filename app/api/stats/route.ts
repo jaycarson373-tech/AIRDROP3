@@ -23,12 +23,15 @@ type ClaimRow = {
 type BuyRow = {
   epoch_id: string;
   tx_sig: string | null;
+  reward_mint?: string | null;
+  reward_asset?: string | null;
   pfp_reward_lamports?: string | number | null;
   base_spent_lamports?: string | number | null;
 };
 
 type RewardBuyRow = {
   epoch_id: string;
+  reward_mint: string | null;
   reward_asset: string;
   split_bps: number;
   base_spent_lamports: string | number;
@@ -43,6 +46,7 @@ type SupabaseConfig = {
 type PayoutRow = {
   epoch_id: string;
   wallet: string;
+  reward_mint: string | null;
   reward_asset: string | null;
   reward_amount: string | number | null;
   normal_reward_amount: string | number | null;
@@ -80,10 +84,16 @@ type ParsedTokenAccountInfo = {
   };
 };
 
-const PUMP_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
-const PUMP_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
+const PUMPFUN_PROGRAM_ID = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
+const PUMPFUN_AMM_PROGRAM_ID = new PublicKey("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA");
+const EPOCH_MS = 5 * 60 * 1000;
+const OFFICIAL_NEURAL_MINT = "PrekqLJvJ3qVdXmBGDiexvwUTF4rLFDa6HWS4HJbw9S";
 const LIVE_ELIGIBLE_CACHE_MS = 90_000;
 let liveEligibleCache: { key: string; value: number; expiresAt: number } | null = null;
+
+function env(name: string) {
+  return process.env[name] ?? process.env[`NEXT_PUBLIC_${name}`];
+}
 
 function supabaseConfig() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -137,7 +147,7 @@ async function getSettledPayouts(config: SupabaseConfig) {
   for (let offset = 0; ; offset += pageSize) {
     const page = await getSupabaseJson<PayoutRow[]>(
       config,
-      "payouts?select=epoch_id,wallet,reward_asset,reward_amount,normal_reward_amount,status,tx_sig,updated_at,created_at&status=eq.settled&order=updated_at.desc",
+      "payouts?select=epoch_id,wallet,reward_mint,reward_asset,reward_amount,normal_reward_amount,status,tx_sig,updated_at,created_at&status=eq.settled&order=updated_at.desc",
       {
         Range: `${offset}-${offset + pageSize - 1}`
       }
@@ -159,7 +169,7 @@ async function getBuysForEpochs(config: SupabaseConfig, epochIds: string[]) {
     const chunk = uniqueEpochIds.slice(index, index + chunkSize);
     const page = await getSupabaseJson<BuyRow[]>(
       config,
-      `buys?select=epoch_id,tx_sig,pfp_reward_lamports,base_spent_lamports&epoch_id=in.(${chunk.map(encodeURIComponent).join(",")})`
+      `buys?select=epoch_id,tx_sig,reward_mint,reward_asset,pfp_reward_lamports,base_spent_lamports&epoch_id=in.(${chunk.map(encodeURIComponent).join(",")})`
     );
     rows.push(...page);
   }
@@ -178,7 +188,7 @@ async function getRewardBuysForEpochs(config: SupabaseConfig, epochIds: string[]
       const chunk = uniqueEpochIds.slice(index, index + chunkSize);
       const page = await getSupabaseJson<RewardBuyRow[]>(
         config,
-        `reward_buys?select=epoch_id,reward_asset,split_bps,base_spent_lamports,tx_sig&epoch_id=in.(${chunk.map(encodeURIComponent).join(",")})&status=eq.settled`
+        `reward_buys?select=epoch_id,reward_mint,reward_asset,split_bps,base_spent_lamports,tx_sig&epoch_id=in.(${chunk.map(encodeURIComponent).join(",")})&status=eq.settled`
       );
       rows.push(...page);
     }
@@ -309,14 +319,29 @@ function buySolSpent(buy: BuyRow | undefined) {
 }
 
 function sourceTokenMint() {
-  const value = process.env.SOURCE_TOKEN_MINT ?? process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT;
+  const value = env("BRAINROT_MINT") ?? env("SOURCE_TOKEN_MINT");
   if (!value) return null;
   try {
     return new PublicKey(value);
   } catch {
-    console.warn("stats route could not parse SOURCE_TOKEN_MINT");
+    console.warn("stats route could not parse BRAINROT/SOURCE_TOKEN_MINT");
     return null;
   }
+}
+
+function sourceMintValue() {
+  return env("BRAINROT_MINT") ?? env("SOURCE_TOKEN_MINT") ?? null;
+}
+
+function rewardMintValue() {
+  const configured = env("NEURAL_MINT") ?? env("REWARD_TOKEN_MINT") ?? OFFICIAL_NEURAL_MINT;
+  return configured === OFFICIAL_NEURAL_MINT ? configured : OFFICIAL_NEURAL_MINT;
+}
+
+function isNeuralRow(row: { reward_mint?: string | null; reward_asset?: string | null }) {
+  const mint = row.reward_mint?.trim();
+  const asset = row.reward_asset?.replace(/^\$/, "").trim().toUpperCase();
+  return mint === rewardMintValue() || asset === "NEURAL";
 }
 
 function pfpRewardWallet() {
@@ -346,8 +371,7 @@ async function pfpRewardWalletBalanceSol() {
 
 function epochNumber(epochId: string, fallback: number) {
   const timestamp = Date.parse(epochId);
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
-  return Number.isFinite(timestamp) ? Math.floor(timestamp / epochMs) : fallback;
+  return Number.isFinite(timestamp) ? Math.floor(timestamp / EPOCH_MS) : fallback;
 }
 
 function rowTime(row: Pick<EpochRow, "epoch_id" | "started_at">) {
@@ -359,8 +383,7 @@ function payoutTime(row: Pick<PayoutRow, "updated_at" | "created_at" | "epoch_id
 }
 
 function nextDropTime() {
-  const epochMs = Math.max(1, numberEnv("EPOCH_MINUTES", 5)) * 60_000;
-  return new Date(Math.ceil(Date.now() / epochMs) * epochMs).toISOString();
+  return new Date(Math.floor(Date.now() / EPOCH_MS + 1) * EPOCH_MS).toISOString();
 }
 
 async function tokenProgramForMint(connection: Connection, mint: PublicKey) {
@@ -386,11 +409,11 @@ function addExcludedString(excluded: Set<string>, value: string | null | undefin
 }
 
 function pumpPda(seeds: Buffer[]) {
-  return PublicKey.findProgramAddressSync(seeds, PUMP_PROGRAM_ID)[0];
+  return PublicKey.findProgramAddressSync(seeds, PUMPFUN_PROGRAM_ID)[0];
 }
 
 function pumpAmmPda(seeds: Buffer[]) {
-  return PublicKey.findProgramAddressSync(seeds, PUMP_AMM_PROGRAM_ID)[0];
+  return PublicKey.findProgramAddressSync(seeds, PUMPFUN_AMM_PROGRAM_ID)[0];
 }
 
 function bondingCurvePda(mint: PublicKey) {
@@ -510,14 +533,27 @@ function durationLabel(startedAt: string | null, completedAt: string | null) {
 export async function GET() {
   const config = supabaseConfig();
   const pfpRewardWalletSol = await pfpRewardWalletBalanceSol();
+  const sourceMint = sourceMintValue();
+  const rewardMint = rewardMintValue();
+  const eligibilityMin = Math.max(0, numberEnv("ELIGIBILITY_MIN", 1_000_000));
+  const maxHolderPct = numberEnv("MAX_HOLDER_PCT", 4);
+  const emergencyPaused = ["1", "true", "yes", "on"].includes((env("EMERGENCY_PAUSED") ?? "").toLowerCase());
 
   if (!config) {
     const latestEligibleHolders = await liveEligibleHolderCountOrNull();
     return NextResponse.json({
+      liveDataAvailable: false,
       currentEpoch: 0,
       totalEpochs: 0,
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
+      totalCreatorFeesConvertedSol: null,
+      latestTransaction: null,
+      sourceMint,
+      rewardMint,
+      eligibilityMin,
+      maxHolderPct,
+      emergencyPaused,
       latestEligibleHolders: latestEligibleHolders ?? 0,
       averageMultiplier: null,
       nextDropTime: nextDropTime(),
@@ -550,7 +586,7 @@ export async function GET() {
       : null;
     const claimRows = claims?.ok ? ((await claims.json()) as ClaimRow[]) : [];
     const claimsByEpoch = new Map(claimRows.map((claim) => [claim.epoch_id, claim]));
-    const payoutRows = await getSettledPayouts(config);
+    const payoutRows = (await getSettledPayouts(config)).filter(isNeuralRow);
     const averageMultiplier = await averageHolderMultiplier(config);
     const leaderboard = await holderLeaderboard(config, payoutRows);
     const payoutsByEpoch = new Map<string, EpochPayoutSummary>();
@@ -588,8 +624,8 @@ export async function GET() {
         return timeA - timeB || epochA.localeCompare(epochB);
       })
       .map(([epochId]) => epochId);
-    const buyRows = await getBuysForEpochs(config, [...epochIds, ...realEpochIds]);
-    const rewardBuyRows = await getRewardBuysForEpochs(config, [...epochIds, ...realEpochIds]);
+    const buyRows = (await getBuysForEpochs(config, [...epochIds, ...realEpochIds])).filter(isNeuralRow);
+    const rewardBuyRows = (await getRewardBuysForEpochs(config, [...epochIds, ...realEpochIds])).filter(isNeuralRow);
     const buysByEpoch = new Map(buyRows.map((buy) => [buy.epoch_id, buy]));
     const totalPfpRewardSol = buyRows.reduce((sum, buy) => sum + toNumber(buy.pfp_reward_lamports) / LAMPORTS_PER_SOL, 0);
     const totalSolValueAirdropped = rewardBuyRows.length
@@ -599,6 +635,11 @@ export async function GET() {
     const displayEpochById = new Map(realEpochIds.map((epochId, index) => [epochId, index + 1]));
     const recentRealEpochIds = [...realEpochIds].reverse().slice(0, 10);
     const latestRealRow = rowsByEpoch.get(recentRealEpochIds[0]) ?? latest;
+    const latestTransaction =
+      payoutRows.find((row) => Boolean(row.tx_sig))?.tx_sig ??
+      rewardBuyRows.find((row) => Boolean(row.tx_sig))?.tx_sig ??
+      buyRows.find((row) => Boolean(row.tx_sig))?.tx_sig ??
+      null;
 
     const epochHistory = recentRealEpochIds.map((epochId, index) => {
         const row = rowsByEpoch.get(epochId);
@@ -612,23 +653,36 @@ export async function GET() {
         };
       });
 
-    const roundHistory = recentRealEpochIds.map((epochId, index) => {
-      const row = rowsByEpoch.get(epochId);
+    const neuralEpochIds = new Set([
+      ...realEpochIds,
+      ...buyRows.map((row) => row.epoch_id),
+      ...rewardBuyRows.map((row) => row.epoch_id)
+    ]);
+    const recentRows = rows
+      .filter((row) => neuralEpochIds.has(row.epoch_id) || row.status === "running")
+      .slice(0, 10);
+    const fallbackRoundRows = recentRealEpochIds
+      .map((epochId) => rowsByEpoch.get(epochId))
+      .filter((row): row is EpochRow => Boolean(row));
+    const roundHistorySource = recentRows.length ? recentRows : fallbackRoundRows;
+    const roundHistory = roundHistorySource.map((historyRow, index) => {
+      const epochId = historyRow.epoch_id;
       const claim = claimsByEpoch.get(epochId);
       const buy = buysByEpoch.get(epochId);
       const payoutSummary = payoutsByEpoch.get(epochId);
+      const noDistribution = !payoutSummary?.rewardAmount || historyRow.status === "skipped";
       return {
         epoch: displayEpochById.get(epochId) ?? realEpochCount - index,
-        status: row?.status === "completed" ? "completed" : "settled",
-        startedAt: row?.started_at ?? epochId,
-        duration: durationLabel(row?.started_at ?? null, row?.completed_at ?? payoutSummary?.latestTime ?? null),
+        status: noDistribution ? "no_distribution" : historyRow.status === "completed" ? "completed" : "settled",
+        startedAt: historyRow.started_at ?? epochId,
+        duration: durationLabel(historyRow.started_at ?? null, historyRow.completed_at ?? payoutSummary?.latestTime ?? null),
         claimedSol: toNumber(claim?.amount_claimed),
-        rewardBought: toNumber(row?.reward_bought),
-        eligibleCount: toNumber(row?.eligible_count),
+        rewardBought: payoutSummary?.rewardAmount ? toNumber(historyRow.reward_bought) : 0,
+        eligibleCount: toNumber(historyRow.eligible_count),
         normalRewardsSent: payoutSummary?.normalRewardAmount ?? 0,
         distributedPump: payoutSummary?.rewardAmount ?? 0,
         solValueAirdropped: buySolSpent(buy),
-        txSig: payoutSummary?.latestTxSig ?? claim?.tx_sig ?? buy?.tx_sig ?? null
+        txSig: noDistribution ? null : payoutSummary?.latestTxSig ?? null
       };
     });
 
@@ -667,10 +721,18 @@ export async function GET() {
       storedEligibleHolders > 0 ? storedEligibleHolders : (await liveEligibleHolderCountOrNull()) ?? storedEligibleHolders;
 
     return NextResponse.json({
+      liveDataAvailable: true,
       currentEpoch: realEpochCount,
       totalEpochs: realEpochCount,
       lastRewardAirdropped: epochHistory[0]?.rewardAmount ?? 0,
       totalRewardAirdropped,
+      totalCreatorFeesConvertedSol: totalSolValueAirdropped,
+      latestTransaction,
+      sourceMint,
+      rewardMint,
+      eligibilityMin,
+      maxHolderPct,
+      emergencyPaused,
       latestEligibleHolders,
       nextDropTime: nextDropTime(),
       totalSolValueAirdropped,
@@ -688,10 +750,18 @@ export async function GET() {
     console.error("stats route failed", error);
     const latestEligibleHolders = await liveEligibleHolderCountOrNull();
     return NextResponse.json({
+      liveDataAvailable: false,
       currentEpoch: 0,
       totalEpochs: 0,
       lastRewardAirdropped: 0,
       totalRewardAirdropped: 0,
+      totalCreatorFeesConvertedSol: null,
+      latestTransaction: null,
+      sourceMint,
+      rewardMint,
+      eligibilityMin,
+      maxHolderPct,
+      emergencyPaused,
       latestEligibleHolders: latestEligibleHolders ?? 0,
       averageMultiplier: null,
       nextDropTime: nextDropTime(),

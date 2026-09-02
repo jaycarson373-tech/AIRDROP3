@@ -1,8 +1,8 @@
--- GOAT dual-asset distributions: preserve one independently verifiable buy
+-- BRAINROT reward distributions: preserve one independently verifiable buy
 -- and payout identity for each reward mint inside the same five-minute epoch.
 
 update public.scout_settings
-set value = 'Minimum GOAT balance for holder distributions.'
+set value = 'Minimum BRAINROT balance for holder distributions.'
 where key = 'eligibility_minimum';
 
 update public.payouts

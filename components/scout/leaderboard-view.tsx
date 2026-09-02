@@ -14,11 +14,11 @@ function walletUrl(wallet: string) {
 }
 
 function RewardTotal({ entry }: { entry: LeaderboardEntry }) {
-  const pump = entry.totalRewards.PUMP;
-  if (!pump) return <span className="goat-leaderboard__awaiting">AWAITING FIRST DRAW</span>;
+  const neural = entry.totalRewards.NEURAL;
+  if (!neural) return <span className="goat-leaderboard__awaiting">AWAITING LIVE DATA</span>;
   return (
     <span className="goat-leaderboard__rewards">
-      <b>{formatToken(pump, "PUMP")}</b>
+      <b>{formatToken(neural, "NEURAL")}</b>
     </span>
   );
 }
@@ -30,8 +30,8 @@ function LeaderboardCard({ entry }: { entry: LeaderboardEntry }) {
       <a className="goat-leaderboard-card__wallet" href={walletUrl(entry.wallet)} target="_blank" rel="noopener noreferrer">
         <span>WALLET</span><strong>{shortWallet(entry.wallet)}</strong><ArrowUpRight size={12} />
       </a>
-      <div><span>$PMONEY BALANCE</span><strong>{formatToken(entry.tokenBalance, "PMONEY")}</strong></div>
-      <div><span>QUALIFIED DRAWS</span><strong>{entry.qualifiedEpochs.toLocaleString()}</strong></div>
+      <div><span>$BRAINROT BALANCE</span><strong>{formatToken(entry.tokenBalance, "BRAINROT")}</strong></div>
+      <div><span>QUALIFIED DROPS</span><strong>{entry.qualifiedEpochs.toLocaleString()}</strong></div>
       <div><span>HOLDING STREAK</span><strong>{entry.holdingStreak.toLocaleString()}</strong></div>
       <div><span>TOTAL REWARDS</span><RewardTotal entry={entry} /></div>
       <div className="goat-leaderboard-card__score"><span>HOLDER SCORE</span><strong>{entry.selectionScore}</strong><i style={{ width: `${entry.selectionScore}%` }} /></div>
@@ -41,7 +41,7 @@ function LeaderboardCard({ entry }: { entry: LeaderboardEntry }) {
 
 function LeaderboardList({ entries }: { entries: LeaderboardEntry[] }) {
   if (!entries.length) {
-    return <EmptyState title="HOLDER BOARD ACTIVATES AT LAUNCH." body="Ranks publish only after the first eligible holder snapshot is recorded." />;
+    return <EmptyState title="HOLDER BOARD AWAITS LIVE DATA." body="Ranks publish only after real eligible holder snapshots are recorded." />;
   }
   return <div className="goat-leaderboard-list">{entries.map((entry) => <LeaderboardCard entry={entry} key={entry.wallet} />)}</div>;
 }
@@ -52,7 +52,7 @@ export function LeaderboardSection() {
   return (
     <section className="goat-leaderboard" id="leaderboard">
       <div className="goat-leaderboard__head">
-        <div><span>HOLDER BOARD</span><h2>MORE TIME. MORE WEIGHT.</h2><p>Balance and continuous holding improve selection weight.</p></div>
+        <div><span>HOLDER BOARD</span><h2>ELIGIBLE $BRAINROT HOLDERS.</h2><p>Balance and eligibility history come from real backend records.</p></div>
         <Link className="goat-button" href="/leaderboard">VIEW ALL HOLDERS <ArrowUpRight size={13} /></Link>
       </div>
       <LeaderboardList entries={entries.slice(0, 5)} />
@@ -75,7 +75,7 @@ export function LeaderboardView() {
 
   return (
     <div className="scout-page goat-leaderboard-page">
-      <div className="scout-page-heading"><div><span className="scout-kicker">$PMONEY HOLDERS</span><h1>HOLDER WEIGHT.</h1><p>Verified balance and holding history only. No fabricated ranks.</p></div></div>
+      <div className="scout-page-heading"><div><span className="scout-kicker">$BRAINROT HOLDERS</span><h1>HOLDER WEIGHT.</h1><p>Verified balance and holding history only. No fabricated ranks.</p></div></div>
 
       <section className="goat-rank-lookup">
         <div><span>CURRENT WALLET RANK</span><strong>{walletRank ? `#${walletRank.rank}` : "ENTER A WALLET"}</strong></div>
@@ -83,9 +83,9 @@ export function LeaderboardView() {
       </section>
 
       <div className="goat-leaderboard-highlights">
-        <div><span>LONGEST STREAK</span><strong>{longestStreak ? longestStreak.holdingStreak.toLocaleString() : "AWAITING FIRST DRAW"}</strong><small>{longestStreak ? shortWallet(longestStreak.wallet) : "REAL SNAPSHOTS ONLY"}</small></div>
-        <div><span>MOST DRAWS QUALIFIED</span><strong>{mostEpochs ? mostEpochs.qualifiedEpochs.toLocaleString() : "AWAITING FIRST DRAW"}</strong><small>{mostEpochs ? shortWallet(mostEpochs.wallet) : "REAL SNAPSHOTS ONLY"}</small></div>
-        <div><span>MOST REWARD RECEIPTS</span><strong>{mostReceipts ? mostReceipts.rewardReceipts.toLocaleString() : "AWAITING FIRST DRAW"}</strong><small>{mostReceipts ? shortWallet(mostReceipts.wallet) : "REAL RECEIPTS ONLY"}</small></div>
+        <div><span>LONGEST STREAK</span><strong>{longestStreak ? longestStreak.holdingStreak.toLocaleString() : "AWAITING LIVE DATA"}</strong><small>{longestStreak ? shortWallet(longestStreak.wallet) : "REAL SNAPSHOTS ONLY"}</small></div>
+        <div><span>MOST DROPS QUALIFIED</span><strong>{mostEpochs ? mostEpochs.qualifiedEpochs.toLocaleString() : "AWAITING LIVE DATA"}</strong><small>{mostEpochs ? shortWallet(mostEpochs.wallet) : "REAL SNAPSHOTS ONLY"}</small></div>
+        <div><span>MOST REWARD RECEIPTS</span><strong>{mostReceipts ? mostReceipts.rewardReceipts.toLocaleString() : "AWAITING LIVE DATA"}</strong><small>{mostReceipts ? shortWallet(mostReceipts.wallet) : "REAL RECEIPTS ONLY"}</small></div>
       </div>
 
       <LeaderboardList entries={entries} />
@@ -99,7 +99,7 @@ export function LeaderboardView() {
 
       <section className="goat-scoring">
         <span>DISPLAY SCORE</span>
-        <p>The holder score is a relative display index built from verified token balance, qualified draws, and holding streak. The live winner draw is weighted and never guarantees selection.</p>
+        <p>The holder score is a relative display index built from verified token balance, qualified drops, and holding streak. Rewards are never guaranteed.</p>
       </section>
     </div>
   );

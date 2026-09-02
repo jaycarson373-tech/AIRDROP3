@@ -7,7 +7,16 @@ import {
   estimatePayoutReserveLamports,
   treasuryRewardBalanceRaw
 } from "./airdrop.js";
-import { completeEpoch, failEpoch, getEpoch, persistSnapshot, recordBuy, recordRewardBuy, startEpoch } from "./db.js";
+import {
+  DuplicateEpochError,
+  completeEpoch,
+  failEpoch,
+  getEpoch,
+  persistSnapshot,
+  recordBuy,
+  recordRewardBuy,
+  startEpoch
+} from "./db.js";
 import { applyHolderState } from "./holder-state.js";
 import { currentEpochId } from "./time.js";
 import { activateScoutSignalForEpoch } from "./scout.js";
@@ -32,13 +41,18 @@ export async function runEpoch(date = new Date()) {
   activateRewardForEpoch(epochId);
 
   try {
-    const scoutSignal = config.rewardSplitEnabled ? null : await activateScoutSignalForEpoch(epochId);
     const existing = await getEpoch(epochId);
-    if (existing?.status === "completed") {
-      console.log(`[${epochId}] already completed, skipping`);
+    if (existing) {
+      console.log(`[${epochId}] already recorded with status=${existing.status ?? "unknown"}, skipping duplicate execution`);
       return;
     }
 
+    if (config.emergencyPaused) {
+      console.log(`[${epochId}] emergency pause is active; skipping claims, swaps, and distributions`);
+      return;
+    }
+
+    const scoutSignal = config.rewardSplitEnabled ? null : await activateScoutSignalForEpoch(epochId);
     await startEpoch(epochId, scoutSignal?.id ?? null);
     const claim = await claimFees(epochId);
     const claimedLamports = BigInt(claim.amountClaimed || "0");
@@ -50,8 +64,8 @@ export async function runEpoch(date = new Date()) {
         reward_distributed: "0",
         status: "skipped"
       });
-      console.log(`[${epochId}] claim delta was 0 lamports; shutting down worker before buy/airdrop.`);
-      process.exit(0);
+      console.log(`[${epochId}] claim delta was 0 lamports; no distribution this epoch.`);
+      return;
     }
 
     const sourceHolders = await snapshotSourceHolders();
@@ -190,7 +204,8 @@ export async function runEpoch(date = new Date()) {
       console.log(`[${epochId}] REWARD_MODE=sol, skipping buy; creator fees remain SOL for direct airdrop`);
     }
 
-    const availableRewardRaw = await treasuryRewardBalanceRaw(payoutReserveLamports);
+    const availableRewardRaw =
+      config.rewardMode === "token" ? buy.rewardReceivedRaw : await treasuryRewardBalanceRaw(payoutReserveLamports);
     const rewardPoolRaw = (availableRewardRaw * BigInt(config.airdropRewardBps)) / 10_000n;
     if (config.rewardMode === "sol") {
       buy = {
@@ -244,6 +259,10 @@ export async function runEpoch(date = new Date()) {
       `[${epochId}] summary: eligible=${eligibleHolders.length}, recipients=${airdrop.settledCount}/${allocations.length}, bought=${buy.rewardReceivedUi}, distributed=${distributed}`
     );
   } catch (error) {
+    if (error instanceof DuplicateEpochError) {
+      console.log(`[${epochId}] already claimed by another worker, skipping duplicate execution`);
+      return;
+    }
     await failEpoch(epochId, error).catch((dbError) => {
       console.error(`[${epochId}] failed to mark epoch failed`, dbError);
     });

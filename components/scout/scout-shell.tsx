@@ -9,15 +9,16 @@ import { ScoutProvider, useScout } from "./scout-provider";
 import { PrelaunchNotice } from "./ui";
 
 const primaryNav = [
-  { href: "/#mechanism", label: "HOW IT WORKS" },
-  { href: "/#terminal", label: "LIVE DRAW" },
+  { href: "/#live-drops", label: "LIVE DROPS" },
+  { href: "/#how", label: "HOW IT WORKS" },
+  { href: "/#wallet", label: "WALLET" },
   { href: "/leaderboard", label: "HOLDERS" },
   { href: "/rewards", label: "REWARDS" }
 ];
 
 const productNav = [
-  { href: "/leaderboard", label: "Leaderboard", icon: Radio },
-  { href: "/rewards", label: "Rewards", icon: Radio },
+  { href: "/leaderboard", label: "Holders", icon: Radio },
+  { href: "/rewards", label: "Drops", icon: Radio },
   { href: "/docs", label: "Docs", icon: BookOpen }
 ];
 
@@ -42,17 +43,15 @@ function TopTicker() {
   const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
   const seconds = String(remaining % 60).padStart(2, "0");
   const metrics = [
-    ["$PMONEY", state === "error" ? "OFFLINE" : "ONLINE"],
-    ["WINNERS", "10"],
-    ["REWARD", "$PUMP"],
-    ["ALLOCATION", "EQUAL SHARE"],
-    ["NEXT DRAW", `${minutes}:${seconds}`],
+    ["$BRAINROT", state === "error" ? "OFFLINE" : "ONLINE"],
+    ["REWARD", "$NEURAL"],
+    ["NEXT DROP", `${minutes}:${seconds}`],
     ["CYCLE", "05:00"],
-    ["SETTLED DRAWS", stats.totalEpochs ? stats.totalEpochs.toLocaleString() : "AWAITING FIRST DRAW"]
+    ["SETTLED DROPS", stats.totalEpochs ? stats.totalEpochs.toLocaleString() : "AWAITING LIVE DATA"]
   ];
 
   return (
-    <div className="scout-ticker" aria-label="Pump Money live draw metrics">
+    <div className="scout-ticker" aria-label="BRAINROT live drop metrics">
       <div className="scout-ticker__track">
         {[...metrics, ...metrics].map(([label, value], index) => (
           <span className="scout-ticker__item" aria-hidden={index >= metrics.length} key={`${label}-${index}`}>
@@ -69,20 +68,23 @@ function TopTicker() {
 function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const headerBuyUrl = projectConfig.buyUrl || (projectConfig.pumpMoneyMint ? `https://jup.ag/swap/SOL-${projectConfig.pumpMoneyMint}` : null);
+  const headerBuyUrl =
+    projectConfig.buyUrl ||
+    (projectConfig.brainrotMint ? `https://jup.ag/swap/SOL-${projectConfig.brainrotMint}` : "/#verified-mints");
+  const headerBuyExternal = headerBuyUrl.startsWith("http");
 
   useEffect(() => setOpen(false), [pathname]);
 
   return (
     <header className="scout-header">
       <div className="scout-header__inner">
-        <Link className="scout-brand" href="/" aria-label="Pump Money home">
+        <Link className="scout-brand" href="/" aria-label="BRAINROT home">
           <span className="scout-brand__mark goat-brand-mark" aria-hidden="true">
-            <img src="/brand/pump-money-logo.png" alt="" />
+            <img src="/brand/brainrot-logo.jpg" alt="" />
           </span>
           <span>
-            <strong>PUMP MONEY</strong>
-            <small>$PMONEY</small>
+            <strong>BRAINROT</strong>
+            <small>$BRAINROT</small>
           </span>
         </Link>
 
@@ -95,8 +97,15 @@ function Header() {
         </nav>
 
         <div className="scout-header__actions">
-          {projectConfig.projectXUrl ? <a className="scout-header-link scout-header-link--social" href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X ↗</a> : null}
-          {headerBuyUrl ? <a className="scout-header-link scout-header-link--buy" href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY</a> : null}
+          {projectConfig.projectXUrl ? <a className="scout-header-link scout-header-link--social" href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X</a> : null}
+          <a
+            className="scout-header-link scout-header-link--buy"
+            href={headerBuyUrl}
+            target={headerBuyExternal ? "_blank" : undefined}
+            rel={headerBuyExternal ? "noopener noreferrer" : undefined}
+          >
+            BUY
+          </a>
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -108,8 +117,10 @@ function Header() {
           {[...primaryNav, ...productNav.filter((item) => !primaryNav.some((primary) => primary.href === item.href))].map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
           ))}
-          {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">PUMP MONEY X ↗</a> : null}
-          {headerBuyUrl ? <a href={headerBuyUrl} target="_blank" rel="noopener noreferrer">BUY $PMONEY ↗</a> : null}
+          {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">BRAINROT X</a> : null}
+          <a href={headerBuyUrl} target={headerBuyExternal ? "_blank" : undefined} rel={headerBuyExternal ? "noopener noreferrer" : undefined}>
+            BUY $BRAINROT
+          </a>
         </div>
       ) : null}
     </header>
@@ -121,21 +132,21 @@ function Footer() {
     <footer className="scout-footer">
       <div className="scout-footer__brand">
         <span className="scout-brand__mark goat-brand-mark" aria-hidden="true">
-          <img src="/brand/pump-money-logo.png" alt="" />
+          <img src="/brand/brainrot-logo.jpg" alt="" />
         </span>
         <div>
-          <strong>PUMP MONEY</strong>
-          <p>Ten holders. Equal PUMP shares. Every five minutes.</p>
+          <strong>BRAINROT</strong>
+          <p>Creator fees buy $NEURAL. Eligible holders get airdropped every five minutes.</p>
         </div>
       </div>
       <nav aria-label="Product links">
         {productNav.map(({ href, label, icon: Icon }) => (
           <Link href={href} key={href}><Icon size={14} /> {label}</Link>
         ))}
-        {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X ↗</a> : null}
+        {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X</a> : null}
       </nav>
       <p className="scout-footer__risk">
-        Pump Money is an experimental holder-distribution project. Selection is weighted, never guaranteed, and depends on verified eligibility. Reward timing and availability may change. Nothing on this site is financial advice.
+        $NEURAL provides tokenized economic exposure to Neuralink through PreStocks. It does not provide direct Neuralink ownership, voting rights, dividends, information rights or guaranteed liquidity. $BRAINROT is not affiliated with or endorsed by Neuralink or PreStocks. Rewards depend on accrued creator fees, asset availability, technical execution and holder eligibility. Geographic restrictions may apply. Nothing on this website constitutes financial advice.
       </p>
     </footer>
   );
@@ -164,7 +175,7 @@ function ShellContent({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="scout-app" ref={appRef}>
-      <div className="scout-background goat-background pump-money-background" aria-hidden="true">
+      <div className="scout-background goat-background" aria-hidden="true">
         <i className="goat-bg-grid" />
         <i className="goat-bg-peak goat-bg-peak--one" />
         <i className="goat-bg-peak goat-bg-peak--two" />
