@@ -28,7 +28,9 @@ threshold have been reviewed in a dry cycle.
 ## Vercel
 
 Start from `deploy/vercel.env.example`. Set the final site URL, $BRAINROT mint,
-project X account, explicit buy URL, eligibility threshold, and Supabase values.
+project X account, exact StonkFun token URL, explicit buy URL, eligibility threshold, and Supabase values.
+Set `NEXT_PUBLIC_STONK_URL` to the final StonkFun token page after launch; the
+template points to the StonkFun launchpad until that URL exists.
 The built-in `/api/stats` endpoint supplies rewards and leaderboard data; only
 set `NEXT_PUBLIC_REWARD_API_URL` or `NEXT_PUBLIC_LEADERBOARD_API_URL` when
 replacing it with a compatible public read API.

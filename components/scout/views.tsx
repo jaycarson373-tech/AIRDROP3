@@ -71,13 +71,13 @@ export function ReceiptsView() {
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How BRAINROT works." body="Every five minutes, accrued creator fees buy $NEURAL and are distributed to eligible $BRAINROT holders using the existing allocation logic." />
+      <PageHeading eyebrow="Documentation" title="How BRAINROT works." body="$BRAINROT launches through StonkFun, pairs with $NEURAL, and routes cleared rewards automatically to qualifying holders." />
       <div className="scout-doc-layout">
         <aside><a href="#lifecycle">Distribution cycle</a><a href="#weight">Eligibility</a><a href="#treasury">Settlement</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Five-minute drop</h2><p>At each fixed five-minute UTC boundary, the worker snapshots eligible $BRAINROT holders and prepares the next $NEURAL distribution.</p></section>
-          <section id="weight"><span className="scout-kicker">02</span><h2>Eligibility</h2><p>Eligibility uses the confirmed holder rules configured for the worker. This site does not invent reward amounts or formulas.</p></section>
-          <section id="treasury"><span className="scout-kicker">03</span><h2>Settlement</h2><p>Creator fees are claimed server-side, swapped into the verified $NEURAL PreStocks asset, and distributed only when real Solana transfer receipts are available.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>StonkFun launch</h2><p>$BRAINROT launches through StonkFun with $NEURAL as its reward-pair asset.</p></section>
+          <section id="weight"><span className="scout-kicker">02</span><h2>Eligibility</h2><p>Eligibility and allocation follow the active StonkFun pair mechanics. This site does not invent reward amounts or formulas.</p></section>
+          <section id="treasury"><span className="scout-kicker">03</span><h2>Automatic settlement</h2><p>StonkFun routes cleared reward pots to qualifying holders. The public ledger displays only completed distributions with real Solana receipts.</p></section>
         </div>
       </div>
     </div>

@@ -21,6 +21,9 @@ export const projectConfig = {
     publicValue(process.env.NEXT_PUBLIC_X_URL) ??
     publicValue(process.env.NEXT_PUBLIC_BRAINROT_X_URL),
   communityUrl: publicValue(process.env.NEXT_PUBLIC_BRAINROT_COMMUNITY_URL),
+  stonkUrl:
+    publicValue(process.env.NEXT_PUBLIC_STONK_URL) ??
+    "https://www.stonkfun.xyz",
   pumpMoneyMint:
     publicValue(process.env.NEXT_PUBLIC_BRAINROT_MINT) ??
     publicValue(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT),

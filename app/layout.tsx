@@ -43,13 +43,13 @@ export const metadata: Metadata = {
     template: "%s | BRAINROT"
   },
   alternates: { canonical: siteUrl },
-  description: "Hold BRAINROT. Creator fees buy $NEURAL. Holders get airdropped every five minutes.",
+  description: "The word of our generation, launched through StonkFun and paired with tokenized Neuralink exposure.",
   applicationName: "BRAINROT",
   manifest: "/manifest.webmanifest",
-  keywords: ["BRAINROT", "NEURAL", "Neuralink", "PreStocks", "Solana", "holder rewards", "five-minute distributions"],
+  keywords: ["BRAINROT", "NEURAL", "Neuralink", "PreStocks", "StonkFun", "Solana", "holder rewards"],
   openGraph: {
     title: "BRAINROT",
-    description: "The internet's final form meets tokenized Neuralink exposure on Solana.",
+    description: "The word of our generation. Launched through StonkFun. Paired with tokenized Neuralink exposure.",
     url: siteUrl,
     siteName: "BRAINROT",
     type: "website",
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "BRAINROT",
-    description: "Hold $BRAINROT. Creator fees buy $NEURAL. Holders get airdropped every five minutes.",
+    description: "The word of our generation. Launched through StonkFun. Paired with $NEURAL.",
     images: ["/brand/brainrot-banner.jpg?v=brainrot"]
   },
   icons: {

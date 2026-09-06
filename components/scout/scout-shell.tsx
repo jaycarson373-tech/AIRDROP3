@@ -45,7 +45,7 @@ function TopTicker() {
   const metrics = [
     ["$BRAINROT", state === "error" ? "OFFLINE" : "ONLINE"],
     ["REWARD", "$NEURAL"],
-    ["NEXT DROP", `${minutes}:${seconds}`],
+    ["NEXT CHECK", `${minutes}:${seconds}`],
     ["CYCLE", "05:00"],
     ["SETTLED DROPS", stats.totalEpochs ? stats.totalEpochs.toLocaleString() : "AWAITING LIVE DATA"]
   ];
@@ -136,7 +136,7 @@ function Footer() {
         </span>
         <div>
           <strong>BRAINROT</strong>
-          <p>Creator fees buy $NEURAL. Eligible holders get airdropped every five minutes.</p>
+          <p>The word of our generation. Launched through StonkFun and paired with $NEURAL.</p>
         </div>
       </div>
       <nav aria-label="Product links">
@@ -146,7 +146,7 @@ function Footer() {
         {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X</a> : null}
       </nav>
       <p className="scout-footer__risk">
-        $NEURAL provides tokenized economic exposure to Neuralink through PreStocks. It does not provide direct Neuralink ownership, voting rights, dividends, information rights or guaranteed liquidity. $BRAINROT is not affiliated with or endorsed by Neuralink or PreStocks. Rewards depend on accrued creator fees, asset availability, technical execution and holder eligibility. Geographic restrictions may apply. Nothing on this website constitutes financial advice.
+        $BRAINROT launches through StonkFun and is paired with $NEURAL, a tokenized Neuralink exposure asset from PreStocks. It does not provide direct Neuralink ownership, voting rights, dividends, information rights or guaranteed liquidity. $BRAINROT is not affiliated with or endorsed by Neuralink, PreStocks or StonkFun. Rewards depend on platform mechanics, reward-pot thresholds, asset availability, technical execution and holder eligibility. Geographic restrictions may apply. Nothing on this website constitutes financial advice.
       </p>
     </footer>
   );

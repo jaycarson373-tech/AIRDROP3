@@ -314,30 +314,30 @@ export function BrainrotView() {
         <img className="brainrot-hero-banner" src="/brand/brainrot-banner.jpg" alt="BRAINROT banner with meme characters" />
         <div className="brainrot-hero-inner">
           <div className="brainrot-hero-copy">
-            <div className="brainrot-eyebrow">THE INTERNET'S FINAL FORM</div>
+            <div className="brainrot-eyebrow">LAUNCHING THROUGH STONKFUN · PAIRED WITH $NEURAL</div>
             <h1 id="brainrot-title">BRAINROT</h1>
-            <p className="brainrot-headline">HOLD BRAINROT. GET NEURALINK.</p>
+            <p className="brainrot-headline">THE WORD OF OUR GENERATION.</p>
             <p className="brainrot-five-second">
               <span>HOLD $BRAINROT.</span>
-              <span>CREATOR FEES BUY $NEURAL.</span>
-              <span>HOLDERS GET AIRDROPPED EVERY FIVE MINUTES.</span>
+              <span>LAUNCHED THROUGH STONKFUN.</span>
+              <span>AUTOMATIC $NEURAL HOLDER REWARDS.</span>
             </p>
             <p className="brainrot-description">
-              Brainrot finally gets its Solana run. Accrued creator fees buy tokenized Neuralink pre-IPO exposure and
-              airdrop it to eligible $BRAINROT holders every five minutes.
+              Brainrot is the word—and the native language—of our generation. $BRAINROT launches through StonkFun,
+              paired with $NEURAL tokenized Neuralink exposure, with rewards routed automatically to holders.
             </p>
-            <div className="brainrot-mobile-timer" aria-label="Next NEURAL drop timer">
+            <div className="brainrot-mobile-timer" aria-label="Next NEURAL reward check timer">
               <div className="brainrot-timer">
-                <span>NEXT $NEURAL DROP</span>
+                <span>NEXT REWARD CHECK</span>
                 <strong>{countdown.label}</strong>
                 <small>{formatUtc(countdown.iso)}</small>
               </div>
             </div>
             <div className="brainrot-loop" aria-label="BRAINROT reward loop">
-              <span>TRADE $BRAINROT</span>
-              <span>CREATOR FEES ACCRUE</span>
-              <span>FEES BUY $NEURAL</span>
-              <span>HOLDERS RECEIVE AIRDROPS</span>
+              <span>LAUNCH ON STONKFUN</span>
+              <span>PAIR WITH $NEURAL</span>
+              <span>REWARD POT BUILDS</span>
+              <span>HOLDERS RECEIVE REWARDS</span>
             </div>
             <div className="brainrot-actions">
               <a className="brainrot-button primary" href={buyUrl} target={buyExternal ? "_blank" : undefined} rel={buyExternal ? "noreferrer" : undefined}>
@@ -347,12 +347,15 @@ export function BrainrotView() {
               <a className="brainrot-button secondary" href="#live-drops">
                 VIEW LIVE DROPS
               </a>
+              <a className="brainrot-button secondary" href={projectConfig.stonkUrl} target="_blank" rel="noopener noreferrer">
+                VIEW ON STONKFUN
+              </a>
             </div>
           </div>
 
-          <aside className="brainrot-hero-side" aria-label="Next NEURAL drop timer">
+          <aside className="brainrot-hero-side" aria-label="Next NEURAL reward check timer">
             <div className="brainrot-timer">
-              <span>NEXT $NEURAL DROP</span>
+              <span>NEXT REWARD CHECK</span>
               <strong>{countdown.label}</strong>
               <small>{formatUtc(countdown.iso)}</small>
             </div>
@@ -380,10 +383,10 @@ export function BrainrotView() {
         {extendedStats.emergencyPaused ? <div className="brainrot-alert">Emergency pause is active. Distribution execution is disabled.</div> : null}
 
         <div className="brainrot-metrics" aria-busy={state === "loading"}>
-          <Metric label="Next $NEURAL drop" value={formatUtc(extendedStats.nextDropTime ?? countdown.iso)} />
+          <Metric label="Next reward check" value={formatUtc(extendedStats.nextDropTime ?? countdown.iso)} />
           <Metric label="Total $NEURAL distributed" value={metricValue(liveDataAvailable, stats.totalRewardAirdropped)} />
           <Metric label="Drops completed" value={metricValue(liveDataAvailable, stats.totalEpochs, (value) => formatAmount(value, 0))} />
-          <Metric label="Creator fees converted" value={metricValue(liveDataAvailable, creatorFeesConverted, formatSol)} />
+          <Metric label="Reward value routed" value={metricValue(liveDataAvailable, creatorFeesConverted, formatSol)} />
           <Metric label="Eligible holders" value={metricValue(liveDataAvailable, stats.latestEligibleHolders, (value) => formatAmount(value, 0))} />
           <Metric
             label="Latest transaction"
@@ -402,8 +405,8 @@ export function BrainrotView() {
               <thead>
                 <tr>
                   <th>Date and UTC time</th>
-                  <th>Creator fees used</th>
-                  <th>$NEURAL purchased</th>
+                  <th>Reward value used</th>
+                  <th>$NEURAL routed</th>
                   <th>Recipients</th>
                   <th>Transaction signature</th>
                   <th>Solscan</th>
@@ -456,20 +459,20 @@ export function BrainrotView() {
 
       <section className="brainrot-steps" id="how" aria-labelledby="how-title">
         <div className="brainrot-section-head">
-          <span>HOW IT WORKS</span>
-          <h2 id="how-title">Trade attention into automated $NEURAL drops.</h2>
+          <span>STONKFUN REWARD PAIR</span>
+          <h2 id="how-title">Launch once. Pair with $NEURAL. Reward holders automatically.</h2>
         </div>
         <div className="brainrot-step-grid">
-          <Step number="1" title="HOLD BRAINROT" body="Buy and hold $BRAINROT in an eligible Solana wallet." />
+          <Step number="1" title="LAUNCH THROUGH STONKFUN" body="$BRAINROT launches through StonkFun's Solana launchpad." />
           <Step
             number="2"
-            title="FEES BUY NEURALINK"
-            body="Accrued creator fees automatically purchase the verified $NEURAL PreStocks asset on Solana."
+            title="PAIR WITH NEURALINK"
+            body="$BRAINROT is paired with the verified $NEURAL tokenized Neuralink asset on Solana."
           />
           <Step
             number="3"
-            title="GET AIRDROPPED"
-            body="Every five minutes, purchased $NEURAL is distributed to eligible $BRAINROT holders using the existing holder-allocation logic."
+            title="HOLDERS GET REWARDED"
+            body="StonkFun routes cleared $NEURAL reward pots automatically to qualifying holders. No manual claim flow."
           />
         </div>
         <div className="brainrot-eligibility">
@@ -481,14 +484,14 @@ export function BrainrotView() {
       <section className="brainrot-thesis" id="thesis" aria-labelledby="thesis-title">
         <div className="brainrot-section-head">
           <span>THESIS</span>
-          <h2 id="thesis-title">THE META THAT NEVER GOT ITS REAL RUN</h2>
+          <h2 id="thesis-title">THE WORD OF OUR GENERATION</h2>
         </div>
         <p>
-          Brainrot became the universal language of the internet. Triple T. 67. Tralalero Tralala. Bombardiro
-          Crocodilo. Billions of views, endless characters and an entire generation speaking in memes.
+          Brainrot is the word of our generation—and the universal language of the internet. Triple T. 67. Tralalero
+          Tralala. Bombardiro Crocodilo. Billions of views, endless characters and an entire generation speaking in memes.
         </p>
         <p>Individual characters have run, but Brainrot itself has never had its definitive Solana run.</p>
-        <p>$BRAINROT changes that—and wires the attention directly into tokenized Neuralink exposure.</p>
+        <p>$BRAINROT changes that: launched through StonkFun and paired directly with tokenized Neuralink exposure.</p>
       </section>
 
       <section className="brainrot-neural" id="neural" aria-labelledby="neural-title">
@@ -498,8 +501,8 @@ export function BrainrotView() {
         </div>
         <p>
           Neuralink remains private and has no publicly traded stock ticker. $NEURAL provides tokenized pre-IPO
-          economic exposure on Solana. $BRAINROT turns creator fees into recurring $NEURAL airdrops for eligible
-          holders.
+          economic exposure on Solana. Through StonkFun, $BRAINROT pairs the defining internet language of this
+          generation with the frontier of brain-computer technology.
         </p>
       </section>
 
@@ -577,13 +580,13 @@ export function BrainrotView() {
           <h2 id="faq-title">Mechanics, proof and disclosure.</h2>
         </div>
         <div className="brainrot-faq-grid">
-          <Faq title="What is $BRAINROT?" body="$BRAINROT is a Solana memecoin for the internet's brainrot meta with automated $NEURAL reward distribution." />
+          <Faq title="What is $BRAINROT?" body="$BRAINROT is the word of our generation turned into a Solana memecoin, launched through StonkFun and paired with $NEURAL." />
           <Faq title="What is $NEURAL?" body="$NEURAL is the verified PreStocks asset that provides tokenized Neuralink pre-IPO economic exposure on Solana." />
-          <Faq title="How are airdrops funded?" body="Accrued creator fees are claimed server-side, swapped into $NEURAL, and distributed when the epoch clears the configured threshold." />
-          <Faq title="When do distributions happen?" body="Distributions run on fixed five-minute UTC epochs. The countdown is synchronized to those epochs and does not restart on refresh." />
+          <Faq title="How are rewards funded?" body="Trading activity in the StonkFun reward pair builds the reward pot. StonkFun routes cleared rewards automatically to qualifying holders." />
+          <Faq title="When do distributions happen?" body="The site tracks five-minute reward windows. Actual settlement depends on StonkFun reward-pot thresholds and platform execution." />
           <Faq title="Who is eligible?" body={eligibilityText} />
-          <Faq title="How are allocations calculated?" body="Allocations use the existing holder-allocation logic already deployed in the airdrop worker. This site does not invent a new formula." />
-          <Faq title="What happens when no fees accrue?" body="If fees or purchased rewards are below the configured minimum threshold, the dashboard shows No distribution this epoch." />
+          <Faq title="How are allocations calculated?" body="Reward eligibility and allocations follow the active StonkFun pair mechanics. This site does not invent a separate formula." />
+          <Faq title="What happens when the reward pot has not cleared?" body="The dashboard remains in an awaiting state until StonkFun records a completed reward distribution." />
           <Faq title="Where can every drop be verified?" body="Every completed distribution links to its Solana transaction on Solscan from the live history table." />
           <Faq
             title="Is this affiliated with Neuralink or PreStocks?"

@@ -1,18 +1,19 @@
 # BRAINROT ($BRAINROT)
 
-BRAINROT is a five-minute Solana holder reward protocol. Each completed cycle:
+BRAINROT is the word of our generation turned into a Solana memecoin: launched through StonkFun and paired with the verified `$NEURAL` tokenized Neuralink asset.
 
-1. snapshots the eligible $BRAINROT holder set;
-2. applies the existing holder-allocation logic;
-3. claims accrued creator fees server-side;
-4. buys the verified $NEURAL PreStocks asset on Solana; and
-5. distributes settled, verifiable $NEURAL receipts to eligible holders.
+The public site presents the StonkFun reward-pair flow:
 
-Distributions run on fixed five-minute UTC epochs. If fees or purchased rewards are below the configured threshold, the epoch is recorded as skipped and the site displays "No distribution this epoch." No wallet signature, approval, or manual claim is required for holder rewards.
+1. launch `$BRAINROT` through StonkFun;
+2. pair it with `$NEURAL`;
+3. let the platform reward pot accumulate from trading activity; and
+4. publish completed holder rewards with verifiable Solana receipts.
 
-## Safety Gates
+The interface uses five-minute tracking windows. Actual reward settlement depends on StonkFun reward-pot thresholds and platform execution. No wallet signature, approval, or manual claim is required for holder rewards.
 
-All money-moving worker flags default off. Configure the verified $BRAINROT source mint, the official $NEURAL reward mint, holder threshold, exclusions, Supabase schema, retry settings, slippage, fee reserves, and emergency pause state; then run and inspect a dry cycle before enabling claims, buys, airdrops, or the worker.
+## Legacy worker safety gates
+
+The repository still contains the earlier standalone distribution worker. Its money-moving flags remain off by default and should not be enabled for a StonkFun-managed reward launch unless the operating model is intentionally changed and reviewed.
 
 The official $NEURAL mint configured by default is:
 
