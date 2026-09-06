@@ -11,53 +11,11 @@ const AWAITING = "Awaiting live data";
 
 const BRAINROT_TIMELINE = [
   {
-    era: "2007",
-    title: "RICKROLL",
-    signal: "THE BAIT",
-    body: "A disguised link becomes the internet's first truly universal bait-and-switch ritual—and never stops working.",
-    href: "https://www.guinnessworldrecords.com/world-records/108978-first-reported-rickroll"
-  },
-  {
-    era: "APR 2011",
-    title: "NYAN CAT",
-    signal: "THE LOOP",
-    body: "A pixel cat, a Pop-Tart body and an endless rainbow prove that repetition itself can become culture.",
-    href: "https://internetmuseum.se/utstallningar/virala-succeer/nyan-cat/"
-  },
-  {
-    era: "2013",
-    title: "DOGE",
-    signal: "THE DIALECT",
-    body: "Kabosu and multicolored Comic Sans create a complete internet dialect—then inspire the original memecoin.",
-    href: "https://dogecoin.com/dogepedia/articles/history-of-dogecoin/"
-  },
-  {
-    era: "2016",
-    title: "HARAMBE",
-    signal: "THE CANON",
-    body: "A tragic news story mutates into the inescapable meme of 2016 and a permanent marker in internet time.",
-    href: "https://www.latimes.com/nation/la-na-harambe-meme-evolution-20161221-story.html"
-  },
-  {
-    era: "JAN 2018",
-    title: "UGANDAN KNUCKLES",
-    signal: "THE SWARM",
-    body: "One distorted character floods VRChat, turning synchronized repetition into a global multiplayer meme.",
-    href: "https://wiki.vrchat.com/wiki/Ugandan_Knuckles"
-  },
-  {
-    era: "2018 → 2023",
+    era: "2023",
     title: "JOHN PORK CALLS",
     signal: "THE FACE",
-    body: "John Pork first appeared in 2018. In 2023, the call screen escaped containment and reached millions of feeds.",
+    body: "The John Pork call screen escapes containment and reaches millions of feeds, becoming one of the first faces of the viral brainrot era.",
     href: "https://johnpork.com/pages/about"
-  },
-  {
-    era: "SUMMER 2020",
-    title: "AMONG US",
-    signal: "THE SUSPICION",
-    body: "A tiny social-deduction game goes global. Crewmates, emergency meetings and “sus” become a visual language.",
-    href: "https://www.innersloth.com/press-kit-among-us/"
   },
   {
     era: "FEB 2023",
