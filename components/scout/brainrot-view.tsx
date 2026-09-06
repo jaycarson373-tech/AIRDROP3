@@ -9,6 +9,51 @@ import type { ScoutStats } from "./types";
 const EPOCH_MS = 5 * 60 * 1000;
 const AWAITING = "Awaiting live data";
 
+const BRAINROT_TIMELINE = [
+  {
+    era: "2018 → 2023",
+    title: "JOHN PORK CALLS",
+    signal: "THE FACE",
+    body: "John Pork first appeared in 2018. In 2023, the call screen escaped containment and reached millions of feeds.",
+    href: "https://johnpork.com/pages/about"
+  },
+  {
+    era: "FEB 2023",
+    title: "SKIBIDI ARRIVES",
+    signal: "THE FORMAT",
+    body: "Skibidi Toilet turns an eleven-second absurdist short into a global, endlessly expanding internet universe.",
+    href: "https://www.youtube.com/shorts/6WS7_R3e6sY"
+  },
+  {
+    era: "DEC 2024",
+    title: "THE WORD BECOMES OFFICIAL",
+    signal: "THE LANGUAGE",
+    body: "Oxford names “brain rot” its 2024 Word of the Year. The feed's native language enters the dictionary era.",
+    href: "https://corp.oup.com/news/brain-rot-named-oxford-word-of-the-year-2024/"
+  },
+  {
+    era: "JAN 2025",
+    title: "ITALIAN BRAINROT",
+    signal: "THE WAVE",
+    body: "Tralalero Tralala opens the floodgates: AI animals, impossible names and lore generated at timeline speed.",
+    href: "https://knowyourmeme.com/memes/italian-brainrot-ai-italian-animals"
+  },
+  {
+    era: "FEB 2025",
+    title: "TRIPLE T",
+    signal: "THE CHARACTER",
+    body: "Tung Tung Tung Sahur—Triple T—crosses from an Indonesian sahur meme into the worldwide brainrot canon.",
+    href: "https://www.mementumlab.com/wiki-tung-tung"
+  },
+  {
+    era: "2025",
+    title: "6-7",
+    signal: "THE NUMBER",
+    body: "A line from Skrilla's “Doot Doot (6 7)” detaches from the song and becomes a universal piece of nonsense.",
+    href: "https://www.youtube.com/watch?v=07xpV4ix2K8"
+  }
+] as const;
+
 type ExtendedStats = ScoutStats & {
   liveDataAvailable?: boolean;
   totalCreatorFeesConvertedSol?: number | null;
@@ -492,6 +537,33 @@ export function BrainrotView() {
         </p>
         <p>Individual characters have run, but Brainrot itself has never had its definitive Solana run.</p>
         <p>$BRAINROT changes that: launched through StonkFun and paired directly with tokenized Neuralink exposure.</p>
+      </section>
+
+      <section className="brainrot-timeline" id="timeline" aria-labelledby="timeline-title">
+        <div className="brainrot-section-head">
+          <span>THE FEED ARCHIVE</span>
+          <h2 id="timeline-title">BRAINROT DIDN'T ARRIVE. IT COMPOUNDED.</h2>
+        </div>
+        <p className="brainrot-timeline-intro">
+          Faces became formats. Formats became language. Language became the word of the year. This is the timeline
+          that made brainrot the defining internet culture of a generation.
+        </p>
+        <div className="brainrot-timeline-grid">
+          {BRAINROT_TIMELINE.map((item, index) => (
+            <article className="brainrot-timeline-item" key={item.title}>
+              <div className="brainrot-timeline-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</div>
+              <div className="brainrot-timeline-meta">
+                <time>{item.era}</time>
+                <span>{item.signal}</span>
+              </div>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              <a href={item.href} target="_blank" rel="noopener noreferrer">
+                TRACE ORIGIN <ExternalLink size={13} aria-hidden="true" />
+              </a>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="brainrot-neural" id="neural" aria-labelledby="neural-title">

@@ -369,6 +369,7 @@
 .brainrot-mints,
 .brainrot-steps,
 .brainrot-thesis,
+.brainrot-timeline,
 .brainrot-neural,
 .brainrot-wallet,
 .brainrot-faq {
@@ -430,6 +431,7 @@
 .brainrot-mints,
 .brainrot-steps,
 .brainrot-thesis,
+.brainrot-timeline,
 .brainrot-neural,
 .brainrot-wallet,
 .brainrot-faq {
@@ -693,6 +695,111 @@
   max-width: 920px;
 }
 
+.brainrot-timeline-intro {
+  max-width: 900px;
+  margin: -2px 0 20px;
+  color: var(--brainrot-muted);
+  font-size: clamp(0.98rem, 1.2vw, 1.08rem);
+  line-height: 1.58;
+}
+
+.brainrot-timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: solid rgba(8, 247, 255, 0.24);
+  border-width: 1px 0 0 1px;
+}
+
+.brainrot-timeline-item {
+  position: relative;
+  display: grid;
+  min-height: 260px;
+  align-content: end;
+  gap: 10px;
+  padding: 22px;
+  overflow: hidden;
+  border: solid rgba(8, 247, 255, 0.24);
+  border-width: 0 1px 1px 0;
+  background:
+    linear-gradient(145deg, rgba(8, 247, 255, 0.055), transparent 48%),
+    rgba(2, 1, 9, 0.66);
+}
+
+.brainrot-timeline-item::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  content: "";
+  opacity: 0;
+  background: linear-gradient(var(--brainrot-green), var(--brainrot-cyan));
+  transition: opacity 160ms ease;
+}
+
+.brainrot-timeline-item:hover::before { opacity: 1; }
+
+.brainrot-timeline-index {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  color: rgba(255, 255, 255, 0.08);
+  font-family: var(--font-pump-display), Inter, sans-serif;
+  font-size: clamp(3rem, 5vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.brainrot-timeline-meta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.brainrot-timeline-meta time,
+.brainrot-timeline-meta span {
+  padding: 5px 7px;
+  border: 1px solid rgba(184, 255, 24, 0.3);
+  border-radius: 4px;
+  color: var(--brainrot-green);
+  background: rgba(184, 255, 24, 0.07);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.brainrot-timeline-item h3 {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  line-height: 1;
+}
+
+.brainrot-timeline-item p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: var(--brainrot-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.brainrot-timeline-item a {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 6px;
+  color: var(--brainrot-cyan);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
 .brainrot-wallet-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -744,6 +851,10 @@
 
   .brainrot-metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .brainrot-timeline-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -802,12 +913,22 @@
   .brainrot-mints,
   .brainrot-steps,
   .brainrot-thesis,
+  .brainrot-timeline,
   .brainrot-neural,
   .brainrot-wallet,
   .brainrot-faq {
     width: calc(100% - 24px);
     margin: 12px auto;
     padding: 16px;
+  }
+
+  .brainrot-timeline-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .brainrot-timeline-item {
+    min-height: 218px;
+    padding: 18px;
   }
 
   .brainrot-section-head {
