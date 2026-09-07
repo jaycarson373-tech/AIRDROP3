@@ -36,6 +36,8 @@ The requested 2025 card order is thematic escalation, not a claim that the 67 Ki
 
 ## Implementation boundaries
 
+All 48 named references across the six yearly archive cards are displayed as visible lists, not collapsed disclosures. The supplied references are covered using recognizable names (for example, DaBaby Car / Convertible and Smurf Cat). Talking Tom and Talking Ben are listed separately across 2021 and 2022 to preserve the chronology correction. The AI-character, Triple T, 67, and Patrick cards remain separate timeline moments.
+
 Only timeline data, timeline visual rendering, and styles scoped to `.fever-lore--evolution` change. Existing paper, borders, tape, typography, and stamps remain. No navigation, reward, token, pairing, worker, or API changes.
 
 Timeline character images use Next Image, responsive sizes, lazy loading, fixed layout boxes, and `object-fit: contain`. Archive screenshots use `object-fit: cover` in proportional frames, so there is no stretching. Existing source images are not overwritten. The multi-character collage uses all four approved local AI-character assets. The generic giant 67 is removed from the timeline only; the separate character feed and hero are out of scope.

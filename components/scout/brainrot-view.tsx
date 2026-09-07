@@ -71,7 +71,7 @@ const LORE: LoreEntry[] = [
     copy: "COVID lockdowns moved hangouts, boredom and entertainment onto screens. Among Us made everyone sus; Coffin Dance and Bella Poarch turned a few seconds of sound and movement into endlessly repeatable jokes. the feed got faster, attention got shorter, and context became optional.",
     images: [],
     archiveYear: 2020,
-    examples: ["Among Us / sus", "Coffin Dance", "Bella Poarch / M to the B", "Always Has Been", "DaBaby Convertible", "Vector edits", "Juan / horse on balcony"],
+    examples: ["Among Us / sus", "Coffin Dance", "Bella Poarch / M to the B", "Always Has Been", "DaBaby Car / Convertible", "Vector edits", "Juan / horse on balcony"],
     stamp: "PATIENT ZERO"
   },
   {
@@ -428,10 +428,10 @@ export function BrainrotView() {
               <time>{item.date}</time>
               <h3>{item.title}</h3>
               <p>{item.copy}</p>
-              {item.examples ? <details className="lore-examples">
-                <summary>IN THE FEED · {item.examples.length} REFERENCES</summary>
+              {item.examples ? <div className="lore-examples">
+                <h4>IN THE FEED · {item.examples.length} REFERENCES</h4>
                 <ul>{item.examples.map((example) => <li key={example}>{example}</li>)}</ul>
-              </details> : null}
+              </div> : null}
               <strong>{item.stamp}</strong>
             </article>
           ))}

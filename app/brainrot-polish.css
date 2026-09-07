@@ -157,8 +157,7 @@ body:has(.brainrot-call-gate) .brainrot-header { visibility: hidden; }
 .fever-lore--evolution .lore-context a { display: inline-block; min-height: 44px; padding-block: 10px; color: #050608; font-size: 12px; font-weight: 900; text-underline-offset: 3px; }
 .fever-lore--evolution .lore-context small { display: block; margin-top: 8px; font: 700 12px/1.5 "Courier New", monospace; }
 .fever-lore--evolution .lore-examples { margin-top: 18px; border-top: 1px dashed #777064; }
-.fever-lore--evolution .lore-examples summary { min-height: 44px; padding: 13px 0; cursor: pointer; font: 900 11px/1.5 "Courier New", monospace; }
-.fever-lore--evolution .lore-examples summary:focus-visible { outline: 2px solid #050608; outline-offset: 3px; }
+.fever-lore--evolution .lore-examples h4 { margin: 0; padding: 13px 0; font: 900 11px/1.5 "Courier New", monospace; }
 .fever-lore--evolution .lore-examples ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; padding: 0; list-style: none; }
 .fever-lore--evolution .lore-examples li { padding: 5px 7px; border: 1px solid #aaa18e; color: #050608; background: #ede5d3; font: 700 12px/1.35 Arial, sans-serif; }
 @media (max-width: 900px) {
