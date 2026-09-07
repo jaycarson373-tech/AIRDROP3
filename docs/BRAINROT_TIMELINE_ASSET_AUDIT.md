@@ -1,6 +1,31 @@
 # Timeline-only lore update — asset audit
 
-Status: expanded with the user's six supplied community-archive references and the subsequently approved 67 Kid photo. The 67 timeline card now uses that exact photo, with no generic number graphic or unrelated substitute.
+Status: expanded to 15 chapters spanning 2005–2026, with 88 visible named references across ten era lists. All prior 48 references are retained. Three newly supplied early-history collages are added; six repeated 2020–2025 screenshots reuse the existing identical references. The taped paper aesthetic and character carousel remain.
+
+## September 7 history expansion
+
+- Added unchanged supplied screenshots at `community-archive-2005.jpg`, `community-archive-2010.jpg`, and `community-archive-2018.jpg`, from upload folder `F0690AEF-5C34-4FCA-BE11-EB49ADBE578B`, photos 1–3. They represent 2005–2009, 2010–2014, and 2018–2019 respectively. CSS frames the book without modifying the originals.
+- The missing 2015–2017 screenshot is not invented. That chapter uses a native typographic Vine catchphrase wall and a visible list of 12 recognizable references.
+- `tung-tung-original.png`: original standing wooden character holding a bat, inspected at 1170×1180. Downloaded unchanged from https://upload.wikimedia.org/wikipedia/commons/1/12/Full_image_of_Tung_Tung_Tung_Sahur.png and attributed in the card. Replaces the bat-less cartoon in the timeline and character carousel only.
+- `bombardiro-crocodilo-hq.png`: inspected 1920×1080 GIGA editorial composition using the same crocodile aircraft as the supplied image, with a white outline and different background. This is NOT represented as an upscale of the user's 225×225 upload. Used in its new dedicated chapter and carousel, with a source link. The exact user image remains in the AI-cast collage.
+- Bombardiro source: https://www.giga.de/tech/bombardiro-crocodilo-was-steckt-hinter-dem-militaer-krokodil-meme-nicht-jugendfrei--01KC9EMC4Y6AAHBQ9XXXTVQ6MH
+- The actual supplied 67 Kid photo now also replaces the generic number in the character carousel. The hero's typographic 67 accent is unchanged.
+- Early-era dates group circulation waves, not inventions: Annoying Orange and Trollface predate the 2010 grouping; their continued spread belongs in that era. YOLO existed before Drake popularized it in 2011. “Brain rot” itself is recorded in 1854, so the new copy explicitly says internet-cultural predecessors, not memes predating the word.
+- YOLO context: https://knowyourmeme.com/memes/yolo
+- What are those, viral June 2015: https://www.dictionary.com/culture/memes/what-are-those
+- E / Markiplier-Farquaad, 2018: https://knowyourmeme.com/memes/lord-marquaad-e
+- New long-form single-column archive walk uses proportional large visuals, all examples visible, a chapter selector, back/next buttons, and reading progress. No timed gate, forced scrolling, autoplay video, or sound. Reduced-motion preference is respected. Layout stacks on mobile; no fixed-width tables.
+- Scope: timeline content/layout and three carousel image references. The outer container uses `overflow: clip` instead of `hidden` so the archive's sticky chapter controls work. No token, reward, backend, pairing, global navigation, intro, or wallet configuration changes.
+
+The following notes preserve the earlier audit; the expansion above supersedes older scope/count/image-use statements.
+
+### Validation for the expansion
+
+- `npm run build`: passed, including TypeScript and static page generation.
+- `node scripts/check-brainrot-history.mjs`: passed against the generated homepage; verifies 15 chapter anchors, 88 visible list entries, historical date/usage wording, all nine archive files, the new character images, and the removed CA strip remaining absent.
+- `git diff --check`: passed.
+- Original Tung and the higher-resolution Bombardiro composition were visually inspected before use.
+- Interactive/mobile screenshot QA could not run: the Browser runtime reported no available browsers, with discovery returning an empty list. Responsive CSS is implemented but a rendered mobile QA pass is still outstanding.
 
 ## Existing assets inspected
 

@@ -26,14 +26,14 @@ const CHARACTERS = [
     name: "BOMBARDIRO CROCODILO",
     era: "2025 // AIRBORNE NONSENSE",
     note: "the timeline requested air support. huge mistake.",
-    image: "/brand/bombardiro.png",
+    image: "/brand/lore/bombardiro-crocodilo-hq.png",
     className: "is-bombardiro"
   },
   {
     name: "TUNG TUNG TUNG SAHUR",
     era: "2025 // MAXIMUM AURA",
     note: "heard three knocks. the lore entered with a bat.",
-    image: "/brand/tung-tung.png",
+    image: "/brand/lore/tung-tung-original.png",
     className: "is-tung"
   },
   {
@@ -47,7 +47,7 @@ const CHARACTERS = [
     name: "SIX SEVEN",
     era: "2025 // THE NUMBER INCIDENT",
     note: "math left the chat. the children understood everything.",
-    image: null,
+    image: "/brand/lore/67-kid.jpg",
     className: "is-sixty-seven"
   }
 ] as const;
@@ -60,11 +60,49 @@ type LoreEntry = {
   images: LoreImage[];
   examples?: string[];
   archiveYear?: number;
+  quotes?: string[];
+  source?: { label: string; url: string };
   stamp: string;
   className?: string;
 };
 
 const LORE: LoreEntry[] = [
+  {
+    date: "2005–2009",
+    title: "BEFORE WE CALLED IT BRAINROT",
+    copy: "Crazy Frog and the Gummy Bear song made repetition the entire event. Rickrolling turned a link into a trap; ‘I like turtles’ made one unexpected answer immortal. these weren’t called TikTok brainrot—they were its extremely-online ancestors, passed around YouTube, forums and school computers.",
+    images: [],
+    archiveYear: 2005,
+    examples: ["Crazy Frog", "I’m a Gummy Bear", "I like turtles", "Rickroll", "Raptor Jesus", "Charlie the Unicorn", "Chocolate Rain", "Keyboard Cat"],
+    stamp: "ANCESTRAL DAMAGE"
+  },
+  {
+    date: "2010–2014",
+    title: "MUCH MEME. VERY SWAG.",
+    copy: "Nyan Cat looped forever, rage faces became a visual vocabulary, and Doge gave the internet its own grammar. YOLO, swag and MLG edits mixed catchphrases with air horns, hit markers and sensory overload. being annoying on purpose was becoming a shared art form.",
+    images: [],
+    archiveYear: 2010,
+    examples: ["Nyan Cat", "Annoying Orange", "Trollface / rage comics", "Doge / much wow", "MLG montages", "YOLO", "Swag", "Illuminati confirmed", "Gangnam Style", "Harlem Shake"],
+    stamp: "LOOP ENABLED"
+  },
+  {
+    date: "2015–2017",
+    title: "SIX SECONDS. PERMANENT DAMAGE.",
+    copy: "Vine made tiny clips into things you could quote in real life: ‘what are those?!’, ‘damn Daniel’ and ‘and his name is John Cena.’ ‘Boi’ reaction images, bottle flips and dabbing needed almost no setup. the app could disappear; the sound bites stayed in everybody’s head.",
+    images: [],
+    quotes: ["WHAT ARE THOSE?!", "DAMN DANIEL", "AND HIS NAME IS JOHN CENA", "BOI"],
+    examples: ["What are those?!", "Damn Daniel", "Unexpected John Cena", "Boi / hand gesture", "Deez nuts", "Dabbing", "Bottle flip", "Dat Boi", "Suh dude", "Mannequin Challenge", "Shooting Stars", "We Are Number One"],
+    stamp: "QUOTED OFFLINE"
+  },
+  {
+    date: "2018–2019",
+    title: "THE PUNCHLINE WAS JUST E",
+    copy: "Deep-fried edits crushed images into noise, and Lord Farquaad + Markiplier + one letter somehow became a joke. Ugandan Knuckles, Big Chungus and Crab Rave spread through remixes, gaming clips and comment sections. the less sense it made, the more recognizable it became.",
+    images: [],
+    archiveYear: 2018,
+    examples: ["Lord Marquaad / Markiplier E", "Deep-fried / dank memes", "Ugandan Knuckles", "Big Chungus", "Crab Rave", "FBI Open Up", "Ligma / Bofa", "Prime Ninja / Fortnite", "Surprised Pikachu", "Area 51 raid"],
+    stamp: "CONTEXT DELETED"
+  },
   {
     date: "2020",
     title: "LOCKDOWN. PHONE ON.",
@@ -72,7 +110,7 @@ const LORE: LoreEntry[] = [
     images: [],
     archiveYear: 2020,
     examples: ["Among Us / sus", "Coffin Dance", "Bella Poarch / M to the B", "Always Has Been", "DaBaby Car / Convertible", "Vector edits", "Juan / horse on balcony"],
-    stamp: "PATIENT ZERO"
+    stamp: "SCROLL ACCELERATED"
   },
   {
     date: "2021",
@@ -103,7 +141,7 @@ const LORE: LoreEntry[] = [
   },
   {
     date: "2024",
-    title: "THE ROT GETS A NAME",
+    title: "THE DICTIONARY NOTICES",
     copy: "the TikTok Rizz Party, Costco Guys’ BOOM and the Low Taper Fade became catchphrases people carried off the screen. Oxford recorded a 230% increase in usage of ‘brain rot’ between 2023 and 2024. it became Oxford’s 2024 Word of the Year; the dictionary had entered the group chat.",
     images: [],
     archiveYear: 2024,
@@ -127,16 +165,26 @@ const LORE: LoreEntry[] = [
       { src: "/brand/tralalero.png", alt: "Tralalero Tralala, the sneaker-wearing shark", className: "lore-tralalero" },
       { src: "/brand/lore/bombardiro-crocodilo.jpg", alt: "Bombardiro Crocodilo flying through clouds, in the supplied meme image", className: "lore-bombardiro" },
       { src: "/brand/ballerina.png", alt: "Ballerina Cappuccina, the coffee-cup ballerina", className: "lore-ballerina" },
-      { src: "/brand/tung-tung.png", alt: "Tung Tung Tung Sahur, the wooden character", className: "lore-tung" }
+      { src: "/brand/lore/tung-tung-original.png", alt: "The original Tung Tung Tung Sahur standing with a wooden bat at night", className: "lore-tung" }
     ],
     stamp: "ROT GLOBAL",
     className: "is-invasion"
   },
   {
     date: "2025",
+    title: "BOMBARDIRO CROCODILO",
+    copy: "a crocodile became an aircraft. the name, the impossible image and the repeated AI voice were the format—not a setup followed by a punchline. the cast was no longer limited by anything that could actually exist.",
+    images: [{ src: "/brand/lore/bombardiro-crocodilo-hq.png", alt: "High-resolution Bombardiro Crocodilo editorial image featuring the same crocodile-headed bomber as the supplied reference" }],
+    source: { label: "IMAGE: GIGA · ORIGINAL MEME EXPLAINED", url: "https://www.giga.de/tech/bombardiro-crocodilo-was-steckt-hinter-dem-militaer-krokodil-meme-nicht-jugendfrei--01KC9EMC4Y6AAHBQ9XXXTVQ6MH" },
+    stamp: "AIRBORNE ROT",
+    className: "is-bombardiro-archive"
+  },
+  {
+    date: "2025",
     title: "TRIPLE T",
-    copy: "Tung Tung Tung Sahur became ‘Triple T’: TikTok edits put the wooden character into baseball, doorbell cams and everyday life. the feed found triple t. then triple t found everybody.",
-    images: [{ src: "/brand/tung-tung.png", alt: "Triple T — Tung Tung Tung Sahur" }],
+    copy: "first came Noxa’s Tung Tung Tung Sahur: a wooden figure with a bat, rooted in Indonesian sahur wake-up calls. later, ‘Triple T’ edits dropped him into baseball, doorbell cams and everyday life. the feed found triple t; then triple t found everybody.",
+    images: [{ src: "/brand/lore/tung-tung-original.png", alt: "Original Tung Tung Tung Sahur standing under a streetlight with his wooden bat — later nicknamed Triple T" }],
+    source: { label: "ORIGINAL IMAGE · NOXA / WIKIMEDIA", url: "https://commons.wikimedia.org/wiki/File:Full_image_of_Tung_Tung_Tung_Sahur.png" },
     stamp: "FEED CAPTURED",
     className: "is-triple-t"
   },
@@ -157,16 +205,54 @@ const LORE: LoreEntry[] = [
 ];
 
 function LoreVisual({ entry }: { entry: LoreEntry }) {
+  if (entry.quotes) return <div className="lore-vine-wall" aria-label="Vine-era catchphrase wall">
+    <span>REPLAYING FROM MEMORY · 00:06</span>
+    {entry.quotes.map((quote) => <b key={quote}>{quote}</b>)}
+    <small>you heard these while reading them.</small>
+  </div>;
   if (entry.archiveYear) {
     const src = `/brand/lore/community-archive-${entry.archiveYear}.jpg`;
     return <a className="lore-archive-crop" href={src} target="_blank" rel="noopener noreferrer" aria-label={`Open the supplied ${entry.archiveYear} community meme archive`}>
-      <Image src={src} alt={`Community archive collage of ${entry.archiveYear} memes from the supplied TikTok reference`} fill sizes="(max-width: 700px) 85vw, (max-width: 900px) 42vw, 360px" loading="lazy" />
+      <Image src={src} alt={`Community archive collage of ${entry.date} memes from the supplied TikTok reference`} fill sizes="(max-width: 700px) 90vw, 550px" loading="lazy" />
     </a>;
   }
   if (!entry.images.length) return null;
   return <div className={`lore-image-mat${entry.images.length > 1 ? " is-collage" : ""}`}>
-    {entry.images.map((image) => <Image key={image.src} src={image.src} alt={image.alt} className={image.className} width={600} height={400} sizes="(max-width: 700px) 85vw, (max-width: 900px) 42vw, 360px" loading="lazy" />)}
+    {entry.images.map((image) => <Image key={image.src} src={image.src} alt={image.alt} className={image.className} width={600} height={400} sizes="(max-width: 700px) 90vw, 550px" loading="lazy" />)}
   </div>;
+}
+
+function HistoryControls() {
+  const [chapter, setChapter] = useState(0);
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (visible[0]) setChapter(Number((visible[0].target as HTMLElement).dataset.chapter));
+    }, { rootMargin: "-15% 0px -45% 0px", threshold: 0 });
+    document.querySelectorAll("[data-chapter]").forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
+  const jump = (index: number) => {
+    setChapter(index);
+    document.getElementById(`rot-chapter-${index}`)?.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+      block: "start"
+    });
+  };
+  return <nav className="lore-chapter-nav" aria-label="Meme history chapters">
+    <span>ARCHIVE <b>{String(chapter + 1).padStart(2, "0")} / {LORE.length}</b></span>
+    <label className="lore-chapter-select">JUMP TO ERA
+      <select value={chapter} onChange={(event) => jump(Number(event.target.value))}>
+        {LORE.map((entry, index) => <option value={index} key={entry.title}>{entry.date} · {entry.title}</option>)}
+      </select>
+    </label>
+    <div className="lore-chapter-buttons">
+      <button type="button" disabled={chapter === 0} onClick={() => jump(chapter - 1)} aria-label="Previous history chapter">BACK</button>
+      <button type="button" disabled={chapter === LORE.length - 1} onClick={() => jump(chapter + 1)} aria-label="Next history chapter">NEXT</button>
+    </div>
+    <div className="lore-reading-progress" aria-hidden="true"><i style={{ width: `${((chapter + 1) / LORE.length) * 100}%` }} /></div>
+  </nav>;
 }
 
 type CallPhase = "ringing" | "answering" | "done";
@@ -408,32 +494,36 @@ export function BrainrotView() {
         </div>
       </section>
 
-      <section className="fever-lore fever-lore--evolution" id="timeline">
+      <section className="fever-lore fever-lore--evolution fever-lore--history" id="timeline">
         <header>
           <span>ARCHIVE CORRUPTED SUCCESSFULLY</span>
           <h2>THE TIMELINE<br />GOT WORSE</h2>
-          <p>2020–2026 // LOCKDOWN SCROLLING. SHARED SOUNDS. RECURRING CHARACTERS. AN ENTIRE INTERNET DIALECT.</p>
+          <p>2005–2026 // SAME INTERNET. FASTER FEED. LESS CONTEXT.</p>
           <div className="lore-context">
-            <p>2020 wasn’t the invention of weird internet humor. It was the lockdown acceleration: phones became the hangout, short videos became the format, and jokes became things you replayed, remixed and quoted.</p>
-            <p>“Brain rot” is older than the internet—Oxford traces it to 1854. Gen Z and Gen Alpha gave it fresh life online, and by 2024 it was Oxford’s Word of the Year. This is the modern feed’s evolution, not the word’s birth certificate.</p>
+            <p>Before the For You page, we were already replaying singing animals, sending cursed links and shouting things nobody outside the group chat understood. Today’s brainrot didn’t appear from nowhere. the delivery system just got faster.</p>
+            <p>THE WORD CAME FIRST: Oxford traces “brain rot” to 1854, long before the internet. These early memes are cultural predecessors—not the first use of the term. Lockdown scrolling accelerated the format in 2020; by 2024, the modern slang was Oxford’s Word of the Year.</p>
             <a href="https://corp.oup.com/news/brain-rot-named-oxford-word-of-the-year-2024/" target="_blank" rel="noopener noreferrer">OXFORD: THE WORD’S HISTORY</a>
-            <small>Years group overlapping meme waves, not every original upload. Supplied community collages are reference material; tap one to view it in full.</small>
+            <small>15 CHAPTERS. SCROLL AT YOUR OWN SPEED. Years group overlapping meme waves, not every first upload. The 2025 arcs overlap. Tap an archive collage to see your original reference in full.</small>
           </div>
         </header>
+        <HistoryControls />
         <div className="fever-lore__wall">
           {LORE.map((item, index) => (
-            <article className={`fever-lore-item fever-lore-item--${index + 1} ${item.className ?? ""}`} key={item.title}>
+            <article id={`rot-chapter-${index}`} data-chapter={index} className={`fever-lore-item fever-lore-item--${index + 1} ${item.className ?? ""}`} key={item.title}>
               <div className="fever-tape" aria-hidden="true" />
-              <LoreVisual entry={item} />
+              <div className="lore-chapter-visual"><span className="lore-file-number">FILE {String(index + 1).padStart(2, "0")} · {item.date}</span><LoreVisual entry={item} /></div>
+              <div className="lore-chapter-copy">
               <time>{item.date}</time>
               <h3>{item.title}</h3>
               <p>{item.copy}</p>
               {item.archiveYear === 2024 ? <a className="lore-source" href="https://corp.oup.com/news/brain-rot-named-oxford-word-of-the-year-2024/" target="_blank" rel="noopener noreferrer">SOURCE: OXFORD UNIVERSITY PRESS</a> : null}
+              {item.source ? <a className="lore-source" href={item.source.url} target="_blank" rel="noopener noreferrer">{item.source.label}</a> : null}
               {item.examples ? <div className="lore-examples">
                 <h4>IN THE FEED · {item.examples.length} REFERENCES</h4>
                 <ul>{item.examples.map((example) => <li key={example}>{example}</li>)}</ul>
               </div> : null}
               <strong>{item.stamp}</strong>
+              </div>
             </article>
           ))}
           <aside className="fever-error-box">

@@ -171,3 +171,55 @@ body:has(.brainrot-call-gate) .brainrot-header { visibility: hidden; }
   .fever-lore--evolution .fever-lore-item { min-height: 0; }
   .fever-lore--evolution .fever-lore-item h3 { font-size: 32px; }
 }
+
+/* A longer archive walk, preserving the paper/tape/stamp visual language. */
+.brainrot-fever:has(.fever-lore--history) { overflow: clip; }
+.fever-lore--history .fever-lore__wall { display: flex; flex-direction: column; gap: 68px; max-width: 1160px; padding: 38px 30px 40px; }
+.fever-lore--history .fever-lore-item,
+.fever-lore--history .fever-lore-item:nth-child(3n + 2) { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; gap: 30px; min-height: 510px; padding: 28px; margin: 0; transform: rotate(-.65deg); scroll-margin-top: 175px; }
+.fever-lore--history .fever-lore-item:nth-child(even) { transform: rotate(.65deg); }
+.fever-lore--history .lore-chapter-visual,
+.fever-lore--history .lore-chapter-copy { min-width: 0; }
+.fever-lore--history .lore-file-number { display: block; margin-bottom: 12px; font: 900 11px/1.4 "Courier New", monospace; letter-spacing: .08em; }
+.fever-lore--history .lore-chapter-copy time { margin: 0 0 12px; padding: 6px 9px; font-size: 18px; }
+.fever-lore--history .lore-chapter-copy h3 { margin: 0 0 18px; font-size: clamp(32px, 3.5vw, 49px); line-height: .97; overflow-wrap: normal; }
+.fever-lore--history .lore-chapter-copy p { font: 700 16px/1.55 Arial, sans-serif; }
+.fever-lore--history .lore-chapter-copy > strong { display: inline-block; margin: 20px 0 3px; padding: 7px 9px; border: 3px solid #dc2727; color: #c41b1b; background: #fff9; font: 900 12px/1.25 "Arial Black", Arial, sans-serif; transform: rotate(-5deg); }
+.fever-lore--history .lore-image-mat { height: 360px; }
+.fever-lore--history .is-triple-t .lore-image-mat { height: 440px; background: #151515; }
+.fever-lore--history .is-bombardiro-archive .lore-image-mat { background: #b8c8d4; }
+.fever-lore--history .lore-examples li { font-size: 12px; padding: 6px 8px; }
+.fever-lore--history .fever-error-box { width: min(100%, 620px); align-self: center; }
+.lore-vine-wall { display: flex; flex-direction: column; justify-content: center; gap: 20px; min-height: 365px; padding: 26px 20px; border: 3px solid #050608; background: repeating-linear-gradient(0deg, #f3edde 0 27px, #d6cebc 28px 29px); }
+.lore-vine-wall > span, .lore-vine-wall small { font: 900 11px/1.5 "Courier New", monospace; }
+.lore-vine-wall b { align-self: flex-start; padding: 8px; color: #fff; background: #050608; font: 900 clamp(22px, 2.4vw, 36px)/1 Impact, "Arial Black", sans-serif; transform: rotate(-3deg); }
+.lore-vine-wall b:nth-of-type(even) { align-self: flex-end; color: #050608; background: #f1e72d; transform: rotate(3deg); }
+.lore-chapter-nav { position: sticky; top: 78px; z-index: 10; display: flex; align-items: center; gap: 20px; max-width: 1100px; margin: 30px auto 0; padding: 12px 16px 16px; border: 2px solid #050608; color: #050608; background: #f5f0e4; box-shadow: 4px 4px 0 #050608; }
+.lore-chapter-nav > span { flex: 0 0 auto; font: 900 10px/1.5 "Courier New", monospace; }
+.lore-chapter-nav > span b { display: block; font-size: 17px; }
+.lore-chapter-select { display: flex; flex: 1; align-items: center; gap: 10px; min-width: 0; font: 900 10px/1.4 "Courier New", monospace; }
+.lore-chapter-select select { width: 100%; min-width: 0; min-height: 44px; border: 1px solid #050608; border-radius: 0; padding: 8px; color: #050608; background: #fffdf3; font: 900 12px/1.4 "Courier New", monospace; text-overflow: ellipsis; }
+.lore-chapter-buttons { display: flex; gap: 6px; }
+.lore-chapter-buttons button { min-height: 44px; padding: 8px 12px; border: 2px solid #050608; color: #050608; background: #eee42b; font: 900 11px/1 "Courier New", monospace; cursor: pointer; }
+.lore-chapter-buttons button:disabled { opacity: .35; cursor: default; }
+.lore-reading-progress { position: absolute; inset: auto 0 0; height: 4px; background: #d0c9b6; }
+.lore-reading-progress i { display: block; height: 100%; background: #d32323; transition: width .25s ease; }
+.fever-card.is-tung img, .fever-card.is-sixty-seven img, .fever-card.is-bombardiro img { object-fit: contain; filter: none; }
+@media (max-width: 1150px) { .lore-chapter-nav { margin-inline: 30px; } }
+@media (max-width: 700px) {
+  .fever-lore--history .fever-lore__wall { gap: 44px; padding: 30px 19px; }
+  .fever-lore--history .fever-lore-item,
+  .fever-lore--history .fever-lore-item:nth-child(3n + 2) { grid-template-columns: minmax(0, 1fr); gap: 22px; min-height: 0; padding: 16px; scroll-margin-top: 190px; box-shadow: 6px 6px 0 #050608; }
+  .fever-lore--history .lore-chapter-copy h3 { font-size: clamp(30px, 8.5vw, 42px); }
+  .fever-lore--history .lore-chapter-copy p { font-size: 15px; line-height: 1.5; }
+  .fever-lore--history .lore-image-mat { height: 290px; }
+  .fever-lore--history .is-triple-t .lore-image-mat { height: auto; aspect-ratio: 1; }
+  .lore-chapter-nav { top: 70px; flex-wrap: wrap; gap: 8px; margin-inline: 16px; padding: 9px 10px 13px; }
+  .lore-chapter-nav > span { flex: 1; display: flex; align-items: baseline; gap: 7px; }
+  .lore-chapter-select { flex: 0 0 100%; order: 3; font-size: 0; }
+  .lore-chapter-select select { font-size: 11px; }
+  .lore-chapter-buttons button { min-height: 36px; }
+  .lore-vine-wall { min-height: 300px; padding: 20px 14px; gap: 16px; }
+  .lore-vine-wall b { font-size: 26px; }
+}
+@media (prefers-reduced-motion: reduce) { .lore-reading-progress i { transition: none; } }
