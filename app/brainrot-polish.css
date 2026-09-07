@@ -28,6 +28,13 @@
 .fever-screen-chart > div span { font-size: 11px; }
 .fever-lore-item { min-width: 0; }
 
+.brainrot-contract { display: flex; min-height: 38px; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 12px; padding: 6px 14px; border-top: 1px solid #263238; background: #080c0e; font: 700 11px/1.4 "Courier New", monospace; }
+.brainrot-contract__label { color: #00f5ff; }
+.brainrot-contract__pending { color: #dfff00; }
+.brainrot-contract button { min-height: 44px; padding: 6px 10px; border: 1px solid #00f5ff; color: #fff; background: #12191d; cursor: pointer; font: 700 12px/1.4 "Courier New", monospace !important; }
+.brainrot-contract__status { color: #dfff00; font-size: 10px; }
+.brainrot-contract__full { flex-basis: 100%; text-align: center; overflow-wrap: anywhere; user-select: all; color: #fff; }
+
 @media (min-width: 901px) {
   .fever-hero__copy { padding-top: clamp(85px, 8vw, 125px); }
   .fever-char--patrick { left: 24%; width: min(43vw, 570px); }
