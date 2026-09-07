@@ -3,6 +3,7 @@ import { IBM_Plex_Mono, Press_Start_2P, Space_Grotesk } from "next/font/google";
 import { ScoutShell } from "../components/scout/scout-shell";
 import "./globals.css";
 import "./scout.css";
+import "./brainrot-polish.css";
 
 const terminalFont = IBM_Plex_Mono({
   subsets: ["latin"],

@@ -1,0 +1,119 @@
+/* BRAINROT: deliberate chaos, usable controls. Scoped away from reward logic. */
+.brainrot-header .scout-brand strong { font-size: 24px !important; line-height: 1 !important; letter-spacing: .02em !important; }
+.brainrot-header .scout-brand small { font-size: 9px !important; line-height: 1.4 !important; letter-spacing: .04em !important; }
+.brainrot-header.scout-header { border-bottom: 2px solid #00f5ff !important; }
+.brainrot-header .scout-nav a { color: #fff !important; font-size: 12px !important; }
+.brainrot-header .scout-header-link--buy { color: #050608 !important; background: #dfff00 !important; }
+.brainrot-header .scout-brand__mark, .brainrot-footer .scout-brand__mark { border-radius: 3px !important; }
+.brainrot-shell :is(a, button, [tabindex]):focus-visible { outline: 3px solid #00f5ff; outline-offset: 5px; }
+.brainrot-fever [id] { scroll-margin-top: 90px; }
+.brainrot-fever ::selection { color: #050608; background: #dfff00; }
+.fever-collage, .fever-sticker, .fever-system { pointer-events: none; }
+.fever-char--patrick { animation-timing-function: ease-in-out; }
+.fever-char--tung { animation-timing-function: ease-in-out; }
+.fever-feed__control { margin-top: 20px; padding: 10px 14px; min-height: 44px; border: 2px solid var(--cyan); color: var(--cyan); background: #07080a; font-weight: 900; cursor: pointer; }
+.fever-feed__hint { display: none; }
+.fever-feed__track.is-paused, .fever-feed__viewport:focus-within .fever-feed__track { animation-play-state: paused; }
+.fever-feed__track { padding: 0 14px; }
+.fever-feed__viewport { scrollbar-color: var(--pink) #111; }
+.fever-popup > div button { width: 36px; height: 32px; cursor: pointer; }
+.fever-popup > button, .fever-error-box button { min-height: 44px; cursor: pointer; }
+.fever-error-box button:disabled { cursor: default; border-style: inset; }
+.fever-doomscroll > div { padding: 0 10px; margin-top: 47px; }
+.fever-doomscroll__group { display: flow-root; }
+.fever-doomscroll article { margin: 0 0 8px; }
+.fever-doomscroll:hover > div { animation-play-state: paused; }
+.fever-orb--neural b { font-size: 30px; }
+.fever-phone-report__stats span { font-size: 12px; }
+.fever-screen-chart > div span { font-size: 11px; }
+.fever-lore-item { min-width: 0; }
+
+@media (min-width: 901px) {
+  .fever-hero__copy { padding-top: clamp(85px, 8vw, 125px); }
+  .fever-char--patrick { left: 24%; width: min(43vw, 570px); }
+  .fever-sticker--one { left: 48%; top: 8%; }
+  .fever-system--one { left: 30%; bottom: 3%; width: 190px; }
+  .fever-lore-item--4 { grid-column: 2 / 7; }
+  .fever-error-box { grid-column: 8 / 12; align-self: center; transform: rotate(2deg); }
+}
+
+@media (max-width: 700px) {
+  .brainrot-header .scout-header__inner { padding-inline: 14px !important; gap: 10px; }
+  .brainrot-header .scout-brand { gap: 9px; min-width: 0; }
+  .brainrot-header .scout-brand strong { font-size: 22px !important; }
+  .brainrot-header .scout-brand small { display: none !important; }
+  .brainrot-header .scout-brand__mark { width: 34px !important; height: 34px !important; }
+  .brainrot-header .scout-header__actions { gap: 8px; }
+  .brainrot-header .scout-header-link--buy { min-height: 38px; padding-inline: 10px; font-size: 11px !important; }
+  .brainrot-header .scout-menu-button { min-width: 40px; min-height: 40px; }
+  .brainrot-header .scout-mobile-nav a { min-height: 48px; display: flex; align-items: center; }
+  .fever-hero { min-height: 830px; }
+  .fever-hero__copy { padding: 34px 18px 0; }
+  .fever-kicker { max-width: 100%; font-size: 10px; padding: 6px 8px; }
+  .fever-hero h1 { font-size: clamp(64px, 23vw, 112px); margin-top: 25px; }
+  .fever-hero h2 { margin-top: 24px; font-size: clamp(34px, 10.7vw, 52px); max-width: 410px; }
+  .fever-hero__copy > p { font-size: 15px; margin-top: 17px; padding: 7px 9px; }
+  .fever-cta { margin-top: 20px; }
+  .fever-collage { top: 380px; right: -12%; width: 124%; }
+  .fever-char--patrick { top: 13%; left: 20%; width: 69vw; }
+  .fever-char--patrick b { font-size: 12px; }
+  .fever-char--bombardiro { top: -3%; left: 25%; width: 65vw; }
+  .fever-char--tung { top: 8%; right: 0; }
+  .fever-char--tralalero { bottom: 0; left: 0; width: 47vw; }
+  .fever-char--ballerina { right: 5%; bottom: 0; width: 32vw; }
+  .fever-sticker--one { top: auto; bottom: 345px; left: 8px; font-size: 11px; }
+  .fever-sticker--two { bottom: 20%; font-size: 11px; }
+  .fever-system { width: 150px; font-size: 10px; }
+  .fever-system--one { bottom: 12px; }
+  .fever-system--two { bottom: 65px; }
+  .fever-feed, .fever-lore { padding-block: 60px; }
+  .fever-feed > header, .fever-lore > header { margin-bottom: 24px; padding-inline: 20px; }
+  .fever-feed h2, .fever-lore h2, .fever-pair h2 { font-size: clamp(52px, 17vw, 88px); line-height: .88; }
+  .fever-feed__control { display: none; }
+  .fever-feed__hint { display: block; margin: 20px 0 0; color: var(--cyan); font: 900 12px/1.3 "Courier New", monospace; }
+  .fever-feed__viewport { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 22px; padding-block: 16px 25px; }
+  .fever-feed__track { animation: none; gap: 22px; padding-inline: 22px; }
+  .fever-card { width: 80vw; min-height: 410px; scroll-snap-align: start; }
+  .fever-card.is-bombardiro { width: 84vw; }
+  .fever-card[aria-hidden="true"] { display: none; }
+  .fever-card h3 { font-size: 29px; }
+  .fever-card > span { font-size: 10px; }
+  .fever-card p { font-size: 15px; }
+  .fever-screentime { padding: 64px 22px 75px; gap: 34px; }
+  .fever-screentime h2 { font-size: clamp(48px, 15vw, 76px); }
+  .fever-phone-report { width: 100%; max-width: 360px; min-height: 510px; transform: rotate(1deg); }
+  .fever-screen-chart { height: 190px; }
+  .fever-doomscroll { width: 100%; height: 340px; }
+  .fever-rewards { padding: 86px 20px 64px; }
+  .fever-alert { top: 27px; font-size: 11px; }
+  .fever-rewards h2 { font-size: clamp(46px, 14.5vw, 80px); }
+  .fever-pipeline { margin-top: 38px; display: grid; grid-template-columns: 1fr 42px 1fr; gap: 0; }
+  .fever-orb { width: 100%; max-width: 150px; border-width: 4px; box-shadow: 5px 5px 0 #000, 8px 8px 0 var(--cyan); }
+  .fever-orb b { font-size: 14px; }
+  .fever-orb--neural b { font-size: clamp(17px, 5vw, 25px); padding: 0; }
+  .fever-orb--neural small { margin-top: -25px; font-size: 10px; }
+  .fever-wire { width: 42px; height: auto; transform: none; }
+  .fever-wire i { width: 8px; height: 8px; }
+  .fever-brain, .fever-wire--reverse { display: none; }
+  .fever-reward-links { margin-top: 30px; }
+  .fever-lore__wall { gap: 30px; padding: 8px 22px 10px; }
+  .fever-lore-item { min-height: 340px; }
+  .fever-lore-item img, .fever-lore-67 { height: 190px; }
+  .fever-lore-item > strong { top: 170px; }
+  .fever-pair { padding: 64px 20px; }
+  .fever-collision { margin-block: 42px 35px; }
+  .fever-collision__brain b { font-size: clamp(15px, 4.4vw, 20px); margin-top: -50px; }
+  .fever-pair > p { font-size: 16px; }
+  .fever-popup { right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); width: 240px; box-shadow: 5px 5px 0 #000, 8px 8px 0 var(--pink); }
+  .fever-popup > strong { margin: 8px 10px; font-size: 11px; }
+  .fever-popup p { display: none; }
+  .fever-popup > button { min-height: 36px; margin: 0 10px 8px; padding: 5px 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brainrot-fever *, .brainrot-fever *::before, .brainrot-fever *::after { animation: none !important; transition: none !important; }
+  .fever-collage, .fever-hero h1, .fever-hero::before { transform: none; }
+  .fever-feed__viewport { overflow-x: auto; }
+  .fever-card[aria-hidden="true"], .fever-feed__control { display: none; }
+  .fever-feed__hint { display: block; }
+}

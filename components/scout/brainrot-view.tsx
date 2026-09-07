@@ -87,27 +87,25 @@ function JohnPorkCallIntro() {
   const [phase, setPhase] = useState<CallPhase>("ringing");
 
   useEffect(() => {
+    if (phase === "done") return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const answerTimer = window.setTimeout(() => setPhase("answering"), reducedMotion ? 200 : 2600);
-    const revealTimer = window.setTimeout(() => setPhase("done"), reducedMotion ? 500 : 3350);
-    return () => {
-      window.clearTimeout(answerTimer);
-      window.clearTimeout(revealTimer);
-    };
-  }, []);
+    const timer = window.setTimeout(() => setPhase(phase === "ringing" ? "answering" : "done"), reducedMotion ? 200 : phase === "ringing" ? 2600 : 750);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
 
   const answerNow = () => {
     if (phase !== "ringing") return;
     setPhase("answering");
-    window.setTimeout(() => setPhase("done"), 650);
   };
 
+  if (phase === "done") return null;
+
   return (
-    <div className={`brainrot-call-gate is-${phase}`} role="dialog" aria-label="John Pork incoming call" aria-hidden={phase === "done"}>
+    <div className={`brainrot-call-gate is-${phase}`} role="dialog" aria-modal="true" aria-label="John Pork incoming call" onKeyDown={(event) => { if (event.key === "Escape") setPhase("done"); }}>
       <p className="brainrot-call-gate__status">{phase === "ringing" ? "JOHN PORK IS ON THE LINE..." : "CALL ACCEPTED. CINEMA. ✓"}</p>
       <div className="brainrot-call-phone">
         <img src="/brand/john-pork-calling.jpg" alt="John Pork is calling" />
-        <button className="brainrot-call-answer" type="button" onClick={answerNow} aria-label="Accept John Pork call"><span aria-hidden="true" /></button>
+        <button className="brainrot-call-answer" type="button" autoFocus onClick={answerNow} aria-label="Accept John Pork call"><span aria-hidden="true" /></button>
         {phase === "answering" ? <i className="brainrot-call-tap" aria-hidden="true">☝</i> : null}
       </div>
       <p className="brainrot-call-gate__hint">pick up bro. the lore depends on it.</p>
@@ -116,20 +114,23 @@ function JohnPorkCallIntro() {
 }
 
 function RotFeed() {
+  const [paused, setPaused] = useState(false);
   return (
     <section className="fever-feed" id="rot-feed">
       <header>
         <span>LIVE FROM THE DAMAGED PART OF THE INTERNET</span>
         <h2>BRAINROT INDEX</h2>
         <strong>ROT LEVEL: ██████████ 100%</strong>
+        <button className="fever-feed__control" type="button" aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? "▶ RESUME THE ROT" : "Ⅱ PAUSE THE ROT"}</button>
+        <p className="fever-feed__hint">SWIPE FOR MORE DAMAGE →</p>
       </header>
-      <div className="fever-feed__viewport">
-        <div className="fever-feed__track">
+      <div className="fever-feed__viewport" tabIndex={0} role="region" aria-label="Brainrot characters — swipe or use arrow keys to explore">
+        <div className={`fever-feed__track${paused ? " is-paused" : ""}`}>
           {[...CHARACTERS, ...CHARACTERS].map((character, index) => (
             <article className={`fever-card ${character.className}`} aria-hidden={index >= CHARACTERS.length} key={`${character.name}-${index}`}>
               <div className="fever-card__warning">{index % 2 ? "⚠ DO NOT THINK" : "100% REAL LORE"}</div>
               {character.image ? (
-                <img src={character.image} alt={index < CHARACTERS.length ? character.name : ""} />
+                <img src={character.image} alt={index < CHARACTERS.length ? character.name : ""} loading="lazy" decoding="async" />
               ) : (
                 <div className="fever-card__67" aria-label="Six seven">67</div>
               )}
@@ -159,7 +160,7 @@ function ScreenTimeReport() {
 
   return (
     <section className="fever-screentime" id="screen-time">
-      <img className="fever-screentime__invader" src="/brand/tung-tung.png" alt="Tung Tung Tung Sahur invading the screen-time report" />
+      <img className="fever-screentime__invader" src="/brand/tung-tung.png" alt="Tung Tung Tung Sahur invading the screen-time report" loading="lazy" decoding="async" />
       <div className="fever-screentime__copy">
         <span>WEEKLY DEVICE REPORT // VERY CONCERNING</span>
         <h2>SCREEN TIME<br /><em>OFF THE CHARTS</em></h2>
@@ -190,9 +191,9 @@ function ScreenTimeReport() {
       <div className="fever-doomscroll" aria-label="Infinite doomscroll parody">
         <header><b>FOR YOU</b><span>doom feed ↓</span></header>
         <div>
-          {[...doomPosts, ...doomPosts].map((post, index) => (
-            <article key={`${post}-${index}`}><i>{index % 3 === 0 ? "67" : index % 3 === 1 ? "🧠" : "?!"}</i><p>{post}</p><span>♡ {Math.max(67, 6900 - index * 67)}</span></article>
-          ))}
+          {[0, 1].map((group) => <div className="fever-doomscroll__group" key={group} aria-hidden={group === 1}>
+            {doomPosts.map((post, index) => <article key={post}><i>{index % 3 === 0 ? "67" : index % 3 === 1 ? "🧠" : "?!"}</i><p>{post}</p><span>♡ {6900 - index * 67}</span></article>)}
+          </div>)}
         </div>
         <footer>YOU HAVE SCROLLED 14.7 KM TODAY</footer>
       </div>
@@ -203,6 +204,7 @@ function ScreenTimeReport() {
 export function BrainrotView() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [popupOpen, setPopupOpen] = useState(false);
+  const [fateAccepted, setFateAccepted] = useState(false);
   const launchUrl = projectConfig.buyUrl || projectConfig.stonkUrl;
 
   useEffect(() => {
@@ -243,6 +245,12 @@ export function BrainrotView() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!popupOpen) return;
+    const timer = window.setTimeout(() => setPopupOpen(false), 6000);
+    return () => window.clearTimeout(timer);
+  }, [popupOpen]);
+
   return (
     <div className="brainrot-fever" ref={rootRef}>
       <JohnPorkCallIntro />
@@ -260,7 +268,7 @@ export function BrainrotView() {
         <div className="fever-scanlines" aria-hidden="true" />
         <div className="fever-hero__copy">
           <span className="fever-kicker">WORLD WIDE WEB // CONDITION: TERMINAL</span>
-          <h1 data-text="BRAINROT">BRAINROT</h1>
+          <h1 data-text="BRAINROT" aria-label="BRAINROT">BRAINROT</h1>
           <h2>THE INTERNET HAS A CONDITION.</h2>
           <p>HOLD $BRAINROT. GET $NEURALINK.</p>
           <a className="fever-cta" href={launchUrl} target="_blank" rel="noopener noreferrer">ENTER THE ROT ↗</a>
@@ -321,7 +329,7 @@ export function BrainrotView() {
           {LORE.map((item, index) => (
             <article className={`fever-lore-item fever-lore-item--${index + 1}`} key={item.title}>
               <div className="fever-tape" aria-hidden="true" />
-              {item.image ? <img src={item.image} alt="" /> : <div className="fever-lore-67">67</div>}
+              {item.image ? <img src={item.image} alt="" loading="lazy" decoding="async" /> : <div className="fever-lore-67">67</div>}
               <time>{item.date}</time>
               <h3>{item.title}</h3>
               <p>{item.copy}</p>
@@ -330,8 +338,8 @@ export function BrainrotView() {
           ))}
           <aside className="fever-error-box">
             <b>Internet Explorer</b>
-            <p>recovery.exe was not found. the condition is permanent.</p>
-            <button type="button">accept fate</button>
+            <p role="status">{fateAccepted ? "fate accepted. welcome to the damaged part of the internet." : "recovery.exe was not found. the condition is permanent."}</p>
+            <button type="button" disabled={fateAccepted} onClick={() => setFateAccepted(true)}>{fateAccepted ? "brain successfully uninstalled ✓" : "accept fate"}</button>
           </aside>
         </div>
       </section>
