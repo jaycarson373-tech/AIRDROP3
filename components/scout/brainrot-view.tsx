@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -51,36 +52,122 @@ const CHARACTERS = [
   }
 ] as const;
 
-const LORE = [
+type LoreImage = { src: string; alt: string; className?: string };
+type LoreEntry = {
+  date: string;
+  title: string;
+  copy: string;
+  images: LoreImage[];
+  examples?: string[];
+  archiveYear?: number;
+  stamp: string;
+  className?: string;
+};
+
+const LORE: LoreEntry[] = [
+  {
+    date: "2020",
+    title: "LOCKDOWN. PHONE ON.",
+    copy: "COVID lockdowns moved hangouts, boredom and entertainment onto screens. Among Us made everyone sus; Coffin Dance and Bella Poarch turned a few seconds of sound and movement into endlessly repeatable jokes. the feed got faster, attention got shorter, and context became optional.",
+    images: [],
+    archiveYear: 2020,
+    examples: ["Among Us / sus", "Coffin Dance", "Bella Poarch / M to the B", "Always Has Been", "DaBaby Convertible", "Vector edits", "Juan / horse on balcony"],
+    stamp: "PATIENT ZERO"
+  },
+  {
+    date: "2021",
+    title: "THE SOUND BECOMES THE JOKE",
+    copy: "John Cena saying ‘bing chilling,’ a Fortnite-card giveaway and SugarCrash! became clips you recognized before anyone explained them. GigaChad and uncanny Mr. Incredible edits turned a face into a whole mood. the punchline was knowing the reference.",
+    images: [],
+    archiveYear: 2021,
+    examples: ["Bing Chilling", "Mr. Incredible Becoming Uncanny", "GigaChad", "19 Dollar Fortnite Card", "Stretchy LeBron", "SugarCrash!", "Talking Tom edits"],
+    stamp: "REPLAY DAMAGE"
+  },
+  {
+    date: "2022",
+    title: "THE FEED LEARNS OUR WEAKNESS",
+    copy: "Quandale Dingle stories, Only in Ohio and Talking Ben made absurd voices, names and recurring characters into their own language. Sigma and Patrick Bateman edits could turn almost any clip into the same joke. sound + image + repetition; understanding was no longer required.",
+    images: [],
+    archiveYear: 2022,
+    examples: ["Hom Say Young", "Kumalala vs. Savesta", "Shocked Jslutty", "Quandale Dingle", "Only in Ohio", "Nathaniel B", "Talking Ben", "Patrick Bateman / sigma edits", "Blue Grinch / knee surgery"],
+    stamp: "ATTENTION LOST"
+  },
   {
     date: "2023",
-    title: "PHONE BRAIN",
-    copy: "humanity picked up the phone. the old world ended.",
-    image: "/brand/john-pork-calling.jpg",
-    stamp: "INCOMING"
+    title: "SKIBIDI TAKES OVER",
+    copy: "toilets got heads: DaFuq!?Boom!’s Skibidi Toilet grew from a YouTube Short into serialized battles, factions and lore. John Pork was calling, the Smurf Cat was everywhere, and hood-irony edits kept scrambling the format. you didn’t just recognize the joke anymore; you followed its universe.",
+    images: [],
+    archiveYear: 2023,
+    examples: ["Skibidi Toilet", "Barbie Dogs / Borzoi", "Smurf Cat", "Biggest Bird", "John Pork is calling", "Hood irony", "Rizz", "Gooning slang"],
+    stamp: "NO RETURN"
   },
   {
     date: "2024",
-    title: "THE ANIMALS STARTED TALKING",
-    copy: "the feed developed wildlife. the wildlife developed opinions.",
-    image: "/brand/bombardiro.png",
-    stamp: "SIGNAL LOST"
+    title: "THE ROT GETS A NAME",
+    copy: "the TikTok Rizz Party, Costco Guys’ BOOM and the Low Taper Fade became catchphrases people carried off the screen. ‘brain rot’ became a mainstream way to name the content and the feeling of consuming too much of it. Oxford made it Word of the Year; the dictionary had entered the group chat.",
+    images: [],
+    archiveYear: 2024,
+    examples: ["TikTok Rizz Party", "Costco Guys", "Low Taper Fade", "Hawk Tuah", "Sigma Boy", "LeBron / You Are My Sunshine", "Thick of It", "Prime / Lunchly", "Knee surgery resurgence"],
+    stamp: "DICTIONARY INFECTED"
+  },
+  {
+    date: "2025",
+    title: "EVERYTHING IS AN INSIDE JOKE",
+    copy: "LeBron parodies, gurt and name slang made ordinary words feel like passwords. Chicken Jockey became a cinema shout-along, while ‘100 men vs. one gorilla’ turned an absurd hypothetical into a shared argument. the comment section was now a dialect.",
+    images: [],
+    archiveYear: 2025,
+    examples: ["LeBron parodies", "Gurt", "SYBAU", "Chicken Jockey", "Name slang", "100 men vs. 1 gorilla", "Tralalero Tralala", "Tung Tung Tung Sahur"],
+    stamp: "CONTEXT COLLAPSED"
+  },
+  {
+    date: "2025",
+    title: "THE ANIMALS START TALKING",
+    copy: "Italian Brainrot and related AI-character trends turned sneaker sharks, crocodile aircraft and coffee-cup ballerinas into a recurring cast. Indonesian Tung Tung Tung Sahur joined the wider remix universe too. animals got names nobody could pronounce; then everybody learned them.",
+    images: [
+      { src: "/brand/tralalero.png", alt: "Tralalero Tralala, the sneaker-wearing shark", className: "lore-tralalero" },
+      { src: "/brand/bombardiro.png", alt: "Bombardiro Crocodilo, the crocodile aircraft", className: "lore-bombardiro" },
+      { src: "/brand/ballerina.png", alt: "Ballerina Cappuccina, the coffee-cup ballerina", className: "lore-ballerina" },
+      { src: "/brand/tung-tung.png", alt: "Tung Tung Tung Sahur, the wooden character", className: "lore-tung" }
+    ],
+    stamp: "ROT GLOBAL",
+    className: "is-invasion"
+  },
+  {
+    date: "2025",
+    title: "TRIPLE T",
+    copy: "Tung Tung Tung Sahur became ‘Triple T’: TikTok edits put the wooden character into baseball, doorbell cams and everyday life. the feed found triple t. then triple t found everybody.",
+    images: [{ src: "/brand/tung-tung.png", alt: "Triple T — Tung Tung Tung Sahur" }],
+    stamp: "FEED CAPTURED",
+    className: "is-triple-t"
   },
   {
     date: "2025",
     title: "67",
-    copy: "math left the chat. language became two numbers and a hand motion.",
-    image: null,
+    copy: "Skrilla’s song, basketball edits and the 67 Kid turned a phrase into a shared reflex. two numbers, one hand motion, zero explanation required. language had officially been compressed into integers.",
+    images: [], // Approved 67 Kid / hand-motion still needed; no generic number art.
     stamp: "ROT CRITICAL"
   },
   {
     date: "2026",
-    title: "NO RECOVERY",
-    copy: "the internet melted. we tokenized the condition. probably bullish.",
-    image: "/brand/brainrot-logo.jpg",
+    title: "BRAIN OFF",
+    copy: "no setup. no context. no recovery.",
+    images: [{ src: "/brand/brainrot-logo.jpg", alt: "Patrick Brainrot: the final state" }],
     stamp: "BRAIN OFF"
   }
-] as const;
+];
+
+function LoreVisual({ entry }: { entry: LoreEntry }) {
+  if (entry.archiveYear) {
+    const src = `/brand/lore/community-archive-${entry.archiveYear}.jpg`;
+    return <a className="lore-archive-crop" href={src} target="_blank" rel="noopener noreferrer" aria-label={`Open the supplied ${entry.archiveYear} community meme archive`}>
+      <Image src={src} alt={`Community archive collage of ${entry.archiveYear} memes from the supplied TikTok reference`} fill sizes="(max-width: 700px) 85vw, (max-width: 900px) 42vw, 360px" loading="lazy" />
+    </a>;
+  }
+  if (!entry.images.length) return null;
+  return <div className={`lore-image-mat${entry.images.length > 1 ? " is-collage" : ""}`}>
+    {entry.images.map((image) => <Image key={image.src} src={image.src} alt={image.alt} className={image.className} width={600} height={400} sizes="(max-width: 700px) 85vw, (max-width: 900px) 42vw, 360px" loading="lazy" />)}
+  </div>;
+}
 
 type CallPhase = "ringing" | "answering" | "done";
 
@@ -321,20 +408,30 @@ export function BrainrotView() {
         </div>
       </section>
 
-      <section className="fever-lore" id="timeline">
+      <section className="fever-lore fever-lore--evolution" id="timeline">
         <header>
           <span>ARCHIVE CORRUPTED SUCCESSFULLY</span>
           <h2>THE TIMELINE<br />GOT WORSE</h2>
-          <p>2023: PHONE BRAIN // 2024: TALKING ANIMALS // 2025: 67 // 2026: NO RECOVERY</p>
+          <p>2020–2026 // LOCKDOWN SCROLLING. SHARED SOUNDS. RECURRING CHARACTERS. AN ENTIRE INTERNET DIALECT.</p>
+          <div className="lore-context">
+            <p>2020 wasn’t the invention of weird internet humor. It was the lockdown acceleration: phones became the hangout, short videos became the format, and jokes became things you replayed, remixed and quoted.</p>
+            <p>“Brain rot” is older than the internet—Oxford traces it to 1854. Gen Z and Gen Alpha gave it fresh life online, and by 2024 it was Oxford’s Word of the Year. This is the modern feed’s evolution, not the word’s birth certificate.</p>
+            <a href="https://corp.oup.com/news/brain-rot-named-oxford-word-of-the-year-2024/" target="_blank" rel="noopener noreferrer">OXFORD: THE WORD’S HISTORY</a>
+            <small>Years group overlapping meme waves, not every original upload. Supplied community collages are reference material; tap one to view it in full.</small>
+          </div>
         </header>
         <div className="fever-lore__wall">
           {LORE.map((item, index) => (
-            <article className={`fever-lore-item fever-lore-item--${index + 1}`} key={item.title}>
+            <article className={`fever-lore-item fever-lore-item--${index + 1} ${item.className ?? ""}`} key={item.title}>
               <div className="fever-tape" aria-hidden="true" />
-              {item.image ? <img src={item.image} alt="" loading="lazy" decoding="async" /> : <div className="fever-lore-67">67</div>}
+              <LoreVisual entry={item} />
               <time>{item.date}</time>
               <h3>{item.title}</h3>
               <p>{item.copy}</p>
+              {item.examples ? <details className="lore-examples">
+                <summary>IN THE FEED · {item.examples.length} REFERENCES</summary>
+                <ul>{item.examples.map((example) => <li key={example}>{example}</li>)}</ul>
+              </details> : null}
               <strong>{item.stamp}</strong>
             </article>
           ))}
