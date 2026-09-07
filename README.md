@@ -9,7 +9,7 @@ The public site presents the StonkFun reward-pair flow:
 3. let the platform reward pot accumulate from trading activity; and
 4. publish completed holder rewards with verifiable Solana receipts.
 
-The interface uses five-minute tracking windows. Actual reward settlement depends on StonkFun reward-pot thresholds and platform execution. No wallet signature, approval, or manual claim is required for holder rewards.
+The interface does not fabricate a settlement timer. Reward timing and settlement follow StonkFun reward-pot thresholds and platform execution. No wallet signature, approval, or manual claim is required for holder rewards.
 
 ## Legacy worker safety gates
 
