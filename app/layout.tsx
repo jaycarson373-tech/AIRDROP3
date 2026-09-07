@@ -43,13 +43,13 @@ export const metadata: Metadata = {
     template: "%s | BRAINROT"
   },
   alternates: { canonical: siteUrl },
-  description: "The word of our generation, launched through StonkFun and paired with tokenized Neuralink exposure.",
+  description: "The internet has a condition. Hold BRAINROT. Get NEURALP through StonkFun holder rewards.",
   applicationName: "BRAINROT",
   manifest: "/manifest.webmanifest",
   keywords: ["BRAINROT", "NEURAL", "Neuralink", "PreStocks", "StonkFun", "Solana", "holder rewards"],
   openGraph: {
     title: "BRAINROT",
-    description: "The word of our generation. Launched through StonkFun. Paired with tokenized Neuralink exposure.",
+    description: "The internet has a condition. Hold BRAINROT. Get NEURALP.",
     url: siteUrl,
     siteName: "BRAINROT",
     type: "website",
@@ -65,17 +65,16 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "BRAINROT",
-    description: "The word of our generation. Launched through StonkFun. Paired with $NEURAL.",
+    description: "The internet has a condition. Hold BRAINROT. Get NEURALP.",
     images: ["/brand/brainrot-banner.jpg?v=brainrot"]
   },
   icons: {
     icon: [
-      { url: "/brand/brainrot-logo.jpg", type: "image/jpeg" },
-      { url: "/favicon-16x16.png?v=brainrot", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png?v=brainrot", sizes: "32x32", type: "image/png" },
-      { url: "/icon-512.png?v=brainrot", sizes: "512x512", type: "image/png" }
+      { url: "/favicon-32x32.png?v=fever", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png?v=fever", sizes: "16x16", type: "image/png" },
+      { url: "/icon-512.png?v=fever", sizes: "512x512", type: "image/png" }
     ],
-    apple: [{ url: "/apple-touch-icon.png?v=brainrot", sizes: "180x180", type: "image/png" }]
+    apple: [{ url: "/apple-touch-icon.png?v=fever", sizes: "180x180", type: "image/png" }]
   },
   robots: { index: true, follow: true }
 };

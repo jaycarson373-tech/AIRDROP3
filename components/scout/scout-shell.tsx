@@ -8,9 +8,9 @@ import { projectConfig } from "./project-config";
 import { ScoutProvider } from "./scout-provider";
 
 const navigation = [
-  { href: "/#timeline", label: "THE LORE" },
-  { href: "/#stonk", label: "STONK THING" },
-  { href: "/rewards", label: "REAL RECEIPTS" }
+  { href: "/#rot-feed", label: "ROT FEED" },
+  { href: "/#timeline", label: "LORE.EXE" },
+  { href: "/#rewards", label: "REWARDS" }
 ];
 
 function Header() {
@@ -29,7 +29,7 @@ function Header() {
           </span>
           <span>
             <strong>BRAINROT</strong>
-            <small>certified thought destroyer</small>
+            <small>$BRAINROT // ROT ONLINE</small>
           </span>
         </Link>
 
@@ -41,7 +41,7 @@ function Header() {
           {projectConfig.projectXUrl ? (
             <a className="scout-header-link scout-header-link--social" href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X</a>
           ) : null}
-          <a className="scout-header-link scout-header-link--buy" href={buyUrl} target="_blank" rel="noopener noreferrer">BUY LOL</a>
+          <a className="scout-header-link scout-header-link--buy" href={buyUrl} target="_blank" rel="noopener noreferrer">GET ROT</a>
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label="Open menu">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -66,17 +66,17 @@ function Footer() {
         <span className="scout-brand__mark" aria-hidden="true"><img src="/brand/brainrot-logo.jpg" alt="" /></span>
         <div>
           <strong>BRAINROT</strong>
-          <p>the word of our generation. unfortunately.</p>
+          <p>THE INTERNET HAS A CONDITION.</p>
         </div>
       </div>
       <nav aria-label="Footer links">
-        <Link href="/#timeline">Lore</Link>
+        <Link href="/#rot-feed">Rot feed</Link>
         <Link href="/rewards">Receipts</Link>
-        <Link href="/docs">Boring docs</Link>
+        <Link href="/docs">Docs.exe</Link>
         <a href={projectConfig.stonkUrl} target="_blank" rel="noopener noreferrer">StonkFun</a>
       </nav>
       <p className="scout-footer__risk">
-        $NEURAL is a tokenized exposure asset, not direct Neuralink stock. BRAINROT is not affiliated with or endorsed by Neuralink, PreStocks, or StonkFun. Rewards depend on StonkFun mechanics and are not guaranteed. this is not financial advice. obviously.
+        $NEURALP is a tokenized exposure asset, not direct Neuralink stock. BRAINROT is independent and is not affiliated with or endorsed by Neuralink, PreStocks, or StonkFun. Rewards depend on StonkFun mechanics and are not guaranteed. Nothing here is financial advice.
       </p>
     </footer>
   );

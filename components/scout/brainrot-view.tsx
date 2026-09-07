@@ -1,64 +1,91 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, PhoneCall, Zap } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ExternalLink, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { projectConfig } from "./project-config";
 
-const BRAINROT_TIMELINE = [
+const CHARACTERS = [
   {
-    era: "2023",
-    title: "JOHN PORK CALLS",
-    signal: "the phone incident",
-    body: "john pork called. society answered. everything got worse after this.",
-    href: "https://johnpork.com/pages/about"
+    name: "PATRICK BRAINROT",
+    era: "FOREVER ONLINE",
+    note: "brain activity: no. aura: catastrophic.",
+    image: "/brand/brainrot-logo.jpg",
+    className: "is-patrick"
   },
   {
-    era: "FEB 2023",
-    title: "SKIBIDI ARRIVES",
-    signal: "toilet cinema",
-    body: "an eleven-second toilet video becomes an entire cinematic universe. normal media is cooked.",
-    href: "https://www.youtube.com/shorts/6WS7_R3e6sY"
+    name: "TRALALERO TRALALA",
+    era: "ITALIAN ROT",
+    note: "three shoes. zero explanations. bellissimo.",
+    image: "/brand/tralalero.png",
+    className: "is-tralalero"
   },
   {
-    era: "DEC 2024",
-    title: "BRAIN ROT IS OFFICIAL",
-    signal: "dictionary moment",
-    body: "oxford names brain rot its word of the year. the disease receives accreditation.",
-    href: "https://corp.oup.com/news/brain-rot-named-oxford-word-of-the-year-2024/"
+    name: "BOMBARDIRO CROCODILO",
+    era: "AIRBORNE NONSENSE",
+    note: "the timeline requested air support. huge mistake.",
+    image: "/brand/bombardiro.png",
+    className: "is-bombardiro"
   },
   {
-    era: "JAN 2025",
-    title: "ITALIAN BRAINROT",
-    signal: "tralalero time",
-    body: "ai animals get impossible names and the timeline develops irreversible pasta damage.",
-    href: "https://knowyourmeme.com/memes/italian-brainrot-ai-italian-animals"
+    name: "TUNG TUNG TUNG SAHUR",
+    era: "MAXIMUM AURA",
+    note: "heard three knocks. the lore entered with a bat.",
+    image: "/brand/tung-tung.png",
+    className: "is-tung"
   },
   {
-    era: "FEB 2025",
-    title: "TRIPLE T",
-    signal: "tung tung tung",
-    body: "tung tung tung sahur walks into the global canon holding a baseball bat. very important history.",
-    href: "https://www.mementumlab.com/wiki-tung-tung"
+    name: "BALLERINA CAPPUCCINA",
+    era: "ESPRESSO ARC",
+    note: "serving pirouettes, caffeine and irreversible damage.",
+    image: "/brand/ballerina.png",
+    className: "is-ballerina"
   },
   {
-    era: "2025",
-    title: "6-7",
-    signal: "the number",
-    body: "two integers stop meaning math. nobody can explain it. everyone understands it.",
-    href: "https://www.youtube.com/watch?v=07xpV4ix2K8"
+    name: "SIX SEVEN",
+    era: "THE NUMBER INCIDENT",
+    note: "math left the chat. the children understood everything.",
+    image: null,
+    className: "is-sixty-seven"
   }
 ] as const;
 
-const ROT_WORDS = [
-  "JOHN PORK IS CALLING",
-  "67",
-  "TRALALERO",
-  "SKIBIDI",
-  "TUNG TUNG TUNG",
-  "BRUH",
-  "BRAIN = OFFLINE",
-  "$BRAINROT"
+const LORE = [
+  {
+    date: "2023",
+    title: "JOHN PORK CALLS",
+    copy: "humanity picked up the phone. the old world ended.",
+    image: "/brand/john-pork-calling.jpg",
+    stamp: "INCOMING"
+  },
+  {
+    date: "FEB 2023",
+    title: "SKIBIDI ESCAPES",
+    copy: "eleven seconds of toilet cinema defeats traditional media.",
+    image: "/brand/brainrot-logo.jpg",
+    stamp: "SIGNAL LOST"
+  },
+  {
+    date: "DEC 2024",
+    title: "THE WORD BECOMES OFFICIAL",
+    copy: "oxford names brain rot word of the year. scholars confirm we are cooked.",
+    image: "/brand/tung-tung.png",
+    stamp: "CERTIFIED"
+  },
+  {
+    date: "2025",
+    title: "ITALIAN BRAINROT",
+    copy: "animals, objects and fake italian collide. cinema reaches its final form.",
+    image: "/brand/tralalero.png",
+    stamp: "BELLISSIMO"
+  },
+  {
+    date: "2025",
+    title: "6-7 DETECTED",
+    copy: "two numbers become a complete language. every generation somehow gets it.",
+    image: null,
+    stamp: "ROT CRITICAL"
+  }
 ] as const;
 
 type CallPhase = "ringing" | "answering" | "done";
@@ -68,11 +95,8 @@ function JohnPorkCallIntro() {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const answerDelay = reducedMotion ? 250 : 2700;
-    const revealDelay = reducedMotion ? 600 : 3500;
-    const answerTimer = window.setTimeout(() => setPhase("answering"), answerDelay);
-    const revealTimer = window.setTimeout(() => setPhase("done"), revealDelay);
-
+    const answerTimer = window.setTimeout(() => setPhase("answering"), reducedMotion ? 200 : 2600);
+    const revealTimer = window.setTimeout(() => setPhase("done"), reducedMotion ? 500 : 3350);
     return () => {
       window.clearTimeout(answerTimer);
       window.clearTimeout(revealTimer);
@@ -82,134 +106,180 @@ function JohnPorkCallIntro() {
   const answerNow = () => {
     if (phase !== "ringing") return;
     setPhase("answering");
-    window.setTimeout(() => setPhase("done"), 700);
+    window.setTimeout(() => setPhase("done"), 650);
   };
 
   return (
-    <div
-      className={`brainrot-call-gate is-${phase}`}
-      role="dialog"
-      aria-label="John Pork incoming call"
-      aria-hidden={phase === "done"}
-    >
-      <p className="brainrot-call-gate__status">
-        {phase === "ringing" ? "INCOMING BRAINROT..." : "CALL ACCEPTED ✓"}
-      </p>
+    <div className={`brainrot-call-gate is-${phase}`} role="dialog" aria-label="John Pork incoming call" aria-hidden={phase === "done"}>
+      <p className="brainrot-call-gate__status">{phase === "ringing" ? "JOHN PORK IS ON THE LINE..." : "CALL ACCEPTED. CINEMA. ✓"}</p>
       <div className="brainrot-call-phone">
         <img src="/brand/john-pork-calling.jpg" alt="John Pork is calling" />
-        <button className="brainrot-call-answer" type="button" onClick={answerNow} aria-label="Accept John Pork call">
-          <span aria-hidden="true" />
-        </button>
+        <button className="brainrot-call-answer" type="button" onClick={answerNow} aria-label="Accept John Pork call"><span aria-hidden="true" /></button>
         {phase === "answering" ? <i className="brainrot-call-tap" aria-hidden="true">☝</i> : null}
       </div>
-      <p className="brainrot-call-gate__hint">do not panic. he does this sometimes.</p>
+      <p className="brainrot-call-gate__hint">pick up bro. the lore depends on it.</p>
     </div>
   );
 }
 
-export function BrainrotView() {
-  const [introRun, setIntroRun] = useState(0);
-  const launchUrl = projectConfig.buyUrl || projectConfig.stonkUrl;
-
+function RotFeed() {
   return (
-    <div className="brainrot-chaos-home">
-      <JohnPorkCallIntro key={introRun} />
-
-      <section className="brainrot-chaos-hero" id="top">
-        <div className="brainrot-chaos-hero__noise" aria-hidden="true" />
-        <div className="brainrot-floater brainrot-floater--one" aria-hidden="true">67</div>
-        <div className="brainrot-floater brainrot-floater--two" aria-hidden="true">bruh</div>
-        <div className="brainrot-floater brainrot-floater--three" aria-hidden="true">???</div>
-        <div className="brainrot-floater brainrot-floater--four" aria-hidden="true">brain=offline</div>
-
-        <div className="brainrot-chaos-hero__copy">
-          <p className="brainrot-scribble">launched on stonkfun • paired with $NEURAL</p>
-          <h1>BRAINROT</h1>
-          <h2>the word of our generation <em>(unfortunately)</em></h2>
-          <p>
-            brainrot ate the entire internet so we gave it a coin. it launches through StonkFun,
-            pairs with tokenized Neuralink exposure, and this is probably what technology was for.
-          </p>
-          <div className="brainrot-chaos-actions">
-            <a href={launchUrl} target="_blank" rel="noopener noreferrer">
-              BUY THE ROT <Zap size={17} aria-hidden="true" />
-            </a>
-            <a href="#stonk">wait how money happen</a>
-          </div>
-          <button className="brainrot-replay-call" type="button" onClick={() => setIntroRun((run) => run + 1)}>
-            <PhoneCall size={15} aria-hidden="true" /> make john pork call again
-          </button>
-        </div>
-
-        <div className="brainrot-patrick-card">
-          <span>LIVE BRAIN SCAN (REAL)</span>
-          <img src="/brand/brainrot-logo.jpg" alt="BRAINROT Patrick logo" />
-          <strong>brain activity: basically none</strong>
-          <small>he is trying his best</small>
-        </div>
-      </section>
-
-      <div className="brainrot-chaos-marquee" aria-label="Brainrot cultural feed">
-        <div>
-          {[...ROT_WORDS, ...ROT_WORDS].map((word, index) => <span key={`${word}-${index}`}>{word}</span>)}
-        </div>
-      </div>
-
-      <section className="brainrot-stonk-thing" id="stonk">
-        <div className="brainrot-sticker">NO TIMER LOL</div>
-        <div>
-          <p className="brainrot-section-label">the money part (boring but important)</p>
-          <h2>stonk does the stonk thing.</h2>
-          <p>
-            $BRAINROT is paired with $NEURAL on StonkFun. Trading activity builds the platform reward pot.
-            StonkFun handles holder rewards using its own mechanics whenever the pot clears.
-          </p>
-          <p className="brainrot-honesty">no fake countdown. no claim button. no pretending we know the exact second.</p>
-          <div className="brainrot-chaos-actions">
-            <a href={projectConfig.stonkUrl} target="_blank" rel="noopener noreferrer">
-              OPEN STONKFUN <ExternalLink size={15} aria-hidden="true" />
-            </a>
-            <Link href="/rewards">SEE REAL RECEIPTS</Link>
-          </div>
-        </div>
-        <aside aria-label="BRAINROT and Neural pairing">
-          <b>BRAINROT</b>
-          <i>+</i>
-          <b>NEURAL</b>
-          <i>=</i>
-          <strong>more brain?</strong>
-        </aside>
-      </section>
-
-      <section className="brainrot-lore" id="timeline">
-        <header>
-          <p className="brainrot-section-label">important human achievements since 2023</p>
-          <h2>the rot expanded.</h2>
-          <p>historians will hate this page. historians are not our target demographic.</p>
-        </header>
-        <div className="brainrot-lore-grid">
-          {BRAINROT_TIMELINE.map((entry, index) => (
-            <a href={entry.href} target="_blank" rel="noopener noreferrer" key={entry.title} style={{ "--tilt": `${index % 2 ? 1.2 : -1.2}deg` } as React.CSSProperties}>
-              <span>{entry.era}</span>
-              <small>{entry.signal}</small>
-              <h3>{entry.title}</h3>
-              <p>{entry.body}</p>
-              <b>inspect the lore ↗</b>
-            </a>
+    <section className="fever-feed" id="rot-feed">
+      <header>
+        <span>LIVE FROM THE DAMAGED PART OF THE INTERNET</span>
+        <h2>BRAINROT INDEX</h2>
+        <strong>ROT LEVEL: ██████████ 100%</strong>
+      </header>
+      <div className="fever-feed__viewport">
+        <div className="fever-feed__track">
+          {[...CHARACTERS, ...CHARACTERS].map((character, index) => (
+            <article className={`fever-card ${character.className}`} aria-hidden={index >= CHARACTERS.length} key={`${character.name}-${index}`}>
+              <div className="fever-card__warning">{index % 2 ? "⚠ DO NOT THINK" : "100% REAL LORE"}</div>
+              {character.image ? (
+                <img src={character.image} alt={index < CHARACTERS.length ? character.name : ""} />
+              ) : (
+                <div className="fever-card__67" aria-label="Six seven">67</div>
+              )}
+              <span>{character.era}</span>
+              <h3>{character.name}</h3>
+              <p>{character.note}</p>
+            </article>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+export function BrainrotView() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const launchUrl = projectConfig.buyUrl || projectConfig.stonkUrl;
+
+  useEffect(() => {
+    const popupTimer = window.setTimeout(() => setPopupOpen(true), 4700);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return () => window.clearTimeout(popupTimer);
+
+    let frame = 0;
+    const update = (event: PointerEvent) => {
+      if (frame) window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const x = (event.clientX / window.innerWidth - .5) * 18;
+        const y = (event.clientY / window.innerHeight - .5) * 14;
+        rootRef.current?.style.setProperty("--mouse-x", `${x}px`);
+        rootRef.current?.style.setProperty("--mouse-y", `${y}px`);
+      });
+    };
+    window.addEventListener("pointermove", update, { passive: true });
+    return () => {
+      window.clearTimeout(popupTimer);
+      window.removeEventListener("pointermove", update);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return (
+    <div className="brainrot-fever" ref={rootRef}>
+      <JohnPorkCallIntro />
+
+      {popupOpen ? (
+        <aside className="fever-popup" role="status">
+          <div><span>brain_scan.exe</span><button type="button" onClick={() => setPopupOpen(false)} aria-label="Close brain scan popup"><X size={15} /></button></div>
+          <strong>⚠ CRITICAL ROT DETECTED</strong>
+          <p>good news: ur early<br />bad news: brain gone</p>
+          <button type="button" onClick={() => setPopupOpen(false)}>ok lol</button>
+        </aside>
+      ) : null}
+
+      <section className="fever-hero" id="top">
+        <div className="fever-scanlines" aria-hidden="true" />
+        <div className="fever-hero__copy">
+          <span className="fever-kicker">WORLD WIDE WEB // CONDITION: TERMINAL</span>
+          <h1 data-text="BRAINROT">BRAINROT</h1>
+          <h2>THE INTERNET HAS A CONDITION.</h2>
+          <p>HOLD $BRAINROT. GET $NEURALP.</p>
+          <a className="fever-cta" href={launchUrl} target="_blank" rel="noopener noreferrer">ENTER THE ROT ↗</a>
+        </div>
+
+        <div className="fever-collage" aria-label="Brainrot character collage">
+          <img className="fever-char fever-char--tralalero" src="/brand/tralalero.png" alt="Tralalero Tralala" />
+          <img className="fever-char fever-char--bombardiro" src="/brand/bombardiro.png" alt="Bombardiro Crocodilo" />
+          <img className="fever-char fever-char--tung" src="/brand/tung-tung.png" alt="Tung Tung Tung Sahur" />
+          <img className="fever-char fever-char--ballerina" src="/brand/ballerina.png" alt="Ballerina Cappuccina" />
+          <div className="fever-char fever-char--patrick">
+            <img src="/brand/brainrot-logo.jpg" alt="Patrick Brainrot" />
+            <b>PATRICK.BRAINROT</b>
+          </div>
+          <strong className="fever-67" aria-label="Six seven">67</strong>
+        </div>
+
+        <div className="fever-system fever-system--one"><b>brain activity</b><span>none detected</span><i><em /></i></div>
+        <div className="fever-system fever-system--two"><b>rot level</b><span>CRITICAL</span><i><em /></i></div>
+        <div className="fever-sticker fever-sticker--one">SIGNAL LOST</div>
+        <div className="fever-sticker fever-sticker--two">67 DETECTED</div>
+        <div className="fever-sticker fever-sticker--three">NO THOUGHTS<br />HEAD EMPTY</div>
       </section>
 
-      <section className="brainrot-neural">
-        <img src="/brand/neural-logo.png" alt="NEURAL token logo" />
-        <div>
-          <p className="brainrot-section-label">brainrot x neuralink-ish</p>
-          <h2>we paired no brain with more brain.</h2>
-          <p>
-            $NEURAL is a tokenized Neuralink exposure asset, not Neuralink stock. BRAINROT is independent
-            and not endorsed by Neuralink, PreStocks, or StonkFun. yes the lawyers made us type this. they are right.
-          </p>
+      <div className="fever-marquee" aria-label="Brainrot status feed"><div>
+        {Array.from({ length: 2 }, (_, group) => (
+          <span key={group}>ROT ROT ROT // JOHN PORK CALLING // SKIBIDI // TUNG TUNG TUNG // 67 // AURA +6900 // BRAIN OFF //&nbsp;</span>
+        ))}
+      </div></div>
+
+      <RotFeed />
+
+      <section className="fever-rewards" id="rewards">
+        <div className="fever-alert">THIS COULD HAVE BEEN AN EMAIL</div>
+        <h2>HOLD BRAINROT.<br />GET NEURALP.<br /><span>BRAIN OFF.</span></h2>
+        <div className="fever-pipeline" aria-label="BRAINROT holder reward pipeline">
+          <div className="fever-orb fever-orb--brainrot"><img src="/brand/brainrot-logo.jpg" alt="BRAINROT" /><b>HOLD</b></div>
+          <div className="fever-wire"><i /><i /><i /><strong>STONK<br />DOES<br />THING</strong></div>
+          <div className="fever-brain" aria-hidden="true">🧠<span>⚡</span></div>
+          <div className="fever-wire fever-wire--reverse"><i /><i /><i /></div>
+          <div className="fever-orb fever-orb--neural"><b>$NEURALP</b><small>REWARD</small></div>
         </div>
+        <div className="fever-reward-links">
+          <a href={projectConfig.stonkUrl} target="_blank" rel="noopener noreferrer">STONKFUN <ExternalLink size={15} /></a>
+          <Link href="/rewards">REAL RECEIPTS ONLY →</Link>
+        </div>
+      </section>
+
+      <section className="fever-lore" id="timeline">
+        <header>
+          <span>ARCHIVE CORRUPTED SUCCESSFULLY</span>
+          <h2>THE ROT<br />TIMELINE</h2>
+          <p>2023 → NOW // history but the textbook is deep fried</p>
+        </header>
+        <div className="fever-lore__wall">
+          {LORE.map((item, index) => (
+            <article className={`fever-lore-item fever-lore-item--${index + 1}`} key={item.title}>
+              <div className="fever-tape" aria-hidden="true" />
+              {item.image ? <img src={item.image} alt="" /> : <div className="fever-lore-67">67</div>}
+              <time>{item.date}</time>
+              <h3>{item.title}</h3>
+              <p>{item.copy}</p>
+              <strong>{item.stamp}</strong>
+            </article>
+          ))}
+          <aside className="fever-error-box">
+            <b>Internet Explorer</b>
+            <p>the internet has stopped responding.</p>
+            <button type="button">wait for the lore</button>
+          </aside>
+        </div>
+      </section>
+
+      <section className="fever-pair" id="pair">
+        <span>UNAUTHORIZED CROSSOVER EVENT</span>
+        <h2>BRAINROT + NEURALP</h2>
+        <div className="fever-collision">
+          <div className="fever-collision__token fever-collision__token--rot"><img src="/brand/brainrot-logo.jpg" alt="BRAINROT" /><b>$BRAINROT</b></div>
+          <strong>×</strong>
+          <div className="fever-collision__brain"><i>🧠</i><b>$NEURALP</b></div>
+          <em>BOOM</em>
+        </div>
+        <h3>NO BRAIN MEETS MAXIMUM BRAIN.</h3>
+        <p>the prophecy is complete. the browser is overheating. please remain extremely online.</p>
       </section>
     </div>
   );

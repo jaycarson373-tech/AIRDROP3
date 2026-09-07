@@ -1,29 +1,29 @@
 {
   "name": "BRAINROT",
   "short_name": "BRAINROT",
-  "description": "The word of our generation, launched through StonkFun and paired with tokenized Neuralink exposure.",
+  "description": "The internet has a condition. Hold BRAINROT. Get NEURALP through StonkFun holder rewards.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#090015",
+  "background_color": "#07080a",
   "theme_color": "#08f7ff",
   "icons": [
     {
-      "src": "/favicon-16x16.png?v=brainrot",
+      "src": "/favicon-16x16.png?v=fever",
       "sizes": "16x16",
       "type": "image/png"
     },
     {
-      "src": "/favicon-32x32.png?v=brainrot",
+      "src": "/favicon-32x32.png?v=fever",
       "sizes": "32x32",
       "type": "image/png"
     },
     {
-      "src": "/apple-touch-icon.png?v=brainrot",
+      "src": "/apple-touch-icon.png?v=fever",
       "sizes": "180x180",
       "type": "image/png"
     },
     {
-      "src": "/icon-512.png?v=brainrot",
+      "src": "/icon-512.png?v=fever",
       "sizes": "512x512",
       "type": "image/png"
     }
