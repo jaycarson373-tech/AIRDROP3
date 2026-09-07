@@ -197,6 +197,14 @@ const LORE: LoreEntry[] = [
   },
   {
     date: "2026",
+    title: "RINTINTIN",
+    copy: "JJQ’s live freestyle sent a reference to the old movie-star dog Rin Tin Tin into the August 2026 feed. reaction clips and remixes made the bar its own event. a century-old dog reference just entered the group chat.",
+    images: [{ src: "/brand/lore/rin-tin-tin.jpg", alt: "JJQ holding a microphone during the live performance behind the Rin Tin Tin rap meme" }],
+    source: { label: "RIN TIN TIN RAP KID · MEME HISTORY", url: "https://knowyourmeme.com/memes/rin-tin-tin-rap-kid" },
+    stamp: "BAR STUCK ON LOOP"
+  },
+  {
+    date: "2026",
     title: "BRAIN OFF",
     copy: "no setup. no context. no recovery.",
     images: [{ src: "/brand/brainrot-logo.jpg", alt: "Patrick Brainrot: the final state" }],
@@ -503,7 +511,7 @@ export function BrainrotView() {
             <p>Before the For You page, we were already replaying singing animals, sending cursed links and shouting things nobody outside the group chat understood. Today’s brainrot didn’t appear from nowhere. the delivery system just got faster.</p>
             <p>THE WORD CAME FIRST: Oxford traces “brain rot” to 1854, long before the internet. These early memes are cultural predecessors—not the first use of the term. Lockdown scrolling accelerated the format in 2020; by 2024, the modern slang was Oxford’s Word of the Year.</p>
             <a href="https://corp.oup.com/news/brain-rot-named-oxford-word-of-the-year-2024/" target="_blank" rel="noopener noreferrer">OXFORD: THE WORD’S HISTORY</a>
-            <small>15 CHAPTERS. SCROLL AT YOUR OWN SPEED. Years group overlapping meme waves, not every first upload. The 2025 arcs overlap. Tap an archive collage to see your original reference in full.</small>
+            <small>{LORE.length} CHAPTERS. SCROLL AT YOUR OWN SPEED. Years group overlapping meme waves, not every first upload. The 2025 arcs overlap. Tap an archive collage to see your original reference in full.</small>
           </div>
         </header>
         <HistoryControls />

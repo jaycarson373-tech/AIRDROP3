@@ -1,5 +1,9 @@
 # Timeline-only lore update — asset audit
 
+## RinTinTin addition
+
+Added a dedicated 2026 RINTINTIN chapter before the final Patrick/BRAIN OFF card, bringing the timeline to 16 chapters. Uses the live-performance still of JJQ from https://i.kym-cdn.com/entries/icons/original/000/057/281/rintincover.jpg, saved unchanged as `public/brand/lore/rin-tin-tin.jpg` (1280×720), visually inspected, and rendered through the existing responsive Next Image component. Context and visible source link: https://knowyourmeme.com/memes/rin-tin-tin-rap-kid. Copy describes the August 2026 reaction/remix wave without invented views or quoting the rap lyrics. No styling or reward changes. The chapter count label now derives from the data array.
+
 Status: expanded to 15 chapters spanning 2005–2026, with 88 visible named references across ten era lists. All prior 48 references are retained. Three newly supplied early-history collages are added; six repeated 2020–2025 screenshots reuse the existing identical references. The taped paper aesthetic and character carousel remain.
 
 ## September 7 history expansion
