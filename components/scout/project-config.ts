@@ -17,7 +17,7 @@ export const projectConfig = {
   buyUrl:
     publicValue(process.env.NEXT_PUBLIC_BUY_URL) ??
     publicValue(process.env.NEXT_PUBLIC_BRAINROT_BUY_URL),
-  projectXUrl: "https://x.com/Tesllama",
+  projectXUrl: null,
   communityUrl: publicValue(process.env.NEXT_PUBLIC_BRAINROT_COMMUNITY_URL),
   stonkUrl:
     publicValue(process.env.NEXT_PUBLIC_STONK_URL) ??
