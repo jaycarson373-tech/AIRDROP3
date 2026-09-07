@@ -144,6 +144,62 @@ function RotFeed() {
   );
 }
 
+function ScreenTimeReport() {
+  const days = ["M", "T", "W", "T", "F", "S", "NOW"];
+  const doomPosts = [
+    "one more video bro",
+    "john pork called again",
+    "67 DETECTED",
+    "tralalero posted",
+    "screen time limit ignored",
+    "brain loading... 0%",
+    "you are still scrolling",
+    "there is no bottom"
+  ];
+
+  return (
+    <section className="fever-screentime" id="screen-time">
+      <img className="fever-screentime__invader" src="/brand/tung-tung.png" alt="Tung Tung Tung Sahur invading the screen-time report" />
+      <div className="fever-screentime__copy">
+        <span>WEEKLY DEVICE REPORT // VERY CONCERNING</span>
+        <h2>SCREEN TIME<br /><em>OFF THE CHARTS</em></h2>
+        <p>the green rot has breached containment. please put the phone down after this next video.</p>
+        <strong>DOOMSCROLL STATUS: NO BOTTOM FOUND</strong>
+      </div>
+
+      <div className="fever-phone-report">
+        <div className="fever-phone-report__top"><i /> SCREEN TIME <b>● LIVE</b></div>
+        <p>DAILY AVERAGE</p>
+        <h3>13h 37m</h3>
+        <strong>↑ 420% FROM LAST WEEK</strong>
+        <div className="fever-screen-chart" aria-label="Screen time chart showing usage increasing beyond the chart">
+          {days.map((day, index) => (
+            <div className={index === days.length - 1 ? "is-today" : ""} key={`${day}-${index}`}>
+              <i><em /></i><span>{day}</span>
+            </div>
+          ))}
+          <b>HELP</b>
+        </div>
+        <div className="fever-phone-report__stats">
+          <span><b>667</b> pickups</span>
+          <span><b>∞</b> refreshes</span>
+          <span><b>0m</b> outside</span>
+        </div>
+      </div>
+
+      <div className="fever-doomscroll" aria-label="Infinite doomscroll parody">
+        <header><b>FOR YOU</b><span>doom feed ↓</span></header>
+        <div>
+          {[...doomPosts, ...doomPosts].map((post, index) => (
+            <article key={`${post}-${index}`}><i>{index % 3 === 0 ? "67" : index % 3 === 1 ? "🧠" : "?!"}</i><p>{post}</p><span>♡ {Math.max(67, 6900 - index * 67)}</span></article>
+          ))}
+        </div>
+        <footer>YOU HAVE SCROLLED 14.7 KM TODAY</footer>
+      </div>
+    </section>
+  );
+}
+
 export function BrainrotView() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -236,6 +292,8 @@ export function BrainrotView() {
       </div></div>
 
       <RotFeed />
+
+      <ScreenTimeReport />
 
       <section className="fever-rewards" id="rewards">
         <div className="fever-alert">THIS COULD HAVE BEEN AN EMAIL</div>

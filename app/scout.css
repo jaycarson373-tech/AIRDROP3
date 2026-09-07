@@ -11414,3 +11414,293 @@ a.goat-profile-card__image:hover img { transform: scale(1.018); }
   .fever-hero h1,
   .fever-collage { transform: none !important; }
 }
+
+/* SCREEN TIME: THE GREEN ROT TAKES OVER */
+.fever-screentime {
+  position: relative;
+  display: grid;
+  min-height: 780px;
+  grid-template-columns: minmax(280px, 1.15fr) minmax(280px, 370px) minmax(260px, 330px);
+  gap: clamp(28px, 4vw, 58px);
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(90px, 11vw, 150px) max(24px, calc((100vw - 1320px) / 2));
+  border-block: 7px solid var(--green);
+  background:
+    linear-gradient(115deg, rgba(5, 6, 8, .97) 0 32%, rgba(9, 38, 16, .88) 70%, rgba(39, 255, 75, .27)),
+    repeating-radial-gradient(circle at 80% 40%, rgba(114, 255, 56, .28) 0 4px, transparent 5px 18px),
+    #050608;
+  isolation: isolate;
+}
+
+.fever-screentime::before {
+  position: absolute;
+  inset: -30%;
+  z-index: -1;
+  opacity: .55;
+  background:
+    radial-gradient(ellipse at 75% 45%, rgba(114, 255, 56, .72) 0 8%, transparent 9%),
+    radial-gradient(ellipse at 93% 30%, rgba(114, 255, 56, .55) 0 7%, transparent 8%),
+    radial-gradient(ellipse at 65% 80%, rgba(114, 255, 56, .38) 0 12%, transparent 13%);
+  content: "";
+  filter: blur(14px);
+  transform: scale(.9);
+  animation: feverGreenTakeover 6s ease-in-out infinite alternate;
+}
+
+.fever-screentime__copy {
+  position: relative;
+  z-index: 3;
+}
+
+.fever-screentime__copy > span {
+  display: inline-block;
+  padding: 7px 10px;
+  border: 2px solid var(--green);
+  color: var(--green);
+  background: #050608;
+  font: 900 13px/1 "Courier New", monospace;
+  letter-spacing: .05em;
+  transform: rotate(-1deg);
+}
+
+.fever-screentime h2 {
+  margin: 22px 0 0;
+  color: #fff;
+  font-size: clamp(60px, 8vw, 118px);
+  line-height: .8;
+  letter-spacing: -.025em;
+}
+
+.fever-screentime h2 em {
+  color: var(--green);
+  font-style: normal;
+  text-shadow: 6px 6px 0 #000, 9px 9px 0 var(--pink);
+}
+
+.fever-screentime__copy > p {
+  max-width: 590px;
+  margin: 28px 0 18px;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.42;
+}
+
+.fever-screentime__copy > strong {
+  display: inline-block;
+  padding: 8px 11px;
+  color: #050608;
+  background: var(--yellow);
+  box-shadow: 5px 5px 0 var(--pink);
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: 13px;
+  transform: rotate(1deg);
+}
+
+.fever-screentime__invader {
+  position: absolute;
+  right: -65px;
+  bottom: -110px;
+  z-index: 2;
+  width: min(26vw, 350px);
+  filter: saturate(1.35) contrast(1.2) drop-shadow(-7px -7px 0 var(--green)) drop-shadow(8px 8px 0 #000);
+  transform: rotate(-8deg);
+  animation: feverScreenInvader 4s steps(2, end) infinite;
+  pointer-events: none;
+}
+
+.fever-phone-report {
+  position: relative;
+  z-index: 4;
+  min-height: 610px;
+  padding: 18px 18px 22px;
+  border: 6px solid #d8d8d8;
+  border-radius: 34px;
+  color: #fff;
+  background: linear-gradient(#101217, #030405);
+  box-shadow: 14px 14px 0 #000, 20px 20px 0 var(--green), inset 0 0 0 2px #383b40;
+  transform: rotate(2deg);
+}
+
+.fever-phone-report::before {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  width: 82px;
+  height: 19px;
+  border-radius: 20px;
+  background: #000;
+  content: "";
+  transform: translateX(-50%);
+}
+
+.fever-phone-report__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0 35px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #30343a;
+  font: 900 11px/1 "Courier New", monospace;
+}
+
+.fever-phone-report__top i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green);
+  animation: feverPhoneBlink .8s steps(2, end) infinite;
+}
+
+.fever-phone-report__top b { color: var(--green); }
+.fever-phone-report > p { margin: 0; color: #8c939d; font: 900 11px/1 "Courier New", monospace; }
+.fever-phone-report > h3 { margin: 8px 0 0; color: #fff; font-size: clamp(62px, 6vw, 88px); line-height: .9; text-shadow: 4px 4px 0 var(--pink); }
+.fever-phone-report > strong { display: block; margin-top: 9px; color: var(--green); font: 900 12px/1 "Courier New", monospace; }
+
+.fever-screen-chart {
+  position: relative;
+  display: flex;
+  height: 220px;
+  align-items: end;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 34px;
+  padding: 20px 8px 23px;
+  border-block: 1px solid #30343a;
+  background: repeating-linear-gradient(0deg, transparent 0 38px, rgba(255,255,255,.08) 38px 39px);
+}
+
+.fever-screen-chart > div {
+  display: grid;
+  width: 28px;
+  height: 100%;
+  grid-template-rows: 1fr auto;
+  align-items: end;
+  gap: 8px;
+  text-align: center;
+}
+
+.fever-screen-chart i {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 30%;
+  overflow: visible;
+  background: #41474e;
+}
+
+.fever-screen-chart > div:nth-child(2) i { height: 43%; }
+.fever-screen-chart > div:nth-child(3) i { height: 37%; }
+.fever-screen-chart > div:nth-child(4) i { height: 52%; }
+.fever-screen-chart > div:nth-child(5) i { height: 61%; }
+.fever-screen-chart > div:nth-child(6) i { height: 78%; background: #416b47; }
+.fever-screen-chart > div.is-today i { height: 118%; background: var(--green); box-shadow: 0 0 24px rgba(114,255,56,.8); animation: feverOffChart 1.7s ease-in-out infinite alternate; }
+.fever-screen-chart i em { position: absolute; inset: auto 0 0; height: 23%; background: var(--pink); }
+.fever-screen-chart > div span { color: #8c939d; font: 700 10px/1 "Courier New", monospace; }
+.fever-screen-chart > div.is-today span { color: var(--green); font-weight: 900; }
+.fever-screen-chart > b { position: absolute; top: -19px; right: -8px; padding: 4px 7px; color: #050608; background: var(--yellow); font: 900 11px/1 "Arial Black", Arial, sans-serif; transform: rotate(9deg); }
+
+.fever-phone-report__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-top: 20px;
+}
+
+.fever-phone-report__stats span {
+  display: grid;
+  min-height: 58px;
+  place-content: center;
+  border: 1px solid #30343a;
+  color: #8c939d;
+  font-size: 10px;
+  text-align: center;
+}
+
+.fever-phone-report__stats b { display: block; color: #fff; font-family: Impact, sans-serif; font-size: 21px; }
+
+.fever-doomscroll {
+  position: relative;
+  z-index: 3;
+  height: 560px;
+  overflow: hidden;
+  border: 4px solid #fff;
+  color: #fff;
+  background: #050608;
+  box-shadow: 11px 11px 0 #000, 15px 15px 0 var(--pink);
+  transform: rotate(-2deg);
+}
+
+.fever-doomscroll > header,
+.fever-doomscroll > footer {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #050608;
+  font: 900 12px/1 "Courier New", monospace;
+}
+
+.fever-doomscroll > header { top: 0; border-bottom: 3px solid var(--cyan); }
+.fever-doomscroll > header b { color: var(--cyan); }
+.fever-doomscroll > header span { color: var(--green); }
+.fever-doomscroll > footer { bottom: 0; border-top: 3px solid var(--pink); color: var(--yellow); }
+.fever-doomscroll > div { padding: 47px 10px 46px; animation: feverDoomScroll 18s linear infinite; }
+
+.fever-doomscroll article {
+  display: grid;
+  min-height: 95px;
+  grid-template-columns: 54px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid #383d44;
+  background: linear-gradient(110deg, #12151a, #07150b);
+}
+
+.fever-doomscroll article > i {
+  display: grid;
+  width: 50px;
+  height: 50px;
+  place-items: center;
+  border: 2px solid var(--green);
+  border-radius: 50%;
+  color: var(--green);
+  font: normal 900 20px/1 Impact, sans-serif;
+}
+
+.fever-doomscroll article p { margin: 0; font-size: 14px; font-weight: 900; }
+.fever-doomscroll article > span { grid-column: 2; margin-top: -14px; color: #7f8791; font: 700 10px/1 "Courier New", monospace; }
+
+@keyframes feverGreenTakeover { to { opacity: .9; transform: scale(1.12) translateX(-4%); } }
+@keyframes feverScreenInvader { 50% { translate: -6px -10px; rotate: 3deg; } }
+@keyframes feverPhoneBlink { 50% { opacity: .25; } }
+@keyframes feverOffChart { to { height: 145%; filter: brightness(1.5); } }
+@keyframes feverDoomScroll { to { transform: translateY(-50%); } }
+
+@media (max-width: 1050px) {
+  .fever-screentime { grid-template-columns: minmax(280px, 1fr) minmax(280px, 370px); }
+  .fever-doomscroll { grid-column: 1 / -1; width: min(680px, 100%); height: 400px; justify-self: center; }
+}
+
+@media (max-width: 700px) {
+  .fever-screentime { min-height: 0; grid-template-columns: 1fr; padding: 90px 16px 120px; }
+  .fever-screentime h2 { font-size: clamp(56px, 18vw, 86px); }
+  .fever-phone-report { width: min(360px, 92vw); min-height: 580px; justify-self: center; }
+  .fever-doomscroll { grid-column: 1; width: min(360px, 92vw); height: 430px; }
+  .fever-screentime__invader { right: -45px; bottom: -45px; width: 52vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fever-screentime::before,
+  .fever-screentime__invader,
+  .fever-phone-report__top i,
+  .fever-screen-chart > div.is-today i,
+  .fever-doomscroll > div { animation: none !important; }
+}
