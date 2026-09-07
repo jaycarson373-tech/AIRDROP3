@@ -104,7 +104,7 @@ const LORE: LoreEntry[] = [
   {
     date: "2024",
     title: "THE ROT GETS A NAME",
-    copy: "the TikTok Rizz Party, Costco Guys’ BOOM and the Low Taper Fade became catchphrases people carried off the screen. ‘brain rot’ became a mainstream way to name the content and the feeling of consuming too much of it. Oxford made it Word of the Year; the dictionary had entered the group chat.",
+    copy: "the TikTok Rizz Party, Costco Guys’ BOOM and the Low Taper Fade became catchphrases people carried off the screen. Oxford recorded a 230% increase in usage of ‘brain rot’ between 2023 and 2024. it became Oxford’s 2024 Word of the Year; the dictionary had entered the group chat.",
     images: [],
     archiveYear: 2024,
     examples: ["TikTok Rizz Party", "Costco Guys", "Low Taper Fade", "Hawk Tuah", "Sigma Boy", "LeBron / You Are My Sunshine", "Thick of It", "Prime / Lunchly", "Knee surgery resurgence"],
@@ -125,7 +125,7 @@ const LORE: LoreEntry[] = [
     copy: "Italian Brainrot and related AI-character trends turned sneaker sharks, crocodile aircraft and coffee-cup ballerinas into a recurring cast. Indonesian Tung Tung Tung Sahur joined the wider remix universe too. animals got names nobody could pronounce; then everybody learned them.",
     images: [
       { src: "/brand/tralalero.png", alt: "Tralalero Tralala, the sneaker-wearing shark", className: "lore-tralalero" },
-      { src: "/brand/bombardiro.png", alt: "Bombardiro Crocodilo, the crocodile aircraft", className: "lore-bombardiro" },
+      { src: "/brand/lore/bombardiro-crocodilo.jpg", alt: "Bombardiro Crocodilo flying through clouds, in the supplied meme image", className: "lore-bombardiro" },
       { src: "/brand/ballerina.png", alt: "Ballerina Cappuccina, the coffee-cup ballerina", className: "lore-ballerina" },
       { src: "/brand/tung-tung.png", alt: "Tung Tung Tung Sahur, the wooden character", className: "lore-tung" }
     ],
@@ -428,6 +428,7 @@ export function BrainrotView() {
               <time>{item.date}</time>
               <h3>{item.title}</h3>
               <p>{item.copy}</p>
+              {item.archiveYear === 2024 ? <a className="lore-source" href="https://corp.oup.com/news/brain-rot-named-oxford-word-of-the-year-2024/" target="_blank" rel="noopener noreferrer">SOURCE: OXFORD UNIVERSITY PRESS</a> : null}
               {item.examples ? <div className="lore-examples">
                 <h4>IN THE FEED · {item.examples.length} REFERENCES</h4>
                 <ul>{item.examples.map((example) => <li key={example}>{example}</li>)}</ul>

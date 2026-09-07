@@ -147,7 +147,7 @@ body:has(.brainrot-call-gate) .brainrot-header { visibility: hidden; }
 .fever-lore--evolution .is-collage { background: #ded8c9; isolation: isolate; }
 .fever-lore--evolution .is-collage img { position: absolute; filter: drop-shadow(3px 4px 0 #050608); }
 .fever-lore--evolution .is-collage .lore-tralalero { width: 80%; height: 120%; top: 0; left: -14%; transform: rotate(-12deg) scale(1.35); }
-.fever-lore--evolution .is-collage .lore-bombardiro { width: 85%; height: 45%; top: -8px; left: 12%; transform: rotate(6deg); }
+.fever-lore--evolution .is-collage .lore-bombardiro { width: 62%; height: 65%; top: -8px; left: 0; transform: rotate(-7deg); }
 .fever-lore--evolution .is-collage .lore-ballerina { width: 46%; height: 70%; bottom: -6px; right: -6px; transform: rotate(8deg); }
 .fever-lore--evolution .is-collage .lore-tung { width: 35%; height: 80%; bottom: -4px; left: 42%; transform: rotate(-5deg); }
 .fever-lore--evolution .lore-archive-crop { display: block; position: relative; width: 100%; aspect-ratio: 589 / 420; overflow: hidden; border: 2px solid #050608; background: #fff; }
@@ -157,6 +157,7 @@ body:has(.brainrot-call-gate) .brainrot-header { visibility: hidden; }
 .fever-lore--evolution .lore-context a { display: inline-block; min-height: 44px; padding-block: 10px; color: #050608; font-size: 12px; font-weight: 900; text-underline-offset: 3px; }
 .fever-lore--evolution .lore-context small { display: block; margin-top: 8px; font: 700 12px/1.5 "Courier New", monospace; }
 .fever-lore--evolution .lore-examples { margin-top: 18px; border-top: 1px dashed #777064; }
+.fever-lore--evolution .lore-source { display: inline-block; min-height: 44px; padding-block: 12px; color: #050608; font: 700 11px/1.5 "Courier New", monospace; text-underline-offset: 3px; }
 .fever-lore--evolution .lore-examples h4 { margin: 0; padding: 13px 0; font: 900 11px/1.5 "Courier New", monospace; }
 .fever-lore--evolution .lore-examples ul { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; padding: 0; list-style: none; }
 .fever-lore--evolution .lore-examples li { padding: 5px 7px; border: 1px solid #aaa18e; color: #050608; background: #ede5d3; font: 700 12px/1.35 Arial, sans-serif; }

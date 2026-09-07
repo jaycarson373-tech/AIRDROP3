@@ -9,7 +9,7 @@ Status: expanded with the user's six supplied community-archive references and t
 | `public/brand/brainrot-logo.jpg` | Patrick Brainrot scene | 2026 final state |
 | `public/brand/tung-tung.png` | Wooden Tung Tung Tung Sahur character | Dedicated Triple T card and AI-character collage |
 | `public/brand/tralalero.png` | Tralalero shark sticker, including surrounding transparent space | AI-character collage |
-| `public/brand/bombardiro.png` | Illustrated crocodile aircraft | AI-character collage, not an early-era image |
+| `public/brand/lore/bombardiro-crocodilo.jpg` | User-supplied crocodile aircraft flying through clouds, 225×225 | AI-character timeline collage; the older site-wide illustration is unchanged |
 | `public/brand/ballerina.png` | Coffee-cup ballerina | AI-character collage |
 | `public/brand/john-pork-calling.jpg` | Incoming John Pork call | Not reused for 2020–2022 or Skibidi; intro is outside this task |
 | `public/brand/lore/67-kid.jpg` | User-supplied 67 Kid photo, 588×330 | Dedicated 2025 67 card, with proportional contain sizing |
@@ -26,6 +26,7 @@ The source screenshot's “Victor” is rendered as Vector. Talking Ben's major 
 - The 67 Kid comes from a March 2025 basketball video and references Skrilla's song: https://knowyourmeme.com/memes/67-kid
 - Independent context for the song, basketball videos and hand motion: https://apnews.com/article/e5a0cddd8d1e6ec5e90c51242367146d
 - The term is recorded in 1854 and was Oxford Word of the Year in 2024, not coined in 2020: https://corp.oup.com/news/brain-rot-named-oxford-word-of-the-year-2024/
+- Oxford reports a **230% increase in usage frequency between 2023 and 2024**, not 280% in 2023. The 2024 card uses the verified figure and links directly to that announcement.
 - TikTok's pandemic context: https://newsroom.tiktok.com/an-update-for-our-tiktok-family?lang=en
 - DaBaby Convertible imagery existed in 2020, with a wider 2021 wave: https://knowyourmeme.com/memes/ironic-dababy-memes
 - Juan / horse-on-balcony circulated in 2020: https://knowyourmeme.com/memes/juan-horse-on-balcony
