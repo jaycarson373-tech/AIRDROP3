@@ -13,41 +13,6 @@ const navigation = [
   { href: "/#rewards", label: "REWARDS" }
 ];
 
-function ContractAddress() {
-  // Only use this project's explicit CA, never a legacy source/reward mint.
-  const address = process.env.NEXT_PUBLIC_BRAINROT_MINT?.trim() || null;
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
-
-  useEffect(() => {
-    if (copyStatus === "idle") return;
-    const timer = window.setTimeout(() => setCopyStatus("idle"), 3000);
-    return () => window.clearTimeout(timer);
-  }, [copyStatus]);
-
-  const copyAddress = async () => {
-    if (!address) return;
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopyStatus("copied");
-    } catch {
-      setCopyStatus("failed");
-    }
-  };
-
-  return (
-    <div className="brainrot-contract">
-      <span className="brainrot-contract__label">$BRAINROT CA</span>
-      {address ? <>
-        <button type="button" onClick={copyAddress} title={address} aria-label={`Copy BRAINROT contract address ${address}`}>
-          {address.slice(0, 6)}…{address.slice(-6)} <span aria-hidden="true">⧉</span>
-        </button>
-        <span className="brainrot-contract__status" role="status">{copyStatus === "copied" ? "COPIED ✓" : copyStatus === "failed" ? "SELECT ADDRESS TO COPY" : "TAP TO COPY"}</span>
-        {copyStatus === "failed" ? <code className="brainrot-contract__full">{address}</code> : null}
-      </> : <span className="brainrot-contract__pending">CA COMING SOON</span>}
-    </div>
-  );
-}
-
 function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -82,8 +47,6 @@ function Header() {
           </button>
         </div>
       </div>
-
-      <ContractAddress />
 
       {open ? (
         <div className="scout-mobile-nav" id="brainrot-mobile-nav" onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}>

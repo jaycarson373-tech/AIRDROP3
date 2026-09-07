@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { projectConfig } from "./project-config";
 
@@ -89,7 +89,7 @@ function JohnPorkCallIntro() {
   useEffect(() => {
     if (phase === "done") return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const timer = window.setTimeout(() => setPhase(phase === "ringing" ? "answering" : "done"), reducedMotion ? 200 : phase === "ringing" ? 2600 : 750);
+    const timer = window.setTimeout(() => setPhase(phase === "ringing" ? "answering" : "done"), reducedMotion ? 200 : phase === "ringing" ? 3000 : 450);
     return () => window.clearTimeout(timer);
   }, [phase]);
 
@@ -101,14 +101,11 @@ function JohnPorkCallIntro() {
   if (phase === "done") return null;
 
   return (
-    <div className={`brainrot-call-gate is-${phase}`} role="dialog" aria-modal="true" aria-label="John Pork incoming call" onKeyDown={(event) => { if (event.key === "Escape") setPhase("done"); }}>
-      <p className="brainrot-call-gate__status">{phase === "ringing" ? "JOHN PORK IS ON THE LINE..." : "CALL ACCEPTED. CINEMA. ✓"}</p>
+    <div className={`brainrot-call-gate is-${phase}`} role="dialog" aria-modal="true" aria-label="John Pork incoming call" onKeyDown={(event) => { if (event.key === "Escape") setPhase("done"); if (event.key === "Tab") event.preventDefault(); }}>
       <div className="brainrot-call-phone">
         <img src="/brand/john-pork-calling.jpg" alt="John Pork is calling" />
         <button className="brainrot-call-answer" type="button" autoFocus onClick={answerNow} aria-label="Accept John Pork call"><span aria-hidden="true" /></button>
-        {phase === "answering" ? <i className="brainrot-call-tap" aria-hidden="true">☝</i> : null}
       </div>
-      <p className="brainrot-call-gate__hint">pick up bro. the lore depends on it.</p>
     </div>
   );
 }
@@ -121,8 +118,8 @@ function RotFeed() {
         <span>LIVE FROM THE DAMAGED PART OF THE INTERNET</span>
         <h2>BRAINROT INDEX</h2>
         <strong>ROT LEVEL: ██████████ 100%</strong>
-        <button className="fever-feed__control" type="button" aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? "▶ RESUME THE ROT" : "Ⅱ PAUSE THE ROT"}</button>
-        <p className="fever-feed__hint">SWIPE FOR MORE DAMAGE →</p>
+        <button className="fever-feed__control" type="button" aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? "RESUME THE ROT" : "PAUSE THE ROT"}</button>
+        <p className="fever-feed__hint">SWIPE FOR MORE DAMAGE</p>
       </header>
       <div className="fever-feed__viewport" tabIndex={0} role="region" aria-label="Brainrot characters — swipe or use arrow keys to explore">
         <div className={`fever-feed__track${paused ? " is-paused" : ""}`}>
@@ -172,7 +169,7 @@ function ScreenTimeReport() {
         <div className="fever-phone-report__top"><i /> SCREEN TIME <b>● LIVE</b></div>
         <p>DAILY AVERAGE</p>
         <h3>13h 37m</h3>
-        <strong>↑ 420% FROM LAST WEEK</strong>
+        <strong>UP 420% FROM LAST WEEK</strong>
         <div className="fever-screen-chart" aria-label="Screen time chart showing usage increasing beyond the chart">
           {days.map((day, index) => (
             <div className={index === days.length - 1 ? "is-today" : ""} key={`${day}-${index}`}>
@@ -189,7 +186,7 @@ function ScreenTimeReport() {
       </div>
 
       <div className="fever-doomscroll" aria-label="Infinite doomscroll parody">
-        <header><b>FOR YOU</b><span>doom feed ↓</span></header>
+        <header><b>FOR YOU</b><span>doom feed</span></header>
         <div>
           {[0, 1].map((group) => <div className="fever-doomscroll__group" key={group} aria-hidden={group === 1}>
             {doomPosts.map((post, index) => <article key={post}><i>{index % 3 === 0 ? "67" : index % 3 === 1 ? "🧠" : "?!"}</i><p>{post}</p><span>♡ {6900 - index * 67}</span></article>)}
@@ -205,7 +202,6 @@ export function BrainrotView() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [popupOpen, setPopupOpen] = useState(false);
   const [fateAccepted, setFateAccepted] = useState(false);
-  const launchUrl = projectConfig.buyUrl || projectConfig.stonkUrl;
 
   useEffect(() => {
     const popupTimer = window.setTimeout(() => setPopupOpen(true), 4700);
@@ -271,7 +267,6 @@ export function BrainrotView() {
           <h1 data-text="BRAINROT" aria-label="BRAINROT">BRAINROT</h1>
           <h2>THE INTERNET HAS A CONDITION.</h2>
           <p>HOLD $BRAINROT. GET $NEURALINK.</p>
-          <a className="fever-cta" href={launchUrl} target="_blank" rel="noopener noreferrer">ENTER THE ROT ↗</a>
         </div>
 
         <div className="fever-collage" aria-label="Brainrot character collage">
@@ -314,8 +309,8 @@ export function BrainrotView() {
           <div className="fever-orb fever-orb--neural"><b>$NEURALINK</b><small>REWARD</small></div>
         </div>
         <div className="fever-reward-links">
-          <a href={projectConfig.stonkUrl} target="_blank" rel="noopener noreferrer">STONKFUN <ExternalLink size={15} /></a>
-          <Link href="/rewards">REAL RECEIPTS ONLY →</Link>
+          <a href={projectConfig.stonkUrl} target="_blank" rel="noopener noreferrer">STONKFUN</a>
+          <Link href="/rewards">REAL RECEIPTS ONLY</Link>
         </div>
       </section>
 
