@@ -1,6 +1,6 @@
 # Timeline-only lore update — asset audit
 
-Status: expanded with the user's six supplied community-archive references. The 67 Kid portrait remains unavailable; its card has copy only, with no generic number graphic or unrelated substitute.
+Status: expanded with the user's six supplied community-archive references and the subsequently approved 67 Kid photo. The 67 timeline card now uses that exact photo, with no generic number graphic or unrelated substitute.
 
 ## Existing assets inspected
 
@@ -12,8 +12,9 @@ Status: expanded with the user's six supplied community-archive references. The 
 | `public/brand/bombardiro.png` | Illustrated crocodile aircraft | AI-character collage, not an early-era image |
 | `public/brand/ballerina.png` | Coffee-cup ballerina | AI-character collage |
 | `public/brand/john-pork-calling.jpg` | Incoming John Pork call | Not reused for 2020–2022 or Skibidi; intro is outside this task |
+| `public/brand/lore/67-kid.jpg` | User-supplied 67 Kid photo, 588×330 | Dedicated 2025 67 card, with proportional contain sizing |
 
-The six supplied screenshots are stored unchanged at `public/brand/lore/community-archive-2020.jpg` through `community-archive-2025.jpg`. Each is 589×1280 and approximately 132–139 KB. CSS frames the book area; the full screenshot is available by tapping the image. Next Image provides responsive, lazy-loaded delivery. These are attributed as community collages, not treated as authoritative first-upload dates. The 2023 screenshot includes recognizable Skibidi imagery. No supplied screenshot contains the actual 67 Kid / hand-motion portrait; that asset is still needed to finish the earlier portrait requirement.
+The six supplied screenshots are stored unchanged at `public/brand/lore/community-archive-2020.jpg` through `community-archive-2025.jpg`. Each is 589×1280 and approximately 132–139 KB. CSS frames the book area; the full screenshot is available by tapping the image. Next Image provides responsive, lazy-loaded delivery. These are attributed as community collages, not treated as authoritative first-upload dates. The 2023 screenshot includes recognizable Skibidi imagery. The separate 67 Kid photo was supplied afterward and is stored unchanged; its full frame is preserved without stretching.
 
 The source screenshot's “Victor” is rendered as Vector. Talking Ben's major meme revival belongs in 2022, rather than treating the 2021 screenshot as an exact chronology. Earlier origins and later resurgences overlap, which is explicitly explained on the site. Knee surgery appears with the 2022 wave and its 2024 resurgence. The 2025 list is separated from the AI-cast collage so both the language trends and the characters have context.
 

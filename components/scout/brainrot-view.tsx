@@ -144,7 +144,7 @@ const LORE: LoreEntry[] = [
     date: "2025",
     title: "67",
     copy: "Skrilla’s song, basketball edits and the 67 Kid turned a phrase into a shared reflex. two numbers, one hand motion, zero explanation required. language had officially been compressed into integers.",
-    images: [], // Approved 67 Kid / hand-motion still needed; no generic number art.
+    images: [{ src: "/brand/lore/67-kid.jpg", alt: "The 67 Kid at a basketball game, in the supplied meme photo" }],
     stamp: "ROT CRITICAL"
   },
   {
