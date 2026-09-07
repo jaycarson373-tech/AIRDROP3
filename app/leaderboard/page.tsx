@@ -3,7 +3,7 @@ import { LeaderboardView } from "../../components/scout/leaderboard-view";
 
 export const metadata: Metadata = {
   title: "Eligible Holders",
-  description: "Verified $BRAINROT holder balances, eligibility history, and $NEURALP reward receipts."
+  description: "Verified $BRAINROT holder balances, eligibility history, and $NEURALINK reward receipts."
 };
 
 export default function LeaderboardPage() {

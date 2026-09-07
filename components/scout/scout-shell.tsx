@@ -76,7 +76,7 @@ function Footer() {
         <a href={projectConfig.stonkUrl} target="_blank" rel="noopener noreferrer">StonkFun</a>
       </nav>
       <p className="scout-footer__risk">
-        $NEURALP is a tokenized exposure asset, not direct Neuralink stock. BRAINROT is independent and is not affiliated with or endorsed by Neuralink, PreStocks, or StonkFun. Rewards depend on StonkFun mechanics and are not guaranteed. Nothing here is financial advice.
+        $NEURALINK is a tokenized exposure asset, not direct Neuralink stock. BRAINROT is independent and is not affiliated with or endorsed by Neuralink, PreStocks, or StonkFun. Rewards depend on StonkFun mechanics and are not guaranteed. Nothing here is financial advice.
       </p>
     </footer>
   );

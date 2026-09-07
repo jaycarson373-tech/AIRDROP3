@@ -1,11 +1,11 @@
 # BRAINROT ($BRAINROT)
 
-BRAINROT is the word of our generation turned into a Solana memecoin: launched through StonkFun and paired with the verified `$NEURALP` tokenized Neuralink asset.
+BRAINROT is the word of our generation turned into a Solana memecoin: launched through StonkFun and paired with the verified `$NEURALINK` tokenized Neuralink asset.
 
 The public site presents the StonkFun reward-pair flow:
 
 1. launch `$BRAINROT` through StonkFun;
-2. pair it with `$NEURALP`;
+2. pair it with `$NEURALINK`;
 3. let the platform reward pot accumulate from trading activity; and
 4. publish completed holder rewards with verifiable Solana receipts.
 
@@ -15,7 +15,7 @@ The interface does not fabricate a settlement timer. Reward timing and settlemen
 
 The repository still contains the earlier standalone distribution worker. Its money-moving flags remain off by default and should not be enabled for a StonkFun-managed reward launch unless the operating model is intentionally changed and reviewed.
 
-The official $NEURALP mint configured by default is:
+The official $NEURALINK mint configured by default is:
 
 ```text
 PrekqLJvJ3qVdXmBGDiexvwUTF4rLFDa6HWS4HJbw9S

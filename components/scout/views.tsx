@@ -22,11 +22,11 @@ export function ReceiptsView() {
   const rewardTotal = neural && neural.transfers > 0 && neural.total > 0 ? formatToken(neural.total, "NEURAL") : awaitingLaunch;
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="BRAINROT Rewards" title="DROP HISTORY." body="Every settled $NEURALP distribution, timestamp, and onchain receipt in one verifiable ledger." />
+      <PageHeading eyebrow="BRAINROT Rewards" title="DROP HISTORY." body="Every settled $NEURALINK distribution, timestamp, and onchain receipt in one verifiable ledger." />
       <div className="scout-overview-grid">
         <Metric label="Current Drop" value={live && stats.currentEpoch ? `#${stats.currentEpoch}` : awaitingLaunch} />
-        <Metric label="$NEURALP Distributed" value={rewardTotal} />
-        <Metric label="Reward Asset" value="$NEURALP" />
+        <Metric label="$NEURALINK Distributed" value={rewardTotal} />
+        <Metric label="Reward Asset" value="$NEURALINK" />
         <Metric label="Holders Rewarded" value={live && stats.totalHoldersRewarded ? stats.totalHoldersRewarded.toLocaleString() : awaitingLaunch} />
       </div>
       <section className="scout-panel scout-panel--table">
@@ -62,7 +62,7 @@ export function ReceiptsView() {
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="DROP HISTORY AWAITS LIVE DATA." body="Wallets and transaction signatures publish after completed $NEURALP distributions." />}
+        ) : <EmptyState title="DROP HISTORY AWAITS LIVE DATA." body="Wallets and transaction signatures publish after completed $NEURALINK distributions." />}
       </section>
     </div>
   );
@@ -71,11 +71,11 @@ export function ReceiptsView() {
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How BRAINROT works." body="$BRAINROT launches through StonkFun, pairs with $NEURALP, and routes cleared rewards automatically to qualifying holders." />
+      <PageHeading eyebrow="Documentation" title="How BRAINROT works." body="$BRAINROT launches through StonkFun, pairs with $NEURALINK, and routes cleared rewards automatically to qualifying holders." />
       <div className="scout-doc-layout">
         <aside><a href="#lifecycle">Distribution cycle</a><a href="#weight">Eligibility</a><a href="#treasury">Settlement</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>StonkFun launch</h2><p>$BRAINROT launches through StonkFun with $NEURALP as its reward-pair asset.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>StonkFun launch</h2><p>$BRAINROT launches through StonkFun with $NEURALINK as its reward-pair asset.</p></section>
           <section id="weight"><span className="scout-kicker">02</span><h2>Eligibility</h2><p>Eligibility and allocation follow the active StonkFun pair mechanics. This site does not invent reward amounts or formulas.</p></section>
           <section id="treasury"><span className="scout-kicker">03</span><h2>Automatic settlement</h2><p>StonkFun routes cleared reward pots to qualifying holders. The public ledger displays only completed distributions with real Solana receipts.</p></section>
         </div>
