@@ -10871,8 +10871,13 @@ a.goat-profile-card__image:hover img { transform: scale(1.018); }
   --green: #72ff38;
   --red: #ff2e38;
   --ink: #07080a;
-  --mouse-x: 0px;
-  --mouse-y: 0px;
+  --parallax-bg-x: 0px;
+  --parallax-bg-y: 0px;
+  --parallax-title-x: 0px;
+  --parallax-title-y: 0px;
+  --parallax-collage-x: 0px;
+  --parallax-collage-y: 0px;
+  --scroll-drift: 0px;
   position: relative;
   overflow: hidden;
   color: #f6f6f2;
@@ -10923,7 +10928,7 @@ a.goat-profile-card__image:hover img { transform: scale(1.018); }
   background-image: radial-gradient(var(--cyan) 1.2px, transparent 1.2px);
   background-size: 12px 12px;
   content: "";
-  transform: translate(calc(var(--mouse-x) * -.25), calc(var(--mouse-y) * -.25));
+  transform: translate(var(--parallax-bg-x), var(--parallax-bg-y));
 }
 
 .fever-scanlines {
@@ -10966,7 +10971,7 @@ a.goat-profile-card__image:hover img { transform: scale(1.018); }
   line-height: .72;
   letter-spacing: -.055em;
   text-shadow: 7px 0 0 var(--pink), -7px 0 0 var(--cyan), 12px 12px 0 #000;
-  transform: translate(calc(var(--mouse-x) * .18), calc(var(--mouse-y) * .12)) skew(-4deg);
+  transform: translate(var(--parallax-title-x), var(--parallax-title-y)) skew(-4deg);
 }
 
 .fever-hero h1::after {
@@ -11030,7 +11035,7 @@ a.goat-profile-card__image:hover img { transform: scale(1.018); }
   bottom: 0;
   z-index: 8;
   width: 64%;
-  transform: translate(calc(var(--mouse-x) * -.34), calc(var(--mouse-y) * -.2));
+  transform: translate(var(--parallax-collage-x), calc(var(--parallax-collage-y) + var(--scroll-drift)));
 }
 
 .fever-char {

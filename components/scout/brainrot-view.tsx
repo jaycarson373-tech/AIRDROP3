@@ -8,42 +8,42 @@ import { projectConfig } from "./project-config";
 const CHARACTERS = [
   {
     name: "PATRICK BRAINROT",
-    era: "FOREVER ONLINE",
+    era: "2026 // NO RECOVERY",
     note: "brain activity: no. aura: catastrophic.",
     image: "/brand/brainrot-logo.jpg",
     className: "is-patrick"
   },
   {
     name: "TRALALERO TRALALA",
-    era: "ITALIAN ROT",
+    era: "2025 // ITALIAN ROT",
     note: "three shoes. zero explanations. bellissimo.",
     image: "/brand/tralalero.png",
     className: "is-tralalero"
   },
   {
     name: "BOMBARDIRO CROCODILO",
-    era: "AIRBORNE NONSENSE",
+    era: "2025 // AIRBORNE NONSENSE",
     note: "the timeline requested air support. huge mistake.",
     image: "/brand/bombardiro.png",
     className: "is-bombardiro"
   },
   {
     name: "TUNG TUNG TUNG SAHUR",
-    era: "MAXIMUM AURA",
+    era: "2025 // MAXIMUM AURA",
     note: "heard three knocks. the lore entered with a bat.",
     image: "/brand/tung-tung.png",
     className: "is-tung"
   },
   {
     name: "BALLERINA CAPPUCCINA",
-    era: "ESPRESSO ARC",
+    era: "2025 // ESPRESSO ARC",
     note: "serving pirouettes, caffeine and irreversible damage.",
     image: "/brand/ballerina.png",
     className: "is-ballerina"
   },
   {
     name: "SIX SEVEN",
-    era: "THE NUMBER INCIDENT",
+    era: "2025 // THE NUMBER INCIDENT",
     note: "math left the chat. the children understood everything.",
     image: null,
     className: "is-sixty-seven"
@@ -53,38 +53,31 @@ const CHARACTERS = [
 const LORE = [
   {
     date: "2023",
-    title: "JOHN PORK CALLS",
+    title: "PHONE BRAIN",
     copy: "humanity picked up the phone. the old world ended.",
     image: "/brand/john-pork-calling.jpg",
     stamp: "INCOMING"
   },
   {
-    date: "FEB 2023",
-    title: "SKIBIDI ESCAPES",
-    copy: "eleven seconds of toilet cinema defeats traditional media.",
-    image: "/brand/brainrot-logo.jpg",
+    date: "2024",
+    title: "THE ANIMALS STARTED TALKING",
+    copy: "the feed developed wildlife. the wildlife developed opinions.",
+    image: "/brand/bombardiro.png",
     stamp: "SIGNAL LOST"
   },
   {
-    date: "DEC 2024",
-    title: "THE WORD BECOMES OFFICIAL",
-    copy: "oxford names brain rot word of the year. scholars confirm we are cooked.",
-    image: "/brand/tung-tung.png",
-    stamp: "CERTIFIED"
-  },
-  {
     date: "2025",
-    title: "ITALIAN BRAINROT",
-    copy: "animals, objects and fake italian collide. cinema reaches its final form.",
-    image: "/brand/tralalero.png",
-    stamp: "BELLISSIMO"
-  },
-  {
-    date: "2025",
-    title: "6-7 DETECTED",
-    copy: "two numbers become a complete language. every generation somehow gets it.",
+    title: "67",
+    copy: "math left the chat. language became two numbers and a hand motion.",
     image: null,
     stamp: "ROT CRITICAL"
+  },
+  {
+    date: "2026",
+    title: "NO RECOVERY",
+    copy: "the internet melted. we tokenized the condition. probably bullish.",
+    image: "/brand/brainrot-logo.jpg",
+    stamp: "BRAIN OFF"
   }
 ] as const;
 
@@ -160,21 +153,37 @@ export function BrainrotView() {
     const popupTimer = window.setTimeout(() => setPopupOpen(true), 4700);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return () => window.clearTimeout(popupTimer);
 
-    let frame = 0;
+    let pointerFrame = 0;
+    let scrollFrame = 0;
     const update = (event: PointerEvent) => {
-      if (frame) window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => {
+      if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
+      pointerFrame = window.requestAnimationFrame(() => {
         const x = (event.clientX / window.innerWidth - .5) * 18;
         const y = (event.clientY / window.innerHeight - .5) * 14;
-        rootRef.current?.style.setProperty("--mouse-x", `${x}px`);
-        rootRef.current?.style.setProperty("--mouse-y", `${y}px`);
+        rootRef.current?.style.setProperty("--parallax-bg-x", `${x * -.25}px`);
+        rootRef.current?.style.setProperty("--parallax-bg-y", `${y * -.25}px`);
+        rootRef.current?.style.setProperty("--parallax-title-x", `${x * .18}px`);
+        rootRef.current?.style.setProperty("--parallax-title-y", `${y * .12}px`);
+        rootRef.current?.style.setProperty("--parallax-collage-x", `${x * -.34}px`);
+        rootRef.current?.style.setProperty("--parallax-collage-y", `${y * -.2}px`);
       });
     };
+    const updateScroll = () => {
+      if (scrollFrame) return;
+      scrollFrame = window.requestAnimationFrame(() => {
+        scrollFrame = 0;
+        rootRef.current?.style.setProperty("--scroll-drift", `${Math.min(window.scrollY * .04, 80)}px`);
+      });
+    };
+    updateScroll();
     window.addEventListener("pointermove", update, { passive: true });
+    window.addEventListener("scroll", updateScroll, { passive: true });
     return () => {
       window.clearTimeout(popupTimer);
       window.removeEventListener("pointermove", update);
-      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateScroll);
+      if (pointerFrame) window.cancelAnimationFrame(pointerFrame);
+      if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
     };
   }, []);
 
@@ -247,8 +256,8 @@ export function BrainrotView() {
       <section className="fever-lore" id="timeline">
         <header>
           <span>ARCHIVE CORRUPTED SUCCESSFULLY</span>
-          <h2>THE ROT<br />TIMELINE</h2>
-          <p>2023 → NOW // history but the textbook is deep fried</p>
+          <h2>THE TIMELINE<br />GOT WORSE</h2>
+          <p>2023: PHONE BRAIN // 2024: TALKING ANIMALS // 2025: 67 // 2026: NO RECOVERY</p>
         </header>
         <div className="fever-lore__wall">
           {LORE.map((item, index) => (
@@ -263,8 +272,8 @@ export function BrainrotView() {
           ))}
           <aside className="fever-error-box">
             <b>Internet Explorer</b>
-            <p>the internet has stopped responding.</p>
-            <button type="button">wait for the lore</button>
+            <p>recovery.exe was not found. the condition is permanent.</p>
+            <button type="button">accept fate</button>
           </aside>
         </div>
       </section>
