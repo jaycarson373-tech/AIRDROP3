@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { projectConfig } from "./project-config";
 
 const CHARACTERS = [
@@ -85,6 +86,9 @@ type CallPhase = "ringing" | "answering" | "done";
 
 function JohnPorkCallIntro() {
   const [phase, setPhase] = useState<CallPhase>("ringing");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (phase === "done") return;
@@ -100,14 +104,17 @@ function JohnPorkCallIntro() {
 
   if (phase === "done") return null;
 
-  return (
+  const preview = (
     <div className={`brainrot-call-gate is-${phase}`} role="dialog" aria-modal="true" aria-label="John Pork incoming call" onKeyDown={(event) => { if (event.key === "Escape") setPhase("done"); if (event.key === "Tab") event.preventDefault(); }}>
       <div className="brainrot-call-phone">
         <img src="/brand/john-pork-calling.jpg" alt="John Pork is calling" />
-        <button className="brainrot-call-answer" type="button" autoFocus onClick={answerNow} aria-label="Accept John Pork call"><span aria-hidden="true" /></button>
+        <button className="brainrot-call-answer" type="button" autoFocus onClick={answerNow} aria-label="Accept John Pork call and enter the site" />
       </div>
     </div>
   );
+
+  // Render outside the site's stacking contexts so the intro covers the viewport.
+  return mounted ? createPortal(preview, document.body) : preview;
 }
 
 function RotFeed() {

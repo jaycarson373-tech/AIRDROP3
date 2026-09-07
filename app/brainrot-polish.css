@@ -28,11 +28,21 @@
 .fever-screen-chart > div span { font-size: 11px; }
 .fever-lore-item { min-width: 0; }
 
-.brainrot-call-gate { background: #07080a; }
+.brainrot-call-gate { position: fixed; inset: 0; z-index: 2147483647; display: block; width: 100%; height: 100dvh; padding: 0; overflow: hidden; background: #07080a; isolation: isolate; }
+.brainrot-call-gate::before { position: absolute; inset: -24px; z-index: -1; content: ""; background: url("/brand/john-pork-calling.jpg") center / cover no-repeat; filter: blur(20px) brightness(.55); }
 body:has(.brainrot-call-gate) { overflow: hidden; }
-.brainrot-shell:has(.brainrot-call-gate) .brainrot-header { visibility: hidden; }
-.brainrot-call-phone { max-height: calc(100svh - 44px); aspect-ratio: 294 / 498; width: min(294px, 76vw, calc((100svh - 44px) * .59)); }
-.brainrot-call-gate.is-answering .brainrot-call-phone { animation-duration: .45s; }
+body:has(.brainrot-call-gate) .brainrot-header { visibility: hidden; }
+.brainrot-call-gate .brainrot-call-phone { position: relative; width: 100%; height: 100%; max-height: none; aspect-ratio: auto; border: 0; border-radius: 0; box-shadow: none; }
+.brainrot-call-gate .brainrot-call-phone img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.brainrot-call-gate .brainrot-call-answer { inset: 0; width: 100%; height: 100%; border-radius: 0; transform: none; }
+.brainrot-call-gate .brainrot-call-answer::after { display: none; }
+.brainrot-call-gate .brainrot-call-answer:focus-visible { outline: 3px solid #fff; outline-offset: -8px; }
+.brainrot-call-gate.is-ringing .brainrot-call-phone { animation: brainrotFullscreenRing .18s linear infinite; }
+.brainrot-call-gate.is-answering .brainrot-call-phone { animation: brainrotFullscreenAnswer .45s ease both; }
+@keyframes brainrotFullscreenRing { 0%, 100% { transform: translateX(-2px) scale(1.01); } 50% { transform: translateX(2px) scale(1.01); } }
+@keyframes brainrotFullscreenAnswer { to { opacity: 0; transform: scale(1.035); } }
+@media (max-width: 700px) { .brainrot-call-gate .brainrot-call-phone img { object-fit: cover; } }
+@media (prefers-reduced-motion: reduce) { .brainrot-call-gate .brainrot-call-phone { animation: none !important; } }
 
 @media (min-width: 901px) {
   .fever-hero__copy { padding-top: clamp(85px, 8vw, 125px); }
