@@ -5,7 +5,7 @@ import { AlertCircle, LoaderCircle, RefreshCw } from "lucide-react";
 export function PrelaunchNotice({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`scout-prelaunch-line${compact ? " scout-prelaunch-line--compact" : ""}`}>
-      AWAITING LIVE DATA. $NEURALINK DROPS WILL DISPLAY ONLY AFTER REAL RECEIPTS EXIST.
+      NO ACTIVE REWARD SCHEDULE IS PROMISED. VERIFIED SETTLEMENTS APPEAR ONLY AFTER ONCHAIN RECEIPTS EXIST.
     </div>
   );
 }

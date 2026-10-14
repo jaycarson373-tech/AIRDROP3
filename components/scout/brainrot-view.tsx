@@ -386,6 +386,57 @@ function ScreenTimeReport() {
   );
 }
 
+declare global {
+  interface Window {
+    trends?: {
+      embed?: {
+        renderExploreWidget: (
+          type: string,
+          comparison: Array<{ keyword: string; geo: string; time: string }>,
+          options: { exploreQuery: string; guestPath: string }
+        ) => void;
+      };
+    };
+  }
+}
+
+function GoogleTrendsWidget() {
+  const embedRef = useRef<HTMLDivElement>(null);
+  const [embedUnavailable, setEmbedUnavailable] = useState(false);
+
+  useEffect(() => {
+    const host = embedRef.current;
+    if (!host) return;
+
+    const loader = document.createElement("script");
+    loader.src = "https://ssl.gstatic.com/trends_nrtr/4114_RC01/embed_loader.js";
+    loader.async = true;
+    loader.onload = () => {
+      if (!window.trends?.embed?.renderExploreWidget) {
+        setEmbedUnavailable(true);
+        return;
+      }
+
+      const widget = document.createElement("script");
+      widget.text = `trends.embed.renderExploreWidget("TIMESERIES", [{"keyword":"brain rot","geo":"","time":"today 5-y"},{"keyword":"brainrot","geo":"","time":"today 5-y"}], {"exploreQuery":"date=today%205-y&q=brain%20rot,brainrot&hl=en-US","guestPath":"https://trends.google.com:443/trends/embed/"});`;
+      host.append(widget);
+    };
+    loader.onerror = () => setEmbedUnavailable(true);
+    host.append(loader);
+
+    return () => host.replaceChildren();
+  }, []);
+
+  return (
+    <div className="brainrot-trends__embed">
+      <div ref={embedRef} className="brainrot-trends__chart" aria-label="Google Trends chart comparing brain rot and brainrot worldwide over the past five years" />
+      {embedUnavailable ? (
+        <p className="brainrot-trends__fallback">The embedded chart could not load. Open the live comparison below.</p>
+      ) : null}
+    </div>
+  );
+}
+
 export function BrainrotView() {
   const rootRef = useRef<HTMLDivElement>(null);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -451,10 +502,10 @@ export function BrainrotView() {
       <section className="fever-hero" id="top">
         <div className="fever-scanlines" aria-hidden="true" />
         <div className="fever-hero__copy">
-          <span className="fever-kicker">WORLD WIDE WEB // CONDITION: TERMINAL</span>
+          <span className="fever-kicker">PUMP.FUN // SOLANA MEME TOKEN</span>
           <h1 data-text="BRAINROT" aria-label="BRAINROT">BRAINROT</h1>
           <h2>THE INTERNET HAS A CONDITION.</h2>
-          <p>HOLD $BRAINROT. GET $NEURALINK.</p>
+          <p>OXFORD’S 2024 WORD OF THE YEAR. NOW ON PUMP.FUN.</p>
         </div>
 
         <div className="fever-collage" aria-label="Brainrot character collage">
@@ -482,24 +533,65 @@ export function BrainrotView() {
         ))}
       </div></div>
 
+      <section className="brainrot-proof" id="signal" aria-labelledby="brainrot-proof-title">
+        <div className="brainrot-proof__copy">
+          <span className="brainrot-proof__eyebrow">THE INTERNET MADE IT OFFICIAL · 2024</span>
+          <h2 id="brainrot-proof-title">BRAIN ROT<br /><em>WAS THE WORD.</em></h2>
+          <p>Oxford named “brain rot” its 2024 Word of the Year. Oxford Languages reported a 230% rise in usage from 2023 to 2024.</p>
+          <a href="https://corp.oup.com/news/brain-rot-named-oxford-word-of-the-year-2024/" target="_blank" rel="noopener noreferrer">READ THE OXFORD ANNOUNCEMENT ↗</a>
+          <small>Google Trends shows search interest over time. It is a separate measure from Oxford’s language-usage data.</small>
+        </div>
+        <div className="brainrot-trends">
+          <div className="brainrot-trends__head"><span>GOOGLE TRENDS</span><b>SEARCH INTEREST · WORLDWIDE</b></div>
+          <GoogleTrendsWidget />
+          <a href="https://trends.google.com/trends/explore?date=today%205-y&q=brain%20rot,brainrot" target="_blank" rel="noopener noreferrer">OPEN LIVE COMPARISON ↗</a>
+        </div>
+      </section>
+
       <RotFeed />
 
       <ScreenTimeReport />
 
       <section className="fever-rewards" id="rewards">
-        <div className="fever-alert">THIS COULD HAVE BEEN AN EMAIL</div>
-        <h2>HOLD BRAINROT.<br />GET NEURALINK.<br /><span>BRAIN OFF.</span></h2>
-        <div className="fever-pipeline" aria-label="BRAINROT holder reward pipeline">
-          <div className="fever-orb fever-orb--brainrot"><img src="/brand/brainrot-logo.jpg" alt="BRAINROT" /><b>HOLD</b></div>
-          <div className="fever-wire"><i /><i /><i /><strong>STONK<br />DOES<br />THING</strong></div>
+        <div className="fever-alert">CULTURE MOVES FAST. THE CHART MOVES FASTER.</div>
+        <h2>MEME CULTURE.<br />ON SOLANA.<br /><span>BRAIN OFF.</span></h2>
+        <div className="fever-pipeline" aria-label="BRAINROT launch and market-data flow">
+          <div className="fever-orb fever-orb--brainrot"><img src="/brand/brainrot-logo.jpg" alt="BRAINROT" /><b>THE MEME</b></div>
+          <div className="fever-wire"><i /><i /><i /><strong>PUMP.FUN<br />LAUNCH</strong></div>
           <div className="fever-brain" aria-hidden="true">🧠<span>⚡</span></div>
-          <div className="fever-wire fever-wire--reverse"><i /><i /><i /></div>
-          <div className="fever-orb fever-orb--neural"><b>$NEURALINK</b><small>REWARD</small></div>
+          <div className="fever-wire fever-wire--reverse"><i /><i /><i /><strong>SOLANA<br />MARKET</strong></div>
+          <div className="fever-orb fever-orb--neural"><b>DEXSCREENER</b><small>LIVE CHART</small></div>
         </div>
         <div className="fever-reward-links">
-          <a href={projectConfig.stonkUrl} target="_blank" rel="noopener noreferrer">STONKFUN</a>
-          <Link href="/rewards">REAL RECEIPTS ONLY</Link>
+          <a href={projectConfig.pumpFunUrl} target="_blank" rel="noopener noreferrer">PUMP.FUN</a>
+          <a href="#chart">VIEW THE MARKET ↘</a>
         </div>
+      </section>
+
+      <section className="brainrot-market" id="chart" aria-labelledby="brainrot-market-title">
+        <div className="brainrot-market__heading">
+          <div><span>LIVE MARKET WINDOW</span><h2 id="brainrot-market-title">THE ROT<br /><em>IN REAL TIME.</em></h2></div>
+          <p>Brainrot launches on Pump.fun. The chart below is reserved for the verified $BRAINROT Solana pair.</p>
+        </div>
+        <div className={`brainrot-market__frame${projectConfig.dexScreenerPair ? " is-connected" : " is-pending"}`}>
+          {projectConfig.dexScreenerPair ? (
+            <iframe
+              title="BRAINROT live DexScreener chart"
+              src={`https://dexscreener.com/solana/${encodeURIComponent(projectConfig.dexScreenerPair)}?embed=1&theme=dark&trades=0&info=0`}
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="clipboard-read; clipboard-write"
+            />
+          ) : (
+            <div className="brainrot-market__empty">
+              <span className="brainrot-market__pulse" aria-hidden="true" />
+              <b>CHART FEED STANDBY</b>
+              <p>Add the verified DexScreener Solana pair address as <code>NEXT_PUBLIC_DEXSCREENER_PAIR</code> to connect the live chart.</p>
+              <a href={projectConfig.pumpFunUrl} target="_blank" rel="noopener noreferrer">OPEN PUMP.FUN ↗</a>
+            </div>
+          )}
+        </div>
+        <div className="brainrot-market__foot"><span>NETWORK · SOLANA</span><span>DATA · DEXSCREENER</span></div>
       </section>
 
       <section className="fever-lore fever-lore--evolution fever-lore--history" id="timeline">
@@ -543,16 +635,16 @@ export function BrainrotView() {
       </section>
 
       <section className="fever-pair" id="pair">
-        <span>UNAUTHORIZED CROSSOVER EVENT</span>
-        <h2>BRAINROT + NEURALINK</h2>
+        <span>CULTURAL SIGNAL</span>
+        <h2>AN OLD PHRASE.<br />A NEW FEED.</h2>
         <div className="fever-collision">
-          <div className="fever-collision__token fever-collision__token--rot"><img src="/brand/brainrot-logo.jpg" alt="BRAINROT" /><b>$BRAINROT</b></div>
-          <strong>×</strong>
-          <div className="fever-collision__brain"><i>🧠</i><b>$NEURALINK</b></div>
-          <em>BOOM</em>
+          <div className="fever-collision__token fever-collision__token--rot"><img src="/brand/brainrot-logo.jpg" alt="BRAINROT" /><b>1854</b></div>
+          <strong>→</strong>
+          <div className="fever-collision__brain"><i>📈</i><b>OXFORD 2024</b></div>
+          <em>230%</em>
         </div>
-        <h3>NO BRAIN MEETS MAXIMUM BRAIN.</h3>
-        <p>the prophecy is complete. the browser is overheating. please remain extremely online.</p>
+        <h3>THE WORD WAS OLD. THE FEED MADE IT EVERYWHERE.</h3>
+        <p>Oxford Languages reported a 230% rise in usage from 2023 to 2024. Google Trends measures search interest separately.</p>
       </section>
     </div>
   );

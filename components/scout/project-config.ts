@@ -14,14 +14,13 @@ export const projectConfig = {
     publicValue(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT),
   neuralMint:
     configuredNeuralMint === officialNeuralMint ? configuredNeuralMint : officialNeuralMint,
-  buyUrl:
-    publicValue(process.env.NEXT_PUBLIC_BUY_URL) ??
-    publicValue(process.env.NEXT_PUBLIC_BRAINROT_BUY_URL),
-  projectXUrl: null,
+  projectXUrl: publicValue(process.env.NEXT_PUBLIC_BRAINROT_X_URL),
   communityUrl: publicValue(process.env.NEXT_PUBLIC_BRAINROT_COMMUNITY_URL),
-  stonkUrl:
-    publicValue(process.env.NEXT_PUBLIC_STONK_URL) ??
-    "https://www.stonkfun.xyz",
+  pumpFunTokenConfigured: Boolean(publicValue(process.env.NEXT_PUBLIC_PUMPFUN_URL)),
+  pumpFunUrl:
+    publicValue(process.env.NEXT_PUBLIC_PUMPFUN_URL) ??
+    "https://pump.fun",
+  dexScreenerPair: publicValue(process.env.NEXT_PUBLIC_DEXSCREENER_PAIR),
   pumpMoneyMint:
     publicValue(process.env.NEXT_PUBLIC_BRAINROT_MINT) ??
     publicValue(process.env.NEXT_PUBLIC_SOURCE_TOKEN_MINT),

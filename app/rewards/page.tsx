@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { ReceiptsView } from "../../components/scout/views";
 
 export const metadata: Metadata = {
-  title: "Live Drops",
-  description: "Verify BRAINROT-funded $NEURALINK distributions and settled Solana transactions."
+  title: "Distribution Records",
+  description: "Review finalized holder distributions and verify their Solana transaction receipts."
 };
 
 export default function RewardsPage() {
