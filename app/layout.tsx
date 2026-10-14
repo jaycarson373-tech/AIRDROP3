@@ -44,13 +44,13 @@ export const metadata: Metadata = {
     template: "%s | BRAINROT"
   },
   alternates: { canonical: siteUrl },
-  description: "The internet has a condition. Hold BRAINROT. Get NEURALINK through StonkFun holder rewards.",
+  description: "The internet has a condition. BRAINROT launches on Pump.fun, with the cultural trend, lore, and live Solana market in one place.",
   applicationName: "BRAINROT",
   manifest: "/manifest.webmanifest",
-  keywords: ["BRAINROT", "NEURAL", "Neuralink", "PreStocks", "StonkFun", "Solana", "holder rewards"],
+  keywords: ["BRAINROT", "brain rot", "Oxford Word of the Year", "Google Trends", "Pump.fun", "Solana", "DexScreener"],
   openGraph: {
     title: "BRAINROT",
-    description: "The internet has a condition. Hold BRAINROT. Get NEURALINK.",
+    description: "The internet has a condition. BRAINROT launches on Pump.fun. Explore the trend, lore, and live Solana market.",
     url: siteUrl,
     siteName: "BRAINROT",
     type: "website",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "BRAINROT",
-    description: "The internet has a condition. Hold BRAINROT. Get NEURALINK.",
+    description: "The internet has a condition. BRAINROT launches on Pump.fun. Explore the trend, lore, and live Solana market.",
     images: ["/brand/brainrot-banner.jpg?v=brainrot"]
   },
   icons: {
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const rawLaunchState = (process.env.BRAINROT_LAUNCH_STATE ?? "live")
+  const rawLaunchState = (process.env.BRAINROT_LAUNCH_STATE ?? "prelaunch")
     .trim()
     .toLowerCase();
   const launchState = rawLaunchState === "prelaunch" ? "prelaunch" : "live";

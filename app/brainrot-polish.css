@@ -28,6 +28,58 @@
 .fever-screen-chart > div span { font-size: 11px; }
 .fever-lore-item { min-width: 0; }
 
+.brainrot-proof {
+  display: grid;
+  grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr);
+  gap: clamp(28px, 6vw, 86px);
+  align-items: center;
+  padding: clamp(64px, 9vw, 120px) clamp(20px, 7vw, 100px);
+  color: #f7f6f2;
+  background: radial-gradient(ellipse at 14% 45%, rgba(255, 45, 169, .17), transparent 36rem), #07080a;
+  border-block: 1px solid rgba(255,255,255,.16);
+}
+.brainrot-proof__copy { max-width: 560px; }
+.brainrot-proof__eyebrow, .brainrot-trends__head, .brainrot-market__heading > div > span, .brainrot-market__foot {
+  font: 800 11px/1.5 var(--scout-mono, monospace);
+  letter-spacing: .12em;
+}
+.brainrot-proof__eyebrow { display: inline-block; padding: 7px 10px; border: 1px solid var(--pink, #ff2da9); color: var(--pink, #ff2da9); }
+.brainrot-proof h2, .brainrot-market h2 { margin: 22px 0 16px; font: 900 clamp(54px, 7.6vw, 108px)/.82 Impact, "Arial Black", sans-serif; letter-spacing: -.035em; }
+.brainrot-proof h2 em, .brainrot-market h2 em { color: var(--pink, #ff2da9); font-style: normal; }
+.brainrot-proof__copy > p, .brainrot-market__heading > p { max-width: 510px; color: #d1cdd1; font: 600 17px/1.65 Arial, sans-serif; }
+.brainrot-proof__copy > a, .brainrot-trends > a, .brainrot-market__empty > a { display: inline-flex; min-height: 44px; align-items: center; margin-top: 12px; color: var(--green, #dfff00); font: 900 12px/1.4 var(--scout-mono, monospace); text-underline-offset: 4px; }
+.brainrot-proof__copy > small { display: block; margin-top: 22px; color: #98929a; font: 500 12px/1.6 Arial, sans-serif; }
+.brainrot-trends { min-width: 0; overflow: hidden; border: 1px solid rgba(255,255,255,.22); background: #fff; box-shadow: 8px 8px 0 rgba(255,45,169,.72); }
+.brainrot-trends__head { display: flex; min-height: 55px; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; color: #f7f6f2; background: #101114; }
+.brainrot-trends__head b { color: #aaa5ab; font-size: 9px; text-align: right; }
+.brainrot-trends__embed { min-height: 360px; color: #111216; background: #fff; }
+.brainrot-trends__chart { min-height: 360px; }
+.brainrot-trends__chart iframe { display: block; width: 100%; height: 360px; border: 0; }
+.brainrot-trends__fallback { margin: 0; padding: 12px 16px; color: #514b53; font: 500 12px/1.5 Arial, sans-serif; }
+.brainrot-trends__widget { display: flex; min-height: 245px; flex-direction: column; justify-content: center; gap: 12px; padding: clamp(22px, 4vw, 34px); overflow: hidden; color: #111216; background: radial-gradient(circle at 88% 18%, rgba(255,45,169,.16), transparent 12rem), #fff; }
+.brainrot-trends__query-label { color: #77717a; font: 800 10px/1.4 var(--scout-mono, monospace); letter-spacing: .14em; }
+.brainrot-trends__widget > strong { font: 900 clamp(25px, 3.4vw, 38px)/1.05 Impact, "Arial Black", sans-serif; letter-spacing: -.025em; }
+.brainrot-trends__widget > strong i { color: #ff2da9; font: 900 12px/1 var(--scout-mono, monospace); font-style: normal; vertical-align: middle; }
+.brainrot-trends__range { color: #28262b; font: 800 11px/1.4 var(--scout-mono, monospace); letter-spacing: .09em; }
+.brainrot-trends__range b { padding-inline: 5px; color: #ff2da9; }
+.brainrot-trends__widget > p { max-width: 410px; margin: 0; color: #66616a; font: 500 13px/1.6 Arial, sans-serif; }
+.brainrot-trends > a { margin: 0; padding: 0 16px; color: #050608; background: #fff; }
+
+.brainrot-market { padding: clamp(68px, 9vw, 120px) clamp(20px, 7vw, 100px) 34px; color: #f7f6f2; background: #050607; }
+.brainrot-market__heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin: 0 auto 30px; max-width: 1240px; }
+.brainrot-market__heading h2 { margin-bottom: 0; }
+.brainrot-market__heading > p { max-width: 380px; margin: 0 0 5px; }
+.brainrot-market__frame { position: relative; width: 100%; max-width: 1240px; min-height: 390px; margin: 0 auto; overflow: hidden; border: 1px solid rgba(255,255,255,.2); background: radial-gradient(ellipse at 50% 100%, rgba(255,45,169,.1), transparent 55%), #090a0d; }
+.brainrot-market__frame.is-connected { height: min(72vw, 620px); min-height: 390px; }
+.brainrot-market__frame iframe { width: 100%; height: 100%; min-height: 390px; border: 0; }
+.brainrot-market__empty { display: grid; min-height: 390px; align-content: center; justify-items: center; padding: 32px; text-align: center; }
+.brainrot-market__empty > b { margin-top: 18px; font: 900 clamp(20px, 4vw, 32px)/1.1 Impact, "Arial Black", sans-serif; letter-spacing: .07em; }
+.brainrot-market__empty > p { max-width: 570px; color: #a8a6ac; font: 500 14px/1.7 Arial, sans-serif; }
+.brainrot-market__empty code { color: #fff; font: 700 12px/1.5 var(--scout-mono, monospace); overflow-wrap: anywhere; }
+.brainrot-market__pulse { width: 12px; height: 12px; border-radius: 50%; background: var(--pink, #ff2da9); box-shadow: 0 0 0 0 rgba(255,45,169,.55); animation: brainrotSignalPulse 1.8s ease-out infinite; }
+.brainrot-market__foot { display: flex; justify-content: space-between; max-width: 1240px; margin: 12px auto 0; color: #85818a; font-size: 9px; }
+@keyframes brainrotSignalPulse { 70% { box-shadow: 0 0 0 12px rgba(255,45,169,0); } 100% { box-shadow: 0 0 0 0 rgba(255,45,169,0); } }
+
 .brainrot-call-gate { position: fixed; inset: 0; z-index: 2147483647; display: block; width: 100%; height: 100dvh; padding: 0; overflow: hidden; background: #07080a; isolation: isolate; }
 .brainrot-call-gate::before { position: absolute; inset: -24px; z-index: -1; content: ""; background: url("/brand/john-pork-calling.jpg") center / cover no-repeat; filter: blur(20px) brightness(.55); }
 body:has(.brainrot-call-gate) { overflow: hidden; }
@@ -54,6 +106,18 @@ body:has(.brainrot-call-gate) .brainrot-header { visibility: hidden; }
 }
 
 @media (max-width: 700px) {
+  .brainrot-proof { grid-template-columns: 1fr; padding: 65px 18px; gap: 30px; }
+  .brainrot-proof h2, .brainrot-market h2 { font-size: clamp(54px, 16vw, 82px); }
+  .brainrot-trends__embed, .brainrot-trends__chart, .brainrot-trends__chart iframe { min-height: 300px; height: 300px; }
+  .brainrot-trends__head { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .brainrot-trends__head b { text-align: left; }
+  .brainrot-market { padding: 66px 18px 26px; }
+  .brainrot-market__heading { display: block; }
+  .brainrot-market__heading > p { margin-top: 22px; font-size: 15px; }
+  .brainrot-market__frame, .brainrot-market__frame.is-connected { min-height: 340px; height: auto; }
+  .brainrot-market__frame iframe, .brainrot-market__empty { min-height: 340px; }
+  .brainrot-market__empty { padding: 24px 16px; }
+  .brainrot-market__foot { font-size: 8px; }
   .brainrot-header .scout-header__inner { padding-inline: 14px !important; gap: 10px; }
   .brainrot-header .scout-brand { gap: 9px; min-width: 0; }
   .brainrot-header .scout-brand strong { font-size: 22px !important; }

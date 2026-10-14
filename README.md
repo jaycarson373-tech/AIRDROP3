@@ -1,25 +1,27 @@
 # BRAINROT ($BRAINROT)
 
-BRAINROT is the word of our generation turned into a Solana memecoin: launched through StonkFun and paired with the verified `$NEURALINK` tokenized Neuralink asset.
+BRAINROT is the word of our generation turned into a Solana memecoin launching on Pump.fun. Its site pairs the meme archive with Oxford’s 2024 Word of the Year announcement, a Google Trends search-interest embed, and a DexScreener market panel.
 
-The public site presents the StonkFun reward-pair flow:
+The public site presents the Pump.fun launch and market-data flow:
 
-1. launch `$BRAINROT` through StonkFun;
-2. pair it with `$NEURALINK`;
-3. let the platform reward pot accumulate from trading activity; and
-4. publish completed holder rewards with verifiable Solana receipts.
+1. launch `$BRAINROT` through Pump.fun;
+2. configure the exact Solana pair in `NEXT_PUBLIC_DEXSCREENER_PAIR` to show the live chart; and
+3. publish any separate holder rewards only with confirmed rules and verifiable Solana receipts.
 
-The interface does not fabricate a settlement timer. Reward timing and settlement follow StonkFun reward-pot thresholds and platform execution. No wallet signature, approval, or manual claim is required for holder rewards.
+The Google Trends panel measures search interest; Oxford University Press is the source for the Word of the Year designation and its reported usage data. Pump.fun does not administer any separate holder-reward program. The interface does not fabricate a settlement timer or reward promise.
 
 ## Legacy worker safety gates
 
-The repository still contains the earlier standalone distribution worker. Its money-moving flags remain off by default and should not be enabled for a StonkFun-managed reward launch unless the operating model is intentionally changed and reviewed.
+The repository still contains an earlier standalone distribution worker. Its money-moving flags remain off by default and should not be enabled until a separate reward program, its rules, and its operating model are intentionally reviewed.
 
-The official $NEURALINK mint configured by default is:
+That legacy worker has a default `$NEURALINK` reward mint configured:
 
 ```text
 PrekqLJvJ3qVdXmBGDiexvwUTF4rLFDa6HWS4HJbw9S
 ```
+
+This default is retained only for the parked worker. It does not configure a
+reward promise or holder distribution on the Pump.fun launch site.
 
 ## Commands
 

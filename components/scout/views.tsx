@@ -18,16 +18,20 @@ export function ReceiptsView() {
   const { launchState, stats, state } = useScout();
   const live = launchState === "live";
   const awaitingLaunch = "AWAITING LIVE DATA";
-  const neural = live ? stats.rewardBreakdown.find((entry) => entry.asset.trim().toUpperCase() === "NEURAL") : undefined;
-  const rewardTotal = neural && neural.transfers > 0 && neural.total > 0 ? formatToken(neural.total, "NEURAL") : awaitingLaunch;
+  const rewardBreakdown = live
+    ? stats.rewardBreakdown.filter((entry) => entry.transfers > 0 && entry.total > 0)
+    : [];
+  const rewardAssets = rewardBreakdown.length
+    ? rewardBreakdown.map((entry) => formatToken(entry.total, entry.asset)).join(" · ")
+    : awaitingLaunch;
   return (
     <div className="scout-page">
-      <PageHeading eyebrow="BRAINROT Rewards" title="DROP HISTORY." body="Every settled $NEURALINK distribution, timestamp, and onchain receipt in one verifiable ledger." />
+      <PageHeading eyebrow="BRAINROT" title="DISTRIBUTION RECORDS." body="Any separate holder distribution appears here only after it is finalized and verifiable on Solana. No reward schedule is currently promised." />
       <div className="scout-overview-grid">
-        <Metric label="Current Drop" value={live && stats.currentEpoch ? `#${stats.currentEpoch}` : awaitingLaunch} />
-        <Metric label="$NEURALINK Distributed" value={rewardTotal} />
-        <Metric label="Reward Asset" value="$NEURALINK" />
-        <Metric label="Holders Rewarded" value={live && stats.totalHoldersRewarded ? stats.totalHoldersRewarded.toLocaleString() : awaitingLaunch} />
+        <Metric label="Latest Cycle" value={live && stats.currentEpoch ? `#${stats.currentEpoch}` : awaitingLaunch} />
+        <Metric label="Recorded Distribution" value={rewardAssets} />
+        <Metric label="Assets Recorded" value={rewardBreakdown.length ? rewardBreakdown.map((entry) => entry.asset).join(", ") : "NONE YET"} />
+        <Metric label="Recipients Recorded" value={live && stats.totalHoldersRewarded ? stats.totalHoldersRewarded.toLocaleString() : awaitingLaunch} />
       </div>
       <section className="scout-panel scout-panel--table">
         <div className="scout-panel__head"><div><span className="scout-kicker">Distribution history</span><h2>Verified settlements</h2></div><Radio size={20} /></div>
@@ -38,14 +42,14 @@ export function ReceiptsView() {
               <tbody>{stats.roundHistory.map((row) => (
                 <tr key={`${row.epoch}-${row.startedAt}`}>
                   <td data-label="EPOCH">#{row.epoch}</td><td data-label="TIMESTAMP">{formatTime(row.startedAt)}</td><td data-label="ELIGIBLE SNAPSHOT">{row.eligibleCount.toLocaleString()}</td>
-                  <td data-label="ALLOCATION">EXISTING HOLDER LOGIC</td>
+                  <td data-label="ALLOCATION">RECORDED ALLOCATION</td>
                   <td data-label="SOL VALUE">{row.solValueAirdropped.toFixed(4)} SOL</td><td data-label="STATUS"><StatusBadge label={row.status} /></td>
                   <td data-label="TRANSACTION">{row.txSig ? <a className="scout-icon-link" href={explorerTxUrl(row.txSig)} target="_blank" rel="noopener noreferrer" aria-label={`Verify epoch ${row.epoch}`}><ExternalLink size={15} /></a> : awaitingLaunch}</td>
                 </tr>
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="DROP HISTORY AWAITS LIVE DATA." body="Distributions appear only after real transactions are recorded as settled." />}
+        ) : <EmptyState title="NO SETTLEMENTS RECORDED." body="Distributions appear only after real transactions are recorded as settled." />}
       </section>
       <section className="scout-panel scout-panel--table">
         <div className="scout-panel__head"><div><span className="scout-kicker">Recipient feed</span><h2>Recent verified payouts</h2></div><ShieldCheck size={20} /></div>
@@ -62,7 +66,7 @@ export function ReceiptsView() {
               ))}</tbody>
             </table>
           </div>
-        ) : <EmptyState title="DROP HISTORY AWAITS LIVE DATA." body="Wallets and transaction signatures publish after completed $NEURALINK distributions." />}
+        ) : <EmptyState title="NO SETTLEMENTS RECORDED." body="Wallets and transaction signatures appear here only after a separate distribution is confirmed onchain." />}
       </section>
     </div>
   );
@@ -71,13 +75,13 @@ export function ReceiptsView() {
 export function DocsView() {
   return (
     <div className="scout-page scout-page--docs">
-      <PageHeading eyebrow="Documentation" title="How BRAINROT works." body="$BRAINROT launches through StonkFun, pairs with $NEURALINK, and routes cleared rewards automatically to qualifying holders." />
+      <PageHeading eyebrow="Documentation" title="How BRAINROT works." body="$BRAINROT is launching on Pump.fun. Market data is shown through DexScreener, and any separate reward program is published with its own confirmed rules and receipts." />
       <div className="scout-doc-layout">
-        <aside><a href="#lifecycle">Distribution cycle</a><a href="#weight">Eligibility</a><a href="#treasury">Settlement</a></aside>
+        <aside><a href="#lifecycle">Launch venue</a><a href="#weight">Market data</a><a href="#treasury">Distribution status</a></aside>
         <div className="scout-doc-content">
-          <section id="lifecycle"><span className="scout-kicker">01</span><h2>StonkFun launch</h2><p>$BRAINROT launches through StonkFun with $NEURALINK as its reward-pair asset.</p></section>
-          <section id="weight"><span className="scout-kicker">02</span><h2>Eligibility</h2><p>Eligibility and allocation follow the active StonkFun pair mechanics. This site does not invent reward amounts or formulas.</p></section>
-          <section id="treasury"><span className="scout-kicker">03</span><h2>Automatic settlement</h2><p>StonkFun routes cleared reward pots to qualifying holders. The public ledger displays only completed distributions with real Solana receipts.</p></section>
+          <section id="lifecycle"><span className="scout-kicker">01</span><h2>Pump.fun launch</h2><p>$BRAINROT launches on Pump.fun. Use the project’s verified launch link to find the token; this site does not create or custody tokens.</p></section>
+          <section id="weight"><span className="scout-kicker">02</span><h2>Market data</h2><p>The live chart is served by DexScreener after the verified Solana pair is configured. Until then, the chart area clearly shows that the feed is waiting for the pair address.</p></section>
+          <section id="treasury"><span className="scout-kicker">03</span><h2>Distribution records</h2><p>There is no active holder-reward schedule in this release. If a separate distribution is introduced, its rules and final transactions will be published here only after confirmation.</p></section>
         </div>
       </div>
     </div>

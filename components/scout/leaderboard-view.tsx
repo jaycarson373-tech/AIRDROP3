@@ -14,11 +14,13 @@ function walletUrl(wallet: string) {
 }
 
 function RewardTotal({ entry }: { entry: LeaderboardEntry }) {
-  const neural = entry.totalRewards.NEURAL;
-  if (!neural) return <span className="goat-leaderboard__awaiting">AWAITING LIVE DATA</span>;
+  const settledAssets = Object.entries(entry.totalRewards)
+    .filter(([, amount]) => Number.isFinite(amount) && amount > 0)
+    .map(([asset, amount]) => formatToken(amount, asset));
+  if (!settledAssets.length) return <span className="goat-leaderboard__awaiting">NO SETTLED PAYOUTS</span>;
   return (
     <span className="goat-leaderboard__rewards">
-      <b>{formatToken(neural, "NEURAL")}</b>
+      <b>{settledAssets.join(" · ")}</b>
     </span>
   );
 }
@@ -33,7 +35,7 @@ function LeaderboardCard({ entry }: { entry: LeaderboardEntry }) {
       <div><span>$BRAINROT BALANCE</span><strong>{formatToken(entry.tokenBalance, "BRAINROT")}</strong></div>
       <div><span>QUALIFIED DROPS</span><strong>{entry.qualifiedEpochs.toLocaleString()}</strong></div>
       <div><span>HOLDING STREAK</span><strong>{entry.holdingStreak.toLocaleString()}</strong></div>
-      <div><span>TOTAL REWARDS</span><RewardTotal entry={entry} /></div>
+      <div><span>SETTLED PAYOUTS</span><RewardTotal entry={entry} /></div>
       <div className="goat-leaderboard-card__score"><span>HOLDER SCORE</span><strong>{entry.selectionScore}</strong><i style={{ width: `${entry.selectionScore}%` }} /></div>
     </article>
   );

@@ -8,15 +8,18 @@ import { projectConfig } from "./project-config";
 import { ScoutProvider } from "./scout-provider";
 
 const navigation = [
+  { href: "/#signal", label: "WORD OF THE YEAR" },
   { href: "/#rot-feed", label: "ROT FEED" },
   { href: "/#timeline", label: "LORE.EXE" },
-  { href: "/#rewards", label: "REWARDS" }
+  { href: "/#chart", label: "LIVE CHART" },
+  { href: "/#rewards", label: "THE ROUTE" }
 ];
 
 function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const buyUrl = projectConfig.buyUrl || projectConfig.stonkUrl;
+  const buyUrl = projectConfig.pumpFunUrl;
+  const buyLabel = projectConfig.pumpFunTokenConfigured ? "GET ROT" : "PUMP.FUN";
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -41,7 +44,7 @@ function Header() {
           {projectConfig.projectXUrl ? (
             <a className="scout-header-link scout-header-link--social" href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">X</a>
           ) : null}
-          <a className="scout-header-link scout-header-link--buy" href={buyUrl} target="_blank" rel="noopener noreferrer">GET ROT</a>
+          <a className="scout-header-link scout-header-link--buy" href={buyUrl} target="_blank" rel="noopener noreferrer">{buyLabel}</a>
           <button className="scout-menu-button" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-controls="brainrot-mobile-nav" aria-label={open ? "Close menu" : "Open menu"}>
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -52,7 +55,7 @@ function Header() {
         <div className="scout-mobile-nav" id="brainrot-mobile-nav" onKeyDown={(event) => { if (event.key === "Escape") setOpen(false); }}>
           {navigation.map((item) => <Link href={item.href} key={item.href} onClick={() => setOpen(false)}>{item.label}</Link>)}
           {projectConfig.projectXUrl ? <a href={projectConfig.projectXUrl} target="_blank" rel="noopener noreferrer">BRAINROT X</a> : null}
-          <a href={buyUrl} target="_blank" rel="noopener noreferrer">BUY $BRAINROT</a>
+          <a href={buyUrl} target="_blank" rel="noopener noreferrer">{projectConfig.pumpFunTokenConfigured ? "BUY $BRAINROT" : "OPEN PUMP.FUN"}</a>
         </div>
       ) : null}
     </header>
@@ -73,10 +76,10 @@ function Footer() {
         <Link href="/#rot-feed">Rot feed</Link>
         <Link href="/rewards">Receipts</Link>
         <Link href="/docs">Docs.exe</Link>
-        <a href={projectConfig.stonkUrl} target="_blank" rel="noopener noreferrer">StonkFun</a>
+        <a href={projectConfig.pumpFunUrl} target="_blank" rel="noopener noreferrer">Pump.fun</a>
       </nav>
       <p className="scout-footer__risk">
-        $NEURALINK is a tokenized exposure asset, not direct Neuralink stock. BRAINROT is independent and is not affiliated with or endorsed by Neuralink, PreStocks, or StonkFun. Rewards depend on StonkFun mechanics and are not guaranteed. Nothing here is financial advice.
+        BRAINROT is an independent community token launched through Pump.fun. It is not affiliated with or endorsed by Pump.fun, Oxford University Press, or Google. Google Trends reports normalized search interest, not absolute search volume or token demand. Nothing here is financial advice.
       </p>
     </footer>
   );

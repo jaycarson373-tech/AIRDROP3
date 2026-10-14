@@ -27,13 +27,19 @@ threshold have been reviewed in a dry cycle.
 
 ## Vercel
 
-Start from `deploy/vercel.env.example`. Set the final site URL, $BRAINROT mint,
-project X account, exact StonkFun token URL, explicit buy URL, eligibility threshold, and Supabase values.
-Set `NEXT_PUBLIC_STONK_URL` to the final StonkFun token page after launch; the
-template points to the StonkFun launchpad until that URL exists.
-The built-in `/api/stats` endpoint supplies rewards and leaderboard data; only
-set `NEXT_PUBLIC_REWARD_API_URL` or `NEXT_PUBLIC_LEADERBOARD_API_URL` when
-replacing it with a compatible public read API.
+Start from `deploy/vercel.env.example`. Keep `BRAINROT_LAUNCH_STATE=prelaunch`
+until the token page is available. After launch, set `NEXT_PUBLIC_PUMPFUN_URL`
+to the canonical token page and `NEXT_PUBLIC_BRAINROT_MINT` to its verified
+mint. The header button changes to `GET ROT` only when the token page URL is
+configured. Set `NEXT_PUBLIC_DEXSCREENER_PAIR` only after confirming the exact
+Solana pair; otherwise the chart remains in standby.
+
+Set `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_BRAINROT_X_URL` when those public
+links are known. Supabase and Helius settings are only needed for the optional
+historical holder and distribution APIs. They are not required for the Pump.fun
+launch page, Oxford source link, Google Trends chart, or DexScreener embed.
+Keep the legacy Railway distribution worker disabled unless a separate reward
+program, its rules, and its funded payout process are intentionally approved.
 
 Never expose the Helius URL, service-role key, treasury secret, or any signing
 authority through a `NEXT_PUBLIC_` variable.
